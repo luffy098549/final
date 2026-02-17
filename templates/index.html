@@ -1,0 +1,178 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Junta Distrital de<br>Villa Cutupú</h1>
+        <p class="hero-subtitle">Río Verde Arriba, La Vega</p>
+        <p class="hero-description">Cerca de ti, trabajando por el progreso</p>
+    </div>
+</section>
+
+<!-- MENSAJE DEL ALCALDE - GESTIÓN Y COMPROMISO -->
+<section class="mensaje-section">
+    <div class="container">
+        <h2 class="section-title">Gestión Municipal</h2>
+        <div class="mensaje-contenido">
+            <p class="mensaje-principal">"Trabajando juntos por el desarrollo y bienestar de Cutupú"</p>
+            <p class="mensaje-texto">Bajo la dirección del Alcalde <strong>Robert Donald Tolentino Grullón</strong>, nuestro ayuntamiento concentra sus esfuerzos en acciones concretas para transformar nuestro distrito.</p>
+            <div class="mensaje-firma">
+                <p class="firma-nombre">Robert Donald Tolentino Grullón</p>
+                <p class="firma-cargo">Director Municipal (Alcalde)</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ACCIONES CLAVE DE GOBIERNO - SOLO 2 -->
+<section class="acciones-section">
+    <div class="container">
+        <h2 class="section-title">Acciones Principales</h2>
+        <div class="acciones-grid">
+            <div class="accion-card">
+                <span class="accion-icono">🛣️</span>
+                <h3>Asfaltado de Calles</h3>
+                <p>Mejorando la vialidad y conectividad de nuestras comunidades.</p>
+            </div>
+            <div class="accion-card">
+                <span class="accion-icono">🧹</span>
+                <h3>Limpieza de Espacios</h3>
+                <p>Manteniendo nuestros entornos públicos impecables y saludables.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AUTORIDADES MUNICIPALES CON FOTOS REALES -->
+<section class="autoridades-section">
+    <div class="container">
+        <h2 class="section-title">Nuestras Autoridades</h2>
+        <div class="autoridades-grid">
+            <div class="autoridad-card">
+                <div class="autoridad-foto">
+                    <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 9.16.03 PM.jpeg') }}"
+                         alt="Robert Donald Tolentino Grullón - Alcalde de Villa Cutupú"
+                         class="autoridad-img"
+                         loading="lazy">
+                </div>
+                <h3>Robert Donald Tolentino Grullón</h3>
+                <p class="autoridad-cargo">Director Municipal (Alcalde)</p>
+                <p class="autoridad-descripcion">Liderando el desarrollo y bienestar de Villa Cutupú con trabajo cercano y transparente.</p>
+            </div>
+            <div class="autoridad-card">
+                <div class="autoridad-foto">
+                    <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 9.29.58 PM.jpeg') }}"
+                         alt="Kelly Bueno - Vicealcaldesa de Villa Cutupú"
+                         class="autoridad-img"
+                         loading="lazy">
+                </div>
+                <h3>Kelly Bueno</h3>
+                <p class="autoridad-cargo">Vicealcaldesa</p>
+                <p class="autoridad-descripcion">Acompañando la gestión municipal en beneficio de toda la comunidad cutupense.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BREVE INTRO DEL DISTRITO -->
+<section class="info-compacta-section">
+    <div class="container">
+        <div class="info-compacta-grid">
+            <div class="info-col">
+                <h3>Nuestro Distrito</h3>
+                <p><strong>Río Verde Arriba (Cutupú)</strong> es un distrito municipal con una rica historia y tradición en la provincia de La Vega. Hogar de cientos de familias trabajadoras que día a día contribuyen a su desarrollo.</p>
+                <div class="dato-mini-grid">
+                    <span><strong>📍</strong> La Vega, R.D.</span>
+                    <span><strong>👨‍👩‍👧‍👦</strong> Comunidad unida</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- VISIÓN Y MISIÓN (BREVE) -->
+<section class="vision-mision-section">
+    <div class="container">
+        <div class="vision-mision-grid">
+            <div class="vision-card">
+                <h3>Visión</h3>
+                <p>Ser un distrito modelo en desarrollo sostenible, con alta calidad de vida y participación ciudadana.</p>
+            </div>
+            <div class="mision-card">
+                <h3>Misión</h3>
+                <p>Gestionar con transparencia y eficiencia para garantizar el bienestar integral de los cutupenses.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- GALERÍA DESTACADA -->
+<section class="galeria-section">
+    <div class="container">
+        <h2 class="section-title">Cutupú en Imágenes</h2>
+        <div class="galeria-grid">
+            <div class="galeria-item">
+                <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 10.09.13 PM.jpeg') }}" alt="Vista de Cutupú" loading="lazy">
+                <div class="galeria-caption">Nuestro Entorno</div>
+            </div>
+            <div class="galeria-item">
+                <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 10.09.06 PM.jpeg') }}" alt="Parque Central" loading="lazy">
+                <div class="galeria-caption">Parque Central</div>
+            </div>
+            <div class="galeria-item">
+                <img src="{{ url_for('static', filename='images/palacio.jpg') }}" alt="Junta Distrital" loading="lazy">
+                <div class="galeria-caption">Sede de la Junta</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CITA DE CIERRE -->
+<section class="cierre-section">
+    <div class="container">
+        <blockquote class="cita-institucional">
+            <p>"Juntos construimos el Cutupú que todos merecemos"</p>
+        </blockquote>
+    </div>
+</section>
+
+<!-- FOOTER COMPLETO -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>Junta de Distrito Municipal</h3>
+                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+            </div>
+            <div class="footer-social">
+                <h3>Síguenos</h3>
+                <a href="https://www.facebook.com/ayuntamientocutupu?locale=es_LA" target="_blank" class="social-link">Facebook</a>
+                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107/" target="_blank" class="social-link">Instagram</a>
+            </div>
+            <div class="footer-horario">
+                <h3>Horario de Oficina</h3>
+                <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
+                <p>Sábados<br>9:00 AM - 12:00 PM</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- PANEL ADMINISTRATIVO (solo visible para usuarios logueados) -->
+{% if logged %}
+<div class="admin-panel">
+    <h3>Panel Administrativo</h3>
+    <div class="admin-links">
+        <a href="/admin">Acceder al panel</a>
+        <a href="/logout">Cerrar sesión</a>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Formulario de Denuncia</h1>
+    <p>Servicio: {{ servicio|replace('-', ' ')|title }}</p>
+</section>
+
+<section class="form-container">
+    <form action="/denunciar" method="POST">
+        <div class="form-group">
+            <label for="nombre">Nombre completo *</label>
+            <input type="text" id="nombre" name="nombre" required>
+        </div>
+
+        <div class="form-group">
+            <label for="telefono">Teléfono de contacto</label>
+            <input type="tel" id="telefono" name="telefono">
+        </div>
+
+        <div class="form-group">
+            <label for="tipo">Tipo de denuncia *</label>
+            <select id="tipo" name="tipo" required>
+                <option value="">Seleccione una opción</option>
+                <option value="limpieza" {% if servicio == 'limpieza' %}selected{% endif %}>Limpieza y Vía Pública</option>
+                <option value="basura" {% if servicio == 'basura' %}selected{% endif %}>Recogida de Basura</option>
+                <option value="policia" {% if servicio == 'policia' %}selected{% endif %}>Policía Municipal</option>
+                <option value="otro">Otro</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="direccion">Dirección del incidente</label>
+            <input type="text" id="direccion" name="direccion" placeholder="Calle, número, colonia">
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción de la denuncia *</label>
+            <textarea id="descripcion" name="descripcion" rows="5" required></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn denunciar">Enviar denuncia</button>
+            <a href="/" class="btn">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

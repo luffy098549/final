@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Acceso Ciudadano</h1>
+    <p>Inicie sesión para dar seguimiento a sus solicitudes y denuncias</p>
+</section>
+
+<div class="login-container">
+    <div class="login-box">
+        <div class="login-header">
+            <div class="login-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </div>
+            <h2>Iniciar Sesión</h2>
+            <p>Ingrese sus credenciales</p>
+        </div>
+
+        {# Mensajes flash #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="post" class="login-form">
+            <div class="form-group">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-options">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="recordar"> Recordar sesión
+                </label>
+                <a href="/recuperar-password" class="forgot-password">¿Olvidó su contraseña?</a>
+            </div>
+
+            <button type="submit" class="btn-login-submit">Iniciar sesión</button>
+        </form>
+
+        <div class="login-footer">
+            <p>¿No tiene una cuenta? <a href="/registro">Regístrese aquí</a></p>
+            <p class="help-text">
+                ¿Problemas de acceso? Contacte al soporte: soporte@ayuntamiento.gob.mx
+            </p>
+        </div>
+    </div>
+
+    <div class="login-info">
+        <h3>Beneficios de su cuenta</h3>
+        <ul class="info-list">
+            <li>✓ Dar seguimiento a sus solicitudes</li>
+            <li>✓ Consultar el estado de sus denuncias</li>
+            <li>✓ Recibir notificaciones</li>
+            <li>✓ Historial de trámites</li>
+        </ul>
+        <div class="info-note">
+            <strong>Nota:</strong> Sus datos están protegidos y solo se utilizarán para trámites municipales.
+        </div>
+    </div>
+</div>
+{% endblock %}

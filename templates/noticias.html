@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Noticias del Ayuntamiento</h1>
+    <p>Mantente informado sobre las últimas novedades y comunicados oficiales</p>
+</section>
+
+<section class="noticias-grid">
+    <article class="noticia-card">
+        <div class="noticia-fecha">15 de febrero, 2026</div>
+        <h2>Nueva campaña de reforestación municipal</h2>
+        <p>El Ayuntamiento invita a la ciudadanía a participar en la jornada de reforestación que se llevará a cabo el próximo sábado en el parque central.</p>
+        <a href="/noticias/reforestacion-2026" class="btn">Leer más</a>
+    </article>
+
+    <article class="noticia-card">
+        <div class="noticia-fecha">10 de febrero, 2026</div>
+        <h2>Ampliación del servicio de recolección de basura</h2>
+        <p>A partir del 1 de marzo, el servicio de recolección de residuos ampliará sus horarios para cubrir más colonias del municipio.</p>
+        <a href="/noticias/ampliacion-recoleccion" class="btn">Leer más</a>
+    </article>
+
+    <article class="noticia-card">
+        <div class="noticia-fecha">5 de febrero, 2026</div>
+        <h2>Jornada de salud gratuita en la plaza principal</h2>
+        <p>Se realizarán consultas médicas, dentales y talleres de prevención. Entrada libre para todas las edades.</p>
+        <a href="/noticias/jornada-salud" class="btn">Leer más</a>
+    </article>
+</section>
+{% endblock %}

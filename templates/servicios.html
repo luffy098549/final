@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="hero">
+    <h1>Bienvenido al Ayuntamiento Municipal</h1>
+    <p>Gestión transparente, servicios eficientes y compromiso ciudadano.</p>
+</section>
+
+<section class="services-detailed">
+    <h2>Servicios Municipales Detallados</h2>
+
+    <div class="service-card">
+        <h3>Funerarias Municipales</h3>
+        <p>Apoyo y facilidades para la realización de servicios funerarios dignos y accesibles.</p>
+        <a href="/solicitar/funeraria" class="btn solicitar">Solicitar servicio</a>
+    </div>
+
+    <div class="service-card">
+        <h3>Certificado de Uso de Suelo</h3>
+        <p>Documento oficial que indica el uso permitido de un terreno o inmueble.</p>
+        <a href="/solicitar/uso-suelo" class="btn solicitar">Solicitar servicio</a>
+    </div>
+
+    <div class="service-card">
+        <h3>Acceso a la Información Municipal (OAIM)</h3>
+        <p>Solicitud de información pública conforme a la ley de transparencia.</p>
+        <a href="/solicitar/oaim" class="btn solicitar">Solicitar servicio</a>
+    </div>
+
+    <div class="service-card">
+        <h3>Limpieza y Cuidado de la Vía Pública</h3>
+        <p>Reportes sobre basura acumulada, calles sucias o espacios públicos descuidados.</p>
+        <a href="/denunciar/limpieza" class="btn denunciar">Hacer denuncia</a>
+    </div>
+
+    <div class="service-card">
+        <h3>Recogida de Basura</h3>
+        <p>Denuncias por falta de recolección o irregularidades del servicio.</p>
+        <a href="/denunciar/basura" class="btn denunciar">Hacer denuncia</a>
+    </div>
+
+    <div class="service-card">
+        <h3>Policía Municipal</h3>
+        <p>Reportes relacionados con orden público y cumplimiento de normativas municipales.</p>
+        <a href="/denunciar/policia" class="btn denunciar">Hacer denuncia</a>
+    </div>
+</section>
+
+<section class="page">
+    <h1>Servicios Municipales</h1>
+    <ul class="services">
+        <li>Recolección de residuos</li>
+        <li>Alumbrado público</li>
+        <li>Obras municipales</li>
+        <li>Registro comunitario</li>
+    </ul>
+</section>
+
+{% if logged %}
+<div class="admin">
+    <h2>Panel Administrativo</h2>
+    <a href="/logout">Cerrar sesión</a>
+</div>
+{% endif %}
+{% endblock %}

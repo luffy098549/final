@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Mi Cuenta</h1>
+    <p>Bienvenido, {{ usuario.nombre }}</p>
+</section>
+
+<div class="contacto-container">
+    <div class="contacto-info">
+        <h2>Información personal</h2>
+        
+        <div class="info-item">
+            <h3>Nombre</h3>
+            <p>{{ usuario.nombre }}</p>
+        </div>
+        
+        <div class="info-item">
+            <h3>Correo electrónico</h3>
+            <p>{{ session.user }}</p>
+        </div>
+        
+        <div class="info-item">
+            <h3>Tipo de usuario</h3>
+            <p>{{ session.user_tipo|title }}</p>
+        </div>
+        
+        <a href="/editar-perfil" class="btn">Editar perfil</a>
+    </div>
+
+    <div class="contacto-info">
+        <h2>Mis trámites</h2>
+        
+        <div class="info-item">
+            <h3>Solicitudes</h3>
+            <p><a href="/mis-solicitudes">Ver mis solicitudes</a></p>
+        </div>
+        
+        <div class="info-item">
+            <h3>Denuncias</h3>
+            <p><a href="/mis-denuncias">Ver mis denuncias</a></p>
+        </div>
+        
+        <div class="info-item">
+            <h3>Notificaciones</h3>
+            <p><a href="/notificaciones">Ver notificaciones</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

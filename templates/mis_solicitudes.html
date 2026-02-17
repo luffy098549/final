@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Mis Solicitudes</h1>
+    <p>Historial de solicitudes realizadas</p>
+</section>
+
+<section class="noticias-grid">
+    <div class="noticia-card">
+        <div class="noticia-fecha">15/02/2026</div>
+        <h3>Certificado de Uso de Suelo</h3>
+        <p><strong>Estado:</strong> <span class="badge badge-pendiente">En proceso</span></p>
+        <p>Folio: SOL-2026-001</p>
+        <a href="#" class="btn">Ver detalles</a>
+    </div>
+
+    <div class="noticia-card">
+        <div class="noticia-fecha">10/02/2026</div>
+        <h3>Funerarias Municipales</h3>
+        <p><strong>Estado:</strong> <span class="badge badge-completado">Completado</span></p>
+        <p>Folio: SOL-2026-002</p>
+        <a href="#" class="btn">Ver detalles</a>
+    </div>
+
+    <div class="noticia-card">
+        <div class="noticia-fecha">05/02/2026</div>
+        <h3>Acceso a la Información (OAIM)</h3>
+        <p><strong>Estado:</strong> <span class="badge badge-pendiente">En revisión</span></p>
+        <p>Folio: SOL-2026-003</p>
+        <a href="#" class="btn">Ver detalles</a>
+    </div>
+</section>
+{% endblock %}

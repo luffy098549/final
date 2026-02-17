@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ayuntamiento Municipal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 9.09.19 PM.jpeg') }}" 
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
+        </div>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia">Transparencia</a></li>
+                <li><a href="/denuncias">Denuncias</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+
+                {% if logged %}
+                    <li class="account">
+                        <a href="/mi-cuenta">Mi cuenta</a>
+                    </li>
+                    <li>
+                        <a href="/mis-solicitudes">Mis solicitudes</a>
+                    </li>
+                    <li>
+                        <a href="/mis-denuncias">Mis denuncias</a>
+                    </li>
+                    {% if session.user_tipo == 'admin' %}
+                        <li class="admin">
+                            <a href="/admin">Panel administrativo</a>
+                        </li>
+                    {% endif %}
+                    <li>
+                        <a href="/logout" class="btn-logout">Salir</a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="/login" class="btn-login">Iniciar sesión</a>
+                    </li>
+                    <li>
+                        <a href="/registro" class="btn-registro">Registrarse</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    {# Mostrar mensajes flash globales #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Script para header ocultable -->
+<script src="{{ url_for('static', filename='js/header.js') }}"></script>
+
+</body>
+</html>

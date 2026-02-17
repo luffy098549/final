@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Solicitud de servicio</h1>
+    <p>{{ servicio | replace("-", " ") | title }}</p>
+</section>
+
+<section class="form-container">
+    <form method="post" action="/solicitar/{{ servicio }}">
+        <div class="form-group">
+            <label for="nombre">Nombre completo *</label>
+            <input type="text" id="nombre" name="nombre" required>
+        </div>
+
+        <div class="form-group">
+            <label for="cedula">Cédula *</label>
+            <input type="text" id="cedula" name="cedula" required>
+        </div>
+
+        <div class="form-group">
+            <label for="telefono">Teléfono *</label>
+            <input type="tel" id="telefono" name="telefono" required>
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción de la solicitud *</label>
+            <textarea id="descripcion" name="descripcion" rows="5" required></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn solicitar">Enviar solicitud</button>
+            <a href="/" class="btn">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

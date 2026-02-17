@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Mis Denuncias</h1>
+    <p>Historial de denuncias realizadas</p>
+</section>
+
+<section class="noticias-grid">
+    <div class="noticia-card">
+        <div class="noticia-fecha">14/02/2026</div>
+        <h3>Recogida de Basura</h3>
+        <p><strong>Estado:</strong> <span class="badge badge-proceso">En proceso</span></p>
+        <p><strong>Dirección:</strong> Calle Principal #123</p>
+        <a href="#" class="btn">Ver seguimiento</a>
+    </div>
+
+    <div class="noticia-card">
+        <div class="noticia-fecha">08/02/2026</div>
+        <h3>Limpieza Vía Pública</h3>
+        <p><strong>Estado:</strong> <span class="badge badge-resuelto">Resuelto</span></p>
+        <p><strong>Dirección:</strong> Av. Central #456</p>
+        <a href="#" class="btn">Ver seguimiento</a>
+    </div>
+</section>
+{% endblock %}
