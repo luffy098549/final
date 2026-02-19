@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contacto - Junta Distrital Villa Cutupú</title>
-    <link rel="icon" type="image/png" href="static/img/logo.png">
-    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -106,8 +106,8 @@
 <header class="main-header">
     <div class="container">
         <div class="logo">
-            <a href="index.html">
-                <img src="static/img/logo.png" 
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" 
                      alt="Logo Junta Distrital Villa Cutupú"
                      class="header-logo">
             </a>
@@ -115,14 +115,19 @@
 
         <nav class="main-nav">
             <ul>
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="municipio.html">Municipio</a></li>
-                <li><a href="servicios.html">Servicios</a></li>
-                <li><a href="transparencia.html">Transparencia</a></li>
-                <li><a href="noticias.html">Noticias</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
-                <li><a href="login.html" class="btn-login">Iniciar sesión</a></li>
-                <li><a href="registro.html" class="btn-registro">Registrarse</a></li>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                    <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
             </ul>
         </nav>
     </div>
@@ -169,7 +174,7 @@
         <section class="contacto-form">
             <h2 style="color: #0a2b5c; margin-bottom: 30px;">Envíenos un mensaje</h2>
             
-            <form action="#" method="POST">
+            <form action="{{ url_for('enviar_contacto') }}" method="POST">
                 <div class="form-group">
                     <label for="nombre">Nombre completo *</label>
                     <input type="text" id="nombre" name="nombre" required>
@@ -213,34 +218,34 @@
             </iframe>
         </div>
     </section>
-
-    <footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
-        <div class="container">
-            <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
-                <div class="footer-info">
-                    <h3 style="color: white;">Junta de Distrito Municipal</h3>
-                    <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
-                    <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
-                    <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
-                </div>
-                <div class="footer-social">
-                    <h3 style="color: white;">Síguenos</h3>
-                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
-                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
-                </div>
-                <div class="footer-horario">
-                    <h3 style="color: white;">Horario de Oficina</h3>
-                    <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
-                    <p>Sábados<br>9:00 AM - 12:00 PM</p>
-                </div>
-            </div>
-            <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
-                <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
-            </div>
-        </div>
-    </footer>
 </main>
 
-<script src="static/js/header.js"></script>
+<footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+    <div class="container">
+        <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+            <div class="footer-info">
+                <h3 style="color: white;">Junta de Distrito Municipal</h3>
+                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+            </div>
+            <div class="footer-social">
+                <h3 style="color: white;">Síguenos</h3>
+                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
+                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+            </div>
+            <div class="footer-horario">
+                <h3 style="color: white;">Horario de Oficina</h3>
+                <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
+                <p>Sábados<br>9:00 AM - 12:00 PM</p>
+            </div>
+        </div>
+        <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/header.js') }}"></script>
 </body>
 </html>

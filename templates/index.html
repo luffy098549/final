@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Junta Distrital de Villa Cutupú</title>
-    <link rel="icon" type="image/png" href="static/img/logo.png">
-    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
     <div class="container">
         <div class="logo">
             <a href="/">
-                <img src="static/img/logo.png" 
+                <img src="{{ url_for('static', filename='img/logo.png') }}" 
                      alt="Logo Junta Distrital Villa Cutupú"
                      class="header-logo">
             </a>
@@ -24,14 +24,14 @@
 
         <nav class="main-nav">
             <ul>
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="municipio.html">Municipio</a></li>
-                <li><a href="servicios.html">Servicios</a></li>
-                <li><a href="transparencia.html">Transparencia</a></li>
-                <li><a href="noticias.html">Noticias</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
-                <li><a href="login.html" class="btn-login">Iniciar sesión</a></li>
-                <li><a href="registro.html" class="btn-registro">Registrarse</a></li>
+                <li><a href="/">Inicio</a></li>                    <!-- CAMBIADO: sin .html -->
+                <li><a href="/municipio">Municipio</a></li>        <!-- CAMBIADO: sin .html -->
+                <li><a href="/servicios">Servicios</a></li>        <!-- CAMBIADO: sin .html -->
+                <li><a href="/transparencia">Transparencia</a></li> <!-- CAMBIADO: sin .html -->
+                <li><a href="/noticias">Noticias</a></li>          <!-- CAMBIADO: sin .html -->
+                <li><a href="/contacto">Contacto</a></li>          <!-- CAMBIADO: sin .html -->
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>     <!-- CAMBIADO: sin .html -->
+                <li><a href="/registro" class="btn-registro">Registrarse</a></li>  <!-- CAMBIADO: sin .html -->
             </ul>
         </nav>
     </div>
@@ -88,7 +88,7 @@
             <div class="autoridades-grid">
                 <div class="autoridad-card">
                     <div class="autoridad-foto">
-                        <img src="static/img/alcalde.jpg"
+                        <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 9.16.03 PM.jpeg') }}"
                              alt="Robert Donald Tolentino Grullón"
                              class="autoridad-img"
                              loading="lazy">
@@ -99,7 +99,7 @@
                 </div>
                 <div class="autoridad-card">
                     <div class="autoridad-foto">
-                        <img src="static/img/vicealcaldesa.jpg"
+                        <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 9.29.58 PM.jpeg') }}"
                              alt="Kelly Bueno"
                              class="autoridad-img"
                              loading="lazy">
@@ -150,15 +150,15 @@
             <h2 class="section-title">Cutupú en Imágenes</h2>
             <div class="galeria-grid">
                 <div class="galeria-item">
-                    <img src="static/img/entorno.jpg" alt="Vista de Cutupú" loading="lazy">
+                    <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 10.09.13 PM.jpeg') }}" alt="Vista de Cutupú" loading="lazy">
                     <div class="galeria-caption">Nuestro Entorno</div>
                 </div>
                 <div class="galeria-item">
-                    <img src="static/img/parque.jpg" alt="Parque Central" loading="lazy">
+                    <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 10.09.06 PM.jpeg') }}" alt="Parque Central" loading="lazy">
                     <div class="galeria-caption">Parque Central</div>
                 </div>
                 <div class="galeria-item">
-                    <img src="static/img/palacio.jpg" alt="Junta Distrital" loading="lazy">
+                    <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 9.09.19 PM.jpeg') }}" alt="Junta Distrital" loading="lazy">
                     <div class="galeria-caption">Sede de la Junta</div>
                 </div>
             </div>
@@ -202,6 +202,6 @@
     </footer>
 </main>
 
-<script src="static/js/header.js"></script>
+<script src="{{ url_for('static', filename='js/header.js') }}"></script>
 </body>
 </html>
