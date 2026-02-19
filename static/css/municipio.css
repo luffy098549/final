@@ -1,0 +1,32 @@
+        .page {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        .page h2 {
+            color: #0a2b5c;
+            margin: 40px 0 20px;
+            font-size: 2rem;
+        }
+        .page p {
+            line-height: 1.8;
+            color: #1f2933;
+            margin-bottom: 20px;
+        }
+        .services {
+            list-style: none;
+            padding: 0;
+        }
+        .services li {
+            padding: 15px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .services li strong {
+            color: #0a2b5c;
+            display: inline-block;
+            min-width: 150px;
+        }

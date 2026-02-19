@@ -1,0 +1,52 @@
+.services-detailed {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 40px 20px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        .service-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .service-card h3 {
+            color: #0a2b5c;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        .service-card p {
+            color: #1f2933;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn.solicitar {
+            background-color: #0a2b5c;
+            color: white;
+        }
+        .btn.solicitar:hover {
+            background-color: #1e3a6f;
+        }
+        .btn.denunciar {
+            background-color: #b42318;
+            color: white;
+        }
+        .btn.denunciar:hover {
+            background-color: #8b1a12;
+        }

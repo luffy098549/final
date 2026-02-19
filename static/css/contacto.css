@@ -1,0 +1,89 @@
+ .contacto-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1280px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .contacto-info {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .info-item {
+            margin-bottom: 30px;
+        }
+        .info-item h3 {
+            color: #0a2b5c;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .info-item p {
+            color: #1f2933;
+            line-height: 1.6;
+        }
+        .contacto-form {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0a2b5c;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0a2b5c;
+        }
+        .btn {
+            background-color: #0a2b5c;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #1e3a6f;
+        }
+        .mapa {
+            max-width: 1280px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        .mapa h2 {
+            text-align: center;
+            color: #0a2b5c;
+            margin-bottom: 30px;
+        }
+        .mapa-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 768px) {
+            .contacto-container {
+                grid-template-columns: 1fr;
+            }
+        }
