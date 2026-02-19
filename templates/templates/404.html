@@ -10,6 +10,50 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-header {
+            background-color: white;
+            border-bottom: 3px solid #0a2b5c;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            height: 70px;
+            width: auto;
+        }
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+        }
+        .main-nav a {
+            color: #1f2933;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+        }
         .error-container {
             max-width: 600px;
             margin: 100px auto;
@@ -47,6 +91,8 @@
             font-weight: 600;
             transition: background-color 0.3s ease;
             margin: 0 10px;
+            border: none;
+            cursor: pointer;
         }
         .btn:hover {
             background-color: #1e3a6f;
@@ -58,63 +104,72 @@
         .btn-secondary:hover {
             background-color: #cbd5e0;
         }
+        footer {
+            background: linear-gradient(135deg, #0a2b5c, #1e3a6f);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: auto;
+        }
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+        }
     </style>
 </head>
 <body>
-
-<header class="main-header">
-    <div class="container">
-        <div class="logo">
-            <a href="/">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" 
-                     alt="Logo Junta Distrital Villa Cutupú"
-                     class="header-logo">
-            </a>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" 
+                         alt="Logo Junta Distrital Villa Cutupú"
+                         class="header-logo">
+                </a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                    {% if logged %}
+                        <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                        <li><a href="/logout" class="btn-logout">Salir</a></li>
+                    {% else %}
+                        <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                        <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
         </div>
+    </header>
 
-        <nav class="main-nav">
-            <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/municipio">Municipio</a></li>
-                <li><a href="/servicios">Servicios</a></li>
-                <li><a href="/transparencia">Transparencia</a></li>
-                <li><a href="/noticias">Noticias</a></li>
-                <li><a href="/contacto">Contacto</a></li>
-                {% if logged %}
-                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
-                    <li><a href="/logout" class="btn-logout">Salir</a></li>
-                {% else %}
-                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
-                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
-</header>
-
-<main>
-    <div class="error-container">
-        <div class="error-code">404</div>
-        <h1 class="error-title">Página no encontrada</h1>
-        <p class="error-message">
-            Lo sentimos, la página que estás buscando no existe o ha sido movida.<br>
-            Verifica la URL o vuelve al inicio.
-        </p>
-        <div>
-            <a href="/" class="btn">Ir al inicio</a>
-            <a href="javascript:history.back()" class="btn btn-secondary">Volver atrás</a>
+    <main>
+        <div class="error-container">
+            <div class="error-code">404</div>
+            <h1 class="error-title">Página no encontrada</h1>
+            <p class="error-message">
+                Lo sentimos, la página que estás buscando no existe o ha sido movida.<br>
+                Verifica la URL o vuelve al inicio.
+            </p>
+            <div>
+                <a href="/" class="btn">Ir al inicio</a>
+                <a href="javascript:history.back()" class="btn btn-secondary">Volver atrás</a>
+            </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 40px 0 20px; margin-top: 60px;">
-    <div class="container">
-        <div class="copyright" style="text-align: center;">
-            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
-<script src="{{ url_for('static', filename='js/header.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/header.js') }}"></script>
 </body>
 </html>

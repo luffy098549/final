@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones - Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .notificaciones-container {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        .notificacion-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid #0a2b5c;
+            transition: transform 0.3s ease;
+        }
+        .notificacion-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .notificacion-fecha {
+            color: #b42318;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .notificacion-titulo {
+            color: #0a2b5c;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .notificacion-mensaje {
+            color: #1f2933;
+            line-height: 1.6;
+        }
+        .no-notificaciones {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 12px;
+            color: #666;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0a2b5c;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" 
+                         alt="Logo" class="header-logo">
+                </a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                    {% if logged %}
+                        <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                        <li><a href="/logout" class="btn-logout">Salir</a></li>
+                    {% else %}
+                        <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                        <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="notificaciones-container">
+            <h1 style="color: #0a2b5c; margin-bottom: 30px;">Mis Notificaciones</h1>
+            
+            <div class="notificacion-card">
+                <div class="notificacion-fecha">18 de febrero, 2026</div>
+                <div class="notificacion-titulo">Solicitud actualizada</div>
+                <div class="notificacion-mensaje">Tu solicitud de Certificado de Uso de Suelo ha pasado a estado "En revisión".</div>
+            </div>
+
+            <div class="notificacion-card">
+                <div class="notificacion-fecha">17 de febrero, 2026</div>
+                <div class="notificacion-titulo">Denuncia recibida</div>
+                <div class="notificacion-mensaje">Hemos recibido tu denuncia sobre recogida de basura. Pronto daremos seguimiento.</div>
+            </div>
+
+            <div class="notificacion-card">
+                <div class="notificacion-fecha">15 de febrero, 2026</div>
+                <div class="notificacion-titulo">Bienvenido al sistema</div>
+                <div class="notificacion-mensaje">Gracias por registrarte en el portal ciudadano. Ahora puedes dar seguimiento a tus trámites.</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                <p>© 2026 Junta de Distrito Municipal de Villa Cutupú</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/header.js') }}"></script>
+</body>
+</html>

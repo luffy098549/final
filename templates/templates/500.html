@@ -6,9 +6,6 @@
     <title>Error del servidor - Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         .error-container {
             max-width: 600px;
@@ -26,17 +23,6 @@
             line-height: 1;
             margin-bottom: 20px;
         }
-        .error-title {
-            font-size: 2rem;
-            color: #1e3a6f;
-            margin-bottom: 20px;
-        }
-        .error-message {
-            color: #4a5568;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
         .btn {
             display: inline-block;
             padding: 12px 30px;
@@ -44,22 +30,15 @@
             color: white;
             text-decoration: none;
             border-radius: 6px;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-        }
-        .btn:hover {
-            background-color: #1e3a6f;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="error-container">
         <div class="error-code">500</div>
-        <h1 class="error-title">Error interno del servidor</h1>
-        <p class="error-message">
-            Lo sentimos, ha ocurrido un error inesperado.<br>
-            Nuestro equipo ha sido notificado y estamos trabajando para solucionarlo.
-        </p>
+        <h1>Error interno del servidor</h1>
+        <p>Lo sentimos, ha ocurrido un error inesperado. Estamos trabajando para solucionarlo.</p>
         <a href="/" class="btn">Volver al inicio</a>
     </div>
 </body>
