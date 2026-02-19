@@ -1,40 +1,163 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transparencia - Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="static/img/logo.png">
+    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .page {
+            max-width: 1280px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        .transparencia-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .service-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .service-card h3 {
+            color: #0a2b5c;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        .service-card p {
+            color: #1f2933;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0a2b5c;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #1e3a6f;
+        }
+    </style>
+</head>
+<body>
 
-{% block content %}
-<section class="page-header">
-    <h1>Portal de Transparencia</h1>
-    <p>Acceso a documentos públicos, presupuestos, informes financieros y rendición de cuentas</p>
-</section>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="index.html">
+                <img src="static/img/logo.png" 
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
+        </div>
 
-<section class="page">
-    <div class="service-card">
-        <h3>Presupuesto 2026</h3>
-        <p>Documento completo del presupuesto de egresos e ingresos para el ejercicio fiscal 2026.</p>
-        <a href="#" class="btn">Descargar PDF</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="municipio.html">Municipio</a></li>
+                <li><a href="servicios.html">Servicios</a></li>
+                <li><a href="transparencia.html">Transparencia</a></li>
+                <li><a href="noticias.html">Noticias</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="login.html" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="registro.html" class="btn-registro">Registrarse</a></li>
+            </ul>
+        </nav>
     </div>
+</header>
 
-    <div class="service-card">
-        <h3>Compras y contrataciones</h3>
-        <p>Información sobre licitaciones, contratos y proveedores del municipio.</p>
-        <a href="#" class="btn">Consultar</a>
-    </div>
+<main>
+    <section class="page-header" style="background: linear-gradient(160deg, #0a2b5c 0%, #1e3a6f 100%); color: white; padding: 60px 20px; text-align: center;">
+        <h1 style="color: white; font-size: 2.5rem;">Portal de Transparencia</h1>
+        <p style="color: rgba(255,255,255,0.9);">Acceso a documentos públicos, presupuestos y rendición de cuentas</p>
+    </section>
 
-    <div class="service-card">
-        <h3>Nómina municipal</h3>
-        <p>Remuneración mensual de funcionarios y empleados del ayuntamiento.</p>
-        <a href="#" class="btn">Consultar</a>
-    </div>
+    <section class="page">
+        <div class="transparencia-grid">
+            <div class="service-card">
+                <h3>Presupuesto 2026</h3>
+                <p>Documento completo del presupuesto de egresos e ingresos para el ejercicio fiscal 2026.</p>
+                <a href="#" class="btn">Descargar PDF</a>
+            </div>
 
-    <div class="service-card">
-        <h3>Informes financieros</h3>
-        <p>Estados financieros trimestrales y anuales del municipio.</p>
-        <a href="#" class="btn">Consultar</a>
-    </div>
+            <div class="service-card">
+                <h3>Compras y contrataciones</h3>
+                <p>Información sobre licitaciones, contratos y proveedores del municipio.</p>
+                <a href="#" class="btn">Consultar</a>
+            </div>
 
-    <div class="service-card">
-        <h3>Obligaciones de transparencia</h3>
-        <p>Cumplimiento de las obligaciones establecidas en la ley de transparencia.</p>
-        <a href="#" class="btn">Consultar</a>
-    </div>
-</section>
-{% endblock %}
+            <div class="service-card">
+                <h3>Nómina municipal</h3>
+                <p>Remuneración mensual de funcionarios y empleados del ayuntamiento.</p>
+                <a href="#" class="btn">Consultar</a>
+            </div>
+
+            <div class="service-card">
+                <h3>Informes financieros</h3>
+                <p>Estados financieros trimestrales y anuales del municipio.</p>
+                <a href="#" class="btn">Consultar</a>
+            </div>
+
+            <div class="service-card">
+                <h3>Obligaciones de transparencia</h3>
+                <p>Cumplimiento de las obligaciones establecidas en la ley de transparencia.</p>
+                <a href="#" class="btn">Consultar</a>
+            </div>
+
+            <div class="service-card">
+                <h3>Acta de sesiones</h3>
+                <p>Actas de las sesiones del concejo municipal y acuerdos tomados.</p>
+                <a href="#" class="btn">Consultar</a>
+            </div>
+        </div>
+    </section>
+
+    <footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+        <div class="container">
+            <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+                <div class="footer-info">
+                    <h3 style="color: white;">Junta de Distrito Municipal</h3>
+                    <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
+                    <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
+                    <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+                </div>
+                <div class="footer-social">
+                    <h3 style="color: white;">Síguenos</h3>
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+                </div>
+                <div class="footer-horario">
+                    <h3 style="color: white;">Horario de Oficina</h3>
+                    <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
+                    <p>Sábados<br>9:00 AM - 12:00 PM</p>
+                </div>
+            </div>
+            <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+                <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<script src="static/js/header.js"></script>
+</body>
+</html>

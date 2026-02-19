@@ -1,37 +1,167 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar Servicio - Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="static/img/logo.png">
+    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0a2b5c;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0a2b5c;
+        }
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .btn.solicitar {
+            background-color: #0a2b5c;
+            color: white;
+        }
+        .btn.solicitar:hover {
+            background-color: #1e3a6f;
+        }
+        .btn {
+            background-color: #e2e8f0;
+            color: #1f2933;
+        }
+        .btn:hover {
+            background-color: #cbd5e0;
+        }
+    </style>
+</head>
+<body>
 
-{% block content %}
-<section class="page-header">
-    <h1>Solicitud de servicio</h1>
-    <p>{{ servicio | replace("-", " ") | title }}</p>
-</section>
-
-<section class="form-container">
-    <form method="post" action="/solicitar/{{ servicio }}">
-        <div class="form-group">
-            <label for="nombre">Nombre completo *</label>
-            <input type="text" id="nombre" name="nombre" required>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="index.html">
+                <img src="static/img/logo.png" 
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
         </div>
 
-        <div class="form-group">
-            <label for="cedula">Cédula *</label>
-            <input type="text" id="cedula" name="cedula" required>
-        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="municipio.html">Municipio</a></li>
+                <li><a href="servicios.html">Servicios</a></li>
+                <li><a href="transparencia.html">Transparencia</a></li>
+                <li><a href="noticias.html">Noticias</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="login.html" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="registro.html" class="btn-registro">Registrarse</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
-        <div class="form-group">
-            <label for="telefono">Teléfono *</label>
-            <input type="tel" id="telefono" name="telefono" required>
-        </div>
+<main>
+    <section class="page-header" style="background: linear-gradient(160deg, #0a2b5c 0%, #1e3a6f 100%); color: white; padding: 60px 20px; text-align: center;">
+        <h1 style="color: white; font-size: 2.5rem;">Solicitud de Servicio</h1>
+        <p style="color: rgba(255,255,255,0.9);">Complete el formulario para solicitar el servicio</p>
+    </section>
 
-        <div class="form-group">
-            <label for="descripcion">Descripción de la solicitud *</label>
-            <textarea id="descripcion" name="descripcion" rows="5" required></textarea>
-        </div>
+    <div class="form-container">
+        <form method="post" action="#">
+            <div class="form-group">
+                <label for="nombre">Nombre completo *</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
 
-        <div class="form-actions">
-            <button type="submit" class="btn solicitar">Enviar solicitud</button>
-            <a href="/" class="btn">Cancelar</a>
+            <div class="form-group">
+                <label for="cedula">Cédula *</label>
+                <input type="text" id="cedula" name="cedula" required>
+            </div>
+
+            <div class="form-group">
+                <label for="telefono">Teléfono *</label>
+                <input type="tel" id="telefono" name="telefono" required>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción de la solicitud *</label>
+                <textarea id="descripcion" name="descripcion" rows="5" required></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn solicitar">Enviar solicitud</button>
+                <a href="servicios.html" class="btn">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+        <div class="container">
+            <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+                <div class="footer-info">
+                    <h3 style="color: white;">Junta de Distrito Municipal</h3>
+                    <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
+                    <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
+                    <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+                </div>
+                <div class="footer-social">
+                    <h3 style="color: white;">Síguenos</h3>
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+                </div>
+                <div class="footer-horario">
+                    <h3 style="color: white;">Horario de Oficina</h3>
+                    <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
+                    <p>Sábados<br>9:00 AM - 12:00 PM</p>
+                </div>
+            </div>
+            <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+                <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            </div>
         </div>
-    </form>
-</section>
-{% endblock %}
+    </footer>
+</main>
+
+<script src="static/js/header.js"></script>
+</body>
+</html>

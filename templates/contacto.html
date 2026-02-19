@@ -1,99 +1,246 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - Junta Distrital Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="static/img/logo.png">
+    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .contacto-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1280px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .contacto-info {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .info-item {
+            margin-bottom: 30px;
+        }
+        .info-item h3 {
+            color: #0a2b5c;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .info-item p {
+            color: #1f2933;
+            line-height: 1.6;
+        }
+        .contacto-form {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0a2b5c;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0a2b5c;
+        }
+        .btn {
+            background-color: #0a2b5c;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #1e3a6f;
+        }
+        .mapa {
+            max-width: 1280px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        .mapa h2 {
+            text-align: center;
+            color: #0a2b5c;
+            margin-bottom: 30px;
+        }
+        .mapa-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 768px) {
+            .contacto-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
 
-{% block content %}
-<section class="page-header">
-    <h1>Contacto</h1>
-    <p>Comuníquese con el Ayuntamiento Municipal para cualquier consulta o solicitud</p>
-</section>
-
-<div class="contacto-container">
-    <section class="contacto-info">
-        <h2>Información de contacto</h2>
-        
-        <div class="info-item">
-            <h3>Dirección</h3>
-            <p>Palacio Municipal<br>
-            Calle Principal #123, Centro<br>
-            C.P. 12345, Ciudad</p>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="index.html">
+                <img src="static/img/logo.png" 
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
         </div>
-        
-        <div class="info-item">
-            <h3>Teléfonos</h3>
-            <p>Conmutador: (123) 456-7890<br>
-            Atención Ciudadana: (123) 456-7891<br>
-            Emergencias: 911</p>
-        </div>
-        
-        <div class="info-item">
-            <h3>Correo electrónico</h3>
-            <p>contacto@ayuntamiento.gob.mx<br>
-            atencion@ayuntamiento.gob.mx</p>
-        </div>
-        
-        <div class="info-item">
-            <h3>Horario de atención</h3>
-            <p>Lunes a Viernes: 8:00 am - 4:00 pm<br>
-            Sábados: 9:00 am - 1:00 pm<br>
-            Domingos: Cerrado</p>
-        </div>
-    </section>
 
-    <section class="contacto-form">
-        <h2>Envíenos un mensaje</h2>
-        
-        {# Mostrar mensajes flash #}
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        
-        <form action="/enviar-contacto" method="POST">
-            <div class="form-group">
-                <label for="nombre">Nombre completo *</label>
-                <input type="text" id="nombre" name="nombre" required>
-            </div>
-
-            <div class="form-group">
-                <label for="email">Correo electrónico *</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="telefono">Teléfono</label>
-                <input type="tel" id="telefono" name="telefono">
-            </div>
-
-            <div class="form-group">
-                <label for="asunto">Asunto *</label>
-                <input type="text" id="asunto" name="asunto" required>
-            </div>
-
-            <div class="form-group">
-                <label for="mensaje">Mensaje *</label>
-                <textarea id="mensaje" name="mensaje" rows="6" required></textarea>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn">Enviar mensaje</button>
-            </div>
-        </form>
-    </section>
-</div>
-
-<section class="mapa">
-    <h2>Ubicación</h2>
-    <div class="mapa-container">
-        <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12345.67890!2d-99.123456!3d19.123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1234567890abcdef%3A0x1234567890abcdef!2sPalacio%20Municipal!5e0!3m2!1ses!2smx!4v1234567890123!5m2!1ses!2smx" 
-            width="100%" 
-            height="400" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy">
-        </iframe>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="municipio.html">Municipio</a></li>
+                <li><a href="servicios.html">Servicios</a></li>
+                <li><a href="transparencia.html">Transparencia</a></li>
+                <li><a href="noticias.html">Noticias</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="login.html" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="registro.html" class="btn-registro">Registrarse</a></li>
+            </ul>
+        </nav>
     </div>
-</section>
-{% endblock %}
+</header>
+
+<main>
+    <section class="page-header" style="background: linear-gradient(160deg, #0a2b5c 0%, #1e3a6f 100%); color: white; padding: 60px 20px; text-align: center;">
+        <h1 style="color: white; font-size: 2.5rem;">Contacto</h1>
+        <p style="color: rgba(255,255,255,0.9);">Comuníquese con nosotros para cualquier consulta o solicitud</p>
+    </section>
+
+    <div class="contacto-container">
+        <section class="contacto-info">
+            <h2 style="color: #0a2b5c; margin-bottom: 30px;">Información de contacto</h2>
+            
+            <div class="info-item">
+                <h3>Dirección</h3>
+                <p>Junta Distrital de Villa Cutupú<br>
+                Río Verde Arriba, La Vega<br>
+                República Dominicana</p>
+            </div>
+            
+            <div class="info-item">
+                <h3>Teléfonos</h3>
+                <p>Conmutador: (809) 691-7111<br>
+                Atención Ciudadana: (809) 691-7112<br>
+                Emergencias: 911</p>
+            </div>
+            
+            <div class="info-item">
+                <h3>Correo electrónico</h3>
+                <p>juntamunicipalrioverdearriba@gmail.com<br>
+                atencion@cutupu.gob.do</p>
+            </div>
+            
+            <div class="info-item">
+                <h3>Horario de atención</h3>
+                <p>Lunes a Viernes: 8:00 am - 4:00 pm<br>
+                Sábados: 9:00 am - 12:00 pm<br>
+                Domingos: Cerrado</p>
+            </div>
+        </section>
+
+        <section class="contacto-form">
+            <h2 style="color: #0a2b5c; margin-bottom: 30px;">Envíenos un mensaje</h2>
+            
+            <form action="#" method="POST">
+                <div class="form-group">
+                    <label for="nombre">Nombre completo *</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Correo electrónico *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono">
+                </div>
+
+                <div class="form-group">
+                    <label for="asunto">Asunto *</label>
+                    <input type="text" id="asunto" name="asunto" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="mensaje">Mensaje *</label>
+                    <textarea id="mensaje" name="mensaje" rows="6" required></textarea>
+                </div>
+
+                <button type="submit" class="btn">Enviar mensaje</button>
+            </form>
+        </section>
+    </div>
+
+    <section class="mapa">
+        <h2>Ubicación</h2>
+        <div class="mapa-container">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3784.123456!2d-70.123456!3d19.123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8acc123456789abc%3A0x123456789abcdef!2sVilla%20Cutup%C3%BA!5e0!3m2!1ses!2sdo!4v1234567890123!5m2!1ses!2sdo" 
+                width="100%" 
+                height="400" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy">
+            </iframe>
+        </div>
+    </section>
+
+    <footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+        <div class="container">
+            <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+                <div class="footer-info">
+                    <h3 style="color: white;">Junta de Distrito Municipal</h3>
+                    <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
+                    <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
+                    <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+                </div>
+                <div class="footer-social">
+                    <h3 style="color: white;">Síguenos</h3>
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+                </div>
+                <div class="footer-horario">
+                    <h3 style="color: white;">Horario de Oficina</h3>
+                    <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
+                    <p>Sábados<br>9:00 AM - 12:00 PM</p>
+                </div>
+            </div>
+            <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+                <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<script src="static/js/header.js"></script>
+</body>
+</html>

@@ -1,31 +1,156 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticias - Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="static/img/logo.png">
+    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .noticias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1280px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        .noticia-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        .noticia-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .noticia-fecha {
+            color: #b42318;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .noticia-card h2 {
+            color: #0a2b5c;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        .noticia-card p {
+            color: #1f2933;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0a2b5c;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #1e3a6f;
+        }
+    </style>
+</head>
+<body>
 
-{% block content %}
-<section class="page-header">
-    <h1>Noticias del Ayuntamiento</h1>
-    <p>Mantente informado sobre las últimas novedades y comunicados oficiales</p>
-</section>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="index.html">
+                <img src="static/img/logo.png" 
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
+        </div>
 
-<section class="noticias-grid">
-    <article class="noticia-card">
-        <div class="noticia-fecha">15 de febrero, 2026</div>
-        <h2>Nueva campaña de reforestación municipal</h2>
-        <p>El Ayuntamiento invita a la ciudadanía a participar en la jornada de reforestación que se llevará a cabo el próximo sábado en el parque central.</p>
-        <a href="/noticias/reforestacion-2026" class="btn">Leer más</a>
-    </article>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="municipio.html">Municipio</a></li>
+                <li><a href="servicios.html">Servicios</a></li>
+                <li><a href="transparencia.html">Transparencia</a></li>
+                <li><a href="noticias.html">Noticias</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="login.html" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="registro.html" class="btn-registro">Registrarse</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
-    <article class="noticia-card">
-        <div class="noticia-fecha">10 de febrero, 2026</div>
-        <h2>Ampliación del servicio de recolección de basura</h2>
-        <p>A partir del 1 de marzo, el servicio de recolección de residuos ampliará sus horarios para cubrir más colonias del municipio.</p>
-        <a href="/noticias/ampliacion-recoleccion" class="btn">Leer más</a>
-    </article>
+<main>
+    <section class="page-header" style="background: linear-gradient(160deg, #0a2b5c 0%, #1e3a6f 100%); color: white; padding: 60px 20px; text-align: center;">
+        <h1 style="color: white; font-size: 2.5rem;">Noticias del Ayuntamiento</h1>
+        <p style="color: rgba(255,255,255,0.9);">Mantente informado sobre las últimas novedades y comunicados oficiales</p>
+    </section>
 
-    <article class="noticia-card">
-        <div class="noticia-fecha">5 de febrero, 2026</div>
-        <h2>Jornada de salud gratuita en la plaza principal</h2>
-        <p>Se realizarán consultas médicas, dentales y talleres de prevención. Entrada libre para todas las edades.</p>
-        <a href="/noticias/jornada-salud" class="btn">Leer más</a>
-    </article>
-</section>
-{% endblock %}
+    <section class="noticias-grid">
+        <article class="noticia-card">
+            <div class="noticia-fecha">15 de febrero, 2026</div>
+            <h2>Nueva campaña de reforestación municipal</h2>
+            <p>El Ayuntamiento invita a la ciudadanía a participar en la jornada de reforestación que se llevará a cabo el próximo sábado en el parque central. Se plantarán más de 500 árboles nativos.</p>
+            <a href="#" class="btn">Leer más</a>
+        </article>
+
+        <article class="noticia-card">
+            <div class="noticia-fecha">10 de febrero, 2026</div>
+            <h2>Ampliación del servicio de recolección de basura</h2>
+            <p>A partir del 1 de marzo, el servicio de recolección de residuos ampliará sus horarios para cubrir más sectores del municipio. Se incorporarán dos nuevas rutas.</p>
+            <a href="#" class="btn">Leer más</a>
+        </article>
+
+        <article class="noticia-card">
+            <div class="noticia-fecha">5 de febrero, 2026</div>
+            <h2>Jornada de salud gratuita en la plaza principal</h2>
+            <p>Se realizarán consultas médicas, dentales y talleres de prevención. Entrada libre para todas las edades. Habrá servicios de odontología, medicina general y vacunación.</p>
+            <a href="#" class="btn">Leer más</a>
+        </article>
+
+        <article class="noticia-card">
+            <div class="noticia-fecha">28 de enero, 2026</div>
+            <h2>Inician trabajos de asfaltado en calles principales</h2>
+            <p>El proyecto de asfaltado comenzará en la calle Duarte y se extenderá por las principales vías del municipio. Se estima una duración de 3 meses.</p>
+            <a href="#" class="btn">Leer más</a>
+        </article>
+    </section>
+
+    <footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+        <div class="container">
+            <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+                <div class="footer-info">
+                    <h3 style="color: white;">Junta de Distrito Municipal</h3>
+                    <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
+                    <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
+                    <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+                </div>
+                <div class="footer-social">
+                    <h3 style="color: white;">Síguenos</h3>
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+                </div>
+                <div class="footer-horario">
+                    <h3 style="color: white;">Horario de Oficina</h3>
+                    <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
+                    <p>Sábados<br>9:00 AM - 12:00 PM</p>
+                </div>
+            </div>
+            <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+                <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<script src="static/js/header.js"></script>
+</body>
+</html>

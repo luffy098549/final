@@ -1,27 +1,130 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Municipio - Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="static/img/logo.png">
+    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .page {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        .page h2 {
+            color: #0a2b5c;
+            margin: 40px 0 20px;
+            font-size: 2rem;
+        }
+        .page p {
+            line-height: 1.8;
+            color: #1f2933;
+            margin-bottom: 20px;
+        }
+        .services {
+            list-style: none;
+            padding: 0;
+        }
+        .services li {
+            padding: 15px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .services li strong {
+            color: #0a2b5c;
+            display: inline-block;
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
 
-{% block content %}
-<section class="page-header">
-    <h1>El Municipio</h1>
-    <p>Conozca más sobre nuestro municipio, su historia y autoridades</p>
-</section>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="index.html">
+                <img src="static/img/logo.png" 
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
+        </div>
 
-<section class="page">
-    <h2>Historia</h2>
-    <p>El municipio fue fundado en el año 1850 y desde entonces ha sido un pilar fundamental en el desarrollo de la región. Con una rica tradición cultural y un compromiso constante con el progreso, nuestro municipio ha crecido para convertirse en un lugar próspero y acogedor para todos sus habitantes.</p>
-    
-    <h2>Misión</h2>
-    <p>Brindar servicios públicos de calidad, promover el desarrollo sostenible y garantizar el bienestar de todos los ciudadanos, actuando con transparencia, eficiencia y cercanía.</p>
-    
-    <h2>Visión</h2>
-    <p>Ser un municipio modelo en gestión pública, reconocido por su innovación, participación ciudadana y desarrollo integral, mejorando continuamente la calidad de vida de sus habitantes.</p>
-    
-    <h2>Autoridades</h2>
-    <ul class="services">
-        <li><strong>Alcalde:</strong> Juan Pérez García</li>
-        <li><strong>Síndico:</strong> María Rodríguez López</li>
-        <li><strong>Secretario Municipal:</strong> Carlos Martínez Sánchez</li>
-        <li><strong>Tesorero:</strong> Ana Gómez Fernández</li>
-    </ul>
-</section>
-{% endblock %}
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="municipio.html">Municipio</a></li>
+                <li><a href="servicios.html">Servicios</a></li>
+                <li><a href="transparencia.html">Transparencia</a></li>
+                <li><a href="noticias.html">Noticias</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="login.html" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="registro.html" class="btn-registro">Registrarse</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="page-header" style="background: linear-gradient(160deg, #0a2b5c 0%, #1e3a6f 100%); color: white; padding: 60px 20px; text-align: center;">
+        <h1 style="color: white; font-size: 2.5rem;">El Municipio</h1>
+        <p style="color: rgba(255,255,255,0.9);">Conozca más sobre nuestro municipio, su historia y autoridades</p>
+    </section>
+
+    <section class="page">
+        <h2>Historia</h2>
+        <p>Villa Cutupú, oficialmente conocido como Río Verde Arriba, es un distrito municipal de la provincia de La Vega, República Dominicana. Fundado hace más de un siglo, este pintoresco municipio ha sido cuna de grandes personalidades y testigo del desarrollo de la región del Cibao. Su nombre proviene del río Cutupú, que atraviesa sus tierras y ha sido fuente de vida y prosperidad para generaciones de cutupenses.</p>
+        
+        <h2>Misión</h2>
+        <p>Brindar servicios públicos de calidad, promover el desarrollo sostenible y garantizar el bienestar de todos los ciudadanos, actuando con transparencia, eficiencia y cercanía. Nuestra misión es trabajar incansablemente para mejorar la calidad de vida de cada familia cutupense.</p>
+        
+        <h2>Visión</h2>
+        <p>Ser un municipio modelo en gestión pública, reconocido por su innovación, participación ciudadana y desarrollo integral, mejorando continuamente la calidad de vida de sus habitantes. Aspiramos a ser un referente en la provincia de La Vega y en toda la región.</p>
+        
+        <h2>Autoridades</h2>
+        <ul class="services">
+            <li><strong>Director Municipal (Alcalde):</strong> Robert Donald Tolentino Grullón</li>
+            <li><strong>Vicealcaldesa:</strong> Kelly Bueno</li>
+            <li><strong>Secretario Municipal:</strong> Carlos Martínez</li>
+            <li><strong>Tesorero:</strong> Ana Gómez</li>
+            <li><strong>Encargado de Obras Públicas:</strong> Pedro Sánchez</li>
+            <li><strong>Encargada de Servicios Sociales:</strong> María Rodríguez</li>
+        </ul>
+    </section>
+
+    <footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+        <div class="container">
+            <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+                <div class="footer-info">
+                    <h3 style="color: white;">Junta de Distrito Municipal</h3>
+                    <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
+                    <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
+                    <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+                </div>
+                <div class="footer-social">
+                    <h3 style="color: white;">Síguenos</h3>
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+                </div>
+                <div class="footer-horario">
+                    <h3 style="color: white;">Horario de Oficina</h3>
+                    <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
+                    <p>Sábados<br>9:00 AM - 12:00 PM</p>
+                </div>
+            </div>
+            <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+                <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<script src="static/js/header.js"></script>
+</body>
+</html>
