@@ -6,10 +6,8 @@
     <title>Junta Distrital de Villa Cutupú - Ayuntamiento</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
     
-    <!-- ✅ CORREGIDO: Ruta con url_for -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     
-    <!-- ✅ OPTIMIZADO: Solo Plus Jakarta Sans (eliminamos Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -42,13 +40,24 @@
 </header>
 
 <main>
-    <!-- HERO SECTION -->
+    <!-- HERO SECTION - CON IMAGEN A LA DERECHA -->
     <section class="hero">
-        <div class="hero-content">
-            <h1>Junta Distrital de<br><span>Villa Cutupú</span></h1>
-            <p class="hero-subtitle">Río Verde Arriba, La Vega</p>
-            <p class="hero-description">Cerca de ti, trabajando por el progreso de nuestra comunidad</p>
-        </div> 
+        <div class="container">
+            <div class="hero-content">
+                <p class="hero-subtitle">JUNTA DISTRITAL DE VILLA CUTUPÚ</p>
+                <h1>
+                    RÍO VERDE ARRIBA, <span>LA VEGA</span>
+                </h1>
+                <p class="hero-description">
+                    Cerca de ti, trabajando por el progreso de nuestra comunidad
+                </p>
+            </div>
+            <div class="hero-right">
+                <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-20 at 4.43.11 PM.jpeg') }}" 
+                     alt="Vista de Villa Cutupú"
+                     loading="lazy">
+            </div>
+        </div>
     </section>
 
     <!-- MENSAJE DEL ALCALDE -->
@@ -72,17 +81,17 @@
             <h2 class="section-title">Acciones Principales</h2>
             <div class="acciones-grid">
                 <div class="accion-card">
-                    <span class="accion-icono"></span>
+                    <span class="accion-icono">🏗️</span>
                     <h3>Asfaltado de Calles</h3>
                     <p>Mejorando la vialidad y conectividad de nuestras comunidades con obras de calidad.</p>
                 </div>
                 <div class="accion-card">
-                    <span class="accion-icono"></span>
+                    <span class="accion-icono">🧹</span>
                     <h3>Limpieza de Espacios</h3>
                     <p>Manteniendo nuestros entornos públicos impecables y saludables para todos.</p>
                 </div>
                 <div class="accion-card">
-                    <span class="accion-icono"></span>
+                    <span class="accion-icono">💡</span>
                     <h3>Alumbrado Público</h3>
                     <p>Modernizando el sistema de iluminación para mayor seguridad en nuestras calles.</p>
                 </div>
@@ -128,8 +137,7 @@
             <div class="vocales-grid">
                 <div class="vocal-card">
                     <div class="vocal-foto">
-                        <!-- ✅ CORREGIDO: Variables correctas -->
-                        <div class="vocal-foto-img" style="background: var(--blue-sky-light); width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--blue-sky);">YB</div>
+                        <div class="vocal-foto-img">YB</div>
                     </div>
                     <div class="vocal-info">
                         <div class="vocal-name">Yumirí A. Bueno Coste</div>
@@ -138,8 +146,7 @@
                 </div>
                 <div class="vocal-card">
                     <div class="vocal-foto">
-                        <!-- ✅ CORREGIDO: Variables correctas -->
-                        <div class="vocal-foto-img" style="background: var(--blue-sky-light); width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--blue-sky);">WM</div>
+                        <div class="vocal-foto-img">WM</div>
                     </div>
                     <div class="vocal-info">
                         <div class="vocal-name">Willian Mata Herrera</div>
@@ -148,8 +155,7 @@
                 </div>
                 <div class="vocal-card">
                     <div class="vocal-foto">
-                        <!-- ✅ CORREGIDO: Variables correctas -->
-                        <div class="vocal-foto-img" style="background: var(--blue-sky-light); width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--blue-sky);">XR</div>
+                        <div class="vocal-foto-img">XR</div>
                     </div>
                     <div class="vocal-info">
                         <div class="vocal-name">Xiomara A. Romano Fernández</div>
@@ -158,8 +164,7 @@
                 </div>
                 <div class="vocal-card">
                     <div class="vocal-foto">
-                        <!-- ✅ CORREGIDO: Variables correctas -->
-                        <div class="vocal-foto-img" style="background: var(--blue-sky-light); width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--blue-sky);">CC</div>
+                        <div class="vocal-foto-img">CC</div>
                     </div>
                     <div class="vocal-info">
                         <div class="vocal-name">Colipson M. Ceballos López</div>
@@ -168,8 +173,7 @@
                 </div>
                 <div class="vocal-card">
                     <div class="vocal-foto">
-                        <!-- ✅ CORREGIDO: Variables correctas -->
-                        <div class="vocal-foto-img" style="background: var(--blue-sky-light); width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--blue-sky);">FP</div>
+                        <div class="vocal-foto-img">FP</div>
                     </div>
                     <div class="vocal-info">
                         <div class="vocal-name">Francisco Peña García</div>
@@ -188,9 +192,9 @@
                     <h3>Nuestro Distrito</h3>
                     <p><strong>Río Verde Arriba (Cutupú)</strong> es un distrito municipal con una rica historia en la provincia de La Vega. Hogar de cientos de familias trabajadoras que día a día contribuyen al desarrollo de nuestra comunidad.</p>
                     <div class="dato-mini-grid">
-                        <span><strong></strong> La Vega, R.D.</span>
-                        <span><strong></strong> Comunidad unida</span>
-                        <span><strong></strong> Gestión 2026</span>
+                        <span>📍 La Vega, R.D.</span>
+                        <span>👥 Comunidad unida</span>
+                        <span>📅 Gestión 2026</span>
                     </div>
                 </div>
             </div>
@@ -235,8 +239,8 @@
             <div class="footer-info">
                 <h3>Junta de Distrito Municipal</h3>
                 <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
-                <p> <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p> <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
             </div>
             <div class="footer-social">
                 <h3>Síguenos</h3>
@@ -246,7 +250,6 @@
             <div class="footer-horario">
                 <h3>Horario de Oficina</h3>
                 <p>Lunes a Viernes<br>8:00 AM - 2:00 PM</p>
-            
             </div>
         </div>
         <div class="copyright">

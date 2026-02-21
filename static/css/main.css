@@ -58,7 +58,7 @@ img {
     --green-xlight:   #EFF3EE;
     
     /* Azul cielo - Acentos secundarios */
-    --blue-sky:       #2B6A9E;        /* Azul más visible para texto */
+    --blue-sky:       #2B6A9E;
     --blue-sky-light: #EBF4FB;
     --blue-sky-soft:  #A9C9E8;
     
@@ -129,15 +129,15 @@ img {
 }
 
 /* ===================================================
-   HEADER - OPTIMIZADO
+   HEADER - MENÚ PEGADO A LA PARED DERECHA
    =================================================== */
 .main-header {
     position: sticky;
     top: 0;
     z-index: 100;
     background: var(--white);
-    border-bottom: 3px solid var(--green);
-    height: 76px;
+    border-bottom: 2px solid var(--green);
+    height: 70px;
     transition: box-shadow var(--transition-base);
 }
 
@@ -150,12 +150,15 @@ img {
     align-items: center;
     justify-content: space-between;
     height: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 1% 0 2%;
 }
 
+/* LOGO */
 .logo a {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
     text-decoration: none;
     transition: opacity var(--transition-fast);
 }
@@ -165,33 +168,40 @@ img {
 }
 
 .header-logo {
-    height: 52px;
+    height: 50px;
     width: auto;
     object-fit: contain;
 }
 
-/* Navegación mejorada */
+/* NAV - TOTALMENTE A LA DERECHA */
+.main-nav {
+    margin-left: auto;
+}
+
 .main-nav ul {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0;
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
+/* Enlaces sin casi padding */
 .main-nav a {
     color: var(--text-soft);
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
-    padding: 0.5rem 0.85rem;
-    border-radius: var(--radius-sm);
-    transition: all var(--transition-fast);
+    padding: 0.5rem 0.6rem;
+    transition: color 0.2s ease;
+    white-space: nowrap;
     position: relative;
 }
 
 .main-nav a:hover {
-    color: var(--green-dark);
-    background: var(--green-xlight);
+    color: var(--green);
+    background: none;
 }
 
 /* Efecto de línea inferior en hover */
@@ -211,40 +221,36 @@ img {
     width: 70%;
 }
 
-/* Botones de login/registro mejorados */
+/* Botones simples */
 .main-nav .btn-login {
     background: transparent;
     color: var(--green);
-    border: 1.5px solid var(--beige);
-    margin-left: var(--space-1);
+    border: none;
+    margin-left: 0.3rem;
     font-weight: 600;
-    border-radius: var(--radius-sm);
-    padding: 0.5rem 0.85rem;
-    transition: all var(--transition-fast);
+    padding: 0.5rem 0.6rem;
 }
 
 .main-nav .btn-login:hover {
-    border-color: var(--green);
-    background: var(--green-xlight);
     color: var(--green-dark);
-    transform: translateY(-1px);
+    background: none;
+    text-decoration: underline;
 }
 
 .main-nav .btn-registro {
     background: var(--green);
     color: white;
-    padding: 0.55rem 1.25rem;
-    font-weight: 700;
-    border: 1.5px solid var(--green);
-    border-radius: var(--radius-sm);
+    padding: 0.45rem 0.9rem;
+    font-weight: 600;
+    border-radius: 4px;
+    margin-left: 0.2rem;
     box-shadow: 0 2px 10px rgba(126, 143, 118, 0.28);
     transition: all var(--transition-fast);
 }
 
 .main-nav .btn-registro:hover {
     background: var(--green-dark);
-    border-color: var(--green-dark);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: 0 6px 18px rgba(126, 143, 118, 0.38);
 }
 
@@ -252,8 +258,13 @@ img {
     transform: scale(0.97); 
 }
 
+/* Último elemento pegado al borde */
+.main-nav li:last-child a {
+    margin-right: -0.5rem;
+}
+
 /* ===================================================
-   HERO SECTION - MEJORADO
+   HERO SECTION - CON IMAGEN EN LADO DERECHO
    =================================================== */
 .hero {
     min-height: 88vh;
@@ -274,26 +285,62 @@ img {
     bottom: 0;
     width: 5px;
     background: linear-gradient(to bottom, var(--green), var(--green-light));
+    z-index: 2;
 }
 
-/* Bloque azul cielo derecha - mejorado */
-.hero::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 42%;
-    background: linear-gradient(160deg, var(--blue-sky-light) 0%, #d4e9f7 100%);
-    clip-path: polygon(10% 0%, 100% 0%, 100% 100%, 0% 100%);
-    z-index: 0;
+/* Contenedor flexible para el contenido e imagen */
+.hero .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    max-width: 1400px;
+    position: relative;
+    z-index: 2;
 }
 
 .hero-content {
+    flex: 1;
     max-width: 620px;
-    position: relative;
-    z-index: 2;
     animation: fadeUp 0.8s ease both;
+}
+
+/* Lado derecho con la imagen */
+.hero-right {
+    flex: 1;
+    height: 550px;
+    max-width: 550px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    animation: fadeIn 0.8s ease both 0.2s;
+    border: 4px solid var(--white);
+    outline: 2px solid var(--green-light);
+}
+
+.hero-right img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.hero-right:hover img {
+    transform: scale(1.05);
+}
+
+/* Overlay sutil */
+.hero-right::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(126, 143, 118, 0.1) 0%, rgba(43, 106, 158, 0.1) 100%);
+    pointer-events: none;
 }
 
 @keyframes fadeUp {
@@ -305,6 +352,11 @@ img {
         opacity: 1; 
         transform: translateY(0);    
     }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .hero h1 {
@@ -426,7 +478,6 @@ section {
     line-height: 1.4;
     letter-spacing: -0.02em;
     font-style: italic;
-    quotes: "«" "»";
 }
 
 .mensaje-principal::before {
@@ -545,7 +596,7 @@ section {
 }
 
 /* ===================================================
-   AUTORIDADES - CORREGIDO (TAMAÑO AJUSTADO)
+   AUTORIDADES - CORREGIDO
    =================================================== */
 .autoridades-section {
     background: var(--white);
@@ -595,7 +646,6 @@ section {
     transform: scaleX(1);
 }
 
-/* ✅ CORREGIDO: Tamaño aumentado para que se vea completa la foto */
 .autoridad-foto {
     width: 200px;
     height: 200px;
@@ -619,7 +669,7 @@ section {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 25%; /* Mejor enfoque para retratos */
+    object-position: center 25%;
     display: block;
     transition: transform 0.5s ease;
 }
@@ -659,7 +709,7 @@ section {
 }
 
 /* ===================================================
-   VOCALES - CORREGIDO (VARIABLES DE COLOR)
+   VOCALES - CORREGIDO
    =================================================== */
 .vocales-section {
     background: var(--white);
@@ -708,7 +758,6 @@ section {
     border-color: var(--green-light);
 }
 
-/* ✅ CORREGIDO: Usando las variables correctas */
 .vocal-foto-img {
     width: 100%;
     height: 100%;
@@ -1051,7 +1100,7 @@ section {
 }
 
 /* ===================================================
-   RESPONSIVE - OPTIMIZADO PARA TODOS LOS DISPOSITIVOS
+   RESPONSIVE
    =================================================== */
 
 /* Desktop grande */
@@ -1066,16 +1115,10 @@ section {
     .container { 
         padding: 0 5%; 
     }
-    .hero::after { 
-        width: 38%; 
-    }
 }
 
 /* Tablet landscape */
 @media (max-width: 1024px) {
-    .hero::after { 
-        width: 34%; 
-    }
     .hero h1 { 
         font-size: clamp(2.2rem, 4.5vw, 3.5rem); 
     }
@@ -1086,19 +1129,25 @@ section {
 
 /* Tablet */
 @media (max-width: 900px) {
-    .hero::after { 
-        display: none; 
-    }
-    .hero {
+    .hero .container {
+        flex-direction: column;
         text-align: center;
-        justify-content: center;
     }
+    
     .hero-content {
         max-width: 100%;
     }
+    
     .hero-description {
         margin-left: auto;
         margin-right: auto;
+    }
+    
+    .hero-right {
+        width: 100%;
+        max-width: 500px;
+        height: 350px;
+        margin: 0 auto;
     }
 }
 
@@ -1116,7 +1165,6 @@ section {
         display: none; 
     }
     
-    /* Ajustes generales */
     section {
         padding: 4rem 0;
     }
@@ -1142,7 +1190,6 @@ section {
         font-size: 1rem; 
     }
     
-    /* ✅ CORREGIDO: Tamaño de fotos en móvil */
     .autoridad-foto { 
         width: 160px;
         height: 160px;
@@ -1228,6 +1275,10 @@ section {
         font-size: 0.95rem; 
     }
     
+    .hero-right {
+        height: 250px;
+    }
+    
     .section-title { 
         font-size: 1.7rem; 
     }
@@ -1244,7 +1295,6 @@ section {
         grid-template-columns: 1fr; 
     }
     
-    /* ✅ AJUSTE FINAL PARA MÓVIL PEQUEÑO */
     .autoridad-foto { 
         width: 140px;
         height: 140px;
@@ -1319,115 +1369,4 @@ section {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
-}
-
-/* Alto contraste modo oscuro (futuro) */
-@media (prefers-color-scheme: dark) {
-    /* Preparado para futura implementación de modo oscuro */
-}
-
-
-
-
-
-
-
-
-/* ===================================================
-   HEADER - MENÚ PEGADO A LA PARED DERECHA
-   =================================================== */
-.main-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: var(--white);
-    border-bottom: 2px solid var(--green);
-    height: 70px;
-}
-
-.main-header .container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 100%;
-    max-width: 100%;  /* Ocupa todo el ancho */
-    margin: 0;
-    padding: 0 1% 0 2%;  /* Casi nada de padding derecho */
-}
-
-/* LOGO */
-.logo a {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-}
-
-.header-logo {
-    height: 50px;
-    width: auto;
-}
-
-/* NAV - TOTALMENTE A LA DERECHA */
-.main-nav {
-    margin-left: auto;
-}
-
-.main-nav ul {
-    display: flex;
-    align-items: center;
-    gap: 0;  /* Sin espacio entre items */
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-/* Enlaces sin casi padding */
-.main-nav a {
-    color: var(--text-soft);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 0.5rem 0.6rem;
-    transition: color 0.2s ease;
-    white-space: nowrap;
-}
-
-.main-nav a:hover {
-    color: var(--green);
-    background: none;  /* Sin fondo al hover */
-}
-
-/* Botones simples */
-.main-nav .btn-login {
-    background: transparent;
-    color: var(--green);
-    border: none;  /* Sin borde */
-    margin-left: 0.3rem;
-    font-weight: 600;
-    padding: 0.5rem 0.6rem;
-}
-
-.main-nav .btn-login:hover {
-    color: var(--green-dark);
-    background: none;
-    text-decoration: underline;
-}
-
-.main-nav .btn-registro {
-    background: var(--green);
-    color: white;
-    padding: 0.45rem 0.9rem;
-    font-weight: 600;
-    border-radius: 4px;
-    margin-left: 0.2rem;
-}
-
-.main-nav .btn-registro:hover {
-    background: var(--green-dark);
-    transform: translateY(-1px);
-}
-
-/* Último elemento pegado al borde */
-.main-nav li:last-child a {
-    margin-right: -0.5rem;  /* Aún más pegado a la derecha */
 }
