@@ -1,365 +1,403 @@
-/* =============================================
-   JUNTA DISTRITAL VILLA CUTUPÚ — servicios.css
-   Tema: Institucional / Servicios Municipales
-   ============================================= */
+/* ============================================================
+   servicios.css — Junta Distrital de Villa Cutupú
+   Adaptado desde main.css
+   ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap');
-
-/* ── Variables ── */
-:root {
-  --azul-oscuro:   #0a2b5c;
-  --azul-medio:    #1e3a6f;
-  --azul-claro:    #2a56a3;
-  --dorado:        #c8973a;
-  --dorado-claro:  #e8b45a;
-  --verde:         #1a7a4a;
-  --verde-claro:   #e8f7ef;
-  --rojo:          #b82c2c;
-  --rojo-claro:    #fdf0f0;
-  --blanco:        #ffffff;
-  --gris-fondo:    #f4f6f9;
-  --gris-borde:    #dde3ed;
-  --texto:         #1a2233;
-  --texto-suave:   #5a6478;
-  --sombra-sm:     0 2px 8px rgba(10,43,92,.08);
-  --sombra-md:     0 6px 24px rgba(10,43,92,.13);
-  --sombra-lg:     0 16px 48px rgba(10,43,92,.18);
-  --radio:         8px;
-  --transicion:    .25s ease;
+/* ===================================================
+   NEUTRALIZAR padding global de section (main.css)
+   =================================================== */
+section.page-header {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-/* ── Reset & base ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 16px;
-  line-height: 1.75;
-  color: var(--texto);
-  background: var(--gris-fondo);
-  -webkit-font-smoothing: antialiased;
-}
-
-h1, h2, h3, h4 {
-  font-family: 'Playfair Display', serif;
-  line-height: 1.25;
-  color: var(--azul-oscuro);
-}
-
-a { text-decoration: none; color: inherit; }
-ul { list-style: none; }
-img { max-width: 100%; display: block; }
-
-.container {
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-/* ════════════════════════════════════
-   HEADER
-════════════════════════════════════ */
-.main-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--blanco);
-  border-bottom: 3px solid var(--dorado);
-  box-shadow: var(--sombra-sm);
-}
-
-.main-header .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 72px;
-}
-
-.logo a { display: flex; align-items: center; gap: 12px; }
-.header-logo { height: 52px; width: auto; }
-
-.main-nav ul {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.main-nav ul li a {
-  font-size: .875rem;
-  font-weight: 500;
-  letter-spacing: .02em;
-  text-transform: uppercase;
-  padding: 6px 12px;
-  border-radius: var(--radio);
-  color: var(--azul-oscuro);
-  transition: color var(--transicion), background var(--transicion);
-}
-
-.main-nav ul li a:hover {
-  color: var(--dorado);
-  background: rgba(10,43,92,.05);
-}
-
-.btn-login {
-  background: transparent !important;
-  border: 2px solid var(--azul-claro) !important;
-  color: var(--azul-claro) !important;
-  border-radius: 30px !important;
-  padding: 5px 16px !important;
-  font-weight: 600 !important;
-  transition: all var(--transicion) !important;
-}
-.btn-login:hover {
-  background: var(--azul-claro) !important;
-  color: var(--blanco) !important;
-}
-
-.btn-registro {
-  background: var(--azul-oscuro) !important;
-  color: var(--blanco) !important;
-  border-radius: 30px !important;
-  padding: 5px 18px !important;
-  font-weight: 600 !important;
-  transition: all var(--transicion) !important;
-  border: 2px solid var(--azul-oscuro) !important;
-}
-.btn-registro:hover {
-  background: var(--dorado) !important;
-  border-color: var(--dorado) !important;
-}
-
-.btn-logout {
-  background: #c0392b !important;
-  color: var(--blanco) !important;
-  border-radius: 30px !important;
-  padding: 5px 14px !important;
-  font-size: .8rem !important;
-  font-weight: 600 !important;
-}
-
-/* ════════════════════════════════════
+/* ===================================================
    PAGE HEADER
-════════════════════════════════════ */
+   =================================================== */
 .page-header {
-  position: relative;
-  overflow: hidden;
+    background: linear-gradient(145deg, #EFF3EE 0%, #FFFFFF 100%);
+    border-bottom: none;
+    margin-bottom: 0;
+    padding: 4rem 5% 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .page-header::before {
-  content: '';
-  position: absolute;
-  left: -80px; top: -80px;
-  width: 320px; height: 320px;
-  border-radius: 50%;
-  background: rgba(200,151,58,.12);
-  pointer-events: none;
-}
-.page-header::after {
-  content: '';
-  position: absolute;
-  right: -60px; bottom: -60px;
-  width: 240px; height: 240px;
-  border-radius: 50%;
-  background: rgba(255,255,255,.06);
-  pointer-events: none;
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(to bottom, #7E8F76, #A9B7A2);
 }
 
 .page-header h1 {
-  font-family: 'Playfair Display', serif;
-  color: var(--blanco) !important;
-  letter-spacing: -.01em;
-  margin-bottom: 10px;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 800;
+    color: #1C1C1C;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
 }
 
 .page-header p {
-  color: rgba(255,255,255,.85) !important;
+    font-size: 1rem;
+    color: #6B6B6B;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-/* ════════════════════════════════════
-   LEYENDA DE TIPOS
-════════════════════════════════════ */
-.services-legend {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  padding: 20px 24px 0;
-  flex-wrap: wrap;
+/* ===================================================
+   FILTROS DE CATEGORÍA
+   =================================================== */
+.servicios-filtros {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    padding: 1.8rem 5%;
+    background: #FAFAFA;
+    border-bottom: 1px solid #E8E8E8;
 }
 
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: .85rem;
-  font-weight: 600;
-  color: var(--texto-suave);
-  text-transform: uppercase;
-  letter-spacing: .04em;
+.filtro-btn {
+    padding: 0.5rem 1.2rem;
+    border-radius: 999px;
+    border: 2px solid #E8E8E8;
+    background: #FFFFFF;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #6B6B6B;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.legend-dot {
-  width: 12px; height: 12px;
-  border-radius: 50%;
-  flex-shrink: 0;
+.filtro-btn:hover {
+    border-color: #7E8F76;
+    color: #5A684F;
 }
-.legend-dot.solicitud { background: var(--azul-claro); }
-.legend-dot.denuncia  { background: var(--rojo); }
 
-/* ════════════════════════════════════
+.filtro-btn.active {
+    background: #5A684F;
+    border-color: #5A684F;
+    color: white;
+}
+
+.filtro-btn.filtro-denuncia.active {
+    background: #9B3A3A;
+    border-color: #9B3A3A;
+    color: white;
+}
+
+.filtro-btn.filtro-denuncia:hover {
+    border-color: #9B3A3A;
+    color: #9B3A3A;
+}
+
+.filtro-btn.filtro-consulta.active {
+    background: #2B6A9E;
+    border-color: #2B6A9E;
+    color: white;
+}
+
+.filtro-btn.filtro-consulta:hover {
+    border-color: #2B6A9E;
+    color: #2B6A9E;
+}
+
+/* ===================================================
+   CONTADOR
+   =================================================== */
+.service-count {
+    text-align: center;
+    padding: 1.5rem 5% 0;
+    font-size: 0.9rem;
+    color: #A3A3A3;
+    font-weight: 500;
+}
+
+/* ===================================================
    GRID DE SERVICIOS
-════════════════════════════════════ */
+   =================================================== */
 .services-detailed {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 40px 24px 70px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 2rem auto 3rem;
+    padding: 0 5%;
 }
 
-/* ── Card base ── */
+/* ===================================================
+   CARDS DE SERVICIO
+   =================================================== */
 .service-card {
-  background: var(--blanco);
-  border-radius: var(--radio);
-  border: 1px solid var(--gris-borde);
-  padding: 28px 26px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  box-shadow: var(--sombra-sm);
-  transition: transform var(--transicion), box-shadow var(--transicion);
-  position: relative;
-  overflow: hidden;
+    background: #FFFFFF;
+    border-radius: 14px;
+    padding: 1.8rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid #E8E8E8;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .service-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: var(--azul-claro); /* default; sobreescrito abajo */
-  transition: height var(--transicion);
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #7E8F76, #A9B7A2);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
 }
 
 .service-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--sombra-md);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border-color: #D0D9CB;
 }
 
+.service-card:hover::before {
+    transform: scaleX(1);
+}
+
+/* Variante denuncia */
+.service-card.tipo-denuncia::before {
+    background: linear-gradient(90deg, #9B3A3A, #C06060);
+}
+
+.service-card.tipo-denuncia:hover {
+    border-color: #E8CCCC;
+}
+
+/* Variante consulta */
+.service-card.tipo-consulta::before {
+    background: linear-gradient(90deg, #2B6A9E, #5A9AC8);
+}
+
+.service-card.tipo-consulta:hover {
+    border-color: #C8DCF0;
+}
+
+/* Ícono de la card */
+.service-icono {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    display: block;
+    line-height: 1;
+}
+
+/* Título */
 .service-card h3 {
-  font-size: 1.15rem;
-  color: var(--azul-oscuro);
-  margin-top: 4px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1C1C1C;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
 }
 
+/* Descripción */
 .service-card p {
-  font-size: .95rem;
-  color: var(--texto-suave);
-  flex: 1;
+    font-size: 0.95rem;
+    color: #6B6B6B;
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+    flex: 1;
 }
 
-/* ── Botones de acción ── */
-.btn {
-  display: inline-block;
-  align-self: flex-start;
-  margin-top: 8px;
-  padding: 9px 22px;
-  border-radius: 30px;
-  font-size: .85rem;
-  font-weight: 700;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  transition: background var(--transicion), transform .15s, box-shadow var(--transicion);
-  cursor: pointer;
+/* Badge de tipo */
+.service-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+    width: fit-content;
 }
 
-/* Solicitar → Azul institucional */
-.btn.solicitar {
-  background: var(--azul-oscuro);
-  color: var(--blanco);
-  box-shadow: 0 3px 10px rgba(10,43,92,.25);
-}
-.btn.solicitar:hover {
-  background: var(--azul-claro);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(42,86,163,.35);
+.badge-solicitud {
+    background: #EFF3EE;
+    color: #5A684F;
 }
 
-/* Denunciar → Rojo alerta */
-.btn.denunciar {
-  background: var(--rojo);
-  color: var(--blanco);
-  box-shadow: 0 3px 10px rgba(184,44,44,.25);
-}
-.btn.denunciar:hover {
-  background: #9b1c1c;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(184,44,44,.35);
+.badge-denuncia {
+    background: #FDEAEA;
+    color: #9B3A3A;
 }
 
-/* Cards que tienen denuncia: borde superior rojo */
-.service-card:has(.btn.denunciar)::before {
-  background: var(--rojo);
+.badge-consulta {
+    background: #EBF4FB;
+    color: #2B6A9E;
 }
 
-/* Cards que tienen solicitar: borde superior azul */
-.service-card:has(.btn.solicitar)::before {
-  background: var(--azul-claro);
+/* ===================================================
+   BOTONES DE ACCIÓN
+   =================================================== */
+.btn-servicio {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1.4rem;
+    border-radius: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    align-self: flex-start;
+    letter-spacing: 0.01em;
 }
 
-/* Icono decorativo por tipo (usando pseudo) */
-.service-card:has(.btn.solicitar) {
-  border-left: 3px solid var(--azul-claro);
-}
-.service-card:has(.btn.denunciar) {
-  border-left: 3px solid var(--rojo);
+.btn-solicitar {
+    background: #5A684F;
+    color: white;
+    box-shadow: 0 2px 8px rgba(90,104,79,0.2);
 }
 
-/* ════════════════════════════════════
-   FOOTER
-════════════════════════════════════ */
-footer {
-  font-size: .9rem;
+.btn-solicitar:hover {
+    background: #7E8F76;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(90,104,79,0.3);
 }
 
-footer h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  color: var(--blanco) !important;
-  margin-bottom: 14px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(200,151,58,.45);
+.btn-denunciar {
+    background: #9B3A3A;
+    color: white;
+    box-shadow: 0 2px 8px rgba(155,58,58,0.2);
 }
 
-footer p, footer a {
-  color: rgba(255,255,255,.8) !important;
-  line-height: 1.9;
+.btn-denunciar:hover {
+    background: #B54A4A;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(155,58,58,0.3);
 }
 
-footer a:hover { color: var(--dorado-claro) !important; }
-
-.footer-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; }
-
-.copyright {
-  font-size: .82rem;
-  color: rgba(255,255,255,.55) !important;
+.btn-consultar {
+    background: #2B6A9E;
+    color: white;
+    box-shadow: 0 2px 8px rgba(43,106,158,0.2);
 }
 
-/* ════════════════════════════════════
+.btn-consultar:hover {
+    background: #3A7DB5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(43,106,158,0.3);
+}
+
+/* ===================================================
+   PAGINACIÓN
+   =================================================== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 5% 4rem;
+    flex-wrap: wrap;
+}
+
+.pagination a,
+.pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 0.8rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.pagination a {
+    background: #FFFFFF;
+    color: #3D3D3D;
+    border: 2px solid #E8E8E8;
+}
+
+.pagination a:hover {
+    border-color: #7E8F76;
+    color: #5A684F;
+    background: #EFF3EE;
+}
+
+.pagination span.current {
+    background: #5A684F;
+    color: white;
+    border: 2px solid #5A684F;
+}
+
+.pagination span.dots {
+    background: transparent;
+    border: none;
+    color: #A3A3A3;
+}
+
+.pagination-info {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #A3A3A3;
+    margin-top: -2.5rem;
+    padding-bottom: 3rem;
+}
+
+/* ===================================================
    RESPONSIVE
-════════════════════════════════════ */
-@media (max-width: 900px) {
-  .services-detailed { grid-template-columns: repeat(2, 1fr); }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
+   =================================================== */
+@media (max-width: 768px) {
+    .services-detailed {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .servicios-filtros {
+        gap: 0.4rem;
+        padding: 1.2rem 5%;
+    }
+
+    .filtro-btn {
+        font-size: 0.82rem;
+        padding: 0.45rem 0.9rem;
+    }
+
+    .service-card {
+        padding: 1.4rem 1.2rem;
+    }
 }
 
-@media (max-width: 640px) {
-  .main-header .container { height: auto; flex-direction: column; padding: 12px 20px; gap: 10px; }
-  .main-nav ul { justify-content: center; gap: 2px; }
-  .main-nav ul li a { font-size: .78rem; padding: 5px 8px; }
-  .page-header h1 { font-size: 1.8rem !important; }
-  .services-detailed { grid-template-columns: 1fr; padding: 28px 16px 50px; }
-  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+@media (max-width: 480px) {
+    .page-header {
+        padding: 3rem 5% 2.5rem;
+    }
+
+    .service-card h3 {
+        font-size: 1.05rem;
+    }
+
+    .pagination a,
+    .pagination span {
+        min-width: 36px;
+        height: 36px;
+        font-size: 0.88rem;
+    }
 }

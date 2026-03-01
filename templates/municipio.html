@@ -22,7 +22,6 @@
                      class="header-logo">
             </a>
         </div>
-
         <nav class="main-nav">
             <ul>
                 <li><a href="/">Inicio</a></li>
@@ -47,21 +46,86 @@
 
 <main>
     <section class="page-header">
-        <h1>El Municipio</h1>
-        <p>Conozca más sobre nuestro municipio, su historia y autoridades</p>
+        <h1>Junta Municipal Río Verde Arriba</h1>
+        <p>Historia, demografía, cultura y turismo de nuestro municipio</p>
     </section>
 
+    <nav class="page-nav">
+        <ul>
+            <li><a href="#historia">Historia</a></li>
+            <li><a href="#demografia">Demografía</a></li>
+            <li><a href="#cultura">Cultura</a></li>
+            <li><a href="#turismo">Turismo</a></li>
+            <li><a href="#autoridades">Autoridades</a></li>
+        </ul>
+    </nav>
+
     <section class="page">
-        <h2>Historia</h2>
-        <p>Villa Cutupú, oficialmente conocido como Río Verde Arriba, es un distrito municipal de la provincia de La Vega, República Dominicana. Fundado hace más de un siglo, este pintoresco municipio ha sido cuna de grandes personalidades y testigo del desarrollo de la región del Cibao. Su nombre proviene del río Cutupú, que atraviesa sus tierras y ha sido fuente de vida y prosperidad para generaciones de cutupenses.</p>
 
-        <h2>Misión</h2>
-        <p>Brindar servicios públicos de calidad, promover el desarrollo sostenible y garantizar el bienestar de todos los ciudadanos, actuando con transparencia, eficiencia y cercanía. Nuestra misión es trabajar incansablemente para mejorar la calidad de vida de cada familia cutupense.</p>
+        <!-- HISTORIA -->
+        <h2 id="historia">Historia</h2>
+        <div class="seccion-imagen">
+            <img src="{{ url_for('static', filename='img/historia.jpg') }}" 
+                 alt="Historia de Villa Cutupú">
+        </div>
+        <p>Sobre el origen del nombre de Cutupú, que es la cabecera del Distrito Municipal, existen diferentes versiones entre ellas tenemos:</p>
+        <ul>
+            <li>Se dice que Cutupú se llamaba un señor de nacionalidad haitiana que vivía en el paraje llamado hoy como El Colí.</li>
+            <li>El Prof. Juan Bosch (1909-2001, político y escritor dominicano), sostenía que el nombre de Cutupú se originó por el Cutupú de las tamboras que se escuchaban en la zona. Las personas al llegar de trabajo, solían reunirse en alguna casa para compartir; y para saber en casa de quien se iban a reunir, estos se orientaban por el sonido de la tambora y la gente decía: "Oye, por allá se escucha el Cutupú de las tamboras". Siendo esta versión la más aceptada.</li>
+            <li>Existe una tercera versión de que el nombre se debe al trotar de los caballos, debido a que como en casi todos los lugares el principal medio de transporte era el caballo, en Cutupú también y al ser el terreno en ciertos lugares hueco, la gente decía al oír el sonido: "Por allá se oye el Cutupú de los caballos".</li>
+        </ul>
+        <p>Esta era una tierra habitada en tiempo de la colonización por aborígenes, los cuales le llamaban a la Zona, Mellác. Esta raza indígena estuvo diseminada por toda la zona que hoy pertenece al Distrito Municipal, el cual era parte del Cacicazgo de Guariones. Después de la exterminación de esta raza, Cutupú empezó a ser poblada por algunos dominicanos, y poco más tarde por un grupo de haitianos que decidieron residir en la zona, ya que era una gran fuente de trabajo para ellos, por la gran cantidad de tabaco que se producía, además cacao, yuca y batata, entre otros productos agrícolas de la época.</p>
 
-        <h2>Visión</h2>
-        <p>Ser un municipio modelo en gestión pública, reconocido por su innovación, participación ciudadana y desarrollo integral, mejorando continuamente la calidad de vida de sus habitantes. Aspiramos a ser un referente en la provincia de La Vega y en toda la región.</p>
+        <!-- DEMOGRAFÍA -->
+        <h2 id="demografia">Demografía</h2>
+        <div class="seccion-imagen">
+            <img src="{{ url_for('static', filename='img/demografia.jpg') }}" 
+                 alt="Geografía y paisaje de Río Verde Arriba">
+        </div>
+        <p>El Distrito Municipal de Río Verde Arriba se encuentra ubicado en la provincia de La Vega, situada en el centro del valle del Cibao de la República Dominicana. Fue fundado en tiempo de la colonia, siendo una de las comunidades más antiguas del municipio de La Vega.</p>
 
-        <h2>Autoridades</h2>
+        <h3>Geografía</h3>
+        <p>El Distrito Municipal de Río Verde Arriba cuenta con la siguiente descripción geográfica:</p>
+        <ul>
+            <li><strong>Al norte:</strong> Por la carretera que divide la provincia de La Vega y Espaillat.</li>
+            <li><strong>Al sur:</strong> La sección de Burende (La Cañada, Medranche y Loma de Santo Cerro).</li>
+            <li><strong>Al este:</strong> Por los ríos Guanabito y Licey.</li>
+            <li><strong>Al oeste:</strong> Por la carretera Duarte vieja.</li>
+        </ul>
+        <p>El Distrito de Río Verde Arriba está enclavado en el centro del Valle de La Vega Real, con sus fértiles tierras, vegetación abundante y una gran diversidad animal. En el mismo se registra un clima tropical, con una temperatura aproximada anual de 24°C a 25°C. Cuenta con una extensión de doscientos trece mil trescientos sesenta y siete (213,367) tareas de tierras, equivalente a 133.35 km².</p>
+
+        <h3>Economía</h3>
+        <p>La economía de Cutupú ha sido el resultado del esfuerzo constante de grandes hombres y mujeres que han habitado dicho lugar. Podemos decir que la misma se originó desde que empezaron a residir las primeras personas en la zona, tal es el caso del señor Félix Martínez, quien fuera fundador del primer colmado que hubo en Cutupú.</p>
+        <p>A partir de dicha época fueron surgiendo diversos negocios, los cuales fueron pasando de generación en generación y de un negociante a otro. En la actualidad, en Cutupú, que es la cabecera del Distrito Municipal, la economía aún se basa en los negocios, contando con cuatro ferreterías, tres supermercados, dos agroquímicas, más de veinte colmados, sastrería, mueblería, centro de Internet, papelerías, aulas virtuales y discotecas, entre otras.</p>
+        <p>Ya en las secciones del distrito, la principal economía es la agricultura (cultivo de plátano, yuca, batata, tabaco, habichuela, maíz, entre otros), además de la ganadería, colmados, bancas de lotería, etc.</p>
+
+        <!-- CULTURA -->
+        <h2 id="cultura">Cultura</h2>
+        <div class="seccion-imagen">
+            <img src="{{ url_for('static', filename='img/cultura.jpg') }}" 
+                 alt="Cultura y tradiciones de Villa Cutupú">
+        </div>
+        <h3>La Religión</h3>
+        <p>Esta comunidad ha sido eminentemente católica desde su origen hasta nuestro tiempo. Hay una Parroquia la cual está asistida por tres padres que brindan los servicios religiosos para mantener la fe de las personas que viven en la comunidad.</p>
+
+        <h3>Fiestas Patronales</h3>
+        <p>Estas son organizadas generalmente por los grupos, la iglesia y el club. Las mismas son en honor al Patrón (San Lorenzo) y son celebradas desde el 1 al 10 del mes de agosto.</p>
+
+        <!-- TURISMO -->
+        <h2 id="turismo">Turismo</h2>
+        <div class="seccion-imagen">
+            <img src="{{ url_for('static', filename='img/turismo.jpg') }}" 
+                 alt="Las Ruinas de La Vega Vieja - Turismo">
+        </div>
+        <p>Nuestro atractivo turístico consiste en La Ruina de La Vega Vieja, la cual fue el lugar escogido por Cristóbal Colón para construir uno de los primeros asentamientos para afianzar la presencia de los españoles en la Isla Española.</p>
+        <p>El Almirante se interesó en el lugar tras comprobar que en estos predios, en el río Verde, encontraron oro. Además, en el lugar abundaba la madera preciosa y había muchos indios jóvenes.</p>
+
+        <h3>Fortaleza de la Concepción</h3>
+        <p>Alrededor de esta fortaleza se levantó entonces una villa llamada también La Concepción y que más tarde se conoció como La Vega. En el lugar se levantó también una iglesia y unas 48 casas de cantería, sobre la base de piedras, ladrillos y argamasa. Además se construyeron alrededor de 300 casas menores, de madera y cana.</p>
+        <p>En La Vega se instaló el primer trapiche, la primera casa de alfarería, una de las primeras catedrales, la primera casa de fundición de metal y la primera casa de acuñar monedas en toda América. La ciudad alcanzó su clímax de prosperidad en 1516. Entre los años 1521 y 1525 se registró una mortandad que acabó con gran parte de los indios. A partir de 1543 se inició una decadencia progresiva de la ciudad.</p>
+
+        <!-- AUTORIDADES -->
+        <h2 id="autoridades">Autoridades</h2>
         <ul class="services">
             <li><strong>Director Municipal (Alcalde)</strong>Robert Donald Tolentino Grullón</li>
             <li><strong>Vicealcaldesa</strong>Kelly Bueno</li>
@@ -70,6 +134,7 @@
             <li><strong>Encargado de Obras Públicas</strong>Pedro Sánchez</li>
             <li><strong>Encargada de Servicios Sociales</strong>María Rodríguez</li>
         </ul>
+
     </section>
 </main>
 

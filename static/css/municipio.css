@@ -4,12 +4,22 @@
    ============================================================ */
 
 /* ===================================================
+   NEUTRALIZAR padding global de section (main.css)
+   =================================================== */
+section.page-header,
+section.page {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* ===================================================
    PAGE HEADER
    =================================================== */
 .page-header {
     background: linear-gradient(145deg, #EFF3EE 0%, #FFFFFF 100%);
-    border-bottom: 1px solid #E8E8E8;
-    padding: 4rem 5%;
+    border-bottom: none;
+    margin-bottom: 0;
+    padding: 4rem 5% 3rem;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -41,27 +51,108 @@
 }
 
 /* ===================================================
+   NAVEGACIÓN INTERNA
+   =================================================== */
+.page-nav {
+    background: #FFFFFF;
+    border-top: 1px solid #E8E8E8;
+    border-bottom: 2px solid #E8E8E8;
+    padding: 0 5%;
+    position: sticky;
+    top: 90px; /* sobreescrito dinámicamente por municipio.js */
+    z-index: 50;
+    margin: 0;
+    transition: top 0.3s ease;
+}
+
+.page-nav ul {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.page-nav ul::-webkit-scrollbar {
+    display: none;
+}
+
+.page-nav a {
+    display: block;
+    padding: 1rem 1.2rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #6B6B6B;
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.page-nav a:hover,
+.page-nav a.active {
+    color: #5A684F;
+    border-bottom-color: #7E8F76;
+}
+
+/* ===================================================
    SECCIÓN PRINCIPAL
    =================================================== */
 .page {
     max-width: 900px;
-    margin: 5rem auto;
+    margin: 3rem auto 5rem;
     padding: 0 5%;
 }
 
 /* ===================================================
-   TÍTULOS DE SECCIÓN
+   IMÁGENES DE SECCIÓN
+   =================================================== */
+.seccion-imagen {
+    width: 100%;
+    height: 280px;
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 1.5rem 0 2rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.seccion-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.seccion-imagen:hover img {
+    transform: scale(1.04);
+}
+
+@media (max-width: 768px) {
+    .seccion-imagen { height: 200px; border-radius: 10px; }
+}
+
+@media (max-width: 480px) {
+    .seccion-imagen { height: 160px; }
+}
+
+/* ===================================================
+   H2 — TÍTULOS DE BLOQUE
    =================================================== */
 .page h2 {
-    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+    font-size: clamp(1.5rem, 2.5vw, 1.9rem);
     font-weight: 800;
     color: #1C1C1C;
     letter-spacing: -0.02em;
-    margin-top: 3rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.6rem;
+    margin-top: 4rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.7rem;
     border-bottom: 3px solid #EFF3EE;
     position: relative;
+    scroll-margin-top: 160px;
 }
 
 .page h2::after {
@@ -80,13 +171,68 @@
 }
 
 /* ===================================================
+   H3 — SUBTÍTULOS
+   =================================================== */
+.page h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #3D3D3D;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    padding-left: 0.9rem;
+    border-left: 3px solid #7E8F76;
+}
+
+/* ===================================================
    PÁRRAFOS
    =================================================== */
 .page p {
     font-size: 1.05rem;
     color: #3D3D3D;
     line-height: 1.9;
-    margin-bottom: 1rem;
+    margin-bottom: 1.1rem;
+}
+
+.page p strong {
+    color: #5A684F;
+    font-weight: 700;
+}
+
+/* ===================================================
+   LISTAS GENERALES
+   =================================================== */
+.page ul:not(.services) {
+    padding-left: 0;
+    margin: 0 0 1.5rem;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.page ul:not(.services) li {
+    padding: 0.75rem 1rem 0.75rem 2.8rem;
+    background: #FAFAFA;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: #3D3D3D;
+    line-height: 1.7;
+    position: relative;
+    border: 1px solid #EBEBEB;
+}
+
+.page ul:not(.services) li::before {
+    content: '▸';
+    position: absolute;
+    left: 1rem;
+    color: #7E8F76;
+    font-size: 0.85rem;
+    top: 0.8rem;
+}
+
+.page ul:not(.services) li strong {
+    color: #5A684F;
+    font-weight: 700;
 }
 
 /* ===================================================
@@ -97,7 +243,7 @@
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: 1rem;
 }
 
@@ -110,6 +256,9 @@
     line-height: 1.6;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     border-left: 4px solid #7E8F76;
+    border-top: 1px solid #E8E8E8;
+    border-right: 1px solid #E8E8E8;
+    border-bottom: 1px solid #E8E8E8;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -120,11 +269,11 @@
 
 .services li strong {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
     color: #5A684F;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.09em;
     margin-bottom: 0.3rem;
 }
 
@@ -133,7 +282,11 @@
    =================================================== */
 @media (max-width: 768px) {
     .page {
-        margin: 3rem auto;
+        margin: 2rem auto 4rem;
+    }
+
+    .page-nav {
+        top: 80px;
     }
 
     .services {
@@ -142,12 +295,18 @@
 
     .page h2 {
         font-size: 1.4rem;
+        margin-top: 3rem;
+        scroll-margin-top: 140px;
+    }
+
+    .page h3 {
+        font-size: 1.05rem;
     }
 }
 
 @media (max-width: 480px) {
     .page-header {
-        padding: 3rem 5%;
+        padding: 3rem 5% 2.5rem;
     }
 
     .page h2 {
@@ -156,5 +315,10 @@
 
     .services li {
         padding: 1rem 1.2rem;
+    }
+
+    .page ul:not(.services) li {
+        padding: 0.7rem 1rem 0.7rem 2.5rem;
+        font-size: 0.95rem;
     }
 }

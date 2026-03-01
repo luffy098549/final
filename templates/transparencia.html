@@ -5,58 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transparencia - Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        .page {
-            max-width: 1280px;
-            margin: 60px auto;
-            padding: 0 20px;
-        }
-        .transparencia-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-        .service-card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            border: 1px solid #e2e8f0;
-        }
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        }
-        .service-card h3 {
-            color: #0a2b5c;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-        .service-card p {
-            color: #1f2933;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #0a2b5c;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-        }
-        .btn:hover {
-            background-color: #1e3a6f;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -64,18 +17,17 @@
     <div class="container">
         <div class="logo">
             <a href="/">
-             <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
+                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}"
                      alt="Logo Junta Distrital Villa Cutupú"
                      class="header-logo">
             </a>
         </div>
-
         <nav class="main-nav">
             <ul>
                 <li><a href="/">Inicio</a></li>
                 <li><a href="/municipio">Municipio</a></li>
                 <li><a href="/servicios">Servicios</a></li>
-                <li><a href="/transparencia">Transparencia</a></li>
+                <li><a href="/transparencia" class="active">Transparencia</a></li>
                 <li><a href="/noticias">Noticias</a></li>
                 <li><a href="/contacto">Contacto</a></li>
                 {% if logged %}
@@ -93,73 +45,159 @@
 </header>
 
 <main>
-    <section class="page-header" style="background: linear-gradient(160deg, #0a2b5c 0%, #1e3a6f 100%); color: white; padding: 60px 20px; text-align: center;">
-        <h1 style="color: white; font-size: 2.5rem;">Portal de Transparencia</h1>
-        <p style="color: rgba(255,255,255,0.9);">Acceso a documentos públicos, presupuestos y rendición de cuentas</p>
+    <section class="page-header">
+        <h1>Portal de Transparencia</h1>
+        <p>Acceso libre a la información pública · Ley 200-04</p>
     </section>
 
     <section class="page">
-        <div class="transparencia-grid">
-            <div class="service-card">
-                <h3>Presupuesto 2026</h3>
-                <p>Documento completo del presupuesto de egresos e ingresos para el ejercicio fiscal 2026.</p>
-                <a href="/transparencia/presupuesto-2026.pdf" class="btn">Descargar PDF</a>
+
+        <!-- Bloque bienvenida -->
+        <div class="welcome-block">
+            <h2>Bienvenidos al Portal de Transparencia<br>Junta Municipal Río Verde Arriba</h2>
+            <p>En este portal interactivo hacemos disponible todo lo requerido en la <strong>Ley General de Libre Acceso a la Información Pública (Ley 200-04)</strong> y el <strong>Decreto No. 130-05</strong> que crea el reglamento de la ley.</p>
+
+            <div class="legal-quote">
+                <p><span class="ley-ref">Artículo 5.-</span> «Se dispone la informatización y la incorporación al sistema de comunicación por Internet, o a cualquier otro sistema similar que en el futuro se establezca, de todos los organismos públicos centralizados y descentralizados del Estado, incluyendo el Distrito Nacional y los Municipios, con la finalidad de garantizar a través de éste un acceso directo del público a la información del Estado.»</p>
+                <p>Todos los poderes y organismos del Estado deberán instrumentar la publicación de sus respectivas «Páginas Web» a los siguientes fines:</p>
+                <ul>
+                    <li><strong>Difusión de Información:</strong> Estructura, integrantes, normativas de funcionamiento, proyectos, informes de gestión, base de datos.</li>
+                    <li><strong>Centro de Intercambio y Atención al Cliente o Usuario:</strong> Consultas, quejas y sugerencias.</li>
+                    <li><strong>Trámites o Transacciones Bilaterales:</strong> «La información a que hace referencia el párrafo anterior será de libre acceso al público sin necesidad de petición previa».</li>
+                </ul>
             </div>
 
-            <div class="service-card">
-                <h3>Compras y contrataciones</h3>
-                <p>Información sobre licitaciones, contratos y proveedores del municipio.</p>
-                <a href="/transparencia/compras" class="btn">Consultar</a>
-            </div>
-
-            <div class="service-card">
-                <h3>Nómina municipal</h3>
-                <p>Remuneración mensual de funcionarios y empleados del ayuntamiento.</p>
-                <a href="/transparencia/nomina" class="btn">Consultar</a>
-            </div>
-
-            <div class="service-card">
-                <h3>Informes financieros</h3>
-                <p>Estados financieros trimestrales y anuales del municipio.</p>
-                <a href="/transparencia/informes" class="btn">Consultar</a>
-            </div>
-
-            <div class="service-card">
-                <h3>Obligaciones de transparencia</h3>
-                <p>Cumplimiento de las obligaciones establecidas en la ley de transparencia.</p>
-                <a href="/transparencia/obligaciones" class="btn">Consultar</a>
-            </div>
-
-            <div class="service-card">
-                <h3>Acta de sesiones</h3>
-                <p>Actas de las sesiones del concejo municipal y acuerdos tomados.</p>
-                <a href="/transparencia/actas" class="btn">Consultar</a>
-            </div>
+            <p class="nota-final">Nuestro Portal cumple con las especificaciones contempladas en la Ley 200-04, la cual establece la actualización permanente de las informaciones ofrecidas en el mismo.</p>
         </div>
+
+        <!-- Badges de cumplimiento -->
+        <div class="compliance-badge">
+            <span class="badge-item"><span class="badge-icon">⚖️</span> Ley 200-04</span>
+            <span class="badge-item"><span class="badge-icon">📄</span> Decreto 130-05</span>
+            <span class="badge-item"><span class="badge-icon">🔄</span> Actualización permanente</span>
+        </div>
+
+        <h3 class="section-subtitle">
+            Categorías de información disponible
+            <span class="tag">Sin solicitud previa</span>
+        </h3>
+
+        <!-- Grid de cards -->
+        <div class="transparencia-grid">
+
+            <div class="service-card">
+                <span class="card-icono">🏛️</span>
+                <h3>Estructura orgánica</h3>
+                <p>Organigrama, funciones de cada área, base legal y responsables. Información actualizada de la Junta Municipal.</p>
+                <a href="/transparencia/estructura" class="btn-transparencia">Ver estructura</a>
+            </div>
+
+            <div class="service-card">
+                <span class="card-icono">👥</span>
+                <h3>Integrantes y autoridades</h3>
+                <p>Nómina de funcionarios, regidores, directores, y sus declaraciones juradas (si aplica).</p>
+                <a href="/transparencia/integrantes" class="btn-transparencia">Conocer equipo</a>
+            </div>
+
+            <div class="service-card">
+                <span class="card-icono">⚖️</span>
+                <h3>Normativas de funcionamiento</h3>
+                <p>Reglamentos internos, ordenanzas municipales, resoluciones y bandos.</p>
+                <a href="/transparencia/normativas" class="btn-transparencia">Consultar</a>
+            </div>
+
+            <div class="service-card">
+                <span class="card-icono">🏗️</span>
+                <h3>Proyectos y obras</h3>
+                <p>Planes, proyectos en ejecución, licitaciones, contratos y avances de obra.</p>
+                <a href="/transparencia/proyectos" class="btn-transparencia">Ver proyectos</a>
+            </div>
+
+            <div class="service-card">
+                <span class="card-icono">📊</span>
+                <h3>Informes de gestión</h3>
+                <p>Rendición de cuentas, informes trimestrales y anuales, ejecución presupuestaria.</p>
+                <a href="/transparencia/informes" class="btn-transparencia">Acceder</a>
+            </div>
+
+            <div class="service-card">
+                <span class="card-icono">🗄️</span>
+                <h3>Base de datos municipal</h3>
+                <p>Estadísticas, censos, indicadores socioeconómicos y conjuntos de datos abiertos.</p>
+                <a href="/transparencia/datos" class="btn-transparencia">Explorar datos</a>
+            </div>
+
+            <div class="service-card">
+                <span class="card-icono">💬</span>
+                <h3>Atención al usuario (SAC)</h3>
+                <p>Realice consultas, quejas o sugerencias sobre la gestión municipal. Sistema de seguimiento.</p>
+                <a href="/transparencia/atencion" class="btn-transparencia">Ingresar</a>
+            </div>
+
+            <div class="service-card">
+                <span class="card-icono">🤝</span>
+                <h3>Trámites y servicios</h3>
+                <p>Solicitudes de certificados, permisos, constancias. Ventanilla única virtual.</p>
+                <a href="/servicios" class="btn-transparencia">Ir a trámites</a>
+            </div>
+
+            <div class="service-card">
+                <span class="card-icono">📋</span>
+                <h3>Actas y acuerdos</h3>
+                <p>Actas de sesiones del concejo, acuerdos municipales y resoluciones administrativas.</p>
+                <a href="/transparencia/actas" class="btn-transparencia">Consultar</a>
+            </div>
+
+            <div class="service-card">
+                <span class="card-icono">🛒</span>
+                <h3>Compras y contrataciones</h3>
+                <p>Licitaciones, órdenes de compra, proveedores y contratos vigentes.</p>
+                <a href="/transparencia/compras" class="btn-transparencia">Ver detalles</a>
+            </div>
+
+        </div>
+
+        <p class="nota-actualizacion">
+            🕐 Esta sección se actualiza permanentemente conforme al Artículo 5 de la Ley 200-04.
+            Para solicitar información específica, puede usar el formulario de
+            <a href="/transparencia/atencion">Atención al Usuario</a>.
+        </p>
+
     </section>
 </main>
 
-<footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+<footer>
     <div class="container">
-        <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+        <div class="footer-grid">
             <div class="footer-info">
-                <h3 style="color: white;">Junta de Distrito Municipal</h3>
-                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
-                <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
             </div>
-            <div class="footer-social">
-                <h3 style="color: white;">Síguenos</h3>
-                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
-                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
             </div>
-            <div class="footer-horario">
-                <h3 style="color: white;">Horario de Oficina</h3>
-                <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
-                <p>Sábados<br>9:00 AM - 12:00 PM</p>
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
             </div>
         </div>
-        <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+        <div class="footer-bottom">
             <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
