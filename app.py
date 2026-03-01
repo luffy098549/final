@@ -1,9 +1,18 @@
-from flask import Flask, render_template, session, request, redirect, url_for, flash
+from flask import Flask, render_template, session, request, redirect, url_for, flash, send_from_directory
 from auth import auth
 import os
 
 app = Flask(__name__)
 app.secret_key = "clave_secreta_muy_segura_cambiar_en_produccion_123"
+
+# 🔴 AÑADE ESTAS LÍNEAS - CONFIGURACIÓN EXPLÍCITA DE CARPETAS ESTÁTICAS
+app.static_folder = 'static'
+app.static_url_path = '/static'
+
+# Opcional: Verificar que la carpeta existe
+print(f"📁 Ruta absoluta de static: {os.path.abspath('static')}")
+print(f"📁 Contenido de static: {os.listdir('static') if os.path.exists('static') else 'No existe'}")
+print(f"📁 Contenido de static/img: {os.listdir('static/img') if os.path.exists('static/img') else 'No existe'}")
 
 # Registrar el blueprint de autenticación
 app.register_blueprint(auth)
