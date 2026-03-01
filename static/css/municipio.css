@@ -1,345 +1,160 @@
-/* =============================================
-   JUNTA DISTRITAL VILLA CUTUPÚ — municipio.css
-   Tema: Institucional / Gubernamental
-   ============================================= */
+/* ============================================================
+   municipio.css — Junta Distrital de Villa Cutupú
+   Adaptado desde main.css
+   ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap');
-
-/* ── Variables ── */
-:root {
-  --azul-oscuro:   #0a2b5c;
-  --azul-medio:    #1e3a6f;
-  --azul-claro:    #2a56a3;
-  --dorado:        #c8973a;
-  --dorado-claro:  #e8b45a;
-  --blanco:        #ffffff;
-  --gris-fondo:    #f4f6f9;
-  --gris-borde:    #dde3ed;
-  --texto:         #1a2233;
-  --texto-suave:   #5a6478;
-  --sombra-sm:     0 2px 8px rgba(10,43,92,.08);
-  --sombra-md:     0 6px 24px rgba(10,43,92,.13);
-  --sombra-lg:     0 16px 48px rgba(10,43,92,.18);
-  --radio:         6px;
-  --transicion:    .25s ease;
-}
-
-/* ── Reset & base ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 16px;
-  line-height: 1.75;
-  color: var(--texto);
-  background: var(--gris-fondo);
-  -webkit-font-smoothing: antialiased;
-}
-
-h1, h2, h3, h4 {
-  font-family: 'Playfair Display', serif;
-  line-height: 1.25;
-  color: var(--azul-oscuro);
-}
-
-a { text-decoration: none; color: inherit; }
-ul { list-style: none; }
-img { max-width: 100%; display: block; }
-
-.container {
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-/* ════════════════════════════════════
-   HEADER
-════════════════════════════════════ */
-.main-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--blanco);
-  border-bottom: 3px solid var(--dorado);
-  box-shadow: var(--sombra-sm);
-}
-
-.main-header .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 72px;
-}
-
-.logo a { display: flex; align-items: center; gap: 12px; }
-.header-logo { height: 52px; width: auto; }
-
-/* Nav */
-.main-nav ul {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.main-nav ul li a {
-  font-size: .875rem;
-  font-weight: 500;
-  letter-spacing: .02em;
-  text-transform: uppercase;
-  padding: 6px 12px;
-  border-radius: var(--radio);
-  color: var(--azul-oscuro);
-  transition: color var(--transicion), background var(--transicion);
-}
-
-.main-nav ul li a:hover {
-  color: var(--dorado);
-  background: rgba(10,43,92,.05);
-}
-
-/* Botones header */
-.btn-login {
-  background: transparent !important;
-  border: 2px solid var(--azul-claro) !important;
-  color: var(--azul-claro) !important;
-  border-radius: 30px !important;
-  padding: 5px 16px !important;
-  font-weight: 600 !important;
-  transition: all var(--transicion) !important;
-}
-.btn-login:hover {
-  background: var(--azul-claro) !important;
-  color: var(--blanco) !important;
-}
-
-.btn-registro {
-  background: var(--azul-oscuro) !important;
-  color: var(--blanco) !important;
-  border-radius: 30px !important;
-  padding: 5px 18px !important;
-  font-weight: 600 !important;
-  transition: all var(--transicion) !important;
-  border: 2px solid var(--azul-oscuro) !important;
-}
-.btn-registro:hover {
-  background: var(--dorado) !important;
-  border-color: var(--dorado) !important;
-}
-
-.btn-logout {
-  background: #c0392b !important;
-  color: var(--blanco) !important;
-  border-radius: 30px !important;
-  padding: 5px 14px !important;
-  font-size: .8rem !important;
-  font-weight: 600 !important;
-}
-
-/* ════════════════════════════════════
-   PAGE HEADER (banda azul de título)
-════════════════════════════════════ */
+/* ===================================================
+   PAGE HEADER
+   =================================================== */
 .page-header {
-  position: relative;
-  overflow: hidden;
+    background: linear-gradient(145deg, #EFF3EE 0%, #FFFFFF 100%);
+    border-bottom: 1px solid #E8E8E8;
+    padding: 4rem 5%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Detalle decorativo */
 .page-header::before {
-  content: '';
-  position: absolute;
-  left: -80px; top: -80px;
-  width: 320px; height: 320px;
-  border-radius: 50%;
-  background: rgba(200,151,58,.12);
-  pointer-events: none;
-}
-.page-header::after {
-  content: '';
-  position: absolute;
-  right: -60px; bottom: -60px;
-  width: 240px; height: 240px;
-  border-radius: 50%;
-  background: rgba(255,255,255,.06);
-  pointer-events: none;
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(to bottom, #7E8F76, #A9B7A2);
 }
 
 .page-header h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.6rem;
-  color: var(--blanco) !important;
-  letter-spacing: -.01em;
-  margin-bottom: 10px;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 800;
+    color: #1C1C1C;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
 }
 
 .page-header p {
-  font-size: 1.05rem;
-  color: rgba(255,255,255,.85) !important;
+    font-size: 1rem;
+    color: #6B6B6B;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-/* ════════════════════════════════════
+/* ===================================================
    SECCIÓN PRINCIPAL
-════════════════════════════════════ */
+   =================================================== */
 .page {
-  max-width: 860px;
-  margin: 60px auto;
-  padding: 0 24px 60px;
+    max-width: 900px;
+    margin: 5rem auto;
+    padding: 0 5%;
 }
 
+/* ===================================================
+   TÍTULOS DE SECCIÓN
+   =================================================== */
 .page h2 {
-  font-size: 1.65rem;
-  color: var(--azul-oscuro);
-  margin: 48px 0 14px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--dorado);
-  display: inline-block;
+    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+    font-weight: 800;
+    color: #1C1C1C;
+    letter-spacing: -0.02em;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 3px solid #EFF3EE;
+    position: relative;
 }
 
-.page h2:first-child { margin-top: 0; }
+.page h2::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #5A684F, #A9B7A2);
+    border-radius: 999px;
+}
 
+.page h2:first-child {
+    margin-top: 0;
+}
+
+/* ===================================================
+   PÁRRAFOS
+   =================================================== */
 .page p {
-  color: var(--texto-suave);
-  font-size: 1.05rem;
-  margin-bottom: 10px;
+    font-size: 1.05rem;
+    color: #3D3D3D;
+    line-height: 1.9;
+    margin-bottom: 1rem;
 }
 
-/* Lista de autoridades */
+/* ===================================================
+   LISTA DE AUTORIDADES
+   =================================================== */
 .services {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 1rem;
 }
 
 .services li {
-  background: var(--blanco);
-  border: 1px solid var(--gris-borde);
-  border-left: 4px solid var(--azul-claro);
-  border-radius: var(--radio);
-  padding: 16px 18px;
-  box-shadow: var(--sombra-sm);
-  font-size: .95rem;
-  color: var(--texto-suave);
-  transition: transform var(--transicion), box-shadow var(--transicion);
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    font-size: 1rem;
+    color: #3D3D3D;
+    line-height: 1.6;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-left: 4px solid #7E8F76;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .services li:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--sombra-md);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
 }
 
 .services li strong {
-  display: block;
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  color: var(--azul-oscuro);
-  margin-bottom: 4px;
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #5A684F;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
 }
 
-/* ════════════════════════════════════
-   FOOTER
-════════════════════════════════════ */
-footer {
-  font-size: .9rem;
-}
-
-footer h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  color: var(--blanco) !important;
-  margin-bottom: 14px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(200,151,58,.45);
-}
-
-footer p, footer a {
-  color: rgba(255,255,255,.8) !important;
-  line-height: 1.9;
-}
-
-footer a:hover { color: var(--dorado-claro) !important; }
-
-.footer-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; }
-
-.copyright {
-  font-size: .82rem;
-  color: rgba(255,255,255,.55) !important;
-}
-
-/* ════════════════════════════════════
-   UTILIDADES GENERALES
-════════════════════════════════════ */
-
-/* Separador decorativo dorado */
-.divider {
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--dorado), var(--dorado-claro));
-  border-radius: 2px;
-  margin: 12px auto 28px;
-}
-
-/* Card genérica */
-.card {
-  background: var(--blanco);
-  border-radius: var(--radio);
-  box-shadow: var(--sombra-sm);
-  padding: 28px;
-  border-top: 4px solid var(--azul-claro);
-  transition: box-shadow var(--transicion), transform var(--transicion);
-}
-.card:hover { box-shadow: var(--sombra-md); transform: translateY(-4px); }
-
-/* Badge institucional */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(10,43,92,.07);
-  color: var(--azul-medio);
-  font-size: .8rem;
-  font-weight: 600;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 20px;
-}
-
-/* Botón primario reutilizable */
-.btn-primary {
-  display: inline-block;
-  background: var(--azul-oscuro);
-  color: var(--blanco);
-  font-weight: 600;
-  font-size: .9rem;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  padding: 11px 26px;
-  border-radius: 30px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: background var(--transicion), border-color var(--transicion), transform .15s;
-}
-.btn-primary:hover {
-  background: var(--dorado);
-  transform: translateY(-2px);
-}
-
-/* ════════════════════════════════════
+/* ===================================================
    RESPONSIVE
-════════════════════════════════════ */
-@media (max-width: 900px) {
-  .footer-grid { grid-template-columns: 1fr 1fr; }
+   =================================================== */
+@media (max-width: 768px) {
+    .page {
+        margin: 3rem auto;
+    }
+
+    .services {
+        grid-template-columns: 1fr;
+    }
+
+    .page h2 {
+        font-size: 1.4rem;
+    }
 }
 
-@media (max-width: 700px) {
-  .main-header .container { height: auto; flex-direction: column; padding: 12px 20px; gap: 10px; }
-  .main-nav ul { justify-content: center; gap: 2px; }
-  .main-nav ul li a { font-size: .78rem; padding: 5px 8px; }
-  .page-header h1 { font-size: 1.8rem !important; }
-  .page { padding: 0 16px 40px; }
-  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-  .services { grid-template-columns: 1fr; }
+@media (max-width: 480px) {
+    .page-header {
+        padding: 3rem 5%;
+    }
+
+    .page h2 {
+        font-size: 1.3rem;
+    }
+
+    .services li {
+        padding: 1rem 1.2rem;
+    }
 }

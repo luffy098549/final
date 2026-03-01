@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Junta Distrital de Villa Cutupú - Ayuntamiento</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
     
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="/static/css/main.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
     <div class="container">
         <div class="logo">
             <a href="/">
-                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
+                <img src="/static/img/Adobe Express - file.png" 
                      alt="Logo Junta Distrital Villa Cutupú"
                      class="header-logo">
             </a>
@@ -40,7 +40,7 @@
 </header>
 
 <main>
-    <!-- HERO SECTION - CON IMAGEN A LA DERECHA -->
+    <!-- HERO SECTION - CON IMAGEN A LA DERECHA (MEJORADO ESPACIADO) -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
@@ -53,14 +53,14 @@
                 </p>
             </div>
             <div class="hero-right">
-                <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-20 at 4.43.11 PM.jpeg') }}" 
+                <img src="/static/img/WhatsApp Image 2026-02-20 at 4.43.11 PM.jpeg" 
                      alt="Vista de Villa Cutupú"
                      loading="lazy">
             </div>
         </div>
     </section>
 
-    <!-- MENSAJE DEL ALCALDE -->
+    <!-- MENSAJE DEL ALCALDE (CON MEJOR ESPACIADO) -->
     <section class="mensaje-section">
         <div class="container">
             <h2 class="section-title">Gestión Municipal</h2>
@@ -75,23 +75,23 @@
         </div>
     </section>
 
-    <!-- ACCIONES PRINCIPALES -->
+    <!-- ACCIONES PRINCIPALES (CON MÁS ESPACIADO) -->
     <section class="acciones-section">
         <div class="container">
             <h2 class="section-title">Acciones Principales</h2>
             <div class="acciones-grid">
                 <div class="accion-card">
-                    <span class="accion-icono"></span>
+                    <span class="accion-icono">🏗️</span>
                     <h3>Asfaltado de Calles</h3>
                     <p>Mejorando la vialidad y conectividad de nuestras comunidades con obras de calidad.</p>
                 </div>
                 <div class="accion-card">
-                    <span class="accion-icono"></span>
+                    <span class="accion-icono">🧹</span>
                     <h3>Limpieza de Espacios</h3>
                     <p>Manteniendo nuestros entornos públicos impecables y saludables para todos.</p>
                 </div>
                 <div class="accion-card">
-                    <span class="accion-icono"></span>
+                    <span class="accion-icono">💡</span>
                     <h3>Alumbrado Público</h3>
                     <p>Modernizando el sistema de iluminación para mayor seguridad en nuestras calles.</p>
                 </div>
@@ -106,7 +106,7 @@
             <div class="autoridades-grid">
                 <div class="autoridad-card">
                     <div class="autoridad-foto">
-                        <img src="{{ url_for('static', filename='img/robert.jpeg') }}"
+                        <img src="/static/img/robert.jpeg"
                              alt="Robert Donald Tolentino Grullón"
                              class="autoridad-img"
                              loading="lazy">
@@ -117,7 +117,7 @@
                 </div>
                 <div class="autoridad-card">
                     <div class="autoridad-foto">
-                        <img src="{{ url_for('static', filename='img/kelly.jpeg') }}"
+                        <img src="/static/img/kelly.jpeg"
                              alt="Kelly Bueno"
                              class="autoridad-img"
                              loading="lazy">
@@ -192,9 +192,9 @@
                     <h3>Nuestro Distrito</h3>
                     <p><strong>Río Verde Arriba (Cutupú)</strong> es un distrito municipal con una rica historia en la provincia de La Vega. Hogar de cientos de familias trabajadoras que día a día contribuyen al desarrollo de nuestra comunidad.</p>
                     <div class="dato-mini-grid">
-                        <span> La Vega, R.D.</span>
-                        <span> Comunidad unida</span>
-                        <span> Gestión 2026</span>
+                        <span>📍 La Vega, R.D.</span>
+                        <span>👥 Comunidad unida</span>
+                        <span>📅 Gestión 2026</span>
                     </div>
                 </div>
             </div>
@@ -207,15 +207,15 @@
             <h2 class="section-title">Cutupú en Imágenes</h2>
             <div class="galeria-grid">
                 <div class="galeria-item">
-                    <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 10.09.13 PM.jpeg') }}" alt="Vista de Cutupú" loading="lazy">
+                    <img src="/static/img/WhatsApp Image 2026-02-16 at 10.09.13 PM.jpeg" alt="Vista de Cutupú" loading="lazy">
                     <div class="galeria-caption">Nuestro Entorno</div>
                 </div>
                 <div class="galeria-item">
-                    <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 10.09.06 PM.jpeg') }}" alt="Parque Central" loading="lazy">
+                    <img src="/static/img/WhatsApp Image 2026-02-16 at 10.09.06 PM.jpeg" alt="Parque Central" loading="lazy">
                     <div class="galeria-caption">Parque Central</div>
                 </div>
                 <div class="galeria-item">
-                    <img src="{{ url_for('static', filename='img/Captura de pantalla 2026-02-19 212623.png') }}" alt="Sede de la Junta" loading="lazy">
+                    <img src="/static/img/Captura de pantalla 2026-02-19 212623.png" alt="Sede de la Junta" loading="lazy">
                     <div class="galeria-caption">Sede de la Junta</div>
                 </div>
             </div>
@@ -232,33 +232,70 @@
     </section>
 </main>
 
-<!-- FOOTER -->
+<!-- FOOTER MEJORADO - MÁS ROBUSTO -->
 <footer>
     <div class="container">
         <div class="footer-grid">
             <div class="footer-info">
-                <h3>Junta de Distrito Municipal</h3>
-                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
-                <p> <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p> <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📍 Calle Principal, Villa Cutupú</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
             </div>
-            <div class="footer-social">
-                <h3>Síguenos</h3>
-                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
-                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+            
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
             </div>
-            <div class="footer-horario">
-                <h3>Horario de Oficina</h3>
-                <p>Lunes a Viernes<br>8:00 AM - 2:00 PM</p>
+            
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕒 Lun-Vie: 8:00 AM - 2:00 PM</p>
             </div>
         </div>
-        <div class="copyright">
+        
+        <div class="footer-bottom">
             <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
 
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<!-- BOTÓN VOLVER ARRIBA (OPCIONAL) -->
+<button class="back-to-top" id="backToTop" aria-label="Volver arriba">↑</button>
+
+<script src="/static/js/main.js"></script>
+
+<script>
+// Script mínimo para el botón volver arriba
+document.addEventListener('DOMContentLoaded', function() {
+    const backToTop = document.getElementById('backToTop');
+    if (backToTop) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+});
+</script>
 
 </body>
 </html>

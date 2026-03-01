@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Municipio - Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/municipio.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
- 
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -26,7 +26,7 @@
         <nav class="main-nav">
             <ul>
                 <li><a href="/">Inicio</a></li>
-                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/municipio" class="active">Municipio</a></li>
                 <li><a href="/servicios">Servicios</a></li>
                 <li><a href="/transparencia">Transparencia</a></li>
                 <li><a href="/noticias">Noticias</a></li>
@@ -46,54 +46,65 @@
 </header>
 
 <main>
-    <section class="page-header" style="background: linear-gradient(160deg, #0a2b5c 0%, #1e3a6f 100%); color: white; padding: 60px 20px; text-align: center;">
-        <h1 style="color: white; font-size: 2.5rem;">El Municipio</h1>
-        <p style="color: rgba(255,255,255,0.9);">Conozca más sobre nuestro municipio, su historia y autoridades</p>
+    <section class="page-header">
+        <h1>El Municipio</h1>
+        <p>Conozca más sobre nuestro municipio, su historia y autoridades</p>
     </section>
 
     <section class="page">
         <h2>Historia</h2>
         <p>Villa Cutupú, oficialmente conocido como Río Verde Arriba, es un distrito municipal de la provincia de La Vega, República Dominicana. Fundado hace más de un siglo, este pintoresco municipio ha sido cuna de grandes personalidades y testigo del desarrollo de la región del Cibao. Su nombre proviene del río Cutupú, que atraviesa sus tierras y ha sido fuente de vida y prosperidad para generaciones de cutupenses.</p>
-        
+
         <h2>Misión</h2>
         <p>Brindar servicios públicos de calidad, promover el desarrollo sostenible y garantizar el bienestar de todos los ciudadanos, actuando con transparencia, eficiencia y cercanía. Nuestra misión es trabajar incansablemente para mejorar la calidad de vida de cada familia cutupense.</p>
-        
+
         <h2>Visión</h2>
         <p>Ser un municipio modelo en gestión pública, reconocido por su innovación, participación ciudadana y desarrollo integral, mejorando continuamente la calidad de vida de sus habitantes. Aspiramos a ser un referente en la provincia de La Vega y en toda la región.</p>
-        
+
         <h2>Autoridades</h2>
         <ul class="services">
-            <li><strong>Director Municipal (Alcalde):</strong> Robert Donald Tolentino Grullón</li>
-            <li><strong>Vicealcaldesa:</strong> Kelly Bueno</li>
-            <li><strong>Secretario Municipal:</strong> Carlos Martínez</li>
-            <li><strong>Tesorero:</strong> Ana Gómez</li>
-            <li><strong>Encargado de Obras Públicas:</strong> Pedro Sánchez</li>
-            <li><strong>Encargada de Servicios Sociales:</strong> María Rodríguez</li>
+            <li><strong>Director Municipal (Alcalde)</strong>Robert Donald Tolentino Grullón</li>
+            <li><strong>Vicealcaldesa</strong>Kelly Bueno</li>
+            <li><strong>Secretario Municipal</strong>Carlos Martínez</li>
+            <li><strong>Tesorero</strong>Ana Gómez</li>
+            <li><strong>Encargado de Obras Públicas</strong>Pedro Sánchez</li>
+            <li><strong>Encargada de Servicios Sociales</strong>María Rodríguez</li>
         </ul>
     </section>
 </main>
 
-<footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+<footer>
     <div class="container">
-        <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+        <div class="footer-grid">
             <div class="footer-info">
-                <h3 style="color: white;">Junta de Distrito Municipal</h3>
-                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
-                <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
             </div>
-            <div class="footer-social">
-                <h3 style="color: white;">Síguenos</h3>
-                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
-                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
             </div>
-            <div class="footer-horario">
-                <h3 style="color: white;">Horario de Oficina</h3>
-                <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
-                <p>Sábados<br>9:00 AM - 12:00 PM</p>
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
             </div>
         </div>
-        <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+        <div class="footer-bottom">
             <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
