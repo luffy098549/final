@@ -40,7 +40,7 @@
 </header>
 
 <main>
-    <!-- HERO SECTION - CON IMAGEN A LA DERECHA (MEJORADO ESPACIADO) -->
+    <!-- HERO SECTION -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
@@ -60,7 +60,7 @@
         </div>
     </section>
 
-    <!-- MENSAJE DEL ALCALDE (CON MEJOR ESPACIADO) -->
+    <!-- MENSAJE DEL ALCALDE -->
     <section class="mensaje-section">
         <div class="container">
             <h2 class="section-title">Gestión Municipal</h2>
@@ -75,23 +75,29 @@
         </div>
     </section>
 
-    <!-- ACCIONES PRINCIPALES (CON MÁS ESPACIADO) -->
+    <!-- ACCIONES PRINCIPALES -->
     <section class="acciones-section">
         <div class="container">
             <h2 class="section-title">Acciones Principales</h2>
             <div class="acciones-grid">
                 <div class="accion-card">
-                    <span class="accion-icono">🏗️</span>
+                    <div class="accion-icono">
+                        <img src="/static/img/asfaltado.jpeg" alt="Asfaltado">
+                    </div>
                     <h3>Asfaltado de Calles</h3>
                     <p>Mejorando la vialidad y conectividad de nuestras comunidades con obras de calidad.</p>
                 </div>
                 <div class="accion-card">
-                    <span class="accion-icono">🧹</span>
+                    <div class="accion-icono">
+                        <img src="/static/img/limpieza.png" alt="Limpieza">
+                    </div>
                     <h3>Limpieza de Espacios</h3>
                     <p>Manteniendo nuestros entornos públicos impecables y saludables para todos.</p>
                 </div>
                 <div class="accion-card">
-                    <span class="accion-icono">💡</span>
+                    <div class="accion-icono">
+                        <img src="/static/img/alumbrado.jpeg" alt="Alumbrado">
+                    </div>
                     <h3>Alumbrado Público</h3>
                     <p>Modernizando el sistema de iluminación para mayor seguridad en nuestras calles.</p>
                 </div>
@@ -232,7 +238,7 @@
     </section>
 </main>
 
-<!-- FOOTER MEJORADO - MÁS ROBUSTO -->
+<!-- FOOTER -->
 <footer>
     <div class="container">
         <div class="footer-grid">
@@ -272,13 +278,11 @@
     </div>
 </footer>
 
-<!-- BOTÓN VOLVER ARRIBA (OPCIONAL) -->
 <button class="back-to-top" id="backToTop" aria-label="Volver arriba">↑</button>
 
 <script src="/static/js/main.js"></script>
 
 <script>
-// Script mínimo para el botón volver arriba
 document.addEventListener('DOMContentLoaded', function() {
     const backToTop = document.getElementById('backToTop');
     if (backToTop) {
