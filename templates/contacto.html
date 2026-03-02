@@ -6,10 +6,6 @@
     <title>Contacto - Junta Distrital Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/contacto.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 </head>
 <body>
 
@@ -17,12 +13,11 @@
     <div class="container">
         <div class="logo">
             <a href="/">
-                    <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
+                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
                      alt="Logo Junta Distrital Villa Cutupú"
                      class="header-logo">
             </a>
         </div>
-
         <nav class="main-nav">
             <ul>
                 <li><a href="/">Inicio</a></li>
@@ -30,9 +25,11 @@
                 <li><a href="/servicios">Servicios</a></li>
                 <li><a href="/transparencia">Transparencia</a></li>
                 <li><a href="/noticias">Noticias</a></li>
-                <li><a href="/contacto">Contacto</a></li>
+                <li><a href="/contacto" class="active">Contacto</a></li>
                 {% if logged %}
                     <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                    <li><a href="/mis-solicitudes">Mis solicitudes</a></li>
+                    <li><a href="/mis-denuncias">Mis denuncias</a></li>
                     <li><a href="/logout" class="btn-logout">Salir</a></li>
                 {% else %}
                     <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
@@ -44,118 +41,177 @@
 </header>
 
 <main>
-    <section class="page-header" style="background: linear-gradient(160deg, #0a2b5c 0%, #1e3a6f 100%); color: white; padding: 60px 20px; text-align: center;">
-        <h1 style="color: white; font-size: 2.5rem;">Contacto</h1>
-        <p style="color: rgba(255,255,255,0.9);">Comuníquese con nosotros para cualquier consulta o solicitud</p>
+
+    <!-- HERO -->
+    <section class="page-header">
+        <div class="page-header-inner">
+            <span class="page-header-eyebrow">Junta Distrital de Villa Cutupú</span>
+            <h1>Contáctenos</h1>
+            <p>Comuníquese con nosotros para cualquier consulta, solicitud o comentario. Estamos para servirle.</p>
+        </div>
     </section>
 
+    <!-- GRID PRINCIPAL -->
     <div class="contacto-container">
-        <section class="contacto-info">
-            <h2 style="color: #0a2b5c; margin-bottom: 30px;">Información de contacto</h2>
-            
+
+        <!-- INFORMACIÓN DE CONTACTO -->
+        <section class="contacto-info" aria-label="Información de contacto">
+            <h2>Información de contacto</h2>
+
             <div class="info-item">
-                <h3>Dirección</h3>
-                <p>Junta Distrital de Villa Cutupú<br>
-                Río Verde Arriba, La Vega<br>
-                República Dominicana</p>
+                <div class="info-icon" aria-hidden="true">📍</div>
+                <div class="info-body">
+                    <h3>Dirección física</h3>
+                    <p>Junta Distrital de Villa Cutupú<br>
+                    Calle Principal, Villa Cutupú<br>
+                    Río Verde Arriba, La Vega<br>
+                    República Dominicana</p>
+                </div>
             </div>
-            
+
             <div class="info-item">
-                <h3>Teléfonos</h3>
-                <p>Conmutador: (809) 691-7111<br>
-                Atención Ciudadana: (809) 691-7112<br>
-                Emergencias: 911</p>
+                <div class="info-icon" aria-hidden="true">📞</div>
+                <div class="info-body">
+                    <h3>Teléfonos</h3>
+                    <p>
+                        Tel.: <a href="tel:+18096917111">(809) 691-7111</a><br>
+                        Fax: <a href="tel:+18096917112">(809) 691-7112</a><br>
+                        Emergencias: <a href="tel:911">911</a>
+                    </p>
+                </div>
             </div>
-            
+
             <div class="info-item">
-                <h3>Correo electrónico</h3>
-                <p>juntamunicipalrioverdearriba@gmail.com<br>
-                atencion@cutupu.gob.do</p>
+                <div class="info-icon" aria-hidden="true">✉️</div>
+                <div class="info-body">
+                    <h3>Correo electrónico</h3>
+                    <p>
+                        Contacto: <a href="mailto:info@tudominio.gob.do">info@tudominio.gob.do</a><br>
+                        General: <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a>
+                    </p>
+                </div>
             </div>
-            
+
             <div class="info-item">
-                <h3>Horario de atención</h3>
-                <p>Lunes a Viernes: 8:00 am - 4:00 pm<br>
-                Sábados: 9:00 am - 12:00 pm<br>
-                Domingos: Cerrado</p>
+                <div class="info-icon" aria-hidden="true">🕒</div>
+                <div class="info-body">
+                    <h3>Horario de atención</h3>
+                    <p>
+                        Lunes a Viernes: 8:00 am – 4:00 pm<br>
+                        Sábados: 9:00 am – 12:00 pm<br>
+                        Domingos: Cerrado
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-social">
+                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" rel="noopener" class="social-pill">
+                    📘 Facebook
+                </a>
+                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" rel="noopener" class="social-pill">
+                    📸 Instagram
+                </a>
             </div>
         </section>
 
-        <section class="contacto-form">
-            <h2 style="color: #0a2b5c; margin-bottom: 30px;">Envíenos un mensaje</h2>
-            
+        <!-- FORMULARIO -->
+        <section class="contacto-form" aria-label="Formulario de contacto">
+            <h2>Envíenos un mensaje</h2>
+
             <form action="{{ url_for('enviar_contacto') }}" method="POST">
                 <div class="form-group">
                     <label for="nombre">Nombre completo *</label>
-                    <input type="text" id="nombre" name="nombre" required>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej: Juan Pérez" required>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Correo electrónico *</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" required>
                 </div>
 
                 <div class="form-group">
                     <label for="telefono">Teléfono</label>
-                    <input type="tel" id="telefono" name="telefono">
+                    <input type="tel" id="telefono" name="telefono" placeholder="(809) 000-0000">
                 </div>
 
                 <div class="form-group">
                     <label for="asunto">Asunto *</label>
-                    <input type="text" id="asunto" name="asunto" required>
+                    <input type="text" id="asunto" name="asunto" placeholder="¿En qué podemos ayudarle?" required>
                 </div>
 
                 <div class="form-group">
                     <label for="mensaje">Mensaje *</label>
-                    <textarea id="mensaje" name="mensaje" rows="6" required></textarea>
+                    <textarea id="mensaje" name="mensaje" rows="6" placeholder="Escriba aquí su consulta o comentario..." required></textarea>
                 </div>
 
-                <button type="submit" class="btn">Enviar mensaje</button>
+                <div class="form-group">
+                    <button type="submit" class="btn">Enviar mensaje</button>
+                </div>
             </form>
         </section>
+
     </div>
 
+    <!-- MAPA -->
     <section class="mapa">
         <h2>Ubicación</h2>
         <div class="mapa-container">
             <iframe 
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3784.123456!2d-70.123456!3d19.123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8acc123456789abc%3A0x123456789abcdef!2sVilla%20Cutup%C3%BA!5e0!3m2!1ses!2sdo!4v1234567890123!5m2!1ses!2sdo" 
+                title="Ubicación Junta Distrital de Villa Cutupú"
                 width="100%" 
                 height="400" 
-                style="border:0;" 
                 allowfullscreen="" 
                 loading="lazy">
             </iframe>
         </div>
     </section>
+
 </main>
 
-<footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+<!-- FOOTER -->
+<footer>
     <div class="container">
-        <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+        <div class="footer-grid">
             <div class="footer-info">
-                <h3 style="color: white;">Junta de Distrito Municipal</h3>
-                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
-                <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📍 Calle Principal, Villa Cutupú</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" rel="noopener" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" rel="noopener" class="social-link">Instagram</a>
+                </div>
             </div>
-            <div class="footer-social">
-                <h3 style="color: white;">Síguenos</h3>
-                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
-                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
             </div>
-            <div class="footer-horario">
-                <h3 style="color: white;">Horario de Oficina</h3>
-                <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
-                <p>Sábados<br>9:00 AM - 12:00 PM</p>
+
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>📠 <a href="tel:+18096917112">(809) 691-7112</a></p>
+                <p>✉️ <a href="mailto:info@tudominio.gob.do">info@tudominio.gob.do</a></p>
+                <p>🕒 Lun–Vie: 8:00 AM – 2:00 PM</p>
             </div>
         </div>
-        <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+
+        <div class="footer-bottom">
             <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
 
-<script src="{{ url_for('static', filename='js/contacto.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/noticias-header-scroll.js') }}"></script>
+
 </body>
 </html>
