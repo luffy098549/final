@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyectos y Obras - Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/proyectos.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/"><img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" class="header-logo"></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia" class="active">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="page-header">
+        <div class="breadcrumb">
+            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Proyectos y Obras</span>
+        </div>
+        <h1>Proyectos y Obras</h1>
+        <p>Obras en ejecución, planificadas y licitaciones en curso — 2025</p>
+    </section>
+
+    <section class="page">
+        <div class="intro-block">
+            <p>Registro actualizado de proyectos conforme al <strong>Artículo 3 de la Ley 200-04</strong>. Se incluyen montos, fuentes de financiamiento, contratistas y porcentaje de avance de cada obra.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><span class="stat-valor">5</span><span class="stat-label">Proyectos en ejecución o finalizados</span></div>
+            <div class="stat-card"><span class="stat-valor">3</span><span class="stat-label">Proyectos planificados 2025–2026</span></div>
+            <div class="stat-card"><span class="stat-valor">2</span><span class="stat-label">Licitaciones en curso</span></div>
+            <div class="stat-card"><span class="stat-valor">RD$ 11M</span><span class="stat-label">Inversión total proyectada</span></div>
+        </div>
+
+        <h2 class="bloque-titulo">Proyectos en ejecución (2025)</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Proyecto</th>
+                        <th>Monto RD$</th>
+                        <th>Fuente</th>
+                        <th>Avance</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Aceras y contenes — Los Multifamiliares</strong><small>Constructora Río Verde SRL</small></td>
+                        <td>2,580,000</td>
+                        <td><span class="badge badge-verde">Presupuesto Municipal</span></td>
+                        <td><div class="progreso-barra"><div class="progreso-fill" style="width:45%"></div></div> 45%</td>
+                        <td><span class="badge badge-azul">En ejecución</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Remozamiento parque central de Villa Cutupú</strong><small>Pendiente de contratación</small></td>
+                        <td>1,250,000</td>
+                        <td><span class="badge badge-gold">FONPER</span></td>
+                        <td><div class="progreso-barra"><div class="progreso-fill" style="width:0%"></div></div> 0%</td>
+                        <td><span class="badge badge-gold">Licitación en curso</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Alumbrado público Villa Progreso — Fase II</strong><small>Electro Sur</small></td>
+                        <td>850,000</td>
+                        <td><span class="badge badge-verde">Presupuesto Municipal</span></td>
+                        <td><div class="progreso-barra"><div class="progreso-fill" style="width:100%"></div></div> 100%</td>
+                        <td><span class="badge badge-verde">Finalizado</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Muro de contención — Cañada El Hoyo</strong><small>Construcciones Jiménez</small></td>
+                        <td>950,000</td>
+                        <td><span class="badge badge-rojo" style="background:#fef2f2;color:#b91c1c;border-color:#fecaca;">Fondo de Emergencia</span></td>
+                        <td><div class="progreso-barra"><div class="progreso-fill" style="width:30%"></div></div> 30%</td>
+                        <td><span class="badge badge-azul">En ejecución</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rehabilitación camino Los Ramones – La Gina</strong><small>Pendiente de contratación</small></td>
+                        <td>1,450,000</td>
+                        <td><span class="badge badge-azul">MOPC</span></td>
+                        <td><div class="progreso-barra"><div class="progreso-fill" style="width:0%"></div></div> 0%</td>
+                        <td><span class="badge badge-gris">Inicia 04/2025</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="bloque-titulo">Proyectos planificados 2025–2026</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Proyecto</th>
+                        <th>Monto estimado RD$</th>
+                        <th>Fecha estimada inicio</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Centro Comunal de Los Multifamiliares</td><td>3,200,000</td><td>Julio 2025</td><td><span class="badge badge-gris">En diseño</span></td></tr>
+                    <tr><td>Asfaltado calles sector Buenos Aires</td><td>4,500,000</td><td>Agosto 2025</td><td><span class="badge badge-gris">Estudio de suelo</span></td></tr>
+                    <tr><td>Ampliación del cementerio municipal</td><td>1,800,000</td><td>Octubre 2025</td><td><span class="badge badge-gris">Anteproyecto</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="bloque-titulo">Licitaciones en curso (Ley 340-06)</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Objeto</th>
+                        <th>Fecha apertura</th>
+                        <th>Presupuesto RD$</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>CCC-LPI-2025-001</strong></td>
+                        <td>Remozamiento del parque central</td>
+                        <td>15/03/2025</td>
+                        <td>1,250,000</td>
+                        <td><span class="badge badge-gold">Recepción de ofertas</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>CCC-CM-2025-002</strong></td>
+                        <td>Suministro de materiales de construcción</td>
+                        <td>20/03/2025</td>
+                        <td>800,000</td>
+                        <td><span class="badge badge-azul">Publicada</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <!-- Columna 1: Información institucional -->
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            
+            <!-- Columna 2: ENLACES RÁPIDOS (corregido) -->
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <!-- Columna 3: Contacto -->
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
+</body>
+</html>

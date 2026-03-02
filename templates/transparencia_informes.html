@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informes de Gestión - Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/informes.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/"><img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" class="header-logo"></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia" class="active">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="page-header">
+        <div class="breadcrumb">
+            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Informes de Gestión</span>
+        </div>
+        <h1>Informes de Gestión</h1>
+        <p>Rendición de cuentas, informes trimestrales y ejecución presupuestaria</p>
+    </section>
+
+    <section class="page">
+        <div class="intro-block">
+            <p>Publicación periódica conforme al <strong>Artículo 3 de la Ley 200-04</strong>. El municipio publica trimestralmente sus informes de gestión y anualmente su memoria de rendición de cuentas ante la ciudadanía.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><span class="stat-valor">RD$ 24.5M</span><span class="stat-label">Presupuesto aprobado 2024</span></div>
+            <div class="stat-card"><span class="stat-valor">91%</span><span class="stat-label">Ejecución presupuestaria 2024</span></div>
+            <div class="stat-card"><span class="stat-valor">96%</span><span class="stat-label">Ejecución presupuestaria 2023</span></div>
+            <div class="stat-card"><span class="stat-valor">4</span><span class="stat-label">Informes trimestrales 2024</span></div>
+        </div>
+
+        <h2 class="bloque-titulo">Informes trimestrales 2024</h2>
+        <div class="docs-lista">
+            <div class="doc-item">
+                <span class="doc-icono">📊</span>
+                <div class="doc-info">
+                    <strong>4to trimestre 2024 (Octubre – Diciembre)</strong>
+                    <span>Publicado: 15/01/2025 · PDF — 2.4 MB</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📊</span>
+                <div class="doc-info">
+                    <strong>3er trimestre 2024 (Julio – Septiembre)</strong>
+                    <span>Publicado: 15/10/2024 · PDF — 2.1 MB</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📊</span>
+                <div class="doc-info">
+                    <strong>2do trimestre 2024 (Abril – Junio)</strong>
+                    <span>Publicado: 15/07/2024 · PDF — 1.9 MB</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📊</span>
+                <div class="doc-info">
+                    <strong>1er trimestre 2024 (Enero – Marzo)</strong>
+                    <span>Publicado: 15/04/2024 · PDF — 1.8 MB</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+        </div>
+
+        <h2 class="bloque-titulo">Memorias anuales de rendición de cuentas</h2>
+        <div class="docs-lista">
+            <div class="doc-item">
+                <span class="doc-icono">📋</span>
+                <div class="doc-info">
+                    <strong>Memoria anual de gestión 2024</strong>
+                    <span>Presentada: 27/02/2025 · PDF — 5.2 MB</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📋</span>
+                <div class="doc-info">
+                    <strong>Memoria anual de gestión 2023</strong>
+                    <span>Presentada: 28/02/2024 · PDF — 4.8 MB</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+        </div>
+
+        <h2 class="bloque-titulo">Ejecución presupuestaria</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Período</th>
+                        <th>Presupuesto aprobado</th>
+                        <th>Ejecutado</th>
+                        <th>Porcentaje</th>
+                        <th>Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>2024</strong></td>
+                        <td>RD$ 24,580,000</td>
+                        <td>RD$ 22,345,000</td>
+                        <td><span class="badge badge-verde">91%</span></td>
+                        <td><a href="#" class="doc-btn">Ver PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2023</strong></td>
+                        <td>RD$ 22,150,000</td>
+                        <td>RD$ 21,280,000</td>
+                        <td><span class="badge badge-verde">96%</span></td>
+                        <td><a href="#" class="doc-btn">Ver PDF</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <!-- Columna 1: Información institucional -->
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            
+            <!-- Columna 2: ENLACES RÁPIDOS (corregido) -->
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <!-- Columna 3: Contacto -->
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
+</body>
+</html>

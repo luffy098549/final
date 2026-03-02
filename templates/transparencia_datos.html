@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de Datos Municipal - Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/datos.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/"><img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" class="header-logo"></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia" class="active">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="page-header">
+        <div class="breadcrumb">
+            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Base de Datos Municipal</span>
+        </div>
+        <h1>Base de Datos Municipal</h1>
+        <p>Estadísticas demográficas, indicadores socioeconómicos y datos abiertos</p>
+    </section>
+
+    <section class="page">
+        <div class="intro-block">
+            <p>Datos publicados conforme al <strong>Artículo 5 de la Ley 200-04</strong>. Fuentes: <strong>Oficina Nacional de Estadística (ONE)</strong> — Censo 2022 e indicadores municipales actualizados por la Junta Distrital.</p>
+        </div>
+
+        <h2 class="bloque-titulo">Datos demográficos — Censo ONE 2022</h2>
+        <div class="stats-grid">
+            <div class="stat-card"><span class="stat-valor">8,547</span><span class="stat-label">Población total del Distrito Municipal</span></div>
+            <div class="stat-card"><span class="stat-valor">4,312</span><span class="stat-label">Población masculina</span></div>
+            <div class="stat-card"><span class="stat-valor">4,235</span><span class="stat-label">Población femenina</span></div>
+            <div class="stat-card"><span class="stat-valor">2,843</span><span class="stat-label">Total de viviendas</span></div>
+            <div class="stat-card"><span class="stat-valor">1,950</span><span class="stat-label">Hogares en zona urbana</span></div>
+            <div class="stat-card"><span class="stat-valor">893</span><span class="stat-label">Hogares en zona rural</span></div>
+        </div>
+
+        <h2 class="bloque-titulo">Indicadores socioeconómicos</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Indicador</th>
+                        <th>Porcentaje / Valor</th>
+                        <th>Año</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Tasa de alfabetización</td><td><span class="badge badge-verde">91.5%</span></td><td>2022</td></tr>
+                    <tr><td>Hogares con acceso a agua potable</td><td><span class="badge badge-azul">78%</span></td><td>2023</td></tr>
+                    <tr><td>Hogares con acceso a energía eléctrica</td><td><span class="badge badge-verde">95%</span></td><td>2023</td></tr>
+                    <tr><td>Hogares con servicio de recogida de basura</td><td><span class="badge badge-gold">72%</span></td><td>2023</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="bloque-titulo">Datos abiertos disponibles para descarga</h2>
+        <div class="docs-lista">
+            <div class="doc-item">
+                <span class="doc-icono">📊</span>
+                <div class="doc-info">
+                    <strong>Nómina de empleados municipales</strong>
+                    <span>CSV / Excel · Actualizado: Enero 2025</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📊</span>
+                <div class="doc-info">
+                    <strong>Proveedores del municipio</strong>
+                    <span>CSV / Excel · Actualizado: Enero 2025</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📊</span>
+                <div class="doc-info">
+                    <strong>Permisos de construcción otorgados 2024</strong>
+                    <span>CSV / Excel · Actualizado: Diciembre 2024</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📊</span>
+                <div class="doc-info">
+                    <strong>Registro de organizaciones comunitarias</strong>
+                    <span>CSV / Excel · Actualizado: 2024</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+        </div>
+
+        <div class="nota-legal">
+            Los datos abiertos se publican bajo licencia de uso libre. Se permite su reutilización citando como fuente: <strong>Junta Distrital de Villa Cutupú / ONE — Censo 2022</strong>. Para solicitar datos adicionales utilice el formulario de <a href="/transparencia/atencion">Atención al Usuario</a>.
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <!-- Columna 1: Información institucional -->
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            
+            <!-- Columna 2: ENLACES RÁPIDOS (como pediste) -->
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <!-- Columna 3: Contacto -->
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
+</body>
+</html>

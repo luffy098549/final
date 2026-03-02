@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compras y Contrataciones - Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/compras.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/"><img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" class="header-logo"></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia" class="active">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="page-header">
+        <div class="breadcrumb">
+            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Compras y Contrataciones</span>
+        </div>
+        <h1>Compras y Contrataciones</h1>
+        <p>Licitaciones, contratos vigentes, proveedores y compras menores — Ley 340-06</p>
+    </section>
+
+    <section class="page">
+        <div class="intro-block">
+            <p>Publicación de compras y contrataciones conforme a la <strong>Ley 340-06 sobre Compras y Contrataciones Públicas</strong> y el <strong>Artículo 3 de la Ley 200-04</strong>. Toda contratación superior a RD$ 400,000 requiere proceso competitivo.</p>
+        </div>
+
+        <h2 class="bloque-titulo">Compras menores — Enero–Febrero 2025</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Objeto</th>
+                        <th>Proveedor</th>
+                        <th>Monto RD$</th>
+                        <th>Proceso</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>15/02/2025</td>
+                        <td>Compra de materiales de oficina</td>
+                        <td>Papelería La Vega</td>
+                        <td>45,000</td>
+                        <td><span class="badge badge-gris">Compra menor</span></td>
+                    </tr>
+                    <tr>
+                        <td>10/02/2025</td>
+                        <td>Suministro de combustible</td>
+                        <td>Estación Shell Cutupú</td>
+                        <td>120,000</td>
+                        <td><span class="badge badge-gris">Compra menor</span></td>
+                    </tr>
+                    <tr>
+                        <td>05/02/2025</td>
+                        <td>Reparación de vehículo municipal</td>
+                        <td>Taller El Mecánico</td>
+                        <td>38,500</td>
+                        <td><span class="badge badge-gris">Compra menor</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="bloque-titulo">Contratos vigentes (Ley 340-06)</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Contrato</th>
+                        <th>Objeto</th>
+                        <th>Contratista</th>
+                        <th>Monto RD$/año</th>
+                        <th>Plazo</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>CCC-CONT-2024-001</strong></td>
+                        <td>Servicio de recogida de basura</td>
+                        <td>Servicios Múltiples del Yuna SRL</td>
+                        <td>2,400,000</td>
+                        <td>12 meses</td>
+                        <td><span class="badge badge-verde">Vigente</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>CCC-CONT-2024-002</strong></td>
+                        <td>Mantenimiento de áreas verdes</td>
+                        <td>Jardinería Cutupú</td>
+                        <td>720,000</td>
+                        <td>12 meses</td>
+                        <td><span class="badge badge-verde">Vigente</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="bloque-titulo">Proveedores registrados</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>RNC</th>
+                        <th>Nombre / Razón Social</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1-31-12345-6</td><td><strong>Constructora Río Verde SRL</strong></td><td>Obras civiles</td><td><span class="badge badge-verde">Activo</span></td></tr>
+                    <tr><td>1-32-54321-0</td><td><strong>Electro Sur SRL</strong></td><td>Instalaciones eléctricas</td><td><span class="badge badge-verde">Activo</span></td></tr>
+                    <tr><td>4-05-67890-1</td><td><strong>Suplidores Agropecuarios La Vega</strong></td><td>Insumos agropecuarios</td><td><span class="badge badge-verde">Activo</span></td></tr>
+                    <tr><td>1-31-78901-2</td><td><strong>Construcciones Jiménez</strong></td><td>Obras civiles</td><td><span class="badge badge-verde">Activo</span></td></tr>
+                    <tr><td>4-01-23456-7</td><td><strong>Servicios Múltiples del Yuna SRL</strong></td><td>Servicios de limpieza</td><td><span class="badge badge-verde">Activo</span></td></tr>
+                    <tr><td>1-23-45678-9</td><td><strong>Papelería La Vega</strong></td><td>Papelería y suministros</td><td><span class="badge badge-verde">Activo</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="nota-legal">
+            Para inscribirse como proveedor del municipio o consultar el estado de un proceso de compra, contacte la <strong>Unidad de Compras y Contrataciones</strong> al teléfono (809) 691-7111 ext. 108 o envíe un correo a <a href="mailto:compras@villacutupu.gob.do">compras@villacutupu.gob.do</a>.
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <!-- Columna 1: Información institucional -->
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            
+            <!-- Columna 2: Enlaces de Transparencia -->
+                  
+                 <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <!-- Columna 3: Contacto -->
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
+</body>
+</html>

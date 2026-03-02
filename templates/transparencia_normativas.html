@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Normativas - Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/normativas.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/"><img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" class="header-logo"></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia" class="active">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="page-header">
+        <div class="breadcrumb">
+            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Normativas</span>
+        </div>
+        <h1>Normativas de Funcionamiento</h1>
+        <p>Ordenanzas municipales, reglamentos internos y resoluciones vigentes</p>
+    </section>
+
+    <section class="page">
+        <div class="intro-block">
+            <p>Publicación de normativas conforme al <strong>Artículo 5 de la Ley 200-04</strong>. Se incluyen ordenanzas del Concejo de Regidores, reglamentos internos administrativos y resoluciones recientes.</p>
+        </div>
+
+        <h2 class="bloque-titulo">Ordenanzas Municipales vigentes</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Fecha</th>
+                        <th>Título</th>
+                        <th>Descargar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>01-2024</strong></td>
+                        <td>15/01/2024</td>
+                        <td>Presupuesto de Ingresos y Ley de Gastos 2024 <small>Aprueba el presupuesto municipal para el ejercicio fiscal 2024</small></td>
+                        <td><a href="#" class="doc-btn">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>12-2023</strong></td>
+                        <td>20/11/2023</td>
+                        <td>Regulación de uso de suelos y zonificación <small>Establece zonas urbanas, rurales y de expansión</small></td>
+                        <td><a href="#" class="doc-btn">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>08-2023</strong></td>
+                        <td>05/08/2023</td>
+                        <td>Tasas por servicios municipales <small>Fija costos de permisos, constancias y certificaciones</small></td>
+                        <td><a href="#" class="doc-btn">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>05-2022</strong></td>
+                        <td>12/05/2022</td>
+                        <td>Creación del Sistema Municipal de Gestión de Riesgos <small>Crea el comité municipal de prevención de desastres</small></td>
+                        <td><a href="#" class="doc-btn">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>03-2021</strong></td>
+                        <td>10/03/2021</td>
+                        <td>Reglamento para ferias y espectáculos públicos <small>Normas para eventos en espacios públicos municipales</small></td>
+                        <td><a href="#" class="doc-btn">PDF</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="bloque-titulo">Reglamentos internos</h2>
+        <div class="docs-lista">
+            <div class="doc-item">
+                <span class="doc-icono">📘</span>
+                <div class="doc-info">
+                    <strong>Reglamento de Organización Administrativa</strong>
+                    <span>Aprobado: 2021 · Última actualización: 2024</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📘</span>
+                <div class="doc-info">
+                    <strong>Reglamento Interno del Concejo de Regidores</strong>
+                    <span>Aprobado: 2022 · Última actualización: 2023</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📘</span>
+                <div class="doc-info">
+                    <strong>Reglamento de la Oficina de Acceso a la Información (OAI)</strong>
+                    <span>Aprobado: 2022</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📘</span>
+                <div class="doc-info">
+                    <strong>Manual de Organización y Funciones</strong>
+                    <span>Aprobado: 2023</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📘</span>
+                <div class="doc-info">
+                    <strong>Reglamento de Viáticos y Gastos de Representación</strong>
+                    <span>Aprobado: 2023</span>
+                </div>
+                <a href="#" class="doc-btn">Descargar</a>
+            </div>
+        </div>
+
+        <h2 class="bloque-titulo">Resoluciones recientes (2025)</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Resolución</th>
+                        <th>Fecha</th>
+                        <th>Tema</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>003-2025</strong></td>
+                        <td>10/02/2025</td>
+                        <td>Aprueba proyecto de aceras y contenes — sector Los Multifamiliares</td>
+                        <td><span class="badge badge-verde">Vigente</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>002-2025</strong></td>
+                        <td>25/01/2025</td>
+                        <td>Designa nuevo encargado de Recursos Humanos</td>
+                        <td><span class="badge badge-verde">Vigente</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>001-2025</strong></td>
+                        <td>08/01/2025</td>
+                        <td>Aprueba calendario de sesiones ordinarias 2025</td>
+                        <td><span class="badge badge-verde">Vigente</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <!-- Columna 1: Información institucional -->
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            
+            <!-- Columna 2: ENLACES RÁPIDOS (corregido) -->
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <!-- Columna 3: Contacto -->
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
+</body>
+</html>

@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 app.secret_key = "clave_secreta_muy_segura_cambiar_en_produccion_123"
 
-# 🔴 AÑADE ESTAS LÍNEAS - CONFIGURACIÓN EXPLÍCITA DE CARPETAS ESTÁTICAS
+# Configuración de carpetas estáticas
 app.static_folder = 'static'
 app.static_url_path = '/static'
 
@@ -55,6 +55,98 @@ def transparencia():
     logged = "user" in session
     is_admin = session.get("is_admin", False) if logged else False
     return render_template("transparencia.html", 
+                         logged=logged, 
+                         is_admin=is_admin,
+                         user_name=session.get("user_name", ""))
+
+# ========== RUTAS DE TRANSPARENCIA ==========
+
+@app.route("/transparencia/estructura")
+def transparencia_estructura():
+    """Estructura orgánica"""
+    logged = "user" in session
+    is_admin = session.get("is_admin", False) if logged else False
+    return render_template("transparencia_estructura.html", 
+                         logged=logged, 
+                         is_admin=is_admin,
+                         user_name=session.get("user_name", ""))
+
+@app.route("/transparencia/integrantes")
+def transparencia_integrantes():
+    """Integrantes y autoridades"""
+    logged = "user" in session
+    is_admin = session.get("is_admin", False) if logged else False
+    return render_template("transparencia_integrantes.html", 
+                         logged=logged, 
+                         is_admin=is_admin,
+                         user_name=session.get("user_name", ""))
+
+@app.route("/transparencia/normativas")
+def transparencia_normativas():
+    """Normativas de funcionamiento"""
+    logged = "user" in session
+    is_admin = session.get("is_admin", False) if logged else False
+    return render_template("transparencia_normativas.html", 
+                         logged=logged, 
+                         is_admin=is_admin,
+                         user_name=session.get("user_name", ""))
+
+@app.route("/transparencia/proyectos")
+def transparencia_proyectos():
+    """Proyectos y obras"""
+    logged = "user" in session
+    is_admin = session.get("is_admin", False) if logged else False
+    return render_template("transparencia_proyectos.html", 
+                         logged=logged, 
+                         is_admin=is_admin,
+                         user_name=session.get("user_name", ""))
+
+@app.route("/transparencia/informes")
+def transparencia_informes():
+    """Informes de gestión"""
+    logged = "user" in session
+    is_admin = session.get("is_admin", False) if logged else False
+    return render_template("transparencia_informes.html", 
+                         logged=logged, 
+                         is_admin=is_admin,
+                         user_name=session.get("user_name", ""))
+
+@app.route("/transparencia/datos")
+def transparencia_datos():
+    """Base de datos municipal"""
+    logged = "user" in session
+    is_admin = session.get("is_admin", False) if logged else False
+    return render_template("transparencia_datos.html", 
+                         logged=logged, 
+                         is_admin=is_admin,
+                         user_name=session.get("user_name", ""))
+
+@app.route("/transparencia/atencion")
+def transparencia_atencion():
+    """Atención al usuario (SAC)"""
+    logged = "user" in session
+    is_admin = session.get("is_admin", False) if logged else False
+    return render_template("transparencia_atencion.html", 
+                         logged=logged, 
+                         is_admin=is_admin,
+                         user_name=session.get("user_name", ""))
+
+@app.route("/transparencia/actas")
+def transparencia_actas():
+    """Actas y acuerdos"""
+    logged = "user" in session
+    is_admin = session.get("is_admin", False) if logged else False
+    return render_template("transparencia_actas.html", 
+                         logged=logged, 
+                         is_admin=is_admin,
+                         user_name=session.get("user_name", ""))
+
+@app.route("/transparencia/compras")
+def transparencia_compras():
+    """Compras y contrataciones"""
+    logged = "user" in session
+    is_admin = session.get("is_admin", False) if logged else False
+    return render_template("transparencia_compras.html", 
                          logged=logged, 
                          is_admin=is_admin,
                          user_name=session.get("user_name", ""))

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actas y Acuerdos - Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <!-- RUTAS CORREGIDAS: archivos en la misma carpeta -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/actas.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* RESPALDO POR SI LOS ARCHIVOS NO CARGAN */
+        :root {
+            --green: #7E8F76;
+            --green-dark: #5A684F;
+            --green-light: #A9B7A2;
+            --green-xlight: #EFF3EE;
+            --text: #1C1C1C;
+            --text-soft: #3D3D3D;
+            --border: #E8E8E8;
+            --gray-50: #FAFAFA;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; background: white; }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <img src="img/Adobe%20Express%20-%20file.png" alt="Logo Villa Cutupú" class="header-logo" onerror="this.src='https://via.placeholder.com/70x70?text=Logo'">
+                </a>
+            </div>
+            
+            <button class="menu-toggle" aria-label="Menú" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia" class="active">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                </ul>
+            </nav>
+        </div>
+        
+        <div class="mobile-menu">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia" class="active">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+            </ul>
+        </div>
+        <div class="overlay"></div>
+    </header>
+
+    <main>
+        <!-- PAGE HEADER -->
+        <section class="page-header">
+            <div class="breadcrumb">
+                <a href="/transparencia">Transparencia</a> 
+                <span>/</span> 
+                <span>Actas y Acuerdos</span>
+            </div>
+            <h1>Actas y Acuerdos</h1>
+            <p>Actas del Concejo de Regidores y acuerdos municipales vigentes</p>
+        </section>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <section class="page">
+            <!-- Bloque introductorio -->
+            <div class="intro-block">
+                <p>Publicación de actas conforme al <strong>Artículo 3 de la Ley 200-04</strong>. Las actas del Concejo de Regidores son documentos públicos aprobados en sesión. Se publican en un plazo no mayor de 5 días hábiles tras su aprobación.</p>
+            </div>
+
+            <!-- ACTAS 2025 -->
+            <h2 class="bloque-titulo">Actas de sesiones del Concejo de Regidores — 2025</h2>
+            <div class="tabla-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Acta N°</th>
+                            <th>Fecha</th>
+                            <th>Tipo de sesión</th>
+                            <th>Temas principales</th>
+                            <th>Descargar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>005-2025</strong></td>
+                            <td>10/03/2025</td>
+                            <td><span class="badge badge-verde">Ordinaria</span></td>
+                            <td>Aprobación proyecto parque central, informes de comisiones</td>
+                            <td><a href="#" class="doc-btn">PDF</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>004-2025</strong></td>
+                            <td>24/02/2025</td>
+                            <td><span class="badge badge-verde">Ordinaria</span></td>
+                            <td>Revisión de ordenanza de tasas, quejas ciudadanas</td>
+                            <td><a href="#" class="doc-btn">PDF</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>003-2025</strong></td>
+                            <td>10/02/2025</td>
+                            <td><span class="badge badge-verde">Ordinaria</span></td>
+                            <td>Aprobación resolución 003-2025, aceras sector Multifamiliares</td>
+                            <td><a href="#" class="doc-btn">PDF</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>002-2025</strong></td>
+                            <td>27/01/2025</td>
+                            <td><span class="badge badge-gold">Extraordinaria</span></td>
+                            <td>Presupuesto participativo 2025</td>
+                            <td><a href="#" class="doc-btn">PDF</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>001-2025</strong></td>
+                            <td>13/01/2025</td>
+                            <td><span class="badge badge-verde">Ordinaria</span></td>
+                            <td>Elección de comisiones 2025, juramentación de nuevos regidores</td>
+                            <td><a href="#" class="doc-btn">PDF</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ACTAS 2024 - COMPILADO -->
+            <h2 class="bloque-titulo">Actas de sesiones — 2024</h2>
+            <div class="docs-lista">
+                <div class="doc-item">
+                    <span class="doc-icono">📋</span>
+                    <div class="doc-info">
+                        <strong>Actas del Concejo de Regidores — Año 2024 (compilado)</strong>
+                        <span>24 sesiones ordinarias · 3 extraordinarias · PDF — 12.4 MB</span>
+                    </div>
+                    <a href="#" class="doc-btn">Descargar</a>
+                </div>
+            </div>
+
+            <!-- ACUERDOS MUNICIPALES VIGENTES -->
+            <h2 class="bloque-titulo">Acuerdos municipales vigentes</h2>
+            <div class="tabla-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Acuerdo</th>
+                            <th>Fecha</th>
+                            <th>Contraparte</th>
+                            <th>Objeto</th>
+                            <th>Vigencia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>001-2024</strong></td>
+                            <td>15/03/2024</td>
+                            <td>MOPC</td>
+                            <td>Mantenimiento de caminos vecinales del Distrito Municipal</td>
+                            <td><span class="badge badge-azul">2 años</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>008-2023</strong></td>
+                            <td>20/10/2023</td>
+                            <td>EDUCA</td>
+                            <td>Programa de becas municipales para estudiantes del distrito</td>
+                            <td><span class="badge badge-azul">3 años</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>005-2023</strong></td>
+                            <td>05/06/2023</td>
+                            <td>Ministerio de Cultura</td>
+                            <td>Festival del Café y el Cacao — apoyo logístico y financiero</td>
+                            <td><span class="badge badge-gris">Anual</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- NOTA INFORMATIVA -->
+            <div class="intro-block" style="margin-top: 2rem;">
+                <p><strong>📢 Actualización:</strong> Las actas más recientes se publican dentro de los primeros 5 días hábiles de cada mes. Para solicitar copias certificadas de actas anteriores al 2023, puede contactar a la Secretaría Municipal a través del <a href="/contacto" style="color: var(--green-dark); font-weight: 600;">formulario de contacto</a> o presencialmente en nuestras oficinas.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-info">
+                    <h3>Junta Distrital de Villa Cutupú</h3>
+                    <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                    <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                    <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Facebook</a>
+                        <a href="#" class="social-link">Instagram</a>
+                    </div>
+                </div>
+                
+                 <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+                <div class="footer-contact">
+                    <h3>Contacto</h3>
+                    <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                    <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                    <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOTÓN VOLVER ARRIBA -->
+    <button class="back-to-top" aria-label="Volver arriba">↑</button>
+
+    <!-- SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.overlay');
+            const header = document.querySelector('.main-header');
+            const backToTop = document.querySelector('.back-to-top');
+            
+            // Menú móvil
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    mobileMenu.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                    document.body.classList.toggle('menu-open');
+                });
+            }
+            
+            // Cerrar menú
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    menuToggle.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                });
+            }
+            
+            // Header scroll
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+                
+                if (window.scrollY > 400) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            });
+            
+            // Volver arriba
+            if (backToTop) {
+                backToTop.addEventListener('click', function() {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

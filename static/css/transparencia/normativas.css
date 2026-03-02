@@ -1,0 +1,665 @@
+/* ============================================================
+   normativas.css — Normativas de Funcionamiento
+   Junta Distrital de Villa Cutupú
+   Coherente con actas.css v3.0
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,400&display=swap');
+
+/* ===== VARIABLES ===== */
+:root {
+    /* Verde natural */
+    --green:          #6B7E63;
+    --green-dark:     #4A5E43;
+    --green-light:    #9DB094;
+    --green-xlight:   #F0F4EF;
+
+    /* Azul acento */
+    --blue-sky:       #2563A8;
+    --blue-sky-light: #EBF3FB;
+
+    /* Tierra */
+    --beige:          #C4BCAF;
+    --beige-light:    #D8D2C8;
+    --brown:          #6B6258;
+
+    /* Grises */
+    --white:          #FFFFFF;
+    --gray-50:        #FAFAF9;
+    --gray-100:       #F4F4F2;
+    --gray-200:       #EAEAE7;
+    --gray-300:       #DDDDD9;
+    --gray-400:       #B0B0AA;
+    --gray-500:       #7A7A73;
+    --gray-600:       #545450;
+    --gray-700:       #3D3D39;
+    --gray-800:       #252523;
+    --gray-900:       #141412;
+
+    /* Textos */
+    --text:           #1A1A18;
+    --text-soft:      #3A3A37;
+    --text-light:     #6B6B65;
+
+    /* Bordes */
+    --border:         #E4E4E0;
+
+    /* Sombras */
+    --shadow-xs:      0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-sm:      0 2px 8px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
+    --shadow-md:      0 4px 20px rgba(0,0,0,0.07);
+    --shadow-hover:   0 8px 30px rgba(74, 94, 67, 0.10), 0 2px 8px rgba(0,0,0,0.05);
+
+    /* Radios */
+    --radius-sm:      6px;
+    --radius-card:    10px;
+    --radius-block:   16px;
+    --radius-full:    999px;
+
+    /* Espaciado */
+    --space-1:  0.5rem;
+    --space-2:  1rem;
+    --space-3:  1.5rem;
+    --space-4:  2rem;
+    --space-5:  3rem;
+    --space-6:  4rem;
+
+    /* Transiciones */
+    --transition-fast: 150ms cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-base: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-slow: 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ===================================================
+   PÁGINA CONTENEDOR
+   =================================================== */
+.page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 5% var(--space-6);
+    background: #F7F7F5;
+}
+
+.page > *:last-child {
+    margin-bottom: 0;
+}
+
+/* ===================================================
+   CABECERA DE PÁGINA
+   =================================================== */
+.page-header {
+    padding: var(--space-6) 5% var(--space-4);
+    background: #1A1E18;
+    border-bottom: 1px solid rgba(107, 126, 99, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 420px; height: 100%;
+    background: radial-gradient(ellipse at top right, rgba(107, 126, 99, 0.13) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+.page-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--green-dark), transparent);
+}
+
+.page-header h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    font-style: italic;
+    color: #FFFFFF;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+    position: relative;
+    z-index: 1;
+}
+
+.page-header p {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.55);
+    max-width: 600px;
+    line-height: 1.7;
+    font-weight: 400;
+    position: relative;
+    z-index: 1;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: var(--space-3);
+    letter-spacing: 0.01em;
+    position: relative;
+    z-index: 1;
+}
+
+.breadcrumb a {
+    color: var(--green-light);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    position: relative;
+}
+
+.breadcrumb a::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 1px;
+    background: var(--green-light);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-base);
+}
+
+.breadcrumb a:hover {
+    color: #FFFFFF;
+}
+
+.breadcrumb a:hover::after {
+    transform: scaleX(1);
+}
+
+.breadcrumb span {
+    color: rgba(255,255,255,0.2);
+}
+
+/* ===================================================
+   BLOQUE INTRO
+   =================================================== */
+.intro-block {
+    background: var(--white);
+    border-left: 3px solid var(--green-dark);
+    padding: var(--space-3) var(--space-4);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    margin-bottom: var(--space-5);
+    font-size: 1rem;
+    color: var(--text-soft);
+    box-shadow: var(--shadow-xs);
+    line-height: 1.8;
+    animation: fadeUpNormativas var(--transition-slow) 80ms both;
+}
+
+.intro-block strong {
+    color: var(--green-dark);
+    font-weight: 600;
+}
+
+/* ===================================================
+   TÍTULOS DE BLOQUE
+   =================================================== */
+.bloque-titulo {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text);
+    margin: var(--space-5) 0 var(--space-3);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    position: relative;
+    padding-bottom: var(--space-2);
+    animation: fadeUpNormativas var(--transition-slow) 120ms both;
+}
+
+.bloque-titulo::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 36px; height: 2px;
+    background: var(--green-dark);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-slow);
+}
+
+.bloque-titulo:hover::after {
+    width: 72px;
+}
+
+/* ===================================================
+   TABLAS
+   =================================================== */
+.tabla-wrapper {
+    background: var(--white);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    overflow-x: auto;
+    margin-bottom: var(--space-5);
+    box-shadow: var(--shadow-xs);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+    animation: fadeUpNormativas var(--transition-slow) 160ms both;
+    will-change: box-shadow;
+}
+
+.tabla-wrapper:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.93rem;
+    min-width: 560px;
+}
+
+thead {
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    text-align: left;
+    padding: 0.9rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-500);
+    white-space: nowrap;
+}
+
+td {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-soft);
+    vertical-align: middle;
+    transition: background var(--transition-fast);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover td {
+    background-color: var(--green-xlight);
+}
+
+td strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* Para la columna de título que tiene <small> */
+td small {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-top: 0.2rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* Última columna centrada (descargar) */
+th:last-child,
+td:last-child {
+    text-align: center;
+}
+
+td .doc-btn {
+    min-width: 60px;
+}
+
+/* ===================================================
+   BADGES
+   =================================================== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.72rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    line-height: 1;
+    background: var(--gray-200);
+    color: var(--gray-700);
+    border: 1px solid transparent;
+}
+
+.badge-verde {
+    background: var(--green-xlight);
+    color: var(--green-dark);
+    border-color: rgba(107, 126, 99, 0.22);
+}
+
+.badge-azul {
+    background: var(--blue-sky-light);
+    color: var(--blue-sky);
+    border-color: rgba(37, 99, 168, 0.20);
+}
+
+.badge-gold {
+    background: #fef9ec;
+    color: #7a5a00;
+    border-color: rgba(234, 179, 8, 0.22);
+}
+
+.badge-gris {
+    background: var(--gray-100);
+    color: var(--gray-600);
+    border-color: var(--gray-300);
+}
+
+/* ===================================================
+   BOTONES DE DOCUMENTO
+   =================================================== */
+.doc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    background: transparent;
+    color: var(--green-dark);
+    border: 1.5px solid var(--green-light);
+    padding: 0.4rem 0.9rem;
+    font-size: 0.73rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+    will-change: transform;
+}
+
+.doc-btn:hover {
+    background: var(--green-dark);
+    border-color: var(--green-dark);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 94, 67, 0.25);
+}
+
+.doc-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.doc-btn:focus-visible {
+    outline: 2px solid var(--green-dark);
+    outline-offset: 3px;
+}
+
+.doc-icono {
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--green-dark);
+    flex-shrink: 0;
+}
+
+/* ===================================================
+   LISTA DE DOCUMENTOS (REGLAMENTOS)
+   =================================================== */
+.docs-lista {
+    background: var(--white);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: var(--space-5);
+    box-shadow: var(--shadow-xs);
+    animation: fadeUpNormativas var(--transition-slow) 180ms both;
+}
+
+.doc-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 1.25rem var(--space-3);
+    border-bottom: 1px solid var(--border);
+    transition: background var(--transition-fast);
+    position: relative;
+}
+
+/* Acento lateral animado */
+.doc-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--green-dark);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--transition-base);
+    border-radius: 0 2px 2px 0;
+}
+
+.doc-item:hover::before {
+    transform: scaleY(1);
+}
+
+.doc-item:last-child {
+    border-bottom: none;
+}
+
+.doc-item:hover {
+    background: var(--green-xlight);
+}
+
+.doc-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.doc-info strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+}
+
+.doc-info span {
+    font-size: 0.82rem;
+    color: var(--text-light);
+}
+
+/* Botón dentro de docs-lista */
+.docs-lista .doc-item .doc-btn {
+    background: var(--green-xlight);
+    border-color: rgba(107, 126, 99, 0.25);
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.docs-lista .doc-item .doc-btn:hover {
+    background: var(--green-dark);
+    color: #FFFFFF;
+    border-color: var(--green-dark);
+}
+
+/* ===================================================
+   ANIMACIONES
+   =================================================== */
+@keyframes fadeUpNormativas {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===================================================
+   RESPONSIVE — TABLET
+   =================================================== */
+@media (max-width: 768px) {
+    .page-header {
+        padding: var(--space-4) 4% var(--space-3);
+    }
+
+    .page-header h1 {
+        font-size: 1.9rem;
+    }
+
+    .bloque-titulo {
+        font-size: 1.5rem;
+    }
+
+    th, td {
+        padding: 0.75rem 1rem;
+        font-size: 0.88rem;
+    }
+
+    .badge {
+        font-size: 0.65rem;
+        padding: 0.22rem 0.6rem;
+    }
+
+    .doc-btn {
+        padding: 0.35rem 0.75rem;
+        font-size: 0.7rem;
+    }
+
+    .doc-item {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .doc-info {
+        flex: 1 1 100%;
+        order: 1;
+    }
+
+    .doc-info strong {
+        font-size: 1rem;
+    }
+
+    .doc-item .doc-btn {
+        order: 2;
+        margin-left: auto;
+    }
+}
+
+/* ===================================================
+   RESPONSIVE — MÓVIL
+   =================================================== */
+@media (max-width: 480px) {
+    .page {
+        padding: 0 4% var(--space-5);
+    }
+
+    .page-header {
+        padding: var(--space-3) 4% var(--space-2);
+    }
+
+    .page-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .intro-block {
+        padding: var(--space-2) var(--space-3);
+        font-size: 0.93rem;
+    }
+
+    .bloque-titulo {
+        font-size: 1.35rem;
+        margin: var(--space-4) 0 var(--space-2);
+    }
+
+    .bloque-titulo::after {
+        width: 30px;
+        height: 2px;
+    }
+
+    .tabla-wrapper {
+        border-radius: var(--radius-sm);
+        margin-bottom: var(--space-4);
+    }
+
+    th, td {
+        padding: 0.65rem 0.8rem;
+        font-size: 0.83rem;
+    }
+
+    .doc-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .doc-item .doc-btn {
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+    }
+
+    .doc-info {
+        width: 100%;
+    }
+
+    .badge {
+        font-size: 0.63rem;
+        padding: 0.2rem 0.55rem;
+    }
+}
+
+/* ===================================================
+   TOUCH — desactivar hovers
+   =================================================== */
+@media (hover: none) {
+    .tabla-wrapper:hover {
+        transform: none;
+        box-shadow: var(--shadow-xs);
+    }
+
+    .doc-btn:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .doc-item:hover::before {
+        transform: scaleY(0);
+    }
+
+    .doc-item:hover {
+        background: transparent;
+    }
+
+    tbody tr:hover td {
+        background-color: transparent;
+    }
+
+    .bloque-titulo:hover::after {
+        width: 36px;
+    }
+}
+
+/* ===================================================
+   PREFERS REDUCED MOTION
+   =================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

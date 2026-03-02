@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noticias - Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/noticias.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/noticias.css') }}?v=5">
+   
 </head>
 <body>
 
@@ -17,19 +14,18 @@
     <div class="container">
         <div class="logo">
             <a href="/">
-              <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
+                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
                      alt="Logo Junta Distrital Villa Cutupú"
-                     class="header-logo">
+                     style="height: 60px;">
             </a>
         </div>
-
         <nav class="main-nav">
             <ul>
                 <li><a href="/">Inicio</a></li>
                 <li><a href="/municipio">Municipio</a></li>
                 <li><a href="/servicios">Servicios</a></li>
                 <li><a href="/transparencia">Transparencia</a></li>
-                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/noticias" class="active">Noticias</a></li>
                 <li><a href="/contacto">Contacto</a></li>
                 {% if logged %}
                     <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
@@ -46,68 +42,419 @@
 </header>
 
 <main>
-    <section class="page-header" style="background: linear-gradient(160deg, #0a2b5c 0%, #1e3a6f 100%); color: white; padding: 60px 20px; text-align: center;">
-        <h1 style="color: white; font-size: 2.5rem;">Noticias del Ayuntamiento</h1>
-        <p style="color: rgba(255,255,255,0.9);">Mantente informado sobre las últimas novedades y comunicados oficiales</p>
+    <section class="page-header">
+        <div class="page-header-inner">
+            <span class="page-header-eyebrow">Comunicados oficiales</span>
+            <h1>Noticias del Ayuntamiento</h1>
+            <p>Mantente informado sobre las últimas novedades, proyectos y comunicados oficiales de Villa Cutupú</p>
+        </div>
     </section>
 
-    <section class="noticias-grid">
+    <!-- GRID NOTICIAS CON IMÁGENES COMPLETAS -->
+    <section class="noticias-grid" id="noticias">
+
+        <!-- NOTICIA 1: COMUNICADO OFICIAL -->
         <article class="noticia-card">
-            <div class="noticia-fecha">15 de febrero, 2026</div>
-            <h2>Nueva campaña de reforestación municipal</h2>
-            <p>El Ayuntamiento invita a la ciudadanía a participar en la jornada de reforestación que se llevará a cabo el próximo sábado en el parque central. Se plantarán más de 500 árboles nativos.</p>
-            <a href="/noticias/reforestacion-2026" class="btn">Leer más</a>
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia1.jpeg') }}" alt="Cierre temporal de vía - Cutupú">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">COMUNICADO OFICIAL</span>
+                    <span class="noticia-fecha">24 febrero, 2026</span>
+                </div>
+                <h2>Cierre Temporal de Vía – Cutupú</h2>
+                <p>La Junta Distrital de Villa Cutupú informa a la comunidad sobre el cierre temporal de vías por trabajos de infraestructura. Agradecemos su comprensión mientras trabajamos para mejorar nuestras calles.</p>
+                <a href="/noticias/cierre-temporal-via" class="btn">Leer más</a>
+            </div>
         </article>
 
+        <!-- NOTICIA 2: Donación a Parroquia (con mención de CUARESMA) -->
         <article class="noticia-card">
-            <div class="noticia-fecha">10 de febrero, 2026</div>
-            <h2>Ampliación del servicio de recolección de basura</h2>
-            <p>A partir del 1 de marzo, el servicio de recolección de residuos ampliará sus horarios para cubrir más sectores del municipio. Se incorporarán dos nuevas rutas.</p>
-            <a href="/noticias/ampliacion-recoleccion" class="btn">Leer más</a>
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia2.jpg') }}" alt="Donación a Parroquia de Romero">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Donación</span>
+                    <span class="noticia-fecha">24 febrero, 2026</span>
+                </div>
+                <h2>Donación de baterías a la Parroquia de Romero</h2>
+                <p>El Director Municipal Robert Donald Tolentino Grullon, realizó la donación de dos baterías para apoyar las actividades de la parroquia en este tiempo de Cuaresma.</p>
+                <a href="/noticias/donacion-baterias-parroquia" class="btn">Leer más</a>
+            </div>
         </article>
 
+        <!-- NOTICIA 3: Reunión con Docentes -->
         <article class="noticia-card">
-            <div class="noticia-fecha">5 de febrero, 2026</div>
-            <h2>Jornada de salud gratuita en la plaza principal</h2>
-            <p>Se realizarán consultas médicas, dentales y talleres de prevención. Entrada libre para todas las edades. Habrá servicios de odontología, medicina general y vacunación.</p>
-            <a href="/noticias/jornada-salud" class="btn">Leer más</a>
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia3.jpeg') }}" alt="Reunión con docentes">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Educación</span>
+                    <span class="noticia-fecha">23 febrero, 2026</span>
+                </div>
+                <h2>Reunión de Coordinación con Docentes</h2>
+                <p>Sostuvimos una reunión de coordinación con el personal docente de los diferentes Centros Educativos del municipio para mejorar la calidad educativa.</p>
+                <a href="/noticias/reunion-docentes" class="btn">Leer más</a>
+            </div>
         </article>
 
+        <!-- NOTICIA 4: Asfaltado Mama Taba -->
         <article class="noticia-card">
-            <div class="noticia-fecha">28 de enero, 2026</div>
-            <h2>Inician trabajos de asfaltado en calles principales</h2>
-            <p>El proyecto de asfaltado comenzará en la calle Duarte y se extenderá por las principales vías del municipio. Se estima una duración de 3 meses.</p>
-            <a href="/noticias/asfaltado-calles" class="btn">Leer más</a>
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia4.jpg') }}" alt="Asfaltado Callejón Mama Taba">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Infraestructura</span>
+                    <span class="noticia-fecha">23 febrero, 2026</span>
+                </div>
+                <h2>Asfaltada del Callejón de Mama Taba</h2>
+                <p>En el día de hoy estuvimos presentes en la entrada frente al Ayuntamiento (callejón de Mamá Taba), dando inicio formal a los trabajos de asfaltado.</p>
+                <a href="/noticias/asfaltado-mama-taba" class="btn">Leer más</a>
+            </div>
         </article>
+
+        <!-- NOTICIA 5: Cementerio Municipal -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia5.jpg') }}" alt="Cementerio Municipal">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Mantenimiento</span>
+                    <span class="noticia-fecha">20 febrero, 2026</span>
+                </div>
+                <h2>Cementerio Municipal de Cutupú</h2>
+                <p>En el día de hoy nos encontramos en el Cementerio Municipal de Cutupú, donde estamos ejecutando un plan integral de limpieza, mantenimiento y pintura.</p>
+                <a href="/noticias/mantenimiento-cemeterio" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 6: Caminos Destiladera -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia6.jpg') }}" alt="Reparación caminos Destiladera">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Obras</span>
+                    <span class="noticia-fecha">19 febrero, 2026</span>
+                </div>
+                <h2>Reparación de Caminos Vecinales de la Destiladera</h2>
+                <p>Las brigadas operativas trabajan en la reparación de caminos vecinales en cumplimiento con los planes de mejora vial.</p>
+                <a href="/noticias/reparacion-destiladera" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 7: Reunión Bonagua -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia7.jpg') }}" alt="Reunión comunidad Bonagua">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Gestión</span>
+                    <span class="noticia-fecha">9 febrero, 2026</span>
+                </div>
+                <h2>Reunión con miembros de la Comunidad Bonagua</h2>
+                <p>Nuestro director distrital sostuvo una importante reunión con una comisión representativa de la comunidad Bonagua.</p>
+                <a href="/noticias/reunion-bonagua" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 8: Fumigación Manga Larga -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia8.jpeg') }}" alt="Fumigación Manga Larga">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Salud</span>
+                    <span class="noticia-fecha">4 febrero, 2026</span>
+                </div>
+                <h2>Fumigación en Manga Larga – Entrada El Quemado</h2>
+                <p>Se llevaron a cabo importantes trabajos de fumigación en la carretera de Manga Larga, sector El Quemado, para prevenir enfermedades.</p>
+                <a href="/noticias/fumigacion-manga-larga" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 9: Iglesia Las Cañas -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia9.jpeg') }}" alt="Iglesia Las Cañas">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Comunidad</span>
+                    <span class="noticia-fecha">4 febrero, 2026</span>
+                </div>
+                <h2>Planificación de Reinauguración Iglesia de la Cañas</h2>
+                <p>Reunión para coordinar la reinauguración de la Iglesia de Las Cañas, un espacio importante para la comunidad.</p>
+                <a href="/noticias/reinauguracion-iglesia-canas" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 10: Comisión Bonagua -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia10.jpeg') }}" alt="Comisión Bonagua">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Gestión</span>
+                    <span class="noticia-fecha">4 febrero, 2026</span>
+                </div>
+                <h2>Reunión con la Comisión de la Comunidad de Bonagua</h2>
+                <p>Diálogo con la comisión de Bonagua para abordar temas prioritarios para el desarrollo de la comunidad.</p>
+                <a href="/noticias/reunion-comision-bonagua" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 11: Visita Mama Taba -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia11.jpg') }}" alt="Visita Callejón Mama Taba">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Infraestructura</span>
+                    <span class="noticia-fecha">3 febrero, 2026</span>
+                </div>
+                <h2>Callejón de Mama Taba</h2>
+                <p>Nuestro Director Distrital realizó una visita a la entrada ubicada frente al Ayuntamiento para supervisar los trabajos.</p>
+                <a href="/noticias/callejon-mama-taba" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 12: Asfalto Torojoco -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia12.jpg') }}" alt="Asfalto Torojoco">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Infraestructura</span>
+                    <span class="noticia-fecha">31 enero, 2026</span>
+                </div>
+                <h2>Asfalto en Torojoco, Rio Verde Arriba</h2>
+                <p>Con la presencia de nuestro Director Municipal continuamos avanzando en los trabajos de asfaltado de la comunidad de Torojoco.</p>
+                <a href="/noticias/asfalto-torojoco" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 13: Día de la Juventud -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia13.jpg') }}" alt="Día de la Juventud">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Efemérides</span>
+                    <span class="noticia-fecha">31 enero, 2026</span>
+                </div>
+                <h2>Día Internacional de la Juventud</h2>
+                <p>Conmemoramos el Día Internacional de la Juventud, reconociendo el papel fundamental de los jóvenes en nuestra sociedad.</p>
+                <a href="/noticias/dia-juventud" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 14: Ornato Pueblo Viejo -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia14.jpg') }}" alt="Ornato Pueblo Viejo">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Aseo</span>
+                    <span class="noticia-fecha">29 enero, 2026</span>
+                </div>
+                <h2>Brigadas de Ornato en Pueblo Viejo</h2>
+                <p>Las brigadas de Ornato y Aseo realizan labores de mantenimiento en la comunidad de Pueblo Viejo.</p>
+                <a href="/noticias/ornato-pueblo-viejo" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 15: Gallera Pueblo Viejo -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia15.jpg') }}" alt="Gallera Pueblo Viejo">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Obras</span>
+                    <span class="noticia-fecha">28 enero, 2026</span>
+                </div>
+                <h2>Asfaltado entrada de la gallera en Pueblo Viejo</h2>
+                <p>Avanzamos en el asfaltado de la entrada de la gallera en Pueblo Viejo, gracias a la gestión de nuestro Director Distrital.</p>
+                <a href="/noticias/asfaltado-gallera" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 16: Natalicio Duarte -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia16.jpg') }}" alt="Natalicio Duarte">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Efemérides</span>
+                    <span class="noticia-fecha">26 enero, 2026</span>
+                </div>
+                <h2>Natalicio de Juan Pablo Duarte</h2>
+                <p>Con profundo respeto conmemoramos el natalicio de Juan Pablo Duarte, padre de la patria.</p>
+                <a href="/noticias/natalicio-duarte" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 17: Trabajos El Aljibe -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia17.jpg') }}" alt="Trabajos El Aljibe">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Obras</span>
+                    <span class="noticia-fecha">22 enero, 2026</span>
+                </div>
+                <h2>Trabajos en beneficio de El Aljibe</h2>
+                <p>Continuamos desarrollando importantes trabajos en beneficio de la comunidad de El Aljibe.</p>
+                <a href="/noticias/trabajos-aljibe" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 18: Día de la Altagracia -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia18.jpg') }}" alt="Día de la Altagracia">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Efemérides</span>
+                    <span class="noticia-fecha">21 enero, 2026</span>
+                </div>
+                <h2>Día de Nuestra Señora de la Altagracia</h2>
+                <p>Celebramos con orgullo el Día de la Altagracia, patrona espiritual del pueblo dominicano.</p>
+                <a href="/noticias/dia-altagracia" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 19: Reparadero Bonagua -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia19.jpg') }}" alt="Reparadero Bonagua">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Obras</span>
+                    <span class="noticia-fecha">19 enero, 2026</span>
+                </div>
+                <h2>Trabajos en Reparadero Bonagua</h2>
+                <p>Ejecutamos importantes trabajos en el sector de Reparadero Bonagua, como parte del plan de desarrollo municipal.</p>
+                <a href="/noticias/reparadero-bonagua" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- NOTICIA 20: Asfalto El Aljibe -->
+        <article class="noticia-card">
+            <div class="noticia-imagen">
+                <img src="{{ url_for('static', filename='img/noticia20.jpg') }}" alt="Asfalto El Aljibe">
+            </div>
+            <div class="noticia-body">
+                <div class="noticia-meta">
+                    <span class="noticia-tag">Infraestructura</span>
+                    <span class="noticia-fecha">19 enero, 2026</span>
+                </div>
+                <h2>Continuidad del Asfalto en el Aljibe</h2>
+                <p>La Junta Municipal continúa los trabajos de asfaltado en el sector del Aljibe.</p>
+                <a href="/noticias/continuidad-asfalto-aljibe" class="btn">Leer más</a>
+            </div>
+        </article>
+
+        <!-- ESTADÍSTICAS -->
+        <div class="noticias-stats">
+            <div class="stat-item">
+                <span class="stat-number">20</span>
+                <span class="stat-label">Noticias publicadas</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">2026</span>
+                <span class="stat-label">Año en curso</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Información oficial</span>
+            </div>
+        </div>
+
     </section>
 </main>
 
-<footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+<!-- FOOTER MEJORADO - MÁS ROBUSTO -->
+<footer>
     <div class="container">
-        <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+        <div class="footer-grid">
             <div class="footer-info">
-                <h3 style="color: white;">Junta de Distrito Municipal</h3>
-                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
-                <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📍 Calle Principal, Villa Cutupú</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
             </div>
-            <div class="footer-social">
-                <h3 style="color: white;">Síguenos</h3>
-                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
-                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+            
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
             </div>
-            <div class="footer-horario">
-                <h3 style="color: white;">Horario de Oficina</h3>
-                <p>Lunes a Viernes<br>8:00 AM - 4:00 PM</p>
-                <p>Sábados<br>9:00 AM - 12:00 PM</p>
+            
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕒 Lun-Vie: 8:00 AM - 2:00 PM</p>
             </div>
         </div>
-        <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+        
+        <div class="footer-bottom">
             <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
 
-<script src="{{ url_for('static', filename='js/noticias.js') }}"></script>
+<script src="{{ url_for('static', filename='js/noticia.js') }}"></script>
+
+<script>
+// Animación suave al hacer scroll
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.noticia-card');
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.style.opacity = '1';
+                e.target.style.transform = 'translateY(0)';
+                io.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    cards.forEach(c => {
+        c.style.opacity = '0';
+        c.style.transform = 'translateY(20px)';
+        c.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        io.observe(c);
+    });
+});
+</script>
 </body>
 </html>
