@@ -1,0 +1,142 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Crear Administrador - Admin{% endblock %}
+
+{% block page_title %}
+<i class="fas fa-user-plus"></i> Crear Nuevo Administrador
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+<span class="separator">/</span>
+<a href="{{ url_for('admin.listar_usuarios') }}">Usuarios</a>
+<span class="separator">/</span>
+<span>Crear Administrador</span>
+{% endblock %}
+
+{% block content %}
+<div class="admin-create-container">
+    <div class="create-card">
+        <div class="card-header">
+            <h2><i class="fas fa-user-shield"></i> Nuevo Administrador</h2>
+            <p>Complete el formulario para crear un nuevo administrador en el sistema.</p>
+        </div>
+
+        <div class="card-body">
+            <form method="POST" action="" class="admin-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre"><i class="fas fa-user"></i> Nombre *</label>
+                        <input type="text" id="nombre" name="nombre" value="{{ request.form.get('nombre', '') }}" required placeholder="Ej: Juan">
+                    </div>
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email *</label>
+                        <input type="email" id="email" name="email" value="{{ request.form.get('email', '') }}" required placeholder="admin@cutupu.gob.do">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Contraseña *</label>
+                        <input type="password" id="password" name="password" required minlength="6" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmar_password"><i class="fas fa-check-circle"></i> Confirmar Contraseña *</label>
+                        <input type="password" id="confirmar_password" name="confirmar_password" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefono"><i class="fas fa-phone"></i> Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" value="{{ request.form.get('telefono', '') }}" placeholder="809-555-1234">
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo"><i class="fas fa-tag"></i> Rol *</label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="admin" selected>Administrador</option>
+                            <option value="super_admin">Super Administrador</option>
+                            <option value="moderador">Moderador</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notas_admin"><i class="fas fa-sticky-note"></i> Notas internas</label>
+                    <textarea id="notas_admin" name="notas_admin" rows="3" placeholder="Información adicional...">{{ request.form.get('notas_admin', '') }}</textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-save"></i> Crear Administrador
+                    </button>
+                    <a href="{{ url_for('admin.listar_usuarios') }}" class="btn-cancel">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de administradores existentes (se muestra gracias a que admin.py pasa usuarios) -->
+    {% if usuarios %}
+    <div class="admins-table-container">
+        <div class="table-header">
+            <h3><i class="fas fa-users-cog"></i> Administradores Actuales</h3>
+        </div>
+        <div class="table-responsive">
+            <table class="admins-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Teléfono</th>
+                        <th>Registro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for email, user_data in usuarios.items() %}
+                        {% if user_data.tipo in ['super_admin', 'admin', 'moderador'] %}
+                        <tr>
+                            <td>
+                                <div class="admin-avatar">
+                                    {{ user_data.nombre[0] }}{{ user_data.apellidos[0] if user_data.apellidos else '' }}
+                                </div>
+                                <div class="admin-name">{{ user_data.nombre }} {{ user_data.apellidos }}</div>
+                            </td>
+                            <td>{{ email }}</td>
+                            <td>
+                                <span class="role-badge {{ user_data.tipo }}">
+                                    {% if user_data.tipo == 'super_admin' %}
+                                        <i class="fas fa-crown"></i> Super Admin
+                                    {% elif user_data.tipo == 'admin' %}
+                                        <i class="fas fa-user-tie"></i> Admin
+                                    {% elif user_data.tipo == 'moderador' %}
+                                        <i class="fas fa-user-cog"></i> Moderador
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                {% if user_data.activo %}
+                                    <span class="status-badge active">Activo</span>
+                                {% else %}
+                                    <span class="status-badge inactive">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user_data.telefono or '—' }}</td>
+                            <td>{{ user_data.fecha_registro or '—' }}</td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- CSS específico -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-create.css') }}">
+{% endblock %}

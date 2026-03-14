@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña - Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/">
+              <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
+        </div>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                    <li><a href="/mis-solicitudes">Mis solicitudes</a></li>
+                    <li><a href="/mis-denuncias">Mis denuncias</a></li>
+                    <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="page-header">
+        <h1>Recuperar Contraseña</h1>
+        <p>Ingrese su correo electrónico para recibir instrucciones</p>
+    </section>
+
+    <div class="login-container" style="justify-content: center;">
+        <div class="login-box" style="border-radius: 12px; border-right: 1px solid #e2e8f0;">
+            <div class="login-header">
+                <div class="login-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M22 6.5L12 13L2 6.5M22 6.5V18C22 18.5304 21.7893 19.0391 21.4142 19.4142C21.0391 19.7893 20.5304 20 20 20H4C3.46957 20 2.96086 19.7893 2.58579 19.4142C2.21071 19.0391 2 18.5304 2 18V6.5L12 13L22 6.5Z"/>
+                    </svg>
+                </div>
+                <h2>Recuperar Contraseña</h2>
+                <p>Le enviaremos un enlace a su correo</p>
+            </div>
+
+            <form method="post" action="{{ url_for('auth.recuperar_password') }}" class="login-form">
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" required>
+                </div>
+
+                <button type="submit" class="btn-login-submit">Enviar instrucciones</button>
+            </form>
+
+            <div class="login-footer">
+                <p><a href="/login">Volver al inicio de sesión</a></p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer style="background: linear-gradient(135deg, #0a2b5c, #1e3a6f); color: white; padding: 60px 0 20px; margin-top: 60px;">
+    <div class="container">
+        <div class="footer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 30px;">
+            <div class="footer-info">
+                <h3 style="color: white;">Junta de Distrito Municipal</h3>
+                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111" style="color: white;">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com" style="color: white;">juntamunicipalrioverdearriba@gmail.com</a></p>
+            </div>
+            <div class="footer-social">
+                <h3 style="color: white;">Síguenos</h3>
+                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" style="color: white; display: block; margin-bottom: 10px;">Facebook</a>
+                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" style="color: white; display: block;">Instagram</a>
+            </div>
+            <div class="footer-horario">
+                <h3 style="color: white;">Horario de Oficina</h3>
+                <p>Lunes a Viernes<br>8:00 AM - 2:00 PM</p>
+               
+            </div>
+        </div>
+        <div class="copyright" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/recuperar.js') }}"></script>
+</body>
+</html>

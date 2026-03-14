@@ -1,0 +1,432 @@
+/* ============================================================
+   transparencia.css — Junta Distrital de Villa Cutupú
+   Adaptado desde main.css
+   ============================================================ */
+
+/* ===================================================
+   NEUTRALIZAR padding global de section (main.css)
+   =================================================== */
+section.page-header,
+section.page {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* ===================================================
+   PAGE HEADER
+   =================================================== */
+.page-header {
+    background: linear-gradient(145deg, #EFF3EE 0%, #FFFFFF 100%);
+    border-bottom: none;
+    margin-bottom: 0;
+    padding: 4rem 5% 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(to bottom, #7E8F76, #A9B7A2);
+}
+
+.page-header h1 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 800;
+    color: #1C1C1C;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    font-size: 1rem;
+    color: #6B6B6B;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ===================================================
+   SECCIÓN PRINCIPAL
+   =================================================== */
+.page {
+    max-width: 1200px;
+    margin: 4rem auto 5rem;
+    padding: 0 5%;
+}
+
+/* ===================================================
+   BLOQUE DE BIENVENIDA
+   =================================================== */
+.welcome-block {
+    background: #FFFFFF;
+    border-radius: 18px;
+    padding: 3rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    border: 1px solid #E8E8E8;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-block::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #5A684F, #A9B7A2);
+}
+
+.welcome-block h2 {
+    font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+    font-weight: 800;
+    color: #1C1C1C;
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem;
+    line-height: 1.3;
+}
+
+.welcome-block > p {
+    font-size: 1.05rem;
+    color: #3D3D3D;
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+}
+
+.welcome-block > p strong {
+    color: #5A684F;
+}
+
+/* Cita legal */
+.legal-quote {
+    background: #FAFAFA;
+    border-left: 4px solid #7E8F76;
+    border-radius: 0 12px 12px 0;
+    padding: 1.5rem 2rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #3D3D3D;
+}
+
+.legal-quote p {
+    margin: 0 0 0.8rem;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.legal-quote p:last-child {
+    margin-bottom: 0;
+}
+
+.ley-ref {
+    font-weight: 800;
+    font-style: normal;
+    color: #5A684F;
+}
+
+.legal-quote ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    font-style: normal;
+}
+
+.legal-quote ul li {
+    padding: 0.6rem 1rem 0.6rem 2.5rem;
+    background: #FFFFFF;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: #3D3D3D;
+    line-height: 1.6;
+    border: 1px solid #EBEBEB;
+    position: relative;
+}
+
+.legal-quote ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0.8rem;
+    color: #7E8F76;
+    font-weight: 800;
+    font-style: normal;
+}
+
+.legal-quote ul li strong {
+    color: #5A684F;
+    font-weight: 700;
+}
+
+/* Nota final del bloque */
+.welcome-block .nota-final {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #3D3D3D;
+    margin-top: 1.5rem;
+    padding: 1rem 1.2rem;
+    background: #EFF3EE;
+    border-radius: 10px;
+}
+
+.welcome-block .nota-final::before {
+    content: '★';
+    color: #7E8F76;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* ===================================================
+   BADGES DE CUMPLIMIENTO
+   =================================================== */
+.compliance-badge {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin: 0 0 3rem;
+}
+
+.badge-item {
+    background: #FFFFFF;
+    border: 2px solid #E8E8E8;
+    border-radius: 999px;
+    padding: 0.5rem 1.3rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #3D3D3D;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.badge-item:hover {
+    border-color: #7E8F76;
+    color: #5A684F;
+}
+
+.badge-item .badge-icon {
+    color: #7E8F76;
+    font-size: 1rem;
+}
+
+/* ===================================================
+   SUBTÍTULO DE SECCIÓN
+   =================================================== */
+.section-subtitle {
+    font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+    font-weight: 800;
+    color: #1C1C1C;
+    text-align: center;
+    margin: 0 0 2.5rem;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+}
+
+.section-subtitle .tag {
+    display: inline-block;
+    background: #EFF3EE;
+    color: #5A684F;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+/* ===================================================
+   GRID DE TRANSPARENCIA
+   =================================================== */
+.transparencia-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* ===================================================
+   CARDS
+   =================================================== */
+.service-card {
+    background: #FFFFFF;
+    border-radius: 14px;
+    padding: 1.8rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid #E8E8E8;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #7E8F76, #A9B7A2);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border-color: #D0D9CB;
+}
+
+.service-card:hover::before {
+    transform: scaleX(1);
+}
+
+.service-card .card-icono {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    line-height: 1;
+    display: block;
+}
+
+.service-card h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1C1C1C;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+}
+
+.service-card p {
+    font-size: 0.95rem;
+    color: #6B6B6B;
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+    flex: 1;
+}
+
+/* Botón de la card */
+.btn-transparencia {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.7rem 1.3rem;
+    background: #5A684F;
+    color: white;
+    border-radius: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    align-self: flex-start;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(90,104,79,0.2);
+}
+
+.btn-transparencia:hover {
+    background: #7E8F76;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(90,104,79,0.3);
+}
+
+.btn-transparencia::after {
+    content: '→';
+    transition: transform 0.2s ease;
+}
+
+.btn-transparencia:hover::after {
+    transform: translateX(3px);
+}
+
+/* ===================================================
+   NOTA DE ACTUALIZACIÓN
+   =================================================== */
+.nota-actualizacion {
+    text-align: center;
+    margin: 1rem 0 0;
+    color: #3D3D3D;
+    background: #FAFAFA;
+    border: 1px solid #E8E8E8;
+    padding: 1.2rem 2rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.nota-actualizacion a {
+    color: #5A684F;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.nota-actualizacion a:hover {
+    color: #7E8F76;
+    text-decoration: underline;
+}
+
+/* ===================================================
+   RESPONSIVE
+   =================================================== */
+@media (max-width: 768px) {
+    .page {
+        margin: 3rem auto 4rem;
+    }
+
+    .welcome-block {
+        padding: 2rem 1.5rem;
+    }
+
+    .legal-quote {
+        padding: 1.2rem 1.2rem;
+    }
+
+    .transparencia-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .compliance-badge {
+        gap: 0.5rem;
+    }
+
+    .nota-actualizacion {
+        border-radius: 14px;
+        padding: 1rem 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header {
+        padding: 3rem 5% 2.5rem;
+    }
+
+    .welcome-block h2 {
+        font-size: 1.3rem;
+    }
+
+    .service-card {
+        padding: 1.4rem 1.2rem;
+    }
+
+    .badge-item {
+        font-size: 0.82rem;
+        padding: 0.4rem 0.9rem;
+    }
+}

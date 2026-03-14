@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "folio": "DEN-2603-9778",
+    "usuario_email": null,
+    "usuario_nombre": "Anónimo",
+    "tipo": "policia",
+    "tipo_nombre": "Policía Municipal",
+    "descripcion": "me pararon sin razon",
+    "direccion": "La lima los llano 99",
+    "anonimo": true,
+    "estado": "pendiente",
+    "fecha_creacion": "2026-03-08T20:48:10.296342",
+    "fecha_actualizacion": "2026-03-08T20:48:10.296348",
+    "asignado_a": null,
+    "comentarios_admin": [],
+    "fotos": [],
+    "historial": [
+      {
+        "fecha": "2026-03-08T20:48:10.296353",
+        "tipo": "creada",
+        "descripcion": "Denuncia creada",
+        "usuario": "sistema"
+      }
+    ]
+  }
+]

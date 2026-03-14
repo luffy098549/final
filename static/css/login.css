@@ -1,0 +1,386 @@
+/* ============================================================
+   login.css — Junta Distrital de Villa Cutupú
+   Adaptado desde main.css
+   ============================================================ */
+
+/* ===================================================
+   PAGE HEADER
+   =================================================== */
+.page-header {
+    background: linear-gradient(145deg, #EFF3EE 0%, #FFFFFF 100%);
+    border-bottom: 1px solid #E8E8E8;
+    padding: 4rem 5%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(to bottom, #7E8F76, #A9B7A2);
+}
+
+.page-header h1 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 800;
+    color: #1C1C1C;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    font-size: 1rem;
+    color: #6B6B6B;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* ===================================================
+   LAYOUT PRINCIPAL
+   =================================================== */
+.login-container {
+    max-width: 960px;
+    margin: 6rem auto;
+    padding: 0 5%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+/* ===================================================
+   LOGIN BOX
+   =================================================== */
+.login-box {
+    background: #FFFFFF;
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.login-box:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+}
+
+.login-box::before {
+    content: '';
+    display: block;
+    height: 5px;
+    background: linear-gradient(90deg, #5A684F, #A9B7A2);
+}
+
+/* ===================================================
+   LOGIN HEADER
+   =================================================== */
+.login-header {
+    padding: 3rem 3rem 1.5rem;
+    text-align: center;
+}
+
+.login-icon {
+    width: 72px;
+    height: 72px;
+    background: #EFF3EE;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: #5A684F;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.login-box:hover .login-icon {
+    background: #5A684F;
+    color: white;
+    transform: scale(1.05);
+}
+
+.login-icon svg {
+    width: 36px;
+    height: 36px;
+}
+
+.login-header h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #1C1C1C;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.3rem;
+}
+
+.login-header p {
+    font-size: 0.95rem;
+    color: #6B6B6B;
+}
+
+/* ===================================================
+   FORMULARIO
+   =================================================== */
+.login-form {
+    padding: 0 3rem 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #3D3D3D;
+    margin-bottom: 0.4rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #E8E8E8;
+    border-radius: 12px;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1rem;
+    color: #1C1C1C;
+    background: #FFFFFF;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #7E8F76;
+    box-shadow: 0 0 0 3px rgba(126, 143, 118, 0.15);
+}
+
+.form-group input::placeholder {
+    color: #A3A3A3;
+}
+
+/* ===================================================
+   OPCIONES DEL FORM
+   =================================================== */
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #3D3D3D;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #5A684F;
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: #5A684F;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.forgot-password:hover {
+    color: #7E8F76;
+    text-decoration: underline;
+}
+
+/* ===================================================
+   BOTÓN SUBMIT
+   =================================================== */
+.btn-login-submit {
+    width: 100%;
+    padding: 0.9rem;
+    background: #5A684F;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.btn-login-submit:hover {
+    background: #7E8F76;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.btn-login-submit:active {
+    transform: translateY(0);
+}
+
+/* ===================================================
+   FOOTER DEL LOGIN BOX
+   =================================================== */
+.login-footer {
+    padding: 1.5rem 3rem 2rem;
+    border-top: 1px solid #E8E8E8;
+    text-align: center;
+}
+
+.login-footer p {
+    font-size: 0.9rem;
+    color: #6B6B6B;
+    margin-bottom: 0.5rem;
+}
+
+.login-footer a {
+    color: #5A684F;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.login-footer a:hover {
+    color: #7E8F76;
+    text-decoration: underline;
+}
+
+.help-text {
+    font-size: 0.8rem !important;
+    color: #A3A3A3 !important;
+    margin-top: 0.3rem !important;
+}
+
+/* ===================================================
+   PANEL INFORMATIVO
+   =================================================== */
+.login-info {
+    background: #5A684F;
+    border-radius: 18px;
+    padding: 3rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-info::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+}
+
+.login-info::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+}
+
+.login-info h3 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+    position: relative;
+    z-index: 1;
+}
+
+.info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.info-list li {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-list li:last-child {
+    border-bottom: none;
+}
+
+.info-note {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+}
+
+.info-note strong {
+    color: white;
+}
+
+/* ===================================================
+   RESPONSIVE
+   =================================================== */
+@media (max-width: 768px) {
+    .login-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin: 3rem auto;
+    }
+
+    .login-info {
+        order: -1;
+    }
+
+    .login-header,
+    .login-form,
+    .login-footer {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-header {
+        padding-top: 2rem;
+    }
+
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .login-info {
+        padding: 2rem;
+    }
+}

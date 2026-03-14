@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrantes y Autoridades - Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/integrantes.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/"><img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" class="header-logo"></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia" class="active">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="page-header">
+        <div class="breadcrumb">
+            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Integrantes y Autoridades</span>
+        </div>
+        <h1>Integrantes y Autoridades</h1>
+        <p>Nómina oficial de autoridades electas y funcionarios designados — Período 2024–2028</p>
+    </section>
+
+    <section class="page">
+        <div class="intro-block">
+            <p>Conforme al <strong>Artículo 3 de la Ley 200-04</strong>, el Estado está obligado a publicar información actualizada sobre sus funcionarios. Se presenta la nómina oficial de la Junta Distrital de Villa Cutupú, período constitucional 2024–2028.</p>
+        </div>
+
+        <h2 class="bloque-titulo">Autoridades electas — Período 2024–2028</h2>
+        <div class="cards-grid">
+            <!-- Tarjeta de Robert con imagen -->
+            <div class="info-card with-image">
+                <div class="card-image">
+                    <img src="{{ url_for('static', filename='img/robert22.jpg') }}" alt="Robert Donald Tolentino Grullón" onerror="this.style.display='none'; this.parentElement.classList.add('image-fallback');">
+                    <div class="image-fallback-content" style="display: none;">👨‍💼</div>
+                </div>
+                <div class="card-content">
+                    <span class="cargo">Alcalde / Director Municipal</span>
+                    <h3>Robert Donald Tolentino Grullón</h3>
+                    <p>Partido: <strong>PRM</strong> · Toma de posesión: 24 de abril 2024</p>
+                </div>
+            </div>
+            
+            <!-- Tarjeta de Kelly con imagen -->
+            <div class="info-card with-image">
+                <div class="card-image">
+                    <img src="{{ url_for('static', filename='img/kelly2.png') }}" alt="Kelly Bueno" onerror="this.style.display='none'; this.parentElement.classList.add('image-fallback');">
+                    <div class="image-fallback-content" style="display: none;">👩‍💼</div>
+                </div>
+                <div class="card-content">
+                    <span class="cargo">Vicealcaldesa / Subdirectora</span>
+                    <h3>Kelly Bueno</h3>
+                    <p>Partido: <strong>PRM</strong> · Toma de posesión: 24 de abril 2024</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="bloque-titulo">Concejo de Regidores</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Partido</th>
+                        <th>Comisión que Preside</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Pedro Antonio Martínez</td><td><span class="badge badge-azul">PRM</span></td><td>Obras Públicas</td></tr>
+                    <tr><td>Ana Cecilia Gómez</td><td><span class="badge badge-gris">PLD</span></td><td>Educación y Cultura</td></tr>
+                    <tr><td>Ramón Emilio Jiménez</td><td><span class="badge badge-azul">PRM</span></td><td>Hacienda y Presupuesto</td></tr>
+                    <tr><td>Luisa Fernanda Reyes</td><td><span class="badge badge-verde">FP</span></td><td>Salud y Medio Ambiente</td></tr>
+                    <tr><td>Carlos Manuel Sánchez</td><td><span class="badge badge-azul">PRM</span></td><td>Deportes y Juventud</td></tr>
+                    <tr><td>Sandra Patricia Peña</td><td><span class="badge badge-gris">PLD</span></td><td>Mujer y Familia</td></tr>
+                    <tr><td>José Miguel Hernández</td><td><span class="badge badge-gris">PRSC</span></td><td>Ética y Reglamentos</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="bloque-titulo">Funcionarios designados</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cargo</th>
+                        <th>Nombre</th>
+                        <th>Desde</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Secretario Municipal</td><td>Carlos Sánchez Rodríguez</td><td>2024</td></tr>
+                    <tr><td>Tesorero Municipal</td><td>Rosa Elena Fernández</td><td>2024</td></tr>
+                    <tr><td>Director de Planeamiento Urbano</td><td>Luis Manuel Jiménez</td><td>2023</td></tr>
+                    <tr><td>Encargada de Compras</td><td>Elena María Vargas</td><td>2024</td></tr>
+                    <tr><td>Oficial de Acceso a la Información (OAI)</td><td>Fernando Antonio Reyes</td><td>2024</td></tr>
+                    <tr><td>Encargada de Recursos Humanos</td><td>Laura Patricia Martínez</td><td>2024</td></tr>
+                    <tr><td>Encargado de Obras Públicas</td><td>Rafael Antonio Pérez</td><td>2023</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="bloque-titulo">Declaraciones Juradas de Bienes (Ley 311-14)</h2>
+        <div class="nota-legal">Según la <strong>Ley 311-14</strong>, todo funcionario electo o designado debe presentar declaración jurada de bienes ante la Cámara de Cuentas dentro de los 30 días de tomar posesión.</div>
+        <div class="docs-lista">
+            <div class="doc-item">
+                <span class="doc-icono">📄</span>
+                <div class="doc-info">
+                    <strong>Robert Donald Tolentino Grullón — Alcalde</strong>
+                    <span>Presentada: 30/04/2024</span>
+                </div>
+                <a href="#" class="doc-btn">Ver PDF</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📄</span>
+                <div class="doc-info">
+                    <strong>Kelly Bueno — Vicealcaldesa</strong>
+                    <span>Presentada: 30/04/2024</span>
+                </div>
+                <a href="#" class="doc-btn">Ver PDF</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📄</span>
+                <div class="doc-info">
+                    <strong>Pedro Antonio Martínez — Regidor</strong>
+                    <span>Presentada: 28/04/2024</span>
+                </div>
+                <a href="#" class="doc-btn">Ver PDF</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <!-- Columna 1: Información institucional -->
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            
+            <!-- Columna 2: ENLACES RÁPIDOS -->
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <!-- Columna 3: Contacto -->
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+    /* Estilos para las tarjetas con imagen */
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .info-card.with-image {
+        display: flex;
+        flex-direction: column;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid var(--border, #E8E8E8);
+    }
+    
+    .info-card.with-image:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    }
+    
+    .card-image {
+        width: 100%;
+        height: 250px;
+        background: var(--gray-100, #F5F5F5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 3px solid var(--green, #7E8F76);
+    }
+    
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+    }
+    
+    .card-image.image-fallback {
+        background: var(--green-xlight, #EFF3EE);
+        font-size: 4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .card-image.image-fallback .image-fallback-content {
+        display: block !important;
+        font-size: 4rem;
+    }
+    
+    .card-content {
+        padding: 1.5rem;
+    }
+    
+    .info-card .cargo {
+        display: inline-block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--green-dark, #5A684F);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: var(--green-xlight, #EFF3EE);
+        padding: 0.25rem 1rem;
+        border-radius: 999px;
+        margin-bottom: 0.75rem;
+    }
+    
+    .info-card h3 {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--text, #1C1C1C);
+        margin-bottom: 0.5rem;
+    }
+    
+    .info-card p {
+        font-size: 0.95rem;
+        color: var(--text-light, #6B6B6B);
+        line-height: 1.5;
+    }
+</style>
+
+<script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
+</body>
+</html>

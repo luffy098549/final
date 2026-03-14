@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil — Junta Distrital Villa Cutupú</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        /* ─────────────────────────────────────────────
+           Extensión de main.css para la página de perfil
+           ───────────────────────────────────────────── */
+        .page-perfil {
+            background: var(--gray-50);
+            min-height: calc(100vh - 90px);
+            padding: 2.5rem 0 4rem;
+        }
+        .breadcrumb {
+            display: flex; align-items: center; gap: .5rem;
+            font-size: .82rem; color: var(--gray-400);
+            margin-bottom: 2rem;
+        }
+        .breadcrumb a { color: var(--gray-400); text-decoration: none; transition: color .2s; }
+        .breadcrumb a:hover { color: var(--green-dark); }
+        .breadcrumb i { font-size: .65rem; }
+        .breadcrumb span:last-child { color: var(--text-soft); font-weight: 600; }
+
+        /* ── Banner hero ── */
+        .profile-banner {
+            background: linear-gradient(135deg, var(--green-dark) 0%, #3a5732 55%, #2B6A9E 100%);
+            border-radius: var(--radius-block);
+            padding: 2.25rem 2.5rem;
+            margin-bottom: 1.75rem;
+            display: flex; align-items: center; gap: 2rem;
+            position: relative; overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        .profile-banner::before {
+            content:''; position:absolute; right:-80px; top:-80px;
+            width:320px; height:320px; border-radius:50%;
+            border:50px solid rgba(255,255,255,.04); pointer-events:none;
+        }
+        .profile-banner::after {
+            content:''; position:absolute; right:60px; bottom:-100px;
+            width:220px; height:220px; border-radius:50%;
+            border:35px solid rgba(255,255,255,.03); pointer-events:none;
+        }
+        .banner-avatar-wrap { position: relative; z-index: 1; flex-shrink: 0; }
+        .banner-avatar {
+            width: 80px; height: 80px; border-radius: 50%;
+            border: 3px solid rgba(255,255,255,.22);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.75rem; font-weight: 800; color: #fff;
+            background: rgba(255,255,255,.12);
+            overflow: hidden; backdrop-filter: blur(4px); cursor: pointer;
+        }
+        .banner-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .banner-avatar.is-admin {
+            border-color: rgba(196,150,58,.7);
+            box-shadow: 0 0 0 3px rgba(196,150,58,.2);
+        }
+        .avatar-edit-btn {
+            position: absolute; bottom: 0; right: 0;
+            width: 26px; height: 26px; border-radius: 50%;
+            background: var(--white); color: var(--green-dark);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .65rem; cursor: pointer;
+            border: 2px solid rgba(255,255,255,.5);
+            transition: all .2s; box-shadow: 0 2px 6px rgba(0,0,0,.2);
+        }
+        .avatar-edit-btn:hover { background: var(--green-dark); color: #fff; transform: scale(1.1); }
+        .banner-info { position: relative; z-index: 1; flex: 1; }
+        .banner-nombre {
+            font-size: 1.55rem; font-weight: 800; color: #fff;
+            letter-spacing: -.025em; margin-bottom: .3rem; line-height: 1.2;
+        }
+        .banner-email {
+            font-size: .85rem; color: rgba(255,255,255,.6);
+            margin-bottom: .85rem; display: flex; align-items: center; gap: .4rem;
+        }
+        .banner-tags { display: flex; gap: .45rem; flex-wrap: wrap; }
+        .tag {
+            padding: .28rem .8rem; border-radius: var(--radius-full);
+            font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+        }
+        .tag-ciudadano  { background: rgba(255,255,255,.12); color: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.15); }
+        .tag-moderador  { background: rgba(43,106,158,.35);  color: #a8d4f5; border: 1px solid rgba(43,106,158,.4); }
+        .tag-admin      { background: rgba(196,150,58,.22);  color: #e8c87a; border: 1px solid rgba(196,150,58,.35); }
+        .tag-superadmin { background: linear-gradient(90deg,rgba(196,150,58,.3),rgba(176,48,32,.25)); color: #f0d49a; border: 1px solid rgba(196,150,58,.4); }
+        .tag-activo     { background: rgba(76,175,80,.18);   color: #a5d6a7; border: 1px solid rgba(76,175,80,.25); }
+        .banner-meta {
+            position: relative; z-index: 1;
+            text-align: right; color: rgba(255,255,255,.5); font-size: .78rem; flex-shrink: 0;
+        }
+        .banner-meta strong { display: block; color: rgba(255,255,255,.85); font-size: .92rem; font-weight: 700; margin-bottom: 2px; }
+
+        /* ── Layout ── */
+        .perfil-layout {
+            display: grid;
+            grid-template-columns: 290px 1fr;
+            gap: 1.5rem; align-items: start;
+        }
+        .perfil-sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+        .perfil-main    { display: flex; flex-direction: column; gap: 1.25rem; }
+
+        /* ── Card base ── */
+        .pcard {
+            background: var(--white);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-xs);
+            overflow: hidden;
+            transition: box-shadow var(--transition-base);
+        }
+        .pcard:hover { box-shadow: var(--shadow-sm); }
+        .pcard-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: .7rem;
+        }
+        .pcard-icon {
+            width: 28px; height: 28px; border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .75rem; flex-shrink: 0;
+        }
+        .pi-green { background: var(--green-xlight); color: var(--green-dark); }
+        .pi-blue  { background: var(--blue-sky-light); color: var(--blue-sky); }
+        .pi-red   { background: #fff0f0; color: #c0392b; }
+        .pi-gold  { background: #fdf5e6; color: #c4963a; }
+        .pcard-title { font-size: .88rem; font-weight: 700; color: var(--text); flex: 1; }
+        .pcard-link {
+            font-size: .75rem; color: var(--green-dark); font-weight: 600;
+            text-decoration: none; display: flex; align-items: center; gap: .3rem;
+            transition: color .2s;
+        }
+        .pcard-link:hover { color: var(--green); }
+        .pcard-body    { padding: 1.5rem; }
+        .pcard-body-sm { padding: 1.1rem 1.5rem; }
+
+        /* ── Foto de perfil ── */
+        .foto-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: .5rem 0; }
+        .foto-preview-grande {
+            width: 110px; height: 110px; border-radius: 50%;
+            border: 3px solid var(--border); overflow: hidden;
+            background: var(--green-xlight);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; font-weight: 800; color: var(--green-dark);
+            position: relative; cursor: pointer;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .foto-preview-grande img { width: 100%; height: 100%; object-fit: cover; }
+        .foto-preview-grande:hover { border-color: var(--green); box-shadow: 0 0 0 4px rgba(126,143,118,.12); }
+        .foto-overlay {
+            position: absolute; inset: 0; background: rgba(26,46,26,.5); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity .2s; color: #fff; font-size: .8rem; font-weight: 600; gap: .4rem;
+        }
+        .foto-preview-grande:hover .foto-overlay { opacity: 1; }
+        .foto-input-hidden { display: none; }
+        .foto-acciones { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; }
+        .btn-foto-subir {
+            height: 36px; padding: 0 1rem;
+            background: var(--green-dark); color: #fff; border: none;
+            border-radius: var(--radius-card);
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: .8rem; font-weight: 600;
+            cursor: pointer; display: inline-flex; align-items: center; gap: .4rem; transition: all .2s;
+        }
+        .btn-foto-subir:hover { background: var(--green); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+        .btn-foto-eliminar {
+            height: 36px; padding: 0 1rem;
+            background: #fff0f0; color: #c0392b;
+            border: 1px solid rgba(192,57,43,.2); border-radius: var(--radius-card);
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: .8rem; font-weight: 600;
+            cursor: pointer; display: inline-flex; align-items: center; gap: .4rem; transition: all .2s;
+        }
+        .btn-foto-eliminar:hover { background: #c0392b; color: #fff; }
+        .foto-hint { font-size: .72rem; color: var(--gray-400); text-align: center; line-height: 1.5; }
+
+        /* ── Stats ── */
+        .stats-duo { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; }
+        .stat-box {
+            border: 1px solid var(--border); border-radius: var(--radius-card);
+            padding: .9rem; text-align: center;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .stat-box:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+        .stat-num {
+            font-size: 1.8rem; font-weight: 800;
+            color: var(--green-dark); line-height: 1; margin-bottom: .25rem;
+        }
+        .stat-num.blue { color: var(--blue-sky); }
+        .stat-lbl {
+            font-size: .68rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .05em; color: var(--gray-400);
+        }
+
+        /* ── Quick nav ── */
+        .qnav { display: flex; flex-direction: column; gap: .25rem; }
+        .qnav-item {
+            display: flex; align-items: center; gap: .7rem;
+            padding: .7rem .9rem; border-radius: var(--radius-card);
+            text-decoration: none; color: var(--text-soft);
+            font-size: .85rem; font-weight: 500;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+        .qnav-item:hover {
+            background: var(--green-xlight);
+            border-color: var(--green-light);
+            color: var(--green-dark);
+            padding-left: 1.1rem;
+        }
+        .qnav-item > i:first-child { width: 14px; color: var(--green-dark); font-size: .78rem; opacity: .65; flex-shrink: 0; }
+        .qnav-arr { margin-left: auto; font-size: .65rem; opacity: 0; transition: opacity .2s; }
+        .qnav-item:hover .qnav-arr { opacity: .4; }
+        .qnav-sep { height: 1px; background: var(--border); margin: .2rem 0; }
+
+        /* ── Form ── */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .fgroup { display: flex; flex-direction: column; gap: .35rem; }
+        .fgroup.full { grid-column: 1/-1; }
+        .flabel {
+            font-size: .68rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: .07em; color: var(--gray-500);
+        }
+        .finput {
+            height: 42px; padding: 0 .9rem;
+            border: 2px solid var(--border); border-radius: var(--radius-card);
+            font-family: 'Plus Jakarta Sans',sans-serif;
+            font-size: .88rem; color: var(--text); background: var(--white);
+            transition: border-color .2s, box-shadow .2s, background .2s;
+            width: 100%;
+        }
+        .finput:focus {
+            outline: none; border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(126,143,118,.1);
+        }
+        .finput[readonly] {
+            background: var(--gray-50); color: var(--gray-400); cursor: default;
+        }
+        .finput[readonly]:focus { border-color: var(--border); box-shadow: none; }
+        .fhint { font-size: .68rem; color: var(--gray-400); }
+        .fsec {
+            grid-column: 1/-1; margin-top: .5rem;
+            padding-top: .9rem; border-top: 1px solid var(--border);
+        }
+        .fsec-lbl {
+            font-size: .66rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: .1em; color: var(--green-dark);
+        }
+        .btn-row {
+            display: flex; gap: .65rem; justify-content: flex-end;
+            margin-top: 1.25rem; padding-top: 1.1rem;
+            border-top: 1px solid var(--border);
+        }
+        .btn-sm { height: 38px; padding: 0 1.3rem; font-size: .82rem; }
+        .btn-ghost {
+            background: transparent; color: var(--gray-500);
+            border: 2px solid var(--border); border-radius: var(--radius-card);
+            font-family: 'Plus Jakarta Sans',sans-serif; font-weight: 600;
+            cursor: pointer; transition: all .2s;
+            display: inline-flex; align-items: center; gap: .4rem;
+        }
+        .btn-ghost:hover { border-color: var(--gray-500); color: var(--text); }
+        .btn-danger-s {
+            background: #fff0f0; color: #c0392b;
+            border: 2px solid rgba(192,57,43,.15);
+            border-radius: var(--radius-card);
+            font-family: 'Plus Jakarta Sans',sans-serif; font-weight: 600;
+            cursor: pointer; transition: all .2s;
+            display: inline-flex; align-items: center; gap: .4rem;
+        }
+        .btn-danger-s:hover { background: #c0392b; color: #fff; }
+
+        /* ── Password collapse ── */
+        .pw-toggle {
+            background: none; border: none;
+            color: var(--green-dark); font-family: 'Plus Jakarta Sans',sans-serif;
+            font-size: .75rem; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: .35rem; padding: 0;
+            transition: color .2s;
+        }
+        .pw-toggle:hover { color: var(--green); }
+        .pw-collapse { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+        .pw-collapse.open { max-height: 400px; }
+        .pw-inner {
+            padding-top: 1.1rem; margin-top: 1.1rem;
+            border-top: 1px dashed var(--border);
+        }
+
+        /* ── Actividad ── */
+        .act-feed { display: flex; flex-direction: column; }
+        .act-row {
+            display: flex; align-items: flex-start; gap: .9rem;
+            padding: .9rem 0; border-bottom: 1px solid var(--border);
+        }
+        .act-row:last-child { border-bottom: none; }
+        .act-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .75rem; flex-shrink: 0; margin-top: 1px;
+        }
+        .act-sol { background: var(--blue-sky-light); color: var(--blue-sky); }
+        .act-den { background: #fff0ee; color: #e8603c; }
+        .act-body { flex: 1; min-width: 0; }
+        .act-title {
+            font-size: .85rem; font-weight: 600; color: var(--text);
+            margin-bottom: .18rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .act-meta {
+            font-size: .72rem; color: var(--gray-400);
+            display: flex; align-items: center; gap: .35rem;
+        }
+        .act-meta i { font-size: .62rem; }
+        .estado-pill {
+            padding: .22rem .65rem; border-radius: var(--radius-full);
+            font-size: .67rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .04em;
+            white-space: nowrap; align-self: flex-start; margin-top: 2px;
+        }
+        .e-pendiente        { background: #fff8e1; color: #e65100; }
+        .e-en_proceso       { background: var(--blue-sky-light); color: var(--blue-sky); }
+        .e-completado       { background: #f0faf0; color: #2e7d32; }
+        .e-resuelto         { background: #f0faf0; color: #2e7d32; }
+        .e-rechazado        { background: #fff0f0; color: #c0392b; }
+        .e-en_investigacion { background: var(--blue-sky-light); color: #1e5480; }
+        .e-cancelado        { background: var(--gray-100); color: var(--gray-500); }
+        .empty-s {
+            text-align: center; padding: 2.5rem 1rem; color: var(--gray-400);
+        }
+        .empty-s i { font-size: 2.2rem; margin-bottom: .7rem; opacity: .25; display: block; }
+        .empty-s p { font-size: .88rem; margin-bottom: 1rem; }
+
+        /* ── Rol card (admin) ── */
+        .rol-card {
+            background: linear-gradient(135deg, var(--green-dark) 0%, #2e4828 100%);
+            border-radius: var(--radius-card);
+            padding: 1.2rem 1.5rem;
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .rol-card.c-admin { background: linear-gradient(135deg,#1e3a5f 0%,#2B6A9E 100%); }
+        .rol-card.c-mod   { background: linear-gradient(135deg,#1e3a5f 0%,#2d4a6a 100%); }
+        .rol-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: rgba(255,255,255,.12);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .95rem; flex-shrink: 0;
+        }
+        .rol-info h4 { font-size: .85rem; font-weight: 700; color: #fff; margin-bottom: .18rem; }
+        .rol-info p  { font-size: .72rem; color: rgba(255,255,255,.55); }
+        .rol-badge {
+            margin-left: auto;
+            padding: .3rem .85rem; border-radius: var(--radius-full);
+            font-size: .65rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: .07em;
+        }
+        .rb-super { background: #c4963a; color: #fff; }
+        .rb-admin { background: rgba(255,255,255,.15); color: rgba(255,255,255,.9); border: 1px solid rgba(255,255,255,.2); }
+        .rb-mod   { background: var(--blue-sky); color: #fff; }
+
+        /* ── Tabs ── */
+        .tabs-bar {
+            display: flex; border-bottom: 2px solid var(--border);
+            margin-bottom: 1.75rem;
+        }
+        .tab-pill {
+            padding: .7rem 1.2rem;
+            background: none; border: none; border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            font-family: 'Plus Jakarta Sans',sans-serif;
+            font-size: .82rem; font-weight: 600; color: var(--gray-400);
+            cursor: pointer;
+            display: flex; align-items: center; gap: .45rem;
+            border-radius: var(--radius-card) var(--radius-card) 0 0;
+            transition: all .2s;
+        }
+        .tab-pill i { font-size: .72rem; }
+        .tab-pill:hover { color: var(--text-soft); background: var(--gray-50); }
+        .tab-pill.active { color: var(--green-dark); border-bottom-color: var(--green-dark); background: none; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        /* ── Permisos ── */
+        .perms-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(176px,1fr)); gap: .55rem; }
+        .perm-item {
+            display: flex; align-items: center; gap: .55rem;
+            padding: .6rem .8rem; border-radius: var(--radius-card);
+            border: 1px solid var(--border); font-size: .75rem; font-weight: 500;
+            color: var(--text-soft); background: var(--gray-50);
+        }
+        .perm-item.on  { background: #f0faf0; border-color: rgba(76,175,80,.2); color: #2e6b2e; }
+        .perm-item.off { opacity: .38; text-decoration: line-through; }
+        .pdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .pdot.ok { background: #4caf50; }
+        .pdot.no { background: var(--gray-300); }
+
+        /* ── Info pairs ── */
+        .info-pairs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+        .ikey {
+            font-size: .67rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: .07em; color: var(--gray-400);
+            margin-bottom: .2rem;
+        }
+        .ival { font-size: .88rem; font-weight: 500; color: var(--text); }
+
+        /* Nota admin */
+        .nota-admin {
+            margin-top: 1.1rem; padding: .8rem 1rem;
+            background: var(--blue-sky-light);
+            border-left: 3px solid var(--blue-sky);
+            border-radius: 0 var(--radius-card) var(--radius-card) 0;
+            font-size: .8rem; color: var(--text-soft);
+        }
+        .nota-admin strong {
+            display: block; font-size: .67rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: .07em;
+            color: var(--blue-sky); margin-bottom: .2rem;
+        }
+
+        /* ── Shortcuts ── */
+        .sc-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(195px,1fr)); gap: .7rem; }
+        .sc-item {
+            display: flex; align-items: center; gap: .7rem;
+            padding: .8rem 1rem; border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            text-decoration: none; color: var(--text-soft);
+            font-size: .82rem; font-weight: 600;
+            background: var(--gray-50);
+            transition: all .2s;
+        }
+        .sc-item:hover {
+            background: var(--white); border-color: var(--green-light);
+            color: var(--green-dark); transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        .sc-item .sc-ic {
+            width: 26px; height: 26px; border-radius: 6px;
+            background: var(--green-xlight); color: var(--green-dark);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .72rem; flex-shrink: 0;
+        }
+        .sc-item.gold .sc-ic { background: #fdf5e6; color: #c4963a; }
+        .sc-arr { margin-left: auto; font-size: .62rem; opacity: .25; }
+
+        /* ── Divider util ── */
+        .hr { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+        /* ── Responsive ── */
+        @media (max-width: 960px) {
+            .perfil-layout { grid-template-columns: 1fr; }
+            .perfil-sidebar { display: grid; grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 640px) {
+            .profile-banner { flex-direction: column; text-align: center; padding: 1.75rem 1.25rem; }
+            .banner-tags { justify-content: center; }
+            .banner-meta { text-align: center; }
+            .perfil-sidebar { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .fgroup.full { grid-column: auto; }
+            .info-pairs { grid-template-columns: 1fr; }
+            .sc-grid { grid-template-columns: 1fr; }
+            .perms-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Flash messages -->
+<div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+                <i class="fas {% if category == 'success' %}fa-check-circle{% elif category == 'error' %}fa-times-circle{% else %}fa-info-circle{% endif %}"></i>
+                <span>{{ message }}</span>
+                <button class="flash-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<!-- Header -->
+<header class="main-header" id="mainHeader">
+    <div class="container">
+        <div class="logo">
+            <a href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Junta Distrital Villa Cutupú" class="header-logo"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <span style="display:none;align-items:center;gap:.5rem;font-weight:800;color:var(--green-dark);font-size:1rem;">Junta Distrital Villa Cutupú</span>
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                <li><a href="{{ url_for('municipio') }}">Municipio</a></li>
+                <li><a href="{{ url_for('servicios') }}">Servicios</a></li>
+                <li><a href="{{ url_for('transparencia') }}">Transparencia</a></li>
+                <li><a href="{{ url_for('noticias') }}">Noticias</a></li>
+                <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                {% if logged %}
+                <li class="user-menu">
+                    <a href="#" class="btn-user">
+                        <i class="fas fa-user-circle"></i>
+                        <span>{{ user_name.split()[0] if user_name else 'Mi cuenta' }}</span>
+                        <i class="fas fa-chevron-down" style="font-size:.62rem;opacity:.6;"></i>
+                    </a>
+                    <ul class="dropdown">
+                        <li><a href="{{ url_for('mi_cuenta') }}" class="active"><i class="fas fa-id-card"></i> Mi perfil</a></li>
+                        {% if not is_admin %}<li><a href="{{ url_for('mis_tramites') }}"><i class="fas fa-folder-open"></i> Mis trámites</a></li>{% endif %}
+                        {% if is_admin %}<li><a href="{{ url_for('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Panel admin</a></li>{% endif %}
+                        <li><div class="divider"></div></li>
+                        <li><a href="{{ url_for('auth.logout') }}" class="text-danger"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="{{ url_for('auth.registro') }}" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <button class="menu-toggle" id="menuToggle" aria-label="Menú"><span></span><span></span><span></span></button>
+    </div>
+</header>
+
+<!-- Menú móvil -->
+<div class="mobile-menu" id="mobileMenu">
+    <ul>
+        <li><a href="{{ url_for('index') }}">Inicio</a></li>
+        <li><a href="{{ url_for('municipio') }}">Municipio</a></li>
+        <li><a href="{{ url_for('servicios') }}">Servicios</a></li>
+        <li><a href="{{ url_for('transparencia') }}">Transparencia</a></li>
+        <li><a href="{{ url_for('noticias') }}">Noticias</a></li>
+        <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+        <div class="divider"></div>
+        {% if logged %}
+        <li><a href="{{ url_for('mi_cuenta') }}">Mi perfil</a></li>
+        {% if not is_admin %}<li><a href="{{ url_for('mis_tramites') }}">Mis trámites</a></li>{% endif %}
+        {% if is_admin %}<li><a href="{{ url_for('admin.dashboard') }}">Panel admin</a></li>{% endif %}
+        <li><a href="{{ url_for('auth.logout') }}" style="color:#dc3545;">Cerrar sesión</a></li>
+        {% else %}
+        <li><a href="{{ url_for('auth.login') }}" class="btn-login-mobile">Iniciar sesión</a></li>
+        <li><a href="{{ url_for('auth.registro') }}" class="btn-registro-mobile">Registrarse</a></li>
+        {% endif %}
+    </ul>
+</div>
+<div class="overlay" id="overlay"></div>
+
+<!-- Contenido -->
+<div class="page-perfil">
+    <div class="container">
+
+        <nav class="breadcrumb">
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Mi perfil</span>
+        </nav>
+
+        <!-- Banner con foto -->
+        <div class="profile-banner">
+            <div class="banner-avatar-wrap">
+                <div class="banner-avatar {% if is_admin %}is-admin{% endif %}"
+                     onclick="document.getElementById('fotoInputBanner').click()">
+                    {% if usuario.foto_perfil %}
+                        <img src="{{ url_for('uploaded_file', filename=usuario.foto_perfil) }}"
+                             alt="Foto" onerror="this.style.display='none'">
+                    {% else %}
+                        {{ usuario.nombre[0]|upper if usuario.nombre else usuario.email[0]|upper }}
+                    {% endif %}
+                </div>
+                <div class="avatar-edit-btn"
+                     onclick="document.getElementById('fotoInputBanner').click()"
+                     title="Cambiar foto">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
+
+            <div class="banner-info">
+                <h1 class="banner-nombre">
+                    {{ usuario.nombre_completo or ((usuario.nombre or '') ~ ' ' ~ (usuario.apellidos or ''))|trim or 'Sin nombre' }}
+                </h1>
+                <p class="banner-email"><i class="fas fa-envelope"></i> {{ usuario.email }}</p>
+                <div class="banner-tags">
+                    {% if usuario.rol == 'super_admin' %}<span class="tag tag-superadmin">Super administrador</span>
+                    {% elif usuario.rol == 'admin' %}<span class="tag tag-admin">Administrador</span>
+                    {% elif usuario.rol == 'moderador' %}<span class="tag tag-moderador">Moderador</span>
+                    {% else %}<span class="tag tag-ciudadano">Ciudadano</span>{% endif %}
+                    {% if usuario.activo %}<span class="tag tag-activo">Activo</span>{% endif %}
+                </div>
+            </div>
+
+            <div class="banner-meta">
+                <strong>{{ usuario.fecha_registro or 'N/D' }}</strong>
+                Miembro desde
+                {% if usuario.ultimo_acceso %}
+                <br><br>
+                <strong>{{ usuario.ultimo_acceso[:10] }}</strong>
+                Último acceso
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Form oculto para subida rápida desde el banner -->
+        <form id="formFotoBanner" action="{{ url_for('subir_foto_perfil') }}"
+              method="POST" enctype="multipart/form-data" style="display:none;">
+            <input type="file" id="fotoInputBanner" name="foto"
+                   accept="image/png,image/jpeg,image/gif,image/webp"
+                   onchange="document.getElementById('formFotoBanner').submit();">
+        </form>
+
+        <!-- ══ VISTA CIUDADANO ══ -->
+        {% if not is_admin %}
+        <div class="perfil-layout">
+
+            <!-- Sidebar -->
+            <aside class="perfil-sidebar">
+
+                <!-- Foto de perfil card -->
+                <div class="pcard">
+                    <div class="pcard-header">
+                        <div class="pcard-icon pi-green"><i class="fas fa-camera"></i></div>
+                        <span class="pcard-title">Foto de perfil</span>
+                    </div>
+                    <div class="pcard-body-sm">
+                        <div class="foto-wrap">
+
+                            <div class="foto-preview-grande" id="fotoPreviewGrande"
+                                 onclick="document.getElementById('fotoInputCard').click()">
+                                {% if usuario.foto_perfil %}
+                                    <img id="fotoImgPreview"
+                                         src="{{ url_for('uploaded_file', filename=usuario.foto_perfil) }}"
+                                         alt="Foto" onerror="this.style.display='none'">
+                                {% else %}
+                                    <span id="fotoLetraPreview">
+                                        {{ usuario.nombre[0]|upper if usuario.nombre else usuario.email[0]|upper }}
+                                    </span>
+                                {% endif %}
+                                <div class="foto-overlay">
+                                    <i class="fas fa-camera"></i> Cambiar
+                                </div>
+                            </div>
+
+                            <form id="formFotoCard" action="{{ url_for('subir_foto_perfil') }}"
+                                  method="POST" enctype="multipart/form-data">
+                                <input type="file" id="fotoInputCard" name="foto"
+                                       class="foto-input-hidden"
+                                       accept="image/png,image/jpeg,image/gif,image/webp"
+                                       onchange="previsualizarFoto(this)">
+
+                                <div class="foto-acciones" id="fotoAcciones">
+                                    <button type="button" class="btn-foto-subir"
+                                            onclick="document.getElementById('fotoInputCard').click()">
+                                        <i class="fas fa-upload"></i>
+                                        {% if usuario.foto_perfil %}Cambiar foto{% else %}Subir foto{% endif %}
+                                    </button>
+                                    {% if usuario.foto_perfil %}
+                                    <form action="{{ url_for('eliminar_foto_perfil') }}"
+                                          method="POST" style="margin:0;">
+                                        <button type="submit" class="btn-foto-eliminar"
+                                                onclick="return confirm('¿Eliminar tu foto de perfil?')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+
+                                <button type="submit" id="btnGuardarFoto"
+                                        class="btn-foto-subir"
+                                        style="display:none; background:var(--blue-sky);">
+                                    <i class="fas fa-save"></i> Guardar foto
+                                </button>
+                            </form>
+
+                            <p class="foto-hint">PNG, JPG o WEBP · Máx. 5 MB</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="pcard">
+                    <div class="pcard-header">
+                        <div class="pcard-icon pi-green"><i class="fas fa-chart-bar"></i></div>
+                        <span class="pcard-title">Actividad</span>
+                    </div>
+                    <div class="pcard-body-sm">
+                        <div class="stats-duo">
+                            <div class="stat-box">
+                                <div class="stat-num">{{ solicitudes_count }}</div>
+                                <div class="stat-lbl">Solicitudes</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-num blue">{{ denuncias_count }}</div>
+                                <div class="stat-lbl">Denuncias</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accesos rápidos -->
+                <div class="pcard">
+                    <div class="pcard-header">
+                        <div class="pcard-icon pi-green"><i class="fas fa-th-large"></i></div>
+                        <span class="pcard-title">Accesos rápidos</span>
+                    </div>
+                    <div class="pcard-body-sm">
+                        <nav class="qnav">
+                            <a href="{{ url_for('mis_tramites') }}" class="qnav-item">
+                                <i class="fas fa-folder-open"></i> Mis trámites
+                                <i class="fas fa-chevron-right qnav-arr"></i>
+                            </a>
+                            <a href="{{ url_for('servicios') }}" class="qnav-item">
+                                <i class="fas fa-file-alt"></i> Solicitar servicio
+                                <i class="fas fa-chevron-right qnav-arr"></i>
+                            </a>
+                            <a href="{{ url_for('servicios') }}" class="qnav-item">
+                                <i class="fas fa-flag"></i> Hacer denuncia
+                                <i class="fas fa-chevron-right qnav-arr"></i>
+                            </a>
+                            <div class="qnav-sep"></div>
+                            <a href="{{ url_for('transparencia') }}" class="qnav-item">
+                                <i class="fas fa-book-open"></i> Transparencia
+                                <i class="fas fa-chevron-right qnav-arr"></i>
+                            </a>
+                            <a href="{{ url_for('contacto') }}" class="qnav-item">
+                                <i class="fas fa-envelope"></i> Contacto
+                                <i class="fas fa-chevron-right qnav-arr"></i>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main -->
+            <main class="perfil-main">
+
+                <!-- Datos personales -->
+                <div class="pcard">
+                    <div class="pcard-header">
+                        <div class="pcard-icon pi-green"><i class="fas fa-user-edit"></i></div>
+                        <span class="pcard-title">Datos personales</span>
+                    </div>
+                    <div class="pcard-body">
+                        <form action="{{ url_for('editar_perfil') }}" method="POST">
+                            <div class="form-grid">
+                                <div class="fgroup">
+                                    <label class="flabel">Nombre(s)</label>
+                                    <input type="text" name="nombre" class="finput" value="{{ usuario.nombre }}" required placeholder="Ej. Juan">
+                                </div>
+                                <div class="fgroup">
+                                    <label class="flabel">Apellidos</label>
+                                    <input type="text" name="apellidos" class="finput" value="{{ usuario.apellidos }}" required placeholder="Ej. Pérez Gómez">
+                                </div>
+                                <div class="fgroup">
+                                    <label class="flabel">Correo electrónico</label>
+                                    <input type="email" class="finput" value="{{ usuario.email }}" readonly>
+                                    <span class="fhint">No puede modificarse</span>
+                                </div>
+                                <div class="fgroup">
+                                    <label class="flabel">Teléfono</label>
+                                    <input type="text" name="telefono" class="finput" value="{{ usuario.telefono }}" placeholder="+1 809 000 0000">
+                                </div>
+                                <div class="fgroup full">
+                                    <label class="flabel">Dirección</label>
+                                    <input type="text" name="direccion" class="finput" value="{{ usuario.direccion }}" placeholder="Ej. Calle Principal No. 4, Villa Cutupú">
+                                </div>
+                                {% if usuario.cedula or usuario.fecha_nacimiento %}
+                                <div class="fsec"><span class="fsec-lbl">Identificación</span></div>
+                                {% if usuario.cedula %}
+                                <div class="fgroup">
+                                    <label class="flabel">Cédula</label>
+                                    <input type="text" class="finput" value="{{ usuario.cedula }}" readonly>
+                                    <span class="fhint">Dato de registro no editable</span>
+                                </div>
+                                {% endif %}
+                                {% if usuario.fecha_nacimiento %}
+                                <div class="fgroup">
+                                    <label class="flabel">Fecha de nacimiento</label>
+                                    <input type="text" class="finput" value="{{ usuario.fecha_nacimiento }}" readonly>
+                                </div>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                            <div class="btn-row">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-save"></i> Guardar cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Seguridad -->
+                <div class="pcard">
+                    <div class="pcard-header">
+                        <div class="pcard-icon pi-red"><i class="fas fa-lock"></i></div>
+                        <span class="pcard-title">Seguridad</span>
+                        <button class="pw-toggle" onclick="togglePw()" id="pwBtn">
+                            <i class="fas fa-key"></i> Cambiar contraseña
+                        </button>
+                    </div>
+                    <div class="pcard-body">
+                        <p style="font-size:.83rem;color:var(--gray-400);">
+                            Cuenta activa desde <strong style="color:var(--text-soft);">{{ usuario.fecha_registro }}</strong>.
+                        </p>
+                        <div class="pw-collapse" id="pwCollapse">
+                            <div class="pw-inner">
+                                <form action="{{ url_for('auth.cambiar_password') }}" method="POST">
+                                    <div class="form-grid">
+                                        <div class="fgroup full">
+                                            <label class="flabel">Contraseña actual</label>
+                                            <input type="password" name="password_actual" class="finput" required placeholder="Tu contraseña actual">
+                                        </div>
+                                        <div class="fgroup">
+                                            <label class="flabel">Nueva contraseña</label>
+                                            <input type="password" name="password_nueva" class="finput" required placeholder="Mínimo 6 caracteres">
+                                        </div>
+                                        <div class="fgroup">
+                                            <label class="flabel">Confirmar contraseña</label>
+                                            <input type="password" name="password_confirmar" class="finput" required placeholder="Repite la contraseña">
+                                        </div>
+                                    </div>
+                                    <div class="btn-row">
+                                        <button type="button" class="btn-ghost btn-sm" onclick="togglePw()">Cancelar</button>
+                                        <button type="submit" class="btn-danger-s btn-sm" style="height:38px;padding:0 1.3rem;">
+                                            <i class="fas fa-key"></i> Actualizar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actividad reciente -->
+                <div class="pcard">
+                    <div class="pcard-header">
+                        <div class="pcard-icon pi-blue"><i class="fas fa-history"></i></div>
+                        <span class="pcard-title">Actividad reciente</span>
+                        <a href="{{ url_for('mis_tramites') }}" class="pcard-link">
+                            Ver todo <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="pcard-body" style="padding-top:.4rem;padding-bottom:.4rem;">
+                        {% if ultimas_actividades %}
+                        <div class="act-feed">
+                            {% for act in ultimas_actividades %}
+                            <div class="act-row">
+                                <div class="act-icon {{ 'act-sol' if act.tipo == 'solicitud' else 'act-den' }}">
+                                    <i class="fas {{ 'fa-file-alt' if act.tipo == 'solicitud' else 'fa-flag' }}"></i>
+                                </div>
+                                <div class="act-body">
+                                    <div class="act-title">{{ act.descripcion }}</div>
+                                    <div class="act-meta">
+                                        <i class="fas fa-hashtag"></i>{{ act.folio }}
+                                        &nbsp;&middot;&nbsp;
+                                        <i class="fas fa-calendar-alt"></i>{{ act.fecha[:10] if act.fecha else '' }}
+                                    </div>
+                                </div>
+                                <span class="estado-pill e-{{ act.estado }}">{{ act.estado|replace('_',' ')|title }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-s">
+                            <i class="fas fa-inbox"></i>
+                            <p>No tienes actividad registrada aún.</p>
+                            <a href="{{ url_for('servicios') }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Solicitar servicio
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- ══ VISTA ADMIN ══ -->
+        {% else %}
+
+        <!-- Rol banner -->
+        <div class="rol-card {% if usuario.rol == 'admin' %}c-admin{% elif usuario.rol == 'moderador' %}c-mod{% endif %}">
+            <div class="rol-icon">
+                <i class="fas {% if usuario.rol == 'super_admin' %}fa-crown{% elif usuario.rol == 'admin' %}fa-shield-alt{% else %}fa-user-shield{% endif %}"></i>
+            </div>
+            <div class="rol-info">
+                <h4>{% if usuario.rol == 'super_admin' %}Super Administrador del sistema{% elif usuario.rol == 'admin' %}Administrador municipal{% else %}Moderador{% endif %}</h4>
+                <p>{% if usuario.rol == 'super_admin' %}Acceso completo a todas las funciones del sistema.{% elif usuario.rol == 'admin' %}Gestión de solicitudes, denuncias y usuarios.{% else %}Visualización y comentarios en trámites ciudadanos.{% endif %}</p>
+            </div>
+            <span class="rol-badge {% if usuario.rol == 'super_admin' %}rb-super{% elif usuario.rol == 'admin' %}rb-admin{% else %}rb-mod{% endif %}">
+                {{ usuario.rol|replace('_',' ')|upper }}
+            </span>
+        </div>
+
+        <!-- Tabs card -->
+        <div class="pcard" style="margin-bottom:1.5rem;">
+            <div class="pcard-body" style="padding-bottom:0;">
+                <div class="tabs-bar">
+                    <button class="tab-pill active" onclick="switchTab(this,'tp-perfil')"><i class="fas fa-id-card"></i> Perfil</button>
+                    <button class="tab-pill" onclick="switchTab(this,'tp-foto')"><i class="fas fa-camera"></i> Foto</button>
+                    <button class="tab-pill" onclick="switchTab(this,'tp-permisos')"><i class="fas fa-lock"></i> Permisos</button>
+                    <button class="tab-pill" onclick="switchTab(this,'tp-seguridad')"><i class="fas fa-key"></i> Seguridad</button>
+                </div>
+            </div>
+
+            <!-- Tab Perfil -->
+            <div class="tab-pane active" id="tp-perfil">
+                <div class="pcard-body">
+                    <div class="info-pairs" style="margin-bottom:1.4rem;">
+                        <div><p class="ikey">Nombre completo</p><p class="ival">{{ usuario.nombre_completo or ((usuario.nombre or '')~' '~(usuario.apellidos or ''))|trim }}</p></div>
+                        <div><p class="ikey">Correo electrónico</p><p class="ival">{{ usuario.email }}</p></div>
+                        <div><p class="ikey">Teléfono</p><p class="ival">{{ usuario.telefono or 'No registrado' }}</p></div>
+                        <div><p class="ikey">Miembro desde</p><p class="ival">{{ usuario.fecha_registro or 'N/D' }}</p></div>
+                        <div><p class="ikey">Último acceso</p><p class="ival">{{ usuario.ultimo_acceso[:16]|replace('T',' ') if usuario.ultimo_acceso else 'Sin registro' }}</p></div>
+                        <div><p class="ikey">Estado</p><p class="ival">{{ 'Activo' if usuario.activo else 'Inactivo' }}</p></div>
+                    </div>
+                    <hr class="hr">
+                    <form action="{{ url_for('editar_perfil') }}" method="POST">
+                        <div class="form-grid">
+                            <div class="fgroup"><label class="flabel">Nombre(s)</label><input type="text" name="nombre" class="finput" value="{{ usuario.nombre }}" required></div>
+                            <div class="fgroup"><label class="flabel">Apellidos</label><input type="text" name="apellidos" class="finput" value="{{ usuario.apellidos }}"></div>
+                            <div class="fgroup"><label class="flabel">Teléfono</label><input type="text" name="telefono" class="finput" value="{{ usuario.telefono }}"></div>
+                            <div class="fgroup"><label class="flabel">Correo (no editable)</label><input type="email" class="finput" value="{{ usuario.email }}" readonly></div>
+                            <div class="fgroup full"><label class="flabel">Dirección</label><input type="text" name="direccion" class="finput" value="{{ usuario.direccion }}"></div>
+                        </div>
+                        <div class="btn-row">
+                            <a href="{{ url_for('admin.dashboard') }}" class="btn-ghost btn-sm" style="height:38px;padding:0 1.3rem;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;">
+                                <i class="fas fa-arrow-left"></i> Volver al panel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tab Foto -->
+            <div class="tab-pane" id="tp-foto">
+                <div class="pcard-body">
+                    <div class="foto-wrap">
+                        <div class="foto-preview-grande"
+                             onclick="document.getElementById('fotoInputAdmin').click()">
+                            {% if usuario.foto_perfil %}
+                                <img src="{{ url_for('uploaded_file', filename=usuario.foto_perfil) }}"
+                                     alt="Foto" onerror="this.style.display='none'">
+                            {% else %}
+                                <span>{{ usuario.nombre[0]|upper if usuario.nombre else usuario.email[0]|upper }}</span>
+                            {% endif %}
+                            <div class="foto-overlay"><i class="fas fa-camera"></i> Cambiar</div>
+                        </div>
+
+                        <form id="formFotoAdmin" action="{{ url_for('subir_foto_perfil') }}"
+                              method="POST" enctype="multipart/form-data">
+                            <input type="file" id="fotoInputAdmin" name="foto"
+                                   class="foto-input-hidden"
+                                   accept="image/png,image/jpeg,image/gif,image/webp"
+                                   onchange="previsualizarFotoAdmin(this)">
+                            <div class="foto-acciones">
+                                <button type="button" class="btn-foto-subir"
+                                        onclick="document.getElementById('fotoInputAdmin').click()">
+                                    <i class="fas fa-upload"></i>
+                                    {% if usuario.foto_perfil %}Cambiar{% else %}Subir foto{% endif %}
+                                </button>
+                                {% if usuario.foto_perfil %}
+                                <form action="{{ url_for('eliminar_foto_perfil') }}"
+                                      method="POST" style="margin:0;">
+                                    <button type="submit" class="btn-foto-eliminar"
+                                            onclick="return confirm('¿Eliminar foto?')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            <button type="submit" id="btnGuardarFotoAdmin"
+                                    class="btn-foto-subir"
+                                    style="display:none;background:var(--blue-sky);">
+                                <i class="fas fa-save"></i> Guardar foto
+                            </button>
+                        </form>
+                        <p class="foto-hint">PNG, JPG o WEBP · Máx. 5 MB</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Permisos -->
+            <div class="tab-pane" id="tp-permisos">
+                <div class="pcard-body">
+                    <p style="font-size:.83rem;color:var(--gray-400);margin-bottom:1.1rem;">
+                        Permisos del rol <strong style="color:var(--text);">{{ usuario.rol|replace('_',' ')|title }}</strong>.
+                    </p>
+                    {% set pm = {
+                        'super_admin': ['ver_solicitudes','editar_solicitudes','eliminar_solicitudes','ver_denuncias','editar_denuncias','eliminar_denuncias','ver_usuarios','editar_usuarios','crear_admins','ver_configuracion','editar_configuracion','ver_bitacora','exportar_datos','modo_mantenimiento','comentar','asignar'],
+                        'admin':       ['ver_solicitudes','editar_solicitudes','ver_denuncias','editar_denuncias','ver_usuarios','editar_usuarios','ver_configuracion','ver_bitacora','exportar_datos','comentar','asignar'],
+                        'moderador':   ['ver_solicitudes','ver_denuncias','ver_usuarios','comentar']
+                    } %}
+                    {% set todos = [
+                        ('ver_solicitudes','Ver solicitudes'),('editar_solicitudes','Editar solicitudes'),
+                        ('eliminar_solicitudes','Eliminar solicitudes'),('ver_denuncias','Ver denuncias'),
+                        ('editar_denuncias','Editar denuncias'),('eliminar_denuncias','Eliminar denuncias'),
+                        ('ver_usuarios','Ver usuarios'),('editar_usuarios','Editar usuarios'),
+                        ('crear_admins','Crear administradores'),('ver_configuracion','Ver configuración'),
+                        ('editar_configuracion','Editar configuración'),('ver_bitacora','Ver bitácora'),
+                        ('exportar_datos','Exportar datos'),('modo_mantenimiento','Modo mantenimiento'),
+                        ('comentar','Comentar trámites'),('asignar','Asignar trámites')
+                    ] %}
+                    {% set misp = pm.get(usuario.rol, []) %}
+                    <div class="perms-grid">
+                        {% for pid,pnm in todos %}
+                        {% set t = pid in misp %}
+                        <div class="perm-item {{ 'on' if t else 'off' }}">
+                            <span class="pdot {{ 'ok' if t else 'no' }}"></span>{{ pnm }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Seguridad -->
+            <div class="tab-pane" id="tp-seguridad">
+                <div class="pcard-body">
+                    <div class="info-pairs" style="margin-bottom:1.25rem;">
+                        <div><p class="ikey">Último acceso</p><p class="ival">{{ usuario.ultimo_acceso[:16]|replace('T',' ') if usuario.ultimo_acceso else 'Sin registro' }}</p></div>
+                        <div><p class="ikey">Estado de la cuenta</p><p class="ival">{{ 'Activa' if usuario.activo else 'Inactiva' }}</p></div>
+                    </div>
+                    <hr class="hr">
+                    <p style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-400);margin-bottom:.9rem;">Cambiar contraseña</p>
+                    <form action="{{ url_for('auth.cambiar_password') }}" method="POST">
+                        <div class="form-grid">
+                            <div class="fgroup full"><label class="flabel">Contraseña actual</label><input type="password" name="password_actual" class="finput" placeholder="Tu contraseña actual"></div>
+                            <div class="fgroup"><label class="flabel">Nueva contraseña</label><input type="password" name="password_nueva" class="finput" placeholder="Mínimo 6 caracteres"></div>
+                            <div class="fgroup"><label class="flabel">Confirmar contraseña</label><input type="password" name="password_confirmar" class="finput" placeholder="Repite la contraseña"></div>
+                        </div>
+                        <div class="btn-row">
+                            <button type="submit" class="btn-danger-s btn-sm" style="height:38px;padding:0 1.3rem;">
+                                <i class="fas fa-key"></i> Actualizar contraseña
+                            </button>
+                        </div>
+                    </form>
+                    {% if usuario.notas_admin %}
+                    <div class="nota-admin"><strong>Nota del sistema</strong>{{ usuario.notas_admin }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Accesos directos -->
+        <div class="pcard">
+            <div class="pcard-header">
+                <div class="pcard-icon pi-gold"><i class="fas fa-bolt"></i></div>
+                <span class="pcard-title">Accesos directos</span>
+            </div>
+            <div class="pcard-body">
+                <div class="sc-grid">
+                    <a href="{{ url_for('admin.dashboard') }}" class="sc-item"><div class="sc-ic"><i class="fas fa-tachometer-alt"></i></div>Dashboard<i class="fas fa-chevron-right sc-arr"></i></a>
+                    <a href="{{ url_for('admin.listar_solicitudes') }}" class="sc-item"><div class="sc-ic"><i class="fas fa-file-alt"></i></div>Solicitudes<i class="fas fa-chevron-right sc-arr"></i></a>
+                    <a href="{{ url_for('admin.listar_denuncias') }}" class="sc-item"><div class="sc-ic"><i class="fas fa-flag"></i></div>Denuncias<i class="fas fa-chevron-right sc-arr"></i></a>
+                    {% if usuario.rol in ['admin','super_admin'] %}
+                    <a href="{{ url_for('admin.listar_usuarios') }}" class="sc-item"><div class="sc-ic"><i class="fas fa-users"></i></div>Usuarios<i class="fas fa-chevron-right sc-arr"></i></a>
+                    <a href="{{ url_for('admin.reportes') }}" class="sc-item gold"><div class="sc-ic"><i class="fas fa-chart-line"></i></div>Reportes<i class="fas fa-chevron-right sc-arr"></i></a>
+                    {% endif %}
+                    {% if usuario.rol == 'super_admin' %}
+                    <a href="{{ url_for('admin.configuracion') }}" class="sc-item gold"><div class="sc-ic"><i class="fas fa-cog"></i></div>Configuración<i class="fas fa-chevron-right sc-arr"></i></a>
+                    <a href="{{ url_for('admin.bitacora') }}" class="sc-item"><div class="sc-ic"><i class="fas fa-list-alt"></i></div>Bitácora<i class="fas fa-chevron-right sc-arr"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>Junta Distrital Villa Cutupú</h3>
+                <p>Institución municipal al servicio de la comunidad de Villa Cutupú, La Vega, República Dominicana.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Accesos</h3>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('municipio') }}">Municipio</a></li>
+                    <li><a href="{{ url_for('servicios') }}">Servicios</a></li>
+                    <li><a href="{{ url_for('transparencia') }}">Transparencia</a></li>
+                    <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Villa Cutupú, La Vega, Rep. Dom.</p>
+                <p><i class="fas fa-phone"></i> <a href="tel:+18096917111">+1 (809) 691-7111</a></p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:info@cutupu.gob.do">info@cutupu.gob.do</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {{ now.year }} Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<button class="back-to-top" id="backToTop" aria-label="Volver arriba">
+    <i class="fas fa-chevron-up"></i>
+</button>
+
+<script>
+    const header = document.getElementById('mainHeader');
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('overlay');
+    const btt = document.getElementById('backToTop');
+
+    window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 10);
+        btt?.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+
+    function closeMobile() {
+        menuToggle.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.classList.remove('menu-open');
+    }
+    menuToggle?.addEventListener('click', () => {
+        const open = mobileMenu.classList.toggle('active');
+        menuToggle.classList.toggle('active', open);
+        overlay.classList.toggle('active', open);
+        document.body.classList.toggle('menu-open', open);
+    });
+    overlay?.addEventListener('click', closeMobile);
+    btt?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    function switchTab(btn, id) {
+        document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(id)?.classList.add('active');
+    }
+
+    function togglePw() {
+        const col = document.getElementById('pwCollapse');
+        const btn = document.getElementById('pwBtn');
+        if (!col) return;
+        col.classList.toggle('open');
+        const open = col.classList.contains('open');
+        if (btn) btn.innerHTML = open
+            ? '<i class="fas fa-times"></i> Cancelar'
+            : '<i class="fas fa-key"></i> Cambiar contraseña';
+    }
+
+    // Preview foto ciudadano
+    function previsualizarFoto(input) {
+        if (!input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const prev = document.getElementById('fotoPreviewGrande');
+            if (!prev) return;
+            let img = prev.querySelector('img');
+            if (!img) {
+                img = document.createElement('img');
+                img.id = 'fotoImgPreview';
+                prev.insertBefore(img, prev.firstChild);
+                const letra = prev.querySelector('#fotoLetraPreview');
+                if (letra) letra.style.display = 'none';
+            }
+            img.src = e.target.result;
+            img.style.display = 'block';
+            document.getElementById('fotoAcciones').style.display = 'none';
+            document.getElementById('btnGuardarFoto').style.display = 'inline-flex';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    // Preview foto admin
+    function previsualizarFotoAdmin(input) {
+        if (!input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const prev = document.querySelector('#tp-foto .foto-preview-grande');
+            if (!prev) return;
+            let img = prev.querySelector('img');
+            if (!img) {
+                img = document.createElement('img');
+                prev.insertBefore(img, prev.firstChild);
+                const span = prev.querySelector('span');
+                if (span) span.style.display = 'none';
+            }
+            img.src = e.target.result;
+            document.getElementById('btnGuardarFotoAdmin').style.display = 'inline-flex';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    setTimeout(() => {
+        document.querySelectorAll('.flash-message').forEach(el => {
+            el.style.transition = 'opacity .4s, transform .4s';
+            el.style.opacity = '0';
+            el.style.transform = 'translateX(30px)';
+            setTimeout(() => el.remove(), 400);
+        });
+    }, 5000);
+</script>
+</body>
+</html>

@@ -1,0 +1,851 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Solicitud: {{ solicitud.folio }} - Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #1a3b2e;
+        --primary-light: #2e7d5e;
+        --primary-soft: #e8f3ee;
+        --warning: #b85e00;
+        --warning-light: #fff1e0;
+        --success: #1e7b4c;
+        --success-light: #e1f7ed;
+        --danger: #b33c2f;
+        --danger-light: #fee9e7;
+        --info: #2563eb;
+        --info-light: #e0edff;
+        --purple: #6b21a5;
+        --purple-light: #f1e5ff;
+        --gray-50: #f9fafb;
+        --gray-100: #f2f4f7;
+        --gray-200: #e4e7ec;
+        --gray-300: #d0d5dd;
+        --gray-400: #98a2b3;
+        --gray-500: #667085;
+        --gray-600: #475467;
+        --gray-700: #344054;
+        --gray-800: #1d2939;
+        --gray-900: #101828;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
+        --shadow-md: 0 4px 6px -2px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: var(--gray-50);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        color: var(--gray-900);
+    }
+
+    .detalle-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    .detalle-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        border-radius: var(--radius-xl);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .detalle-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .detalle-header h1 i {
+        font-size: 2rem;
+        opacity: 0.9;
+    }
+
+    .detalle-header .folio-badge {
+        background: rgba(255,255,255,0.2);
+        padding: 0.5rem 1.5rem;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(5px);
+    }
+
+    .btn-volver {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: white;
+        color: var(--primary);
+        text-decoration: none;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .btn-volver:hover {
+        background: var(--primary-soft);
+        transform: translateX(-5px);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Grid principal */
+    .detalle-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Tarjetas */
+    .card {
+        background: white;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-light);
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        background: var(--gray-100);
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .card-header h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-header h2 i {
+        color: var(--primary);
+        font-size: 1.25rem;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Información de la solicitud */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .info-item {
+        border-bottom: 1px solid var(--gray-200);
+        padding-bottom: 1rem;
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--gray-500);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-label i {
+        font-size: 0.9rem;
+        color: var(--primary);
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .info-value.full-width {
+        grid-column: span 2;
+    }
+
+    .descripcion-box {
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--gray-700);
+        margin-top: 0.5rem;
+    }
+
+    /* Badge de estado */
+    .estado-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1.25rem;
+        border-radius: 40px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        gap: 0.5rem;
+    }
+
+    .estado-badge i {
+        font-size: 0.7rem;
+    }
+
+    .estado-pendiente {
+        background: var(--warning-light);
+        color: var(--warning);
+        border: 1px solid #ffd9b0;
+    }
+
+    .estado-en_proceso {
+        background: var(--info-light);
+        color: var(--info);
+        border: 1px solid #b8d3ff;
+    }
+
+    .estado-completado {
+        background: var(--success-light);
+        color: var(--success);
+        border: 1px solid #b0e5c0;
+    }
+
+    .estado-rechazado {
+        background: var(--danger-light);
+        color: var(--danger);
+        border: 1px solid #ffcfc9;
+    }
+
+    /* Timeline de comentarios */
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 7px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--gray-200);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 1.5rem;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -2rem;
+        top: 0;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--primary);
+        border: 3px solid white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .timeline-content {
+        background: var(--gray-50);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        border: 1px solid var(--gray-200);
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-author {
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    .timeline-date {
+        font-size: 0.85rem;
+        color: var(--gray-500);
+    }
+
+    .timeline-text {
+        color: var(--gray-700);
+        line-height: 1.5;
+    }
+
+    .empty-comments {
+        text-align: center;
+        padding: 3rem;
+        background: var(--gray-50);
+        border-radius: var(--radius-lg);
+        border: 2px dashed var(--gray-300);
+    }
+
+    .empty-comments i {
+        font-size: 3rem;
+        color: var(--gray-400);
+        margin-bottom: 1rem;
+    }
+
+    .empty-comments p {
+        color: var(--gray-500);
+        font-size: 1.1rem;
+    }
+
+    /* Formularios de acciones */
+    .action-form {
+        margin-bottom: 1.5rem;
+        padding: 1.25rem;
+        background: var(--gray-50);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--gray-200);
+    }
+
+    .action-form:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(26, 59, 46, 0.1);
+    }
+
+    .form-select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        background: white;
+        cursor: pointer;
+    }
+
+    .form-select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(26, 59, 46, 0.1);
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        width: 100%;
+    }
+
+    .btn i {
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-info {
+        background: var(--info);
+        color: white;
+    }
+
+    .btn-info:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #9f2d1f;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Botón icono para plantillas */
+    .btn-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-md);
+        background: var(--gray-100);
+        color: var(--primary);
+        border: 1px solid var(--gray-300);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .btn-icon:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Información del usuario */
+    .user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .user-info-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        background: var(--gray-50);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--gray-200);
+    }
+
+    .user-info-item i {
+        width: 24px;
+        color: var(--primary);
+        font-size: 1.1rem;
+    }
+
+    .user-info-item .info {
+        flex: 1;
+    }
+
+    .user-info-item .label {
+        font-size: 0.8rem;
+        color: var(--gray-500);
+        display: block;
+    }
+
+    .user-info-item .value {
+        font-weight: 600;
+        color: var(--gray-800);
+    }
+
+    .badge-anonimo {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.9rem;
+        background: var(--gray-200);
+        color: var(--gray-700);
+        border-radius: 40px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .detalle-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .detalle-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .info-value.full-width {
+            grid-column: span 1;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .detalle-container {
+            padding: 1rem;
+        }
+
+        .card-header {
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detalle-container">
+    <!-- Header con navegación -->
+    <div class="detalle-header">
+        <div>
+            <h1>
+                <i class="fas fa-file-alt"></i>
+                Detalle de Solicitud
+            </h1>
+            <span class="folio-badge">{{ solicitud.folio }}</span>
+        </div>
+        <a href="{{ url_for('admin.listar_solicitudes') }}" class="btn-volver">
+            <i class="fas fa-arrow-left"></i>
+            Volver a Solicitudes
+        </a>
+    </div>
+
+    <!-- Grid principal -->
+    <div class="detalle-grid">
+        <!-- Columna izquierda - Información principal -->
+        <div>
+            <!-- Información de la solicitud -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-info-circle"></i>
+                        Información de la Solicitud
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-hashtag"></i> Folio
+                            </div>
+                            <div class="info-value">{{ solicitud.folio }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-calendar"></i> Fecha de Creación
+                            </div>
+                            <div class="info-value">
+                                {{ solicitud.fecha_creacion[:10] }}<br>
+                                <small class="text-muted">{{ solicitud.fecha_creacion[11:16] }}</small>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-tag"></i> Servicio
+                            </div>
+                            <div class="info-value">{{ servicios.get(solicitud.servicio_id|string, 'Desconocido') }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-clock"></i> Estado Actual
+                            </div>
+                            <div class="info-value">
+                                <span class="estado-badge estado-{{ solicitud.estado }}">
+                                    <i class="fas fa-circle"></i>
+                                    {{ solicitud.estado|replace('_', ' ')|title }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="info-item full-width">
+                            <div class="info-label">
+                                <i class="fas fa-align-left"></i> Descripción
+                            </div>
+                            <div class="descripcion-box">
+                                {{ solicitud.descripcion }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historial de seguimiento -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-history"></i>
+                        Historial de Seguimiento
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% if solicitud.comentarios_admin and solicitud.comentarios_admin|length > 0 %}
+                        <div class="timeline">
+                            {% for comentario in solicitud.comentarios_admin %}
+                            <div class="timeline-item">
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="timeline-author">
+                                            <i class="fas fa-user-shield"></i>
+                                            {{ comentario.admin or 'Sistema' }}
+                                        </span>
+                                        <span class="timeline-date">
+                                            <i class="far fa-clock"></i>
+                                            {{ comentario.fecha[:10] }} {{ comentario.fecha[11:16] }}
+                                        </span>
+                                    </div>
+                                    <div class="timeline-text">
+                                        {{ comentario.comentario }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-comments">
+                            <i class="far fa-comment-dots"></i>
+                            <p>No hay comentarios aún.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha - Acciones -->
+        <div>
+            <!-- Panel de acciones -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-cog"></i>
+                        Acciones
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <!-- Cambiar estado -->
+                    <form method="POST" action="{{ url_for('admin.actualizar_solicitud', solicitud_id=solicitud.id) }}" class="action-form">
+                        <input type="hidden" name="accion" value="cambiar_estado">
+                        
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-exchange-alt"></i>
+                                Cambiar Estado
+                            </label>
+                            <select name="estado" class="form-select" required>
+                                {% for estado in estados %}
+                                <option value="{{ estado }}" {% if solicitud.estado == estado %}selected{% endif %}>
+                                    {{ estado|replace('_', ' ')|title }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-comment"></i>
+                                Comentario (opcional)
+                            </label>
+                            <textarea name="comentario" class="form-control" placeholder="Agregar comentario sobre el cambio..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Actualizar Estado
+                        </button>
+                    </form>
+
+                    <!-- Agregar comentario / respuesta con plantillas -->
+                    <form method="POST" action="{{ url_for('admin.actualizar_solicitud', solicitud_id=solicitud.id) }}" class="action-form" id="comentarioForm">
+                        <input type="hidden" name="accion" value="comentar">
+                        
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-plus-circle"></i>
+                                Agregar Comentario o Respuesta
+                            </label>
+                            <div style="display:flex;gap:.5rem;align-items:flex-end">
+                                <textarea name="comentario" class="form-control" rows="3" placeholder="Escribe tu respuesta..." id="comentarioText" required></textarea>
+                                <button type="button" class="btn-icon" onclick="abrirSelectorPlantillas('solicitud')" title="Usar plantilla">
+                                    <i class="fas fa-file-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-info">
+                            <i class="fas fa-comment"></i>
+                            Enviar Comentario
+                        </button>
+                    </form>
+
+                    <!-- Eliminar solicitud (solo super_admin) -->
+                    {% if session.user_rol == 'super_admin' %}
+                    <form method="POST" action="{{ url_for('admin.eliminar_solicitud', solicitud_id=solicitud.id) }}" class="action-form" onsubmit="return confirm('¿Estás seguro de eliminar esta solicitud? Esta acción no se puede deshacer.');">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i>
+                            Eliminar Solicitud
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Información del usuario -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-user"></i>
+                        Información del Usuario
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="user-info">
+                        <div class="user-info-item">
+                            <i class="fas fa-user-circle"></i>
+                            <div class="info">
+                                <span class="label">Nombre</span>
+                                <span class="value">{{ solicitud.usuario_nombre }}</span>
+                            </div>
+                        </div>
+                        <div class="user-info-item">
+                            <i class="fas fa-envelope"></i>
+                            <div class="info">
+                                <span class="label">Email</span>
+                                <span class="value">{{ solicitud.usuario_email }}</span>
+                            </div>
+                        </div>
+                        {% if solicitud.anonimo %}
+                        <div class="badge-anonimo">
+                            <i class="fas fa-user-secret"></i>
+                            Solicitud Anónima
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Incluir el modal de plantillas -->
+{% include "admin/modal_plantillas.html" %}
+
+<script>
+// Función para abrir el selector de plantillas
+function abrirSelectorPlantillas(tipo) {
+    const modal = document.getElementById('modalPlantillas');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Guardar referencia al tipo y al campo de texto actual
+        window.plantillaTipo = tipo;
+        window.plantillaCampo = 'comentarioText';
+    }
+}
+
+// Función para cerrar el modal (debe definirse aquí también)
+function cerrarModalPlantillas() {
+    const modal = document.getElementById('modalPlantillas');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Función para insertar plantilla en el campo de texto
+function insertarPlantilla(contenido) {
+    const campo = document.getElementById(window.plantillaCampo);
+    if (campo) {
+        campo.value = contenido;
+        campo.focus();
+    }
+    cerrarModalPlantillas();
+}
+
+// Cerrar modal al hacer clic fuera
+window.addEventListener('click', function(e) {
+    const modal = document.getElementById('modalPlantillas');
+    if (e.target === modal) {
+        cerrarModalPlantillas();
+    }
+});
+
+// Cerrar con tecla ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('modalPlantillas');
+        if (modal && modal.classList.contains('active')) {
+            cerrarModalPlantillas();
+        }
+    }
+});
+</script>
+{% endblock %}

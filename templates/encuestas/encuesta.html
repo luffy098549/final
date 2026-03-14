@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Evaluar Trámite | Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<style>
+    .encuesta-container{max-width:720px;margin:2rem auto;padding:0 1.5rem}
+    .encuesta-card{background:white;border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,0.05);padding:2rem}
+    .encuesta-header{background:linear-gradient(135deg,#1a3b2e,#2e7d5e);border-radius:16px;padding:2rem;margin-bottom:2rem;color:white}
+    .encuesta-header h1{font-size:2rem;font-weight:700;margin-bottom:.5rem}
+    .encuesta-info{background:var(--gray-50);border-radius:12px;padding:1.5rem;margin-bottom:2rem;border:1px solid var(--gray-200)}
+    .info-row{display:flex;margin-bottom:.5rem}
+    .info-label{font-weight:600;width:100px;color:var(--gray-500)}
+    .info-value{color:var(--gray-800)}
+    .rating-container{text-align:center;margin:2rem 0}
+    .rating-stars{display:flex;justify-content:center;gap:.5rem;font-size:2.5rem;cursor:pointer;margin:1rem 0}
+    .rating-stars i{color:#d1d5db;transition:all .2s}
+    .rating-stars i:hover,.rating-stars i.active{color:#fbbf24;transform:scale(1.1)}
+    .rating-text{font-size:.9rem;color:var(--gray-500);margin-bottom:1.5rem}
+    .form-group{margin-bottom:1.5rem}
+    .form-label{display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-500);margin-bottom:.5rem}
+    .form-control{width:100%;padding:.875rem 1rem;border:2px solid var(--gray-200);border-radius:12px;font-size:.95rem;transition:all .2s}
+    .form-control:focus{outline:none;border-color:#1a3b2e;box-shadow:0 0 0 4px rgba(26,59,46,.1)}
+    .btn-primary{background:#1a3b2e;color:white;padding:.875rem 2rem;border:none;border-radius:12px;font-weight:600;font-size:1rem;cursor:pointer;transition:all .2s;width:100%}
+    .btn-primary:hover{background:#2e7d5e;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    .btn-saltar{background:transparent;color:var(--gray-500);border:1px solid var(--gray-300);padding:.875rem 2rem;border-radius:12px;font-weight:600;cursor:pointer;transition:all .2s;width:100%;margin-top:.5rem}
+    .btn-saltar:hover{background:var(--gray-100)}
+    .rating-message{display:none;padding:1rem;border-radius:8px;margin:1rem 0}
+    .rating-message.show{display:block}
+    .rating-message.excelente{background:#e1f7ed;color:#1e7b4c}
+    .rating-message.bueno{background:#e0edff;color:#2563eb}
+    .rating-message.regular{background:#fff8e1;color:#b85e00}
+    .rating-message.malo{background:#fee9e7;color:#b33c2f}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="encuesta-container">
+    <div class="encuesta-header">
+        <h1><i class="fas fa-star"></i> Evaluar Servicio</h1>
+        <p>Tu opinión nos ayuda a mejorar</p>
+    </div>
+
+    <div class="encuesta-card">
+        <div class="encuesta-info">
+            <div class="info-row">
+                <span class="info-label">Folio:</span>
+                <span class="info-value"><strong>{{ tramite.folio }}</strong></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Servicio:</span>
+                <span class="info-value">{{ nombre_servicio }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tipo:</span>
+                <span class="info-value">{{ tipo|title }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Estado:</span>
+                <span class="info-value">{{ tramite.estado|title }}</span>
+            </div>
+        </div>
+
+        <form method="POST" id="encuestaForm">
+            <div class="rating-container">
+                <h3 style="margin-bottom:1rem">¿Cómo calificas la atención recibida?</h3>
+                
+                <div class="rating-stars" id="ratingStars">
+                    <i class="fas fa-star" data-value="1"></i>
+                    <i class="fas fa-star" data-value="2"></i>
+                    <i class="fas fa-star" data-value="3"></i>
+                    <i class="fas fa-star" data-value="4"></i>
+                    <i class="fas fa-star" data-value="5"></i>
+                </div>
+                <input type="hidden" name="calificacion" id="calificacion" required>
+
+                <div class="rating-message" id="ratingMessage"></div>
+
+                <div class="rating-text">
+                    <span id="ratingLabel">Selecciona una calificación</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Comentario (opcional)</label>
+                <textarea name="comentario" class="form-control" rows="4" 
+                          placeholder="Cuéntanos tu experiencia... ¿qué podemos mejorar?"></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-paper-plane"></i> Enviar Evaluación
+            </button>
+            
+            <a href="{{ url_for('mis_tramites') }}" class="btn-saltar">
+                <i class="fas fa-times"></i> Evaluar después
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const stars = document.querySelectorAll('.rating-stars i');
+const ratingInput = document.getElementById('calificacion');
+const ratingLabel = document.getElementById('ratingLabel');
+const ratingMessage = document.getElementById('ratingMessage');
+const messages = {
+    1: {text: '😔 Lamentamos que tu experiencia no haya sido buena', class: 'malo'},
+    2: {text: '😐 Trabajaremos para mejorar', class: 'regular'},
+    3: {text: '🙂 Gracias, seguiremos mejorando', class: 'regular'},
+    4: {text: '😊 ¡Nos alegra que hayas tenido una buena experiencia!', class: 'bueno'},
+    5: {text: '🌟 ¡Excelente! Nos motivas a seguir dando lo mejor', class: 'excelente'}
+};
+
+stars.forEach(star => {
+    star.addEventListener('mouseover', function() {
+        const value = this.dataset.value;
+        resetStars();
+        for (let i = 0; i < value; i++) {
+            stars[i].classList.add('active');
+            stars[i].style.color = '#fbbf24';
+        }
+    });
+
+    star.addEventListener('mouseout', function() {
+        resetStars();
+        const savedValue = ratingInput.value;
+        if (savedValue) {
+            highlightStars(savedValue);
+        }
+    });
+
+    star.addEventListener('click', function() {
+        const value = this.dataset.value;
+        ratingInput.value = value;
+        highlightStars(value);
+        
+        // Mostrar mensaje
+        const msg = messages[value];
+        ratingMessage.className = `rating-message show ${msg.class}`;
+        ratingMessage.innerHTML = `<i class="fas fa-${value >= 4 ? 'smile' : 'frown'}"></i> ${msg.text}`;
+        
+        // Actualizar label
+        const labels = ['', 'Malo', 'Regular', 'Regular', 'Bueno', 'Excelente'];
+        ratingLabel.textContent = `${value} estrella${value > 1 ? 's' : ''} - ${labels[value]}`;
+    });
+});
+
+function resetStars() {
+    stars.forEach(star => {
+        star.classList.remove('active');
+        star.style.color = '#d1d5db';
+    });
+}
+
+function highlightStars(value) {
+    for (let i = 0; i < value; i++) {
+        stars[i].classList.add('active');
+        stars[i].style.color = '#fbbf24';
+    }
+}
+
+document.getElementById('encuestaForm').addEventListener('submit', function(e) {
+    if (!ratingInput.value) {
+        e.preventDefault();
+        alert('Por favor selecciona una calificación');
+    }
+});
+</script>
+{% endblock %}

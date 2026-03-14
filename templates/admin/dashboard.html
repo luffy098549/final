@@ -1,0 +1,351 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Dashboard - Villa Cutupú{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card gradient-primary">
+        <div class="stat-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Usuarios</h3>
+            <div class="stat-number">{{ stats.usuarios.total if stats and stats.usuarios else 0 }}</div>
+            <div class="stat-details">
+                <span class="stat-badge admin">{{ stats.usuarios.admins if stats and stats.usuarios else 0 }} admins</span>
+                <span class="stat-badge user">{{ stats.usuarios.ciudadanos if stats and stats.usuarios else 0 }} ciudadanos</span>
+            </div>
+        </div>
+        <div class="stat-trend positive">
+            <i class="fas fa-arrow-up"></i> +12%
+        </div>
+    </div>
+    
+    <div class="stat-card gradient-success">
+        <div class="stat-icon">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Solicitudes</h3>
+            <div class="stat-number">{{ stats.solicitudes.total if stats and stats.solicitudes else 0 }}</div>
+            <div class="stat-details">
+                <span class="stat-badge pending">{{ stats.solicitudes.pendientes if stats and stats.solicitudes else 0 }} pendientes</span>
+                <span class="stat-badge completed">{{ stats.solicitudes.completadas if stats and stats.solicitudes else 0 }} completadas</span>
+            </div>
+        </div>
+        <div class="stat-progress">
+            <div class="progress-bar" style="width: 75%"></div>
+        </div>
+    </div>
+    
+    <div class="stat-card gradient-warning">
+        <div class="stat-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Denuncias</h3>
+            <div class="stat-number">{{ stats.denuncias.total if stats and stats.denuncias else 0 }}</div>
+            <div class="stat-details">
+                <span class="stat-badge pending">{{ stats.denuncias.pendientes if stats and stats.denuncias else 0 }} pendientes</span>
+                <span class="stat-badge resolved">{{ stats.denuncias.resueltas if stats and stats.denuncias else 0 }} resueltas</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card gradient-info">
+        <div class="stat-icon">
+            <i class="fas fa-calendar-day"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Actividad Hoy</h3>
+            <div class="stat-number">{{ (stats.actividad_hoy.solicitudes + stats.actividad_hoy.denuncias) if stats and stats.actividad_hoy else 0 }}</div>
+            <div class="stat-details">
+                <span>{{ stats.actividad_hoy.solicitudes if stats and stats.actividad_hoy else 0 }} solicitudes</span>
+                <span>{{ stats.actividad_hoy.denuncias if stats and stats.actividad_hoy else 0 }} denuncias</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos -->
+<div class="charts-grid">
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3><i class="fas fa-chart-line"></i> Solicitudes por mes</h3>
+            <div class="chart-actions">
+                <button class="chart-btn active" onclick="changeChartPeriod('month')">Mes</button>
+                <button class="chart-btn" onclick="changeChartPeriod('year')">Año</button>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="solicitudesChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3><i class="fas fa-chart-pie"></i> Denuncias por tipo</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="denunciasPieChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Actividad Reciente -->
+<div class="recent-activity-grid">
+    <!-- Últimas solicitudes -->
+    <div class="activity-card">
+        <div class="activity-header">
+            <h3><i class="fas fa-clock"></i> Últimas Solicitudes</h3>
+            <a href="{{ url_for('admin.listar_solicitudes') }}" class="view-all">
+                Ver todas <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <div class="activity-list">
+            {% if ultimas_solicitudes %}
+                {% for sol in ultimas_solicitudes %}
+                <div class="activity-item">
+                    <div class="activity-icon bg-soft-primary">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">
+                            <a href="{{ url_for('admin.detalle_solicitud', solicitud_id=sol.id) }}">
+                                {{ sol.servicio_nombre if sol.servicio_nombre else servicios.get(sol.servicio_id|string, 'Solicitud') }}
+                            </a>
+                            <span class="badge badge-{{ sol.estado }}">{{ sol.estado }}</span>
+                        </div>
+                        <div class="activity-meta">
+                            <span><i class="far fa-user"></i> {{ sol.usuario_nombre }}</span>
+                            <span><i class="far fa-calendar"></i> {{ sol.fecha_creacion[:10] }}</span>
+                            <span><i class="fas fa-tag"></i> {{ sol.folio }}</span>
+                        </div>
+                    </div>
+                    {% if sol.estado == 'pendiente' %}
+                    <div class="activity-action">
+                        <button class="btn-icon" onclick="quickAction('solicitud', {{ sol.id }})">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No hay solicitudes recientes</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Últimas denuncias -->
+    <div class="activity-card">
+        <div class="activity-header">
+            <h3><i class="fas fa-clock"></i> Últimas Denuncias</h3>
+            <a href="{{ url_for('admin.listar_denuncias') }}" class="view-all">
+                Ver todas <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <div class="activity-list">
+            {% if ultimas_denuncias %}
+                {% for den in ultimas_denuncias %}
+                <div class="activity-item">
+                    <div class="activity-icon bg-soft-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">
+                            <a href="{{ url_for('admin.detalle_denuncia', denuncia_id=den.id) }}">
+                                {{ den.tipo_nombre if den.tipo_nombre else tipos_denuncia.get(den.tipo|string, 'Denuncia') }}
+                            </a>
+                            <span class="badge badge-{{ den.estado }}">{{ den.estado }}</span>
+                        </div>
+                        <div class="activity-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> {{ den.direccion[:30] if den.direccion else 'Sin dirección' }}{% if den.direccion and den.direccion|length > 30 %}...{% endif %}</span>
+                            <span><i class="far fa-calendar"></i> {{ den.fecha_creacion[:10] }}</span>
+                            {% if not den.anonimo %}
+                            <span><i class="far fa-user"></i> {{ den.usuario_nombre }}</span>
+                            {% else %}
+                            <span><i class="fas fa-user-secret"></i> Anónimo</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No hay denuncias recientes</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="quick-actions">
+    <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
+    <div class="actions-grid">
+        <a href="{{ url_for('admin.crear_admin') }}" class="action-card">
+            <i class="fas fa-user-plus"></i>
+            <span>Crear Administrador</span>
+        </a>
+        <a href="#" class="action-card" onclick="exportReport()">
+            <i class="fas fa-file-export"></i>
+            <span>Exportar Reportes</span>
+        </a>
+        <a href="{{ url_for('admin.configuracion') }}" class="action-card">
+            <i class="fas fa-cog"></i>
+            <span>Configuración</span>
+        </a>
+        <a href="{{ url_for('index') }}" target="_blank" class="action-card">
+            <i class="fas fa-external-link-alt"></i>
+            <span>Ver Sitio Web</span>
+        </a>
+    </div>
+</div>
+
+<!-- Modal de acción rápida -->
+<div class="modal fade" id="quickActionModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Acción Rápida</h5>
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="quickActionBody">
+                <!-- Contenido dinámico -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{# Chart.js solo se carga en el dashboard, no en todas las páginas #}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/admin-charts.js') }}"></script>
+<script>
+// Datos para gráficos desde el backend
+{% if stats and stats.solicitudes and stats.solicitudes.por_mes %}
+const solicitudesData = {
+    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+    datasets: [{
+        label: 'Solicitudes',
+        data: [
+            {{ stats.solicitudes.por_mes.get('2026-01', 0) }},
+            {{ stats.solicitudes.por_mes.get('2026-02', 0) }},
+            {{ stats.solicitudes.por_mes.get('2026-03', 0) }},
+            {{ stats.solicitudes.por_mes.get('2026-04', 0) }},
+            {{ stats.solicitudes.por_mes.get('2026-05', 0) }},
+            {{ stats.solicitudes.por_mes.get('2026-06', 0) }}
+        ],
+        borderColor: '#7E8F76',
+        backgroundColor: 'rgba(126, 143, 118, 0.1)',
+        tension: 0.4
+    }]
+};
+{% else %}
+const solicitudesData = {
+    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+    datasets: [{
+        label: 'Solicitudes',
+        data: [12, 19, 15, 17, 24, 30],
+        borderColor: '#7E8F76',
+        backgroundColor: 'rgba(126, 143, 118, 0.1)',
+        tension: 0.4
+    }]
+};
+{% endif %}
+
+{% if stats and stats.denuncias and stats.denuncias.por_tipo %}
+const denunciasData = {
+    labels: [
+        {% for tipo_id, tipo_nombre in tipos_denuncia.items() %}
+        '{{ tipo_nombre[:15] }}'{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ],
+    datasets: [{
+        data: [
+            {% for tipo_id, tipo_nombre in tipos_denuncia.items() %}
+            {{ stats.denuncias.por_tipo.get(tipo_id, 0) }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ],
+        backgroundColor: [
+            '#7E8F76',
+            '#2B6A9E',
+            '#C4BCAF',
+            '#DC2626',
+            '#F59E0B'
+        ]
+    }]
+};
+{% else %}
+const denunciasData = {
+    labels: ['Policía', 'Limpieza', 'Basura', 'Alumbrado', 'Otros'],
+    datasets: [{
+        data: [30, 25, 20, 15, 10],
+        backgroundColor: [
+            '#7E8F76',
+            '#2B6A9E',
+            '#C4BCAF',
+            '#DC2626',
+            '#F59E0B'
+        ]
+    }]
+};
+{% endif %}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar gráficos
+    if (typeof initCharts === 'function') {
+        initCharts(solicitudesData, denunciasData);
+    }
+    
+    // Auto-refresh cada 30 segundos
+    if (typeof startAutoRefresh === 'function') {
+        startAutoRefresh(30000);
+    }
+});
+
+function changeChartPeriod(period) {
+    // Actualizar botones
+    document.querySelectorAll('.chart-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    if (event.target) {
+        event.target.classList.add('active');
+    }
+    
+    console.log('Cambiando período a:', period);
+}
+
+function quickAction(type, id) {
+    console.log('Acción rápida:', type, id);
+}
+
+function exportReport() {
+    alert('Función de exportación próximamente disponible');
+}
+
+function closeModal() {
+    const modal = document.getElementById('quickActionModal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+    }
+    document.querySelector('.modal-backdrop')?.remove();
+}
+</script>
+{% endblock %}

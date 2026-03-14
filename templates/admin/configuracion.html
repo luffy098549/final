@@ -1,0 +1,695 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Configuración - Villa Cutupú{% endblock %}
+{% block page_title %}Configuración{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/configuracion.css') }}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Inicio</a>
+<span class="separator">›</span>
+<span>Configuración</span>
+{% endblock %}
+
+{% block content %}
+
+{# Pasar config actual al JS como objeto #}
+<script>
+    const CONFIG_INICIAL = {{ config | tojson }};
+</script>
+
+<div class="config-layout">
+
+    <!-- ── Sidebar de navegación ──────────────────────── -->
+    <aside class="config-nav">
+        <div class="config-nav-header">
+            <i class="fas fa-sliders-h"></i>
+            <span>Ajustes del Sistema</span>
+        </div>
+        <ul class="config-nav-list">
+            <li><a href="#" class="config-nav-item active" data-section="general">
+                <i class="fas fa-globe"></i>
+                <div><span class="nav-label">General</span><span class="nav-desc">Nombre, logo, zona horaria</span></div>
+            </a></li>
+            <li><a href="#" class="config-nav-item" data-section="seguridad">
+                <i class="fas fa-shield-alt"></i>
+                <div><span class="nav-label">Seguridad</span><span class="nav-desc">Contraseñas, sesiones</span></div>
+            </a></li>
+            <li><a href="#" class="config-nav-item" data-section="notificaciones">
+                <i class="fas fa-bell"></i>
+                <div><span class="nav-label">Notificaciones</span><span class="nav-desc">Email SMTP, alertas</span></div>
+            </a></li>
+            <li><a href="#" class="config-nav-item" data-section="servicios">
+                <i class="fas fa-concierge-bell"></i>
+                <div><span class="nav-label">Servicios</span><span class="nav-desc">Tiempos, límites</span></div>
+            </a></li>
+            <li><a href="#" class="config-nav-item" data-section="base-datos">
+                <i class="fas fa-database"></i>
+                <div><span class="nav-label">Base de Datos</span><span class="nav-desc">Conexión, migración</span></div>
+                <span class="nav-badge pending">Pendiente</span>
+            </a></li>
+            <li><a href="#" class="config-nav-item" data-section="apariencia">
+                <i class="fas fa-palette"></i>
+                <div><span class="nav-label">Apariencia</span><span class="nav-desc">Tema, colores</span></div>
+            </a></li>
+            <li><a href="#" class="config-nav-item" data-section="sistema">
+                <i class="fas fa-server"></i>
+                <div><span class="nav-label">Sistema</span><span class="nav-desc">Debug, caché, exportar</span></div>
+            </a></li>
+        </ul>
+    </aside>
+
+    <!-- ── Contenido ──────────────────────────────────── -->
+    <div class="config-content">
+
+        <!-- ════════════ GENERAL ════════════ -->
+        <section id="seccion-general" class="config-section active">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-globe"></i>
+                    <div><h2>Configuración General</h2><p>Información básica del sistema municipal</p></div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Identidad del Municipio</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nombre del Municipio</label>
+                        <input type="text" class="form-input" id="cfg_nombre_municipio" placeholder="Nombre oficial">
+                        <span class="form-hint">Aparece en encabezado y documentos</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Siglas</label>
+                        <input type="text" class="form-input" id="cfg_siglas" placeholder="Ej: JDVC">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Dirección Física</label>
+                        <input type="text" class="form-input" id="cfg_direccion" placeholder="Dirección completa">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Teléfono</label>
+                        <input type="tel" class="form-input" id="cfg_telefono" placeholder="(809) 000-0000">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Institucional</label>
+                        <input type="email" class="form-input" id="cfg_email" placeholder="info@villacutupu.gob.do">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sitio Web</label>
+                        <input type="url" class="form-input" id="cfg_web" placeholder="https://...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Zona Horaria y Formato</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Zona Horaria</label>
+                        <select class="form-select" id="cfg_timezone">
+                            <option value="America/Santo_Domingo">América/Santo Domingo (UTC-4)</option>
+                            <option value="America/New_York">América/Nueva York (UTC-5/-4)</option>
+                            <option value="UTC">UTC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="cfg_date_format">
+                            <option value="DD/MM/YYYY">DD/MM/AAAA</option>
+                            <option value="MM/DD/YYYY">MM/DD/AAAA</option>
+                            <option value="YYYY-MM-DD">AAAA-MM-DD</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Idioma</label>
+                        <select class="form-select" id="cfg_idioma">
+                            <option value="es">Español</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Logo y Favicon</div>
+                <div class="form-grid-3">
+                    <div class="upload-zone" id="uploadLogo" data-tipo="logo">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Logo Principal</p>
+                        <span>PNG, SVG · Max 2MB</span>
+                        <input type="file" accept="image/*" hidden id="inputLogo">
+                    </div>
+                    <div class="upload-zone" id="uploadFavicon" data-tipo="favicon">
+                        <i class="fas fa-star"></i>
+                        <p>Favicon</p>
+                        <span>ICO, PNG · 32×32px</span>
+                        <input type="file" accept="image/*" hidden id="inputFavicon">
+                    </div>
+                    <div class="upload-zone" id="uploadBanner" data-tipo="banner">
+                        <i class="fas fa-image"></i>
+                        <p>Banner / Portada</p>
+                        <span>JPG, PNG · Max 5MB</span>
+                        <input type="file" accept="image/*" hidden id="inputBanner">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-actions">
+                <button class="btn-save" onclick="guardarSeccion('general')"><i class="fas fa-save"></i> Guardar Cambios</button>
+                <button class="btn-reset" onclick="resetSeccion('general')"><i class="fas fa-undo"></i> Restablecer</button>
+            </div>
+        </section>
+
+        <!-- ════════════ SEGURIDAD ════════════ -->
+        <section id="seccion-seguridad" class="config-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-shield-alt"></i>
+                    <div><h2>Seguridad</h2><p>Contraseñas, sesiones y autenticación</p></div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Política de Contraseñas</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Longitud mínima</label>
+                        <input type="number" class="form-input" id="cfg_pass_min" min="6" max="32">
+                        <span class="form-hint">Mínimo recomendado: 8</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Intentos fallidos máximos</label>
+                        <input type="number" class="form-input" id="cfg_max_intentos" min="3" max="10">
+                        <span class="form-hint">Bloqueo temporal al superarlo</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expiración de contraseña (días)</label>
+                        <input type="number" class="form-input" id="cfg_pass_expiry" min="0">
+                        <span class="form-hint">0 = nunca expira</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tiempo de bloqueo (minutos)</label>
+                        <input type="number" class="form-input" id="cfg_lockout_time" min="5" max="60">
+                    </div>
+                </div>
+                <div class="toggle-list">
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Requerir mayúsculas</span><span class="toggle-desc">Al menos una letra mayúscula</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_require_upper"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Requerir números</span><span class="toggle-desc">Al menos un número</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_require_num"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Requerir caracteres especiales</span><span class="toggle-desc">Ej: @, #, $, !</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_require_special"><span class="toggle-slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Sesiones</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Duración de sesión (horas)</label>
+                        <input type="number" class="form-input" id="cfg_session_hours" min="1" max="72">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tiempo de inactividad (minutos)</label>
+                        <input type="number" class="form-input" id="cfg_inactivity" min="5" max="120">
+                    </div>
+                </div>
+                <div class="toggle-list">
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Sesión única por usuario</span><span class="toggle-desc">Cierra sesiones anteriores al iniciar en otro dispositivo</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_single_session"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Registrar intentos de acceso</span><span class="toggle-desc">Guarda en bitácora todos los intentos de login</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_log_access"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Autenticación en dos pasos (2FA)</span><span class="toggle-desc">Requiere base de datos</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_2fa" disabled><span class="toggle-slider"></span></label>
+                        <span class="requires-db">🗄️ Requiere BD</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-actions">
+                <button class="btn-save" onclick="guardarSeccion('seguridad')"><i class="fas fa-save"></i> Guardar Cambios</button>
+                <button class="btn-reset" onclick="resetSeccion('seguridad')"><i class="fas fa-undo"></i> Restablecer</button>
+            </div>
+        </section>
+
+        <!-- ════════════ NOTIFICACIONES ════════════ -->
+        <section id="seccion-notificaciones" class="config-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-bell"></i>
+                    <div><h2>Notificaciones</h2><p>Configura el SMTP para enviar emails reales</p></div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Servidor SMTP</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Servidor SMTP</label>
+                        <input type="text" class="form-input" id="cfg_smtp_host" placeholder="smtp.gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Puerto</label>
+                        <input type="number" class="form-input" id="cfg_smtp_port" placeholder="587">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Usuario (email remitente)</label>
+                        <input type="email" class="form-input" id="cfg_smtp_user" placeholder="noreply@dominio.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contraseña SMTP</label>
+                        <div class="input-password">
+                            <input type="password" class="form-input" id="cfg_smtp_pass" placeholder="••••••••">
+                            <button class="toggle-pass" type="button" onclick="togglePassword('cfg_smtp_pass')"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label">Nombre del remitente</label>
+                        <input type="text" class="form-input" id="cfg_smtp_name" placeholder="Junta Distrital Villa Cutupú">
+                    </div>
+                </div>
+
+                <div class="smtp-test-box">
+                    <label class="form-label">Probar configuración SMTP</label>
+                    <div class="input-action">
+                        <input type="email" class="form-input" id="cfg_test_email" placeholder="tu@email.com">
+                        <button class="btn-test" type="button" id="btnTestSmtp" onclick="testSmtp()">
+                            <i class="fas fa-paper-plane"></i> Enviar prueba
+                        </button>
+                    </div>
+                    <div id="smtpTestResult" class="test-result hidden"></div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">¿Cuándo enviar notificaciones?</div>
+                <div class="toggle-list">
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Nueva solicitud recibida</span><span class="toggle-desc">Notifica al admin cuando un ciudadano envía una solicitud</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_notif_solicitud"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Nueva denuncia recibida</span><span class="toggle-desc">Notifica al admin cuando se registra una denuncia</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_notif_denuncia"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Nuevo usuario registrado</span><span class="toggle-desc">Alerta cuando alguien crea una cuenta nueva</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_notif_usuario"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Cambio de estado de solicitud</span><span class="toggle-desc">Notifica al ciudadano cuando su solicitud es actualizada</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_notif_estado"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Resumen diario automático</span><span class="toggle-desc">Requiere base de datos y tarea programada</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_notif_resumen" disabled><span class="toggle-slider"></span></label>
+                        <span class="requires-db">🗄️ Requiere BD</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-actions">
+                <button class="btn-save" onclick="guardarSeccion('notificaciones')"><i class="fas fa-save"></i> Guardar Cambios</button>
+            </div>
+        </section>
+
+        <!-- ════════════ SERVICIOS ════════════ -->
+        <section id="seccion-servicios" class="config-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-concierge-bell"></i>
+                    <div><h2>Servicios Municipales</h2><p>Tiempos de respuesta y límites del sistema</p></div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Tiempos de Respuesta (días hábiles) y Estado</div>
+                <div class="services-table">
+                    <div class="services-table-header">
+                        <span>Servicio</span><span>Días respuesta</span><span>Activo</span>
+                    </div>
+                    {% set servicios_lista = [
+                        ('funeraria',      'Funerarias Municipales'),
+                        ('uso-suelo',      'Certificado de Uso de Suelo'),
+                        ('oaim',           'Oficina OAI/M'),
+                        ('planeamiento',   'Planeamiento Urbano'),
+                        ('ornato',         'Ornato y Préstamos de Áreas'),
+                        ('catastro',       'Catastro Municipal'),
+                        ('aseo-comercial', 'Gestión Comercial de Aseo')
+                    ] %}
+                    {% for key, nombre in servicios_lista %}
+                    <div class="service-row">
+                        <div class="service-name"><i class="fas fa-file-alt"></i> {{ nombre }}</div>
+                        <input type="number" class="form-input-sm svc-tiempo" data-key="{{ key }}" min="1">
+                        <label class="toggle-switch sm">
+                            <input type="checkbox" class="svc-activo" data-key="{{ key }}">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Límites del Sistema</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Máx. solicitudes por usuario/mes</label>
+                        <input type="number" class="form-input" id="cfg_max_solicitudes" min="0">
+                        <span class="form-hint">0 = sin límite</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Máx. denuncias por usuario/mes</label>
+                        <input type="number" class="form-input" id="cfg_max_denuncias" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tamaño máx. de archivos (MB)</label>
+                        <input type="number" class="form-input" id="cfg_max_file_size" min="1" max="50">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipos de archivo permitidos</label>
+                        <input type="text" class="form-input" id="cfg_file_types" placeholder="pdf,jpg,png">
+                        <span class="form-hint">Separados por coma</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-actions">
+                <button class="btn-save" onclick="guardarSeccion('servicios')"><i class="fas fa-save"></i> Guardar Cambios</button>
+            </div>
+        </section>
+
+        <!-- ════════════ BASE DE DATOS ════════════ -->
+        <section id="seccion-base-datos" class="config-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-database"></i>
+                    <div><h2>Base de Datos</h2><p>Conexión futura, generador de URL y guía de migración</p></div>
+                </div>
+                <span class="status-badge pending"><i class="fas fa-clock"></i> Pendiente</span>
+            </div>
+
+            <div class="db-status-banner">
+                <div class="db-status-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="db-status-content">
+                    <h3>Sistema actualmente sin base de datos</h3>
+                    <p>Usa archivos JSON locales. Cuando configures una BD, instala <code>flask-sqlalchemy</code> y <code>flask-migrate</code>, luego sigue los pasos de migración de abajo.</p>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Motor de Base de Datos</div>
+                <div class="db-engine-grid">
+                    <div class="db-engine-card active" data-engine="sqlite" onclick="selectEngine('sqlite')">
+                        <i class="fas fa-database"></i>
+                        <span class="engine-name">SQLite</span>
+                        <span class="engine-desc">Sin servidor, ideal para desarrollo</span>
+                        <span class="engine-badge recommended">Recomendado</span>
+                    </div>
+                    <div class="db-engine-card" data-engine="postgresql" onclick="selectEngine('postgresql')">
+                        <i class="fas fa-server"></i>
+                        <span class="engine-name">PostgreSQL</span>
+                        <span class="engine-desc">Producción, escalable</span>
+                    </div>
+                    <div class="db-engine-card" data-engine="mysql" onclick="selectEngine('mysql')">
+                        <i class="fas fa-database"></i>
+                        <span class="engine-name">MySQL / MariaDB</span>
+                        <span class="engine-desc">Ampliamente compatible</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Generador de DATABASE_URL</div>
+
+                <div id="db-sqlite-config" class="db-config-panel">
+                    <div class="form-group">
+                        <label class="form-label">Ruta del archivo SQLite</label>
+                        <input type="text" class="form-input" id="cfg_sqlite_path" value="instance/villacutupu.db">
+                    </div>
+                    <div class="code-preview">
+                        <span class="code-label">DATABASE_URL:</span>
+                        <code id="sqlite-url">sqlite:///instance/villacutupu.db</code>
+                        <button class="btn-copy" type="button" onclick="copyText('sqlite-url')"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+
+                <div id="db-postgresql-config" class="db-config-panel hidden">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Host</label><input type="text" class="form-input" id="cfg_pg_host" placeholder="localhost"></div>
+                        <div class="form-group"><label class="form-label">Puerto</label><input type="number" class="form-input" id="cfg_pg_port" value="5432"></div>
+                        <div class="form-group"><label class="form-label">Base de datos</label><input type="text" class="form-input" id="cfg_pg_db" placeholder="villacutupu_db"></div>
+                        <div class="form-group"><label class="form-label">Usuario</label><input type="text" class="form-input" id="cfg_pg_user" placeholder="postgres"></div>
+                        <div class="form-group"><label class="form-label">Contraseña</label>
+                            <div class="input-password">
+                                <input type="password" class="form-input" id="cfg_pg_pass" placeholder="••••••••">
+                                <button class="toggle-pass" type="button" onclick="togglePassword('cfg_pg_pass')"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="code-preview">
+                        <span class="code-label">DATABASE_URL:</span>
+                        <code id="pg-url">postgresql://user:pass@localhost:5432/villacutupu_db</code>
+                        <button class="btn-copy" type="button" onclick="copyText('pg-url')"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+
+                <div id="db-mysql-config" class="db-config-panel hidden">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Host</label><input type="text" class="form-input" id="cfg_my_host" placeholder="localhost"></div>
+                        <div class="form-group"><label class="form-label">Puerto</label><input type="number" class="form-input" id="cfg_my_port" value="3306"></div>
+                        <div class="form-group"><label class="form-label">Base de datos</label><input type="text" class="form-input" id="cfg_my_db" placeholder="villacutupu_db"></div>
+                        <div class="form-group"><label class="form-label">Usuario</label><input type="text" class="form-input" id="cfg_my_user" placeholder="root"></div>
+                        <div class="form-group"><label class="form-label">Contraseña</label>
+                            <div class="input-password">
+                                <input type="password" class="form-input" id="cfg_my_pass" placeholder="••••••••">
+                                <button class="toggle-pass" type="button" onclick="togglePassword('cfg_my_pass')"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="code-preview">
+                        <span class="code-label">DATABASE_URL:</span>
+                        <code id="my-url">mysql+pymysql://user:pass@localhost:3306/villacutupu_db</code>
+                        <button class="btn-copy" type="button" onclick="copyText('my-url')"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Guía de Migración</div>
+                <div class="migration-steps">
+                    <div class="migration-step"><div class="step-number">1</div><div class="step-content"><strong>Instalar dependencias</strong><span><code>pip install flask-sqlalchemy flask-migrate</code></span></div><i class="fas fa-check-circle step-check"></i></div>
+                    <div class="migration-step"><div class="step-number">2</div><div class="step-content"><strong>Configurar DATABASE_URL</strong><span>Agrega la URL generada arriba a tu <code>app.py</code> o <code>.env</code></span></div><i class="fas fa-check-circle step-check"></i></div>
+                    <div class="migration-step"><div class="step-number">3</div><div class="step-content"><strong>Crear tablas</strong><span><code>flask db init && flask db migrate && flask db upgrade</code></span></div><i class="fas fa-check-circle step-check"></i></div>
+                    <div class="migration-step"><div class="step-number">4</div><div class="step-content"><strong>Importar datos JSON</strong><span>Ejecutar script de migración de JSON a BD</span></div><i class="fas fa-check-circle step-check"></i></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════ APARIENCIA ════════════ -->
+        <section id="seccion-apariencia" class="config-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-palette"></i>
+                    <div><h2>Apariencia</h2><p>Tema, colores y opciones de interfaz</p></div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Tema del Panel</div>
+                <div class="theme-grid">
+                    <div class="theme-card" data-theme="default" onclick="selectTheme('default')">
+                        <div class="theme-preview default-theme"><div class="t-sidebar"></div><div class="t-content"><div class="t-bar"></div><div class="t-block"></div></div></div>
+                        <span>Verde Bosque</span>
+                    </div>
+                    <div class="theme-card" data-theme="dark" onclick="selectTheme('dark')">
+                        <div class="theme-preview dark-theme"><div class="t-sidebar"></div><div class="t-content"><div class="t-bar"></div><div class="t-block"></div></div></div>
+                        <span>Oscuro</span>
+                    </div>
+                    <div class="theme-card" data-theme="blue" onclick="selectTheme('blue')">
+                        <div class="theme-preview blue-theme"><div class="t-sidebar"></div><div class="t-content"><div class="t-bar"></div><div class="t-block"></div></div></div>
+                        <span>Azul Gobierno</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Colores Personalizados</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Color primario</label>
+                        <div class="color-input">
+                            <input type="color" id="cfg_color_primary">
+                            <input type="text" class="form-input" id="cfg_color_primary_hex" maxlength="7">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Color de acento</label>
+                        <div class="color-input">
+                            <input type="color" id="cfg_color_accent">
+                            <input type="text" class="form-input" id="cfg_color_accent_hex" maxlength="7">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Color sidebar</label>
+                        <div class="color-input">
+                            <input type="color" id="cfg_color_sidebar">
+                            <input type="text" class="form-input" id="cfg_color_sidebar_hex" maxlength="7">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Opciones de Interfaz</div>
+                <div class="toggle-list">
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Sidebar colapsado por defecto</span><span class="toggle-desc">El menú lateral inicia minimizado</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_sidebar_collapsed"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Mostrar breadcrumbs</span><span class="toggle-desc">Ruta de navegación en cada página</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_breadcrumbs"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Animaciones de interfaz</span><span class="toggle-desc">Transiciones y efectos visuales</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_animations"><span class="toggle-slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-actions">
+                <button class="btn-save" onclick="guardarSeccion('apariencia')"><i class="fas fa-save"></i> Guardar y Aplicar</button>
+                <button class="btn-reset" onclick="resetSeccion('apariencia')"><i class="fas fa-undo"></i> Restablecer</button>
+            </div>
+        </section>
+
+        <!-- ════════════ SISTEMA ════════════ -->
+        <section id="seccion-sistema" class="config-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-server"></i>
+                    <div><h2>Sistema</h2><p>Debug, mantenimiento, caché y exportación de datos</p></div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Información del Sistema</div>
+                <div class="system-info-grid" id="systemInfoGrid">
+                    <div class="sys-info-item"><i class="fab fa-python"></i><div><span class="sys-label">Python</span><span class="sys-value" id="sys-python">Cargando...</span></div></div>
+                    <div class="sys-info-item"><i class="fas fa-pepper-hot"></i><div><span class="sys-label">Flask</span><span class="sys-value" id="sys-flask">Cargando...</span></div></div>
+                    <div class="sys-info-item"><i class="fas fa-hdd"></i><div><span class="sys-label">Almacenamiento</span><span class="sys-value" id="sys-storage">JSON Local</span></div></div>
+                    <div class="sys-info-item"><i class="fas fa-code-branch"></i><div><span class="sys-label">Versión</span><span class="sys-value">v2.0.0</span></div></div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Modo de Operación</div>
+                <div class="toggle-list">
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Modo Debug</span><span class="toggle-desc">Muestra errores detallados — DESACTIVAR en producción</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_debug"><span class="toggle-slider"></span></label>
+                        <span class="badge-warning">Solo desarrollo</span>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Modo Mantenimiento</span><span class="toggle-desc">Ciudadanos ven página de mantenimiento — admins mantienen acceso</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_maintenance"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Registro de actividad (Bitácora)</span><span class="toggle-desc">Registra todas las acciones administrativas</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_audit_log"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-info"><span class="toggle-label">Registro en archivo (app.log)</span><span class="toggle-desc">Guarda logs del servidor en disco</span></div>
+                        <label class="toggle-switch"><input type="checkbox" id="cfg_file_log"><span class="toggle-slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="card-section-title">Caché</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Tiempo de caché de sesiones (segundos)</label>
+                        <input type="number" class="form-input" id="cfg_cache_sessions" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Caché de archivos estáticos (días)</label>
+                        <input type="number" class="form-input" id="cfg_cache_static" min="0">
+                    </div>
+                </div>
+                <button class="btn-danger-soft" type="button" id="btnLimpiarCache" onclick="limpiarCache()">
+                    <i class="fas fa-trash-alt"></i> Limpiar Caché Ahora
+                </button>
+            </div>
+
+            <div class="config-card danger-zone">
+                <div class="card-section-title danger">⚠️ Zona de Peligro</div>
+                <div class="danger-actions">
+                    <div class="danger-item">
+                        <div>
+                            <strong>Exportar todos los datos</strong>
+                            <p>Descarga un ZIP con todos los JSON del sistema y la configuración</p>
+                        </div>
+                        <button class="btn-outline-danger" type="button" id="btnExportar" onclick="exportarDatos()">
+                            <i class="fas fa-download"></i> Exportar ZIP
+                        </button>
+                    </div>
+                    <div class="danger-item">
+                        <div>
+                            <strong>Reiniciar datos de prueba</strong>
+                            <p>Borra todos los datos y vuelve al estado inicial — <strong>IRREVERSIBLE</strong></p>
+                        </div>
+                        <button class="btn-danger" type="button" onclick="confirmarReset()">
+                            <i class="fas fa-exclamation-triangle"></i> Reiniciar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-actions">
+                <button class="btn-save" onclick="guardarSeccion('sistema')"><i class="fas fa-save"></i> Guardar Cambios</button>
+            </div>
+        </section>
+
+    </div><!-- /.config-content -->
+</div><!-- /.config-layout -->
+
+<!-- Toast notification -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle" id="toastIcon"></i>
+    <span id="toastMsg">Cambios guardados</span>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="confirm-modal">
+        <div class="confirm-icon danger"><i class="fas fa-exclamation-triangle"></i></div>
+        <h3 id="confirmTitle">¿Estás seguro?</h3>
+        <p id="confirmMsg">Esta acción no se puede deshacer.</p>
+        <div class="confirm-actions">
+            <button class="btn-cancel" type="button" onclick="closeModal()">Cancelar</button>
+            <button class="btn-confirm-danger" type="button" id="confirmBtn">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/configuracion.js') }}"></script>
+{% endblock %}

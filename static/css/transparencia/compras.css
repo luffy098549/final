@@ -1,0 +1,390 @@
+/* ============================================================
+   compras.css — Compras y Contrataciones
+   Junta Distrital de Villa Cutupú
+   Coherente con actas.css + atencion.css v3.0
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,400&display=swap');
+
+/* ===== VARIABLES ===== */
+:root {
+    --green:          #6B7E63;
+    --green-dark:     #4A5E43;
+    --green-light:    #9DB094;
+    --green-xlight:   #F0F4EF;
+    --blue-sky:       #2563A8;
+    --blue-sky-light: #EBF3FB;
+    --white:          #FFFFFF;
+    --gray-50:        #FAFAF9;
+    --gray-100:       #F4F4F2;
+    --gray-200:       #EAEAE7;
+    --gray-300:       #DDDDD9;
+    --gray-400:       #B0B0AA;
+    --gray-500:       #7A7A73;
+    --gray-600:       #545450;
+    --gray-700:       #3D3D39;
+    --text:           #1A1A18;
+    --text-soft:      #3A3A37;
+    --text-light:     #6B6B65;
+    --border:         #E4E4E0;
+    --shadow-xs:      0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-sm:      0 2px 8px rgba(0,0,0,0.05);
+    --shadow-hover:   0 8px 30px rgba(74, 94, 67, 0.10), 0 2px 8px rgba(0,0,0,0.05);
+    --radius-sm:      6px;
+    --radius-card:    10px;
+    --radius-full:    999px;
+    --space-1:  0.5rem;
+    --space-2:  1rem;
+    --space-3:  1.5rem;
+    --space-4:  2rem;
+    --space-5:  3rem;
+    --space-6:  4rem;
+    --transition-fast: 150ms cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-base: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-slow: 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ===================================================
+   PÁGINA CONTENEDOR
+   =================================================== */
+.page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 5% var(--space-6);
+    background: #F7F7F5;
+}
+
+/* ===================================================
+   CABECERA
+   =================================================== */
+.page-header {
+    padding: var(--space-6) 5% var(--space-4);
+    background: #1A1E18;
+    border-bottom: 1px solid rgba(107, 126, 99, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 420px; height: 100%;
+    background: radial-gradient(ellipse at top right, rgba(107, 126, 99, 0.13) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+.page-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--green-dark), transparent);
+}
+
+.page-header h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    font-style: italic;
+    color: #FFFFFF;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+    position: relative;
+    z-index: 1;
+}
+
+.page-header p {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.55);
+    max-width: 600px;
+    line-height: 1.7;
+    font-weight: 400;
+    position: relative;
+    z-index: 1;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: var(--space-3);
+    letter-spacing: 0.01em;
+    position: relative;
+    z-index: 1;
+}
+
+.breadcrumb a {
+    color: var(--green-light);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    position: relative;
+}
+
+.breadcrumb a::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 1px;
+    background: var(--green-light);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-base);
+}
+
+.breadcrumb a:hover { color: #FFFFFF; }
+.breadcrumb a:hover::after { transform: scaleX(1); }
+.breadcrumb span { color: rgba(255,255,255,0.2); }
+
+/* ===================================================
+   BLOQUE INTRO
+   =================================================== */
+.intro-block {
+    background: var(--white);
+    border-left: 3px solid var(--green-dark);
+    padding: var(--space-3) var(--space-4);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    margin-bottom: var(--space-5);
+    font-size: 1rem;
+    color: var(--text-soft);
+    box-shadow: var(--shadow-xs);
+    line-height: 1.8;
+    animation: fadeUpCompras var(--transition-slow) 80ms both;
+}
+
+.intro-block strong {
+    color: var(--green-dark);
+    font-weight: 600;
+}
+
+/* ===================================================
+   TÍTULOS DE BLOQUE
+   =================================================== */
+.bloque-titulo {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text);
+    margin: var(--space-5) 0 var(--space-3);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    position: relative;
+    padding-bottom: var(--space-2);
+    animation: fadeUpCompras var(--transition-slow) 120ms both;
+}
+
+.bloque-titulo::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 36px; height: 2px;
+    background: var(--green-dark);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-slow);
+}
+
+.bloque-titulo:hover::after { width: 72px; }
+
+/* ===================================================
+   TABLAS
+   =================================================== */
+.tabla-wrapper {
+    background: var(--white);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    overflow-x: auto;
+    margin-bottom: var(--space-5);
+    box-shadow: var(--shadow-xs);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+    animation: fadeUpCompras var(--transition-slow) 160ms both;
+    will-change: box-shadow;
+}
+
+.tabla-wrapper:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.93rem;
+    min-width: 560px;
+}
+
+thead {
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    text-align: left;
+    padding: 0.9rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-500);
+    white-space: nowrap;
+}
+
+td {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-soft);
+    vertical-align: middle;
+    transition: background var(--transition-fast);
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+tbody tr:hover td { background-color: var(--green-xlight); }
+
+td strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* Columna de monto — alinear a la derecha */
+td:nth-child(4),
+th:nth-child(4) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Última columna centrada (estado/proceso) */
+th:last-child,
+td:last-child {
+    text-align: center;
+}
+
+/* ===================================================
+   BADGES
+   =================================================== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.72rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    line-height: 1;
+    background: var(--gray-200);
+    color: var(--gray-700);
+    border: 1px solid transparent;
+}
+
+.badge-verde { background: var(--green-xlight); color: var(--green-dark); border-color: rgba(107,126,99,0.22); }
+.badge-azul  { background: var(--blue-sky-light); color: var(--blue-sky); border-color: rgba(37,99,168,0.20); }
+.badge-gold  { background: #fef9ec; color: #7a5a00; border-color: rgba(234,179,8,0.22); }
+.badge-gris  { background: var(--gray-100); color: var(--gray-600); border-color: var(--gray-300); }
+
+/* ===================================================
+   NOTA LEGAL / CONTACTO COMPRAS
+   =================================================== */
+.nota-legal {
+    background: var(--blue-sky-light);
+    border-left: 3px solid var(--blue-sky);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    padding: 1rem var(--space-3);
+    font-size: 0.92rem;
+    color: #1e3a5f;
+    line-height: 1.75;
+    margin-bottom: var(--space-5);
+    animation: fadeUpCompras var(--transition-slow) 200ms both;
+}
+
+.nota-legal strong {
+    font-weight: 700;
+    color: var(--blue-sky);
+}
+
+.nota-legal a {
+    color: var(--blue-sky);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(37, 99, 168, 0.35);
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.nota-legal a:hover {
+    color: #1a4a80;
+    border-bottom-color: #1a4a80;
+}
+
+/* ===================================================
+   ANIMACIONES
+   =================================================== */
+@keyframes fadeUpCompras {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===================================================
+   RESPONSIVE — TABLET
+   =================================================== */
+@media (max-width: 768px) {
+    .page-header { padding: var(--space-4) 4% var(--space-3); }
+    .page-header h1 { font-size: 1.9rem; }
+
+    .bloque-titulo { font-size: 1.5rem; }
+
+    th, td { padding: 0.75rem 1rem; font-size: 0.88rem; }
+
+    .badge { font-size: 0.65rem; padding: 0.22rem 0.6rem; }
+
+    /* En tablet los montos pueden quedar centrados */
+    td:nth-child(4),
+    th:nth-child(4) { text-align: left; }
+}
+
+/* ===================================================
+   RESPONSIVE — MÓVIL
+   =================================================== */
+@media (max-width: 480px) {
+    .page { padding: 0 4% var(--space-5); }
+
+    .page-header { padding: var(--space-3) 4% var(--space-2); }
+    .page-header h1 { font-size: 1.75rem; }
+
+    .intro-block { padding: var(--space-2) var(--space-3); font-size: 0.93rem; }
+
+    .bloque-titulo { font-size: 1.35rem; margin: var(--space-4) 0 var(--space-2); }
+    .bloque-titulo::after { width: 30px; }
+
+    .tabla-wrapper { border-radius: var(--radius-sm); margin-bottom: var(--space-4); }
+
+    th, td { padding: 0.65rem 0.8rem; font-size: 0.83rem; }
+}
+
+/* ===================================================
+   TOUCH
+   =================================================== */
+@media (hover: none) {
+    .tabla-wrapper:hover {
+        transform: none;
+        box-shadow: var(--shadow-xs);
+    }
+    tbody tr:hover td { background-color: transparent; }
+}
+
+/* ===================================================
+   PREFERS REDUCED MOTION
+   =================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

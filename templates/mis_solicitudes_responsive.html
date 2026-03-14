@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Administrar Solicitudes - Villa Cutupú{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Gestión de Solicitudes</h1>
+        <div>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Solicitudes</h5>
+                    <h2>{{ stats.solicitudes }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Pendientes</h5>
+                    <h2>{{ stats.pendientes }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">En Proceso</h5>
+                    <h2>{{ stats.en_proceso|default(0) }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Completados</h5>
+                    <h2>{{ stats.completados }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Buscar</label>
+                    <input type="text" name="q" class="form-control" value="{{ filtros.q }}" placeholder="Folio, nombre, email...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Estado</label>
+                    <select name="estado" class="form-select">
+                        <option value="">Todos</option>
+                        {% for estado in estados %}
+                        <option value="{{ estado }}" {% if filtros.estado == estado %}selected{% endif %}>
+                            {{ estado|replace('_', ' ')|title }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Servicio</label>
+                    <select name="servicio" class="form-select">
+                        <option value="">Todos</option>
+                        {% for id, nombre in servicios.items() %}
+                        <option value="{{ id }}" {% if filtros.servicio == id %}selected{% endif %}>
+                            {{ nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de solicitudes -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="solicitudesTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Folio</th>
+                            <th>Usuario</th>
+                            <th>Servicio</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in solicitudes %}
+                        <tr>
+                            <td>{{ s.id }}</td>
+                            <td><strong>{{ s.folio }}</strong></td>
+                            <td>
+                                {{ s.usuario_nombre }}<br>
+                                <small class="text-muted">{{ s.usuario_email }}</small>
+                            </td>
+                            <td>{{ servicios.get(s.servicio_id|string, 'Desconocido') }}</td>
+                            <td>{{ s.fecha_creacion[:10] }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'warning' if s.estado == 'pendiente' else 'info' if s.estado == 'en_proceso' else 'success' if s.estado == 'completado' else 'secondary' }}">
+                                    {{ s.estado|replace('_', ' ')|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('admin.detalle_solicitud', solicitud_id=s.id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// IMPORTANTE: Esta es la línea corregida (reemplaza a {{ tramites|tojson|safe }})
+let solicitudes = {{ solicitudes_json|safe }};
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Solicitudes cargadas:', solicitudes.length);
+    
+    // Aquí puedes agregar funcionalidad JavaScript adicional
+    // Por ejemplo, búsqueda en tiempo real, ordenamiento, etc.
+    
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#solicitudesTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

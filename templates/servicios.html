@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios Municipales - Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/servicios.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}"
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios" class="active">Servicios</a></li>
+                <li><a href="/transparencia">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                    <li><a href="/mis-solicitudes">Mis solicitudes</a></li>
+                    <li><a href="/mis-denuncias">Mis denuncias</a></li>
+                    <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+    <!-- ===== PAGE HEADER ===== -->
+    <section class="page-header">
+        <div class="container">
+            <div class="page-header-text">
+                <span class="page-header-eyebrow">Portal de servicios</span>
+                <h1>Servicios <em>Municipales</em></h1>
+                <p>Trámites, solicitudes y denuncias disponibles para los ciudadanos de Villa Cutupú.</p>
+            </div>
+            <div class="page-header-stats">
+                <div class="header-stat">
+                    <span class="header-stat-num">11</span>
+                    <span class="header-stat-label">Servicios</span>
+                </div>
+                <div class="header-stat">
+                    <span class="header-stat-num">3</span>
+                    <span class="header-stat-label">Categorías</span>
+                </div>
+                <div class="header-stat">
+                    <span class="header-stat-num">24h</span>
+                    <span class="header-stat-label">Respuesta</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FILTROS ===== -->
+    <div class="servicios-filtros">
+        <div class="filtros-grupo">
+            <button class="filtro-btn active" data-filtro="todos">Todos</button>
+            <button class="filtro-btn" data-filtro="solicitud">Solicitudes</button>
+            <button class="filtro-btn filtro-denuncia" data-filtro="denuncia">Denuncias</button>
+            <button class="filtro-btn filtro-consulta" data-filtro="consulta">Consultas</button>
+        </div>
+        <p class="service-count">Mostrando <span id="contador">11</span> servicios</p>
+    </div>
+
+    <!-- ===== GRID ===== -->
+    <div class="services-detailed">
+
+        <!-- 01 · Funerarias -->
+        <div class="service-card" id="funeraria" data-tipo="solicitud">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C9.79 2 8 3.79 8 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6c0-2.21-1.79-4-4-4z"/><path d="M12 6v8M9 10h6"/></svg>
+                </div>
+                <span class="service-badge badge-solicitud">Solicitud</span>
+            </div>
+            <h3>Funerarias Municipales</h3>
+            <p>Apoyo y facilidades para la realización de servicios funerarios dignos y accesibles. Incluye gestión de espacios, trámites y acompañamiento.</p>
+            <div class="service-card-footer">
+                <a href="/solicitar/funeraria" class="btn-servicio btn-solicitar">Solicitar</a>
+                <span class="card-meta">Presencial</span>
+            </div>
+        </div>
+
+        <!-- 02 · Uso de Suelo -->
+        <div class="service-card" id="uso-suelo" data-tipo="solicitud">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                </div>
+                <span class="service-badge badge-solicitud">Solicitud</span>
+            </div>
+            <h3>Certificado de Uso de Suelo</h3>
+            <p>Documento oficial que indica el uso permitido de un terreno o inmueble. Requisito para permisos de construcción y operación comercial.</p>
+            <div class="service-card-footer">
+                <a href="/solicitar/uso-suelo" class="btn-servicio btn-solicitar">Solicitar</a>
+                <span class="card-meta">3–5 días</span>
+            </div>
+        </div>
+
+        <!-- 03 · POT -->
+        <div class="service-card tipo-consulta" id="pot" data-tipo="consulta">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><path d="M9 3v15M15 6v15"/></svg>
+                </div>
+                <span class="service-badge badge-consulta">Consulta</span>
+            </div>
+            <h3>Plan de Ordenamiento Territorial</h3>
+            <p>Consulta y asesoría sobre el plan regulador, zonificación, áreas de protección y desarrollo urbano.</p>
+            <div class="service-card-footer">
+                <a href="/consultar/pot" class="btn-servicio btn-consultar">Consultar</a>
+                <span class="card-meta">En línea</span>
+            </div>
+        </div>
+
+        <!-- 04 · OAI/M -->
+        <div class="service-card" id="oaim" data-tipo="solicitud">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+                </div>
+                <span class="service-badge badge-solicitud">Solicitud</span>
+            </div>
+            <h3>Acceso a Información (OAI/M)</h3>
+            <p>Solicitud de información pública conforme a la ley de transparencia. Presupuestos, actas, contratos y documentos municipales.</p>
+            <div class="service-card-footer">
+                <a href="/solicitar/oaim" class="btn-servicio btn-solicitar">Solicitar</a>
+                <span class="card-meta">15 días hábiles</span>
+            </div>
+        </div>
+
+        <!-- 05 · Planeamiento -->
+        <div class="service-card" id="planeamiento" data-tipo="solicitud">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <span class="service-badge badge-solicitud">Solicitud</span>
+            </div>
+            <h3>Planeamiento Urbano</h3>
+            <p>Asesoría para proyectos urbanísticos, factibilidad de desarrollos, alineamiento y cumplimiento de normativas municipales.</p>
+            <div class="service-card-footer">
+                <a href="/solicitar/planeamiento" class="btn-servicio btn-solicitar">Iniciar trámite</a>
+                <span class="card-meta">Cita previa</span>
+            </div>
+        </div>
+
+        <!-- 06 · Policía Municipal -->
+        <div class="service-card tipo-denuncia" id="policia" data-tipo="denuncia">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                </div>
+                <span class="service-badge badge-denuncia">Denuncia</span>
+            </div>
+            <h3>Policía Municipal</h3>
+            <p>Reportes de orden público, ruidos molestos, ocupación de aceras, ventas informales y cumplimiento de normativas.</p>
+            <div class="service-card-footer">
+                <a href="/denunciar/policia" class="btn-servicio btn-denunciar">Denunciar</a>
+                <span class="card-meta">Urgente</span>
+            </div>
+        </div>
+
+        <!-- 07 · Limpieza -->
+        <div class="service-card tipo-denuncia" id="limpieza" data-tipo="denuncia">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                </div>
+                <span class="service-badge badge-denuncia">Denuncia</span>
+            </div>
+            <h3>Limpieza y Cuidado de la Vía Pública</h3>
+            <p>Reportes de basura acumulada, calles sucias, espacios descuidados o falta de mantenimiento en parques y aceras.</p>
+            <div class="service-card-footer">
+                <a href="/denunciar/limpieza" class="btn-servicio btn-denunciar">Reportar</a>
+                <span class="card-meta">24–48 h</span>
+            </div>
+        </div>
+
+        <!-- 08 · Recogida de Basura -->
+        <div class="service-card tipo-denuncia" id="basura" data-tipo="denuncia">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                </div>
+                <span class="service-badge badge-denuncia">Denuncia</span>
+            </div>
+            <h3>Recogida de Basura</h3>
+            <p>Denuncias por falta de recolección, horarios incumplidos, camiones en mal estado o irregularidades del servicio de aseo domiciliario.</p>
+            <div class="service-card-footer">
+                <a href="/denunciar/basura" class="btn-servicio btn-denunciar">Denunciar</a>
+                <span class="card-meta">48 h</span>
+            </div>
+        </div>
+
+        <!-- 09 · Ornato -->
+        <div class="service-card" id="ornato" data-tipo="solicitud">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-13 7 4 0 6 4 6 4"/></svg>
+                </div>
+                <span class="service-badge badge-solicitud">Solicitud</span>
+            </div>
+            <h3>Ornato y Préstamos de Áreas</h3>
+            <p>Solicitud de uso de plazas, parques y salones comunales para eventos. Reportes sobre deterioro del ornato público.</p>
+            <div class="service-card-footer">
+                <a href="/solicitar/ornato" class="btn-servicio btn-solicitar">Solicitar</a>
+                <span class="card-meta">5 días hábiles</span>
+            </div>
+        </div>
+
+        <!-- 10 · Catastro -->
+        <div class="service-card" id="catastro" data-tipo="solicitud">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><rect x="9" y="14" width="6" height="8"/></svg>
+                </div>
+                <span class="service-badge badge-solicitud">Solicitud</span>
+            </div>
+            <h3>Catastro Municipal</h3>
+            <p>Trámites de nomenclatura, números de identificación predial, deslindes, certificaciones de avalúo y actualización de datos.</p>
+            <div class="service-card-footer">
+                <a href="/solicitar/catastro" class="btn-servicio btn-solicitar">Solicitar trámite</a>
+                <span class="card-meta">7 días hábiles</span>
+            </div>
+        </div>
+
+        <!-- 11 · Aseo Comercial -->
+        <div class="service-card" id="aseo-comercial" data-tipo="solicitud">
+            <div class="card-header">
+                <div class="service-icono">
+                    <svg viewBox="0 0 24 24"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2"/><path d="M12 12v5"/></svg>
+                </div>
+                <span class="service-badge badge-solicitud">Solicitud</span>
+            </div>
+            <h3>Gestión Comercial de Aseo</h3>
+            <p>Altas, bajas o modificaciones del servicio de recolección para comercios, facturación, convenios y contenedores especiales.</p>
+            <div class="service-card-footer">
+                <a href="/solicitar/aseo-comercial" class="btn-servicio btn-solicitar">Gestionar</a>
+                <span class="card-meta">En línea</span>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/servicios.js') }}"></script>
+</body>
+</html>

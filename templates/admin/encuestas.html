@@ -1,0 +1,140 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Encuestas de Satisfacción - Villa Cutupú{% endblock %}
+
+{% block page_title %}Encuestas de Satisfacción{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Dashboard</a> / <span>Encuestas</span>
+{% endblock %}
+
+{% block content %}
+<!-- Stats principales -->
+<div class="stats-grid" style="margin-bottom:2rem">
+    <div class="stat-card gradient-primary">
+        <div class="stat-icon">
+            <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Promedio General</h3>
+            <div class="stat-number">{{ stats.promedio }}</div>
+            <div class="stat-details">
+                <span>/ 5.00 estrellas</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card gradient-success">
+        <div class="stat-icon">
+            <i class="fas fa-clipboard-list"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Total Encuestas</h3>
+            <div class="stat-number">{{ stats.total }}</div>
+            <div class="stat-details">
+                <span>{{ stats.por_tipo.solicitud }} solicitudes</span>
+                <span>{{ stats.por_tipo.denuncia }} denuncias</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card gradient-warning">
+        <div class="stat-icon">
+            <i class="fas fa-smile"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Satisfacción</h3>
+            <div class="stat-number">{{ (stats.promedio * 20)|round|int }}%</div>
+            <div class="stat-details">
+                <span>de usuarios satisfechos</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráfico de calificaciones -->
+<div class="charts-grid" style="margin-bottom:2rem">
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3><i class="fas fa-chart-bar"></i> Distribución de Calificaciones</h3>
+        </div>
+        <div class="chart-container">
+            <div style="display:flex;flex-direction:column;gap:1rem;padding:1rem">
+                {% for i in range(1,6) %}
+                <div style="display:flex;align-items:center;gap:.5rem">
+                    <div style="width:60px;font-weight:600">{{ i }} estrella{{ 's' if i > 1 else '' }}</div>
+                    <div style="flex:1;height:30px;background:var(--gray-200);border-radius:15px;overflow:hidden">
+                        {% set porcentaje = (stats.por_calificacion[i] / stats.total * 100) if stats.total > 0 else 0 %}
+                        <div style="width:{{ porcentaje }}%;height:100%;background:{% if i == 5 %}#10b981{% elif i == 4 %}#3b82f6{% elif i == 3 %}#f59e0b{% else %}#ef4444{% endif %};display:flex;align-items:center;padding-left:1rem;color:white;font-weight:600;font-size:.8rem">
+                            {{ stats.por_calificacion[i] }}
+                        </div>
+                    </div>
+                    <div style="width:60px">{{ '%.1f'|format(porcentaje) }}%</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3><i class="fas fa-chart-pie"></i> Por Tipo de Trámite</h3>
+        </div>
+        <div class="chart-container">
+            <div style="display:flex;justify-content:center;gap:2rem;padding:2rem">
+                <div style="text-align:center">
+                    <div style="width:100px;height:100px;border-radius:50%;background:conic-gradient(#3b82f6 0deg {{ stats.por_tipo.solicitud/stats.total * 360 if stats.total > 0 else 0 }}deg, #10b981 {{ stats.por_tipo.solicitud/stats.total * 360 if stats.total > 0 else 0 }}deg 360deg);margin:0 auto 1rem"></div>
+                    <h4 style="margin-bottom:.5rem">Solicitudes</h4>
+                    <p style="font-size:1.5rem;font-weight:700">{{ stats.por_tipo.solicitud }}</p>
+                </div>
+                <div style="text-align:center">
+                    <div style="width:100px;height:100px;border-radius:50%;background:conic-gradient(#ef4444 0deg {{ stats.por_tipo.denuncia/stats.total * 360 if stats.total > 0 else 0 }}deg, #f59e0b {{ stats.por_tipo.denuncia/stats.total * 360 if stats.total > 0 else 0 }}deg 360deg);margin:0 auto 1rem"></div>
+                    <h4 style="margin-bottom:.5rem">Denuncias</h4>
+                    <p style="font-size:1.5rem;font-weight:700">{{ stats.por_tipo.denuncia }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Últimas encuestas -->
+<div class="activity-card">
+    <div class="activity-header">
+        <h3><i class="fas fa-clock"></i> Últimas Evaluaciones</h3>
+    </div>
+    
+    <div class="activity-list">
+        {% if stats.ultimas %}
+            {% for encuesta in stats.ultimas %}
+            <div class="activity-item">
+                <div class="activity-icon {% if encuesta.calificacion >= 4 %}bg-soft-success{% elif encuesta.calificacion >= 3 %}bg-soft-warning{% else %}bg-soft-danger{% endif %}">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">
+                        <strong>{{ encuesta.usuario_nombre }}</strong>
+                        <span style="margin-left:1rem;color:{% if encuesta.calificacion == 5 %}#10b981{% elif encuesta.calificacion == 4 %}#3b82f6{% elif encuesta.calificacion == 3 %}#f59e0b{% else %}#ef4444{% endif %};font-weight:700">
+                            {{ encuesta.calificacion }}/5
+                        </span>
+                    </div>
+                    <div class="activity-meta">
+                        <span><i class="fas fa-hashtag"></i> {{ encuesta.folio_tramite }}</span>
+                        <span><i class="far fa-calendar"></i> {{ encuesta.fecha[:10] }}</span>
+                    </div>
+                    {% if encuesta.comentario %}
+                    <div style="margin-top:.5rem;padding:.5rem;background:var(--gray-50);border-radius:8px;font-style:italic;color:var(--gray-600)">
+                        "{{ encuesta.comentario }}"
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>No hay encuestas registradas</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

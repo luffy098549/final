@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Realizar Denuncia - {{ nombre_servicio }} | Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #1a3b2e;
+        --primary-light: #2e7d5e;
+        --primary-soft: #e8f3ee;
+        --warning: #b85e00;
+        --warning-light: #fff1e0;
+        --success: #1e7b4c;
+        --success-light: #e1f7ed;
+        --danger: #b33c2f;
+        --danger-light: #fee9e7;
+        --info: #2563eb;
+        --info-light: #e0edff;
+        --gray-50: #f9fafb;
+        --gray-100: #f2f4f7;
+        --gray-200: #e4e7ec;
+        --gray-300: #d0d5dd;
+        --gray-400: #98a2b3;
+        --gray-500: #667085;
+        --gray-600: #475467;
+        --gray-700: #344054;
+        --gray-800: #1d2939;
+        --gray-900: #101828;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
+        --shadow-md: 0 4px 6px -2px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.1);
+        --radius-md: 12px;
+        --radius-lg: 16px;
+    }
+
+    .denuncia-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .denuncia-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .denuncia-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .denuncia-header p {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    .denuncia-form {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-200);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 59, 46, 0.1);
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+    }
+
+    .checkbox-group label {
+        font-size: 0.95rem;
+        color: var(--gray-700);
+        cursor: pointer;
+    }
+
+    .btn-submit {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
+    }
+
+    .btn-submit:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-submit i {
+        margin-right: 0.5rem;
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-error {
+        background: var(--danger-light);
+        color: var(--danger);
+        border: 1px solid var(--danger);
+    }
+
+    .alert-success {
+        background: var(--success-light);
+        color: var(--success);
+        border: 1px solid var(--success);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="denuncia-container">
+    <!-- Header -->
+    <div class="denuncia-header">
+        <h1>
+            <i class="fas fa-exclamation-triangle"></i>
+            Realizar Denuncia
+        </h1>
+        <p>{{ nombre_servicio }}</p>
+    </div>
+
+    <!-- Mostrar mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message|safe }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Formulario de denuncia -->
+    <div class="denuncia-form">
+        <form method="POST" action="{{ url_for('denunciar_servicio', tipo=servicio) }}">
+            <div class="form-group">
+                <label for="nombre">Tu Nombre</label>
+                <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ingresa tu nombre completo">
+                <small class="text-muted">Opcional si marcas "Denuncia anónima"</small>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="anonimo" name="anonimo">
+                <label for="anonimo">Hacer denuncia anónima</label>
+            </div>
+
+            <div class="form-group">
+                <label for="direccion">Dirección del incidente *</label>
+                <input type="text" id="direccion" name="direccion" class="form-control" placeholder="Calle, número, sector..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción de la denuncia *</label>
+                <textarea id="descripcion" name="descripcion" class="form-control" placeholder="Describe detalladamente lo que sucedió..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i>
+                Enviar Denuncia
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

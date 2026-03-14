@@ -1,0 +1,77 @@
+[
+  {
+    "id": 1,
+    "folio": "SOL-2603-2153",
+    "usuario_email": "ciudadano@email.com",
+    "usuario_nombre": "SEBASTIAN",
+    "usuario_cedula": "04701923122",
+    "servicio_id": "uso-suelo",
+    "servicio_nombre": "Certificado de Uso de Suelo",
+    "descripcion": "no an areglado mi calle",
+    "estado": "pendiente",
+    "fecha_creacion": "2026-03-08T13:08:16.007239",
+    "fecha_actualizacion": "2026-03-08T13:08:16.007245",
+    "fecha_resolucion": null,
+    "asignado_a": null,
+    "comentarios_admin": [],
+    "documentos": [],
+    "historial": [
+      {
+        "fecha": "2026-03-08T13:08:16.007250",
+        "tipo": "creada",
+        "descripcion": "Solicitud creada por el usuario",
+        "usuario": "sistema"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "folio": "SOL-2603-5096",
+    "usuario_email": "ciudadano@email.com",
+    "usuario_nombre": "manolo javier",
+    "usuario_cedula": "04701923122",
+    "servicio_id": "ornato",
+    "servicio_nombre": "Ornato y Préstamos de Áreas",
+    "descripcion": "quiero un prestamo de area para boda",
+    "estado": "pendiente",
+    "fecha_creacion": "2026-03-08T20:50:02.573250",
+    "fecha_actualizacion": "2026-03-08T20:50:02.573251",
+    "fecha_resolucion": null,
+    "asignado_a": null,
+    "comentarios_admin": [],
+    "documentos": [],
+    "historial": [
+      {
+        "fecha": "2026-03-08T20:50:02.573253",
+        "tipo": "creada",
+        "descripcion": "Solicitud creada por el usuario",
+        "usuario": "sistema"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "folio": "SOL-2603-2698",
+    "usuario_email": "ciudadano@email.com",
+    "usuario_nombre": "SEBASTIAN",
+    "usuario_cedula": "04701923122",
+    "servicio_id": "uso-suelo",
+    "servicio_nombre": "Certificado de Uso de Suelo",
+    "descripcion": "hoa",
+    "estado": "pendiente",
+    "fecha_creacion": "2026-03-09T11:15:46.185108",
+    "fecha_actualizacion": "2026-03-09T11:15:46.185109",
+    "fecha_resolucion": null,
+    "asignado_a": null,
+    "comentarios_admin": [],
+    "documentos": [],
+    "historial": [
+      {
+        "fecha": "2026-03-09T11:15:46.185111",
+        "tipo": "creada",
+        "descripcion": "Solicitud creada por el usuario",
+        "usuario": "sistema"
+      }
+    ]
+  }
+]

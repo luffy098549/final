@@ -1,0 +1,200 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Mapa de Incidencias - Admin{% endblock %}
+
+{% block page_title %}Mapa de Incidencias{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Dashboard</a> / <span>Mapa</span>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    .admin-mapa-container{padding:1.5rem}
+    .stats-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+    .stat-mini-card{background:white;border-radius:12px;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);display:flex;align-items:center;gap:1rem}
+    .stat-mini-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+    .stat-mini-content h4{font-size:.75rem;color:var(--gray-500);margin-bottom:.2rem}
+    .stat-mini-content .number{font-size:1.3rem;font-weight:700;color:var(--gray-800)}
+    #adminMap{height:500px;border-radius:12px;margin-bottom:1.5rem}
+    .geocode-panel{background:white;border-radius:12px;padding:1.5rem;margin-top:1.5rem;border:1px solid var(--gray-200)}
+    .geocode-form{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
+    .geocode-input{flex:2;min-width:300px}
+    .geocode-input label{display:block;font-size:.7rem;text-transform:uppercase;color:var(--gray-500);margin-bottom:.3rem}
+    .geocode-input input,.geocode-input select{width:100%;padding:.6rem;border:1px solid var(--gray-300);border-radius:8px}
+    .btn-geocode{background:#1a3b2e;color:white;padding:.6rem 1.5rem;border:none;border-radius:8px;cursor:pointer}
+    .btn-geocode:hover{background:#2e7d5e}
+    .coords-result{background:var(--gray-50);padding:.8rem;border-radius:8px;margin-top:.5rem;font-family:monospace;font-size:.8rem}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-mapa-container">
+    <!-- Stats mini -->
+    <div class="stats-mini-grid">
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon" style="background:#e8f3ee;color:#1a3b2e">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>Total denuncias</h4>
+                <div class="number">{{ stats.total }}</div>
+            </div>
+        </div>
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon" style="background:#e0edff;color:#2563eb">
+                <i class="fas fa-map-pin"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>Geolocalizadas</h4>
+                <div class="number">{{ stats.geolocalizadas }}</div>
+            </div>
+        </div>
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon" style="background:#fff8e1;color:#b85e00">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>Pendientes</h4>
+                <div class="number">{{ stats.pendientes }}</div>
+            </div>
+        </div>
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon" style="background:#e1f7ed;color:#1e7b4c">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>Sin geolocalizar</h4>
+                <div class="number">{{ stats.total - stats.geolocalizadas }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa -->
+    <div id="adminMap"></div>
+
+    <!-- Panel de geocodificación -->
+    <div class="geocode-panel">
+        <h3 style="margin-bottom:1rem"><i class="fas fa-search-location"></i> Geocodificar dirección</h3>
+        <div class="geocode-form">
+            <div class="geocode-input">
+                <label>Seleccionar denuncia</label>
+                <select id="denunciaSelect">
+                    <option value="">-- Selecciona una denuncia --</option>
+                    {% for d in denuncias %}
+                        <option value="{{ d.id }}" data-direccion="{{ d.direccion }}">
+                            {{ d.folio }} - {{ d.direccion[:50] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="geocode-input" style="flex:3">
+                <label>Dirección a geocodificar</label>
+                <input type="text" id="direccionInput" placeholder="Ej: Calle Principal, Villa Cutupú">
+            </div>
+            <button class="btn-geocode" onclick="geocodificar()">
+                <i class="fas fa-map-pin"></i> Obtener coordenadas
+            </button>
+        </div>
+        <div id="coordsResult" class="coords-result" style="display:none"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+let map;
+let markers = [];
+let denunciasData = {{ denuncias|tojson }};
+
+function initMap() {
+    map = L.map('adminMap').setView([19.0, -70.5], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    cargarDenuncias();
+}
+
+async function cargarDenuncias() {
+    try {
+        const res = await fetch('/api/denuncias/geojson');
+        const data = await res.json();
+        
+        data.features.forEach(feature => {
+            const props = feature.properties;
+            const coords = feature.geometry.coordinates;
+            
+            const marker = L.marker([coords[1], coords[0]]).addTo(map);
+            
+            marker.bindPopup(`
+                <div style="min-width:200px">
+                    <strong style="color:#1a3b2e">${props.folio}</strong><br>
+                    <span style="color:#666;font-size:.8rem">${props.tipo_nombre}</span><br>
+                    <span>${props.direccion}</span><br>
+                    <span class="badge badge-${props.estado}">${props.estado.replace('_',' ')}</span><br>
+                    <a href="${props.url}" style="display:inline-block;margin-top:.5rem;color:#1a3b2e">Ver detalle</a>
+                </div>
+            `);
+            
+            markers.push(marker);
+        });
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function geocodificar() {
+    const denunciaSelect = document.getElementById('denunciaSelect');
+    const direccion = document.getElementById('direccionInput').value || 
+                     denunciaSelect.selectedOptions[0]?.dataset.direccion;
+    const denunciaId = denunciaSelect.value;
+    
+    if (!direccion) {
+        alert('Por favor ingresa una dirección');
+        return;
+    }
+    
+    try {
+        const res = await fetch('/api/geocodificar', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                direccion: direccion,
+                denuncia_id: denunciaId
+            })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+            document.getElementById('coordsResult').style.display = 'block';
+            document.getElementById('coordsResult').innerHTML = `
+                <strong>✅ Coordenadas encontradas:</strong><br>
+                Latitud: ${data.latitud}<br>
+                Longitud: ${data.longitud}<br>
+                <small>${data.display_name}</small>
+            `;
+            
+            // Agregar marcador
+            L.marker([data.latitud, data.longitud])
+                .addTo(map)
+                .bindPopup(`<strong>${direccion}</strong>`)
+                .openPopup();
+            
+            map.setView([data.latitud, data.longitud], 16);
+        } else {
+            alert('No se pudo encontrar la dirección');
+        }
+    } catch (error) {
+        alert('Error al geocodificar');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+{% endblock %}

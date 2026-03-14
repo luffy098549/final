@@ -1,0 +1,586 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestión de Usuarios - Admin{% endblock %}
+
+{% block page_title %}
+<i class="fas fa-users-cog"></i> Gestión de Administradores
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+<span class="separator">/</span>
+<span>Administradores</span>
+{% endblock %}
+
+{% block content %}
+<div class="admin-users-container">
+
+    <div class="admin-users-header">
+        <div class="header-left">
+            <h2>
+                <i class="fas fa-user-shield"></i>
+                Administradores del Sistema
+            </h2>
+            <p class="text-muted">Gestiona los administradores, roles y permisos</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('admin.crear_admin') }}" class="btn-create-admin">
+                <i class="fas fa-plus-circle"></i> Nuevo Administrador
+            </a>
+        </div>
+    </div>
+
+    <div class="admin-stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon super-admin">
+                <i class="fas fa-crown"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-value" id="totalSuperAdmins">0</span>
+                <span class="stat-label">Super Admins</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon admin">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-value" id="totalAdmins">0</span>
+                <span class="stat-label">Administradores</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon moderator">
+                <i class="fas fa-user-cog"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-value" id="totalModeradores">0</span>
+                <span class="stat-label">Moderadores</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon active">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-value" id="totalActivos">0</span>
+                <span class="stat-label">Activos hoy</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="filters-section">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" 
+                   id="searchAdmin" 
+                   placeholder="Buscar administrador por nombre, email o rol..."
+                   onkeyup="filtrarAdmins()">
+        </div>
+
+        <div class="filter-group">
+            <select id="rolFilter" onchange="filtrarAdmins()" class="filter-select">
+                <option value="todos">Todos los roles</option>
+                <option value="super_admin">Super Admin</option>
+                <option value="admin">Administrador</option>
+                <option value="moderador">Moderador</option>
+            </select>
+
+            <select id="estadoFilter" onchange="filtrarAdmins()" class="filter-select">
+                <option value="todos">Todos los estados</option>
+                <option value="activo">Activos</option>
+                <option value="inactivo">Inactivos</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="admins-table" id="adminsTable">
+            <thead>
+                <tr>
+                    <th>Administrador</th>
+                    <th>Contacto</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Último acceso</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody id="adminsTableBody">
+                {% for user_data in usuarios %}
+                <tr class="admin-row"
+                    data-role="{{ user_data.rol or user_data.tipo }}"
+                    data-estado="{{ 'activo' if user_data.activo else 'inactivo' }}"
+                    data-nombre="{{ user_data.nombre }} {{ user_data.apellidos }}"
+                    data-email="{{ user_data.email }}">
+
+                    <td class="admin-cell">
+                        <div class="admin-avatar">
+                            {{ user_data.nombre[0] }}{{ user_data.apellidos[0] if user_data.apellidos else '' }}
+                        </div>
+                        <div class="admin-info">
+                            <div class="admin-name">
+                                {{ user_data.nombre }} {{ user_data.apellidos }}
+                                {% if user_data.rol == 'super_admin' %}
+                                <i class="fas fa-crown super-admin-icon"></i>
+                                {% endif %}
+                            </div>
+                            <div class="admin-email">
+                                {{ user_data.email }}
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="contact-cell">
+                            <div>
+                                <i class="fas fa-phone"></i>
+                                {{ user_data.telefono or 'No registrado' }}
+                            </div>
+                            <div class="text-small">
+                                {{ user_data.fecha_registro }}
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>
+                        {% if user_data.rol == 'super_admin' %}
+                        <span class="role-badge super-admin">
+                            <i class="fas fa-crown"></i> Super Admin
+                        </span>
+                        {% elif user_data.rol == 'admin' %}
+                        <span class="role-badge admin">
+                            <i class="fas fa-user-tie"></i> Administrador
+                        </span>
+                        {% elif user_data.rol == 'moderador' %}
+                        <span class="role-badge moderator">
+                            <i class="fas fa-user-cog"></i> Moderador
+                        </span>
+                        {% elif user_data.tipo == 'admin' and not user_data.rol %}
+                        <span class="role-badge admin">
+                            <i class="fas fa-user-tie"></i> Admin (legado)
+                        </span>
+                        {% else %}
+                        <span class="role-badge ciudadano">
+                            <i class="fas fa-user"></i> Ciudadano
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if user_data.activo %}
+                        <span class="status-badge active">
+                            <span class="status-dot"></span>
+                            Activo
+                        </span>
+                        {% else %}
+                        <span class="status-badge inactive">
+                            <span class="status-dot"></span>
+                            Inactivo
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <div class="last-access">
+                            {% if user_data.ultimo_acceso %}
+                            {{ user_data.ultimo_acceso[:10] }}
+                            <span class="text-small">
+                                {{ user_data.ultimo_acceso[11:16] if user_data.ultimo_acceso and 'T' in user_data.ultimo_acceso else '' }}
+                            </span>
+                            {% else %}
+                            <span class="text-muted">Nunca</span>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit"
+                                onclick="editarAdmin('{{ user_data.email }}')"
+                                {% if session.get('user_rol') != 'super_admin' and user_data.rol == 'super_admin' %}disabled{% endif %}>
+                                <i class="fas fa-edit"></i>
+                            </button>
+
+                            <button class="btn-action btn-password"
+                                onclick="cambiarPasswordAdmin('{{ user_data.email }}','{{ user_data.nombre }} {{ user_data.apellidos }}')">
+                                <i class="fas fa-key"></i>
+                            </button>
+
+                            {% if (user_data.rol != 'super_admin' or session.get('user_rol') == 'super_admin') and session.get('user') != user_data.email %}
+                            <button class="btn-action btn-toggle"
+                                onclick="toggleEstadoAdmin('{{ user_data.email }}', {{ 'true' if user_data.activo else 'false' }})">
+                                <i class="fas {{ 'fa-toggle-on' if user_data.activo else 'fa-toggle-off' }}"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Modal para editar administrador -->
+<div id="editAdminModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Editar Administrador</h3>
+            <button class="modal-close" onclick="cerrarModal('editAdminModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="editAdminForm" method="POST">
+                <input type="hidden" id="editEmail" name="email">
+                
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="editNombre" name="nombre" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Apellidos</label>
+                    <input type="text" id="editApellidos" name="apellidos" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" id="editTelefono" name="telefono" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Rol</label>
+                    <select id="editRol" name="rol" class="form-control" 
+                            {% if session.get('user_rol') != 'super_admin' %}disabled{% endif %}>
+                        <option value="super_admin">Super Administrador</option>
+                        <option value="admin">Administrador</option>
+                        <option value="moderador">Moderador</option>
+                        <option value="">Ciudadano (sin rol)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="editActivo" name="activo">
+                        Cuenta activa
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Notas de administración</label>
+                    <textarea id="editNotas" name="notas_admin" class="form-control" rows="3"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="cerrarModal('editAdminModal')">Cancelar</button>
+            <button class="btn-save" onclick="guardarAdmin()">Guardar cambios</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para cambiar contraseña -->
+<div id="passwordModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Cambiar Contraseña</h3>
+            <button class="modal-close" onclick="cerrarModal('passwordModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="passwordUserName"></p>
+            <form id="passwordForm" method="POST">
+                <input type="hidden" id="passwordEmail" name="email">
+                
+                <div class="form-group">
+                    <label>Nueva contraseña</label>
+                    <input type="password" id="nuevaPassword" name="nueva_password" class="form-control" required minlength="6">
+                    <small class="text-muted">Mínimo 6 caracteres</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirmar contraseña</label>
+                    <input type="password" id="confirmarPassword" name="confirmar_password" class="form-control" required>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="cerrarModal('passwordModal')">Cancelar</button>
+            <button class="btn-save" onclick="guardarPassword()">Cambiar contraseña</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Datos de usuarios desde el servidor
+const usuariosData = {{ usuarios|tojson }};
+const currentUser = "{{ session.get('user') }}";
+const currentUserRol = "{{ session.get('user_rol') }}";
+
+document.addEventListener('DOMContentLoaded', function() {
+    inicializarEstadisticas();
+    cargarScriptAdminUsers();
+});
+
+function cargarScriptAdminUsers() {
+    // Cargar el script de admin-users.js si no está cargado
+    if (typeof window.filtrarAdmins !== 'function') {
+        const script = document.createElement('script');
+        script.src = "{{ url_for('static', filename='js/admin-users.js') }}";
+        script.onload = function() {
+            inicializarEstadisticas();
+        };
+        document.head.appendChild(script);
+    }
+}
+
+function inicializarEstadisticas() {
+    // Calcular estadísticas
+    let superAdmins = 0;
+    let admins = 0;
+    let moderadores = 0;
+    let activos = 0;
+
+    usuariosData.forEach(user => {
+        if (user.rol === 'super_admin') superAdmins++;
+        else if (user.rol === 'admin') admins++;
+        else if (user.rol === 'moderador') moderadores++;
+        
+        if (user.activo) activos++;
+    });
+
+    // Actualizar UI
+    document.getElementById('totalSuperAdmins').textContent = superAdmins;
+    document.getElementById('totalAdmins').textContent = admins;
+    document.getElementById('totalModeradores').textContent = moderadores;
+    document.getElementById('totalActivos').textContent = activos;
+}
+
+function filtrarAdmins() {
+    const searchTerm = document.getElementById('searchAdmin').value.toLowerCase();
+    const rolFilter = document.getElementById('rolFilter').value;
+    const estadoFilter = document.getElementById('estadoFilter').value;
+    
+    const rows = document.querySelectorAll('.admin-row');
+    
+    rows.forEach(row => {
+        const nombre = row.dataset.nombre.toLowerCase();
+        const email = row.dataset.email.toLowerCase();
+        const rol = row.dataset.role;
+        const estado = row.dataset.estado;
+        
+        let matchSearch = searchTerm === '' || nombre.includes(searchTerm) || email.includes(searchTerm);
+        let matchRol = rolFilter === 'todos' || rol === rolFilter;
+        let matchEstado = estadoFilter === 'todos' || estado === estadoFilter;
+        
+        if (matchSearch && matchRol && matchEstado) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function editarAdmin(email) {
+    const user = usuariosData.find(u => u.email === email);
+    if (!user) return;
+    
+    document.getElementById('editEmail').value = user.email;
+    document.getElementById('editNombre').value = user.nombre || '';
+    document.getElementById('editApellidos').value = user.apellidos || '';
+    document.getElementById('editTelefono').value = user.telefono || '';
+    document.getElementById('editRol').value = user.rol || '';
+    document.getElementById('editActivo').checked = user.activo || false;
+    document.getElementById('editNotas').value = user.notas_admin || '';
+    
+    document.getElementById('editAdminModal').style.display = 'flex';
+}
+
+function guardarAdmin() {
+    const form = document.getElementById('editAdminForm');
+    const email = document.getElementById('editEmail').value;
+    
+    form.action = `/admin/usuarios/${email}/editar`;
+    form.method = 'POST';
+    form.submit();
+}
+
+function cambiarPasswordAdmin(email, nombre) {
+    document.getElementById('passwordEmail').value = email;
+    document.getElementById('passwordUserName').textContent = `Cambiar contraseña para: ${nombre}`;
+    document.getElementById('passwordModal').style.display = 'flex';
+}
+
+function guardarPassword() {
+    const nueva = document.getElementById('nuevaPassword').value;
+    const confirmar = document.getElementById('confirmarPassword').value;
+    const email = document.getElementById('passwordEmail').value;
+    
+    if (nueva.length < 6) {
+        alert('La contraseña debe tener al menos 6 caracteres');
+        return;
+    }
+    
+    if (nueva !== confirmar) {
+        alert('Las contraseñas no coinciden');
+        return;
+    }
+    
+    const form = document.getElementById('passwordForm');
+    form.action = `/admin/usuarios/${email}/cambiar-password`;
+    form.method = 'POST';
+    form.submit();
+}
+
+function toggleEstadoAdmin(email, activoActual) {
+    const action = activoActual ? 'desactivar' : 'activar';
+    if (!confirm(`¿Estás seguro de que deseas ${action} este usuario?`)) return;
+    
+    fetch(`/admin/usuarios/${email}/toggle-activo`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    }).then(() => {
+        location.reload();
+    });
+}
+
+function cerrarModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Cerrar modal al hacer clic fuera
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+}
+</script>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #1a237e;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #1a237e;
+}
+
+.btn-cancel {
+    padding: 8px 20px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-save {
+    padding: 8px 20px;
+    background: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-save:hover {
+    background: #283593;
+}
+
+.text-muted {
+    color: #666;
+    font-size: 12px;
+}
+
+.role-badge.ciudadano {
+    background: #9e9e9e;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+</style>
+{% endblock %}

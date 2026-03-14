@@ -1,0 +1,182 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestión de Citas - Villa Cutupú{% endblock %}
+
+{% block page_title %}Gestión de Citas{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Dashboard</a> / <span>Citas</span>
+{% endblock %}
+
+{% block content %}
+<!-- Stats -->
+<div class="stats-grid" style="margin-bottom:2rem">
+    <div class="stat-card">
+        <div class="stat-icon" style="background:#e8f3ee;color:#1a3b2e">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Total Citas</h3>
+            <div class="stat-number">{{ stats.total }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:#fff8e1;color:#b85e00">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Pendientes</h3>
+            <div class="stat-number">{{ stats.pendientes }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:#e1f7ed;color:#1e7b4c">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Confirmadas</h3>
+            <div class="stat-number">{{ stats.confirmadas }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:#e0edff;color:#2563eb">
+            <i class="fas fa-calendar-day"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Citas Hoy</h3>
+            <div class="stat-number">{{ stats.hoy }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="filters-section" style="margin-bottom:1.5rem">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Buscar por folio, usuario..." autocomplete="off">
+    </div>
+    <div class="filter-group">
+        <select id="estadoFilter" class="filter-select">
+            <option value="todos">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="confirmada">Confirmada</option>
+            <option value="cancelada">Cancelada</option>
+            <option value="completada">Completada</option>
+        </select>
+    </div>
+</div>
+
+<!-- Tabla de citas -->
+<div class="table-container">
+    <table class="table" id="citasTable">
+        <thead>
+            <tr>
+                <th>Folio</th>
+                <th>Usuario</th>
+                <th>Servicio</th>
+                <th>Fecha/Hora</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in citas %}
+            <tr data-estado="{{ cita.estado }}" data-fecha="{{ cita.fecha }}">
+                <td><strong style="font-family:monospace;">{{ cita.folio }}</strong></td>
+                <td>
+                    <div><strong>{{ cita.usuario_nombre }}</strong></div>
+                    <div style="font-size:.8rem;color:var(--gray-400)">{{ cita.usuario_email }}</div>
+                </td>
+                <td>
+                    {% if cita.servicio == 'asesoria_legal' %}Asesoría Legal
+                    {% elif cita.servicio == 'catastro' %}Catastro
+                    {% elif cita.servicio == 'licencias' %}Licencias
+                    {% elif cita.servicio == 'atencion_ciudadana' %}Atención Ciudadana
+                    {% elif cita.servicio == 'tesoreria' %}Tesorería
+                    {% elif cita.servicio == 'planeamiento' %}Planeamiento
+                    {% elif cita.servicio == 'oaim' %}OAI/M
+                    {% elif cita.servicio == 'funeraria' %}Funeraria
+                    {% else %}{{ cita.servicio }}
+                    {% endif %}
+                </td>
+                <td>
+                    <div><i class="fas fa-calendar"></i> {{ cita.fecha }}</div>
+                    <div><i class="fas fa-clock"></i> {{ cita.hora }}</div>
+                </td>
+                <td>
+                    <span class="badge badge-{{ cita.estado }}">{{ cita.estado|title }}</span>
+                </td>
+                <td>
+                    <button class="btn-icon" onclick="cambiarEstado('{{ cita.id }}')" title="Cambiar estado">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal de cambio de estado -->
+<div class="modal" id="estadoModal">
+    <div class="modal-content" style="max-width:500px">
+        <div class="modal-header">
+            <h2><i class="fas fa-edit"></i> Cambiar Estado de Cita</h2>
+            <button class="modal-close" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" id="estadoForm">
+                <div class="form-group" style="margin-bottom:1rem">
+                    <label class="form-label">Nuevo Estado</label>
+                    <select name="estado" class="form-control" required>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="cancelada">Cancelada</option>
+                        <option value="completada">Completada</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:1.5rem">
+                    <label class="form-label">Notas (opcional)</label>
+                    <textarea name="notas" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let citaActual = null;
+
+function cambiarEstado(citaId) {
+    citaActual = citaId;
+    const modal = document.getElementById('estadoModal');
+    const form = document.getElementById('estadoForm');
+    form.action = `/admin/citas/${citaId}/estado`;
+    modal.classList.add('active');
+}
+
+function cerrarModal() {
+    document.getElementById('estadoModal').classList.remove('active');
+}
+
+// Filtros
+document.getElementById('searchInput').addEventListener('keyup', filtrar);
+document.getElementById('estadoFilter').addEventListener('change', filtrar);
+
+function filtrar() {
+    const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const estado = document.getElementById('estadoFilter')?.value || 'todos';
+    
+    document.querySelectorAll('#citasTable tbody tr').forEach(row => {
+        const okQ = !q || row.textContent.toLowerCase().includes(q);
+        const okE = estado === 'todos' || row.dataset.estado === estado;
+        row.style.display = (okQ && okE) ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}

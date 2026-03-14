@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estructura Orgánica - Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/estructura.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/"><img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" class="header-logo"></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia" class="active">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="page-header">
+        <div class="breadcrumb">
+            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Estructura Orgánica</span>
+        </div>
+        <h1>Estructura Orgánica</h1>
+        <p>Organigrama, funciones y base legal de la Junta Distrital de Villa Cutupú</p>
+    </section>
+
+    <section class="page">
+        <div class="intro-block">
+            <p>La Junta Distrital de Villa Cutupú (Río Verde Arriba) está organizada conforme a la <strong>Ley 176-07 del Distrito Nacional y los Municipios</strong>. Toda persona tiene derecho a conocer esta estructura según el <strong>Artículo 5 de la Ley 200-04</strong>.</p>
+        </div>
+
+        <h2 class="bloque-titulo">Organigrama funcional</h2>
+        <div class="organigrama">
+            <div class="org-root">🏛️ ALCALDÍA (Director Municipal)</div>
+            <div class="org-sub">
+                <div class="org-item">VICE ALCALDÍA (Subdirección)</div>
+                <div class="org-item">CONSEJO DE REGIDORES</div>
+                <div class="org-sub">
+                    <div class="org-item">Presidente del Concejo</div>
+                    <div class="org-item">Vicepresidente</div>
+                    <div class="org-item last">Secretario del Concejo</div>
+                </div>
+                <div class="org-item">SECRETARÍA MUNICIPAL</div>
+                <div class="org-item">TESORERÍA MUNICIPAL</div>
+                <div class="org-item">DIRECCIÓN DE PLANEAMIENTO URBANO</div>
+                <div class="org-item">OFICINA DE ACCESO A LA INFORMACIÓN (OAI)</div>
+                <div class="org-item">UNIDAD DE COMPRAS Y CONTRATACIONES</div>
+                <div class="org-item">DEPARTAMENTO DE RECURSOS HUMANOS</div>
+                <div class="org-item">DEPARTAMENTO DE OBRAS PÚBLICAS MUNICIPALES</div>
+                <div class="org-item">DEPARTAMENTO DE SERVICIOS MUNICIPALES</div>
+                <div class="org-item">DEPARTAMENTO DE JUVENTUD Y DEPORTES</div>
+                <div class="org-item last">DEPARTAMENTO DE CULTURA Y TURISMO</div>
+            </div>
+        </div>
+
+        <h2 class="bloque-titulo">Funciones por área</h2>
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Área</th>
+                        <th>Base Legal</th>
+                        <th>Funciones Principales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Alcaldía (Dirección)</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Dirección general, representación del municipio, ejecución de políticas públicas</td></tr>
+                    <tr><td><strong>Vice Alcaldía</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Apoyo a la alcaldía, coordinación de comisiones, suplencia del alcalde</td></tr>
+                    <tr><td><strong>Consejo de Regidores</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Órgano normativo y fiscalizador, aprobación de ordenanzas y presupuesto</td></tr>
+                    <tr><td><strong>Secretaría Municipal</strong></td><td><span class="badge badge-gris">Reglamento Interno</span></td><td>Gestión documental, actas de sesiones, certificaciones</td></tr>
+                    <tr><td><strong>Tesorería</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Administración financiera, gestión de ingresos y pagos</td></tr>
+                    <tr><td><strong>Planeamiento Urbano</strong></td><td><span class="badge badge-azul">Ley 6232</span></td><td>Ordenamiento territorial, licencias de construcción, uso de suelos</td></tr>
+                    <tr><td><strong>OAI</strong></td><td><span class="badge badge-azul">Ley 200-04</span></td><td>Recepción y gestión de solicitudes de información, actualización del portal</td></tr>
+                    <tr><td><strong>Compras y Contrataciones</strong></td><td><span class="badge badge-azul">Ley 340-06</span></td><td>Procesos de licitación, contrataciones, gestión de proveedores</td></tr>
+                    <tr><td><strong>Recursos Humanos</strong></td><td><span class="badge badge-gris">Reglamento Interno</span></td><td>Gestión de nómina, reclutamiento, capacitación del personal</td></tr>
+                    <tr><td><strong>Obras Públicas</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Ejecución y supervisión de proyectos de infraestructura municipal</td></tr>
+                    <tr><td><strong>Servicios Municipales</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Aseo urbano, cementerio, alumbrado público, parques</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <!-- Columna 1: Información institucional -->
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            
+            <!-- Columna 2: ENLACES RÁPIDOS (corregido) -->
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <!-- Columna 3: Contacto -->
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
+</body>
+</html>

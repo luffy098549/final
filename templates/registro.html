@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Junta Distrital Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registro.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ===== ESTILOS PROFESIONALES PARA REGISTRO ===== */
+        .registro-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .registro-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .registro-header {
+            background: linear-gradient(135deg, #1a3b2e, #2e7d5e);
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .registro-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .registro-header h1 {
+            color: white;
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .registro-header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .registro-body {
+            padding: 3rem;
+        }
+
+        .form-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a3b2e;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            font-size: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group label i {
+            color: #1a3b2e;
+            width: 20px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2e7d5e;
+            box-shadow: 0 0 0 4px rgba(46, 125, 94, 0.1);
+        }
+
+        /* ===== INPUT DE TELÉFONO SIMPLIFICADO ===== */
+        .input-tel {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .input-tel:focus {
+            outline: none;
+            border-color: #2e7d5e;
+            box-shadow: 0 0 0 4px rgba(46, 125, 94, 0.1);
+        }
+
+        .input-tel:hover {
+            border-color: #999;
+        }
+
+        /* ===== VALIDACIÓN ===== */
+        .input-feedback {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .input-feedback i {
+            font-size: 0.9rem;
+        }
+
+        .input-feedback.valid i {
+            color: #28a745;
+        }
+
+        .input-feedback.error i {
+            color: #dc3545;
+        }
+
+        /* ===== FORTALEZA DE CONTRASEÑA ===== */
+        .password-strength {
+            margin-top: 0.5rem;
+        }
+
+        .strength-bar {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .strength-progress {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        .strength-requirements {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0 0;
+            font-size: 0.85rem;
+        }
+
+        .strength-requirements li {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #666;
+        }
+
+        .strength-requirements li.valid {
+            color: #28a745;
+        }
+
+        .strength-requirements li i {
+            font-size: 0.8rem;
+        }
+
+        /* ===== TÉRMINOS Y CONDICIONES ===== */
+        .terms-group {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: #1a3b2e;
+        }
+
+        .checkbox-item label {
+            flex: 1;
+            font-size: 0.95rem;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .checkbox-item a {
+            color: #1a3b2e;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .checkbox-item a:hover {
+            text-decoration: underline;
+        }
+
+        .terms-summary {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        /* ===== BOTÓN DE ENVÍO ===== */
+        .btn-submit {
+            width: 100%;
+            padding: 1.2rem;
+            background: #1a3b2e;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+        }
+
+        .btn-submit:hover {
+            background: #2e7d5e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 94, 0.3);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .registro-body {
+                padding: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+
+        /* ===== FIX PARA INPUTS ===== */
+        input, select, textarea {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        input[type="tel"] {
+            -webkit-appearance: textfield;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        input[type="tel"]:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
+        </div>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                    <li><a href="/mis-solicitudes">Mis solicitudes</a></li>
+                    <li><a href="/mis-denuncias">Mis denuncias</a></li>
+                    <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="registro-container">
+        <div class="registro-card">
+            <div class="registro-header">
+                <h1>¡Bienvenido a Villa Cutupú!</h1>
+                <p>Crea tu cuenta y accede a todos los servicios municipales</p>
+            </div>
+
+            <div class="registro-body">
+                <form id="registroForm" method="post" action="{{ url_for('auth.registro') }}">
+                    
+                    <!-- SECCIÓN 1: DATOS PERSONALES -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-user"></i> Datos Personales
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nombre">
+                                    <i class="fas fa-user"></i> Nombres *
+                                </label>
+                                <input type="text" id="nombre" name="nombre" 
+                                       placeholder="Ej: Juan Carlos" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="apellidos">
+                                    <i class="fas fa-user"></i> Apellidos *
+                                </label>
+                                <input type="text" id="apellidos" name="apellidos" 
+                                       placeholder="Ej: Pérez Rodríguez" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cedula">
+                                    <i class="fas fa-id-card"></i> Cédula * (11 números)
+                                </label>
+                                <input type="text" id="cedula" name="cedula" 
+                                       placeholder="40212345678" maxlength="11" required
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <small style="color: #666; font-size: 0.85rem;">
+                                    <i class="fas fa-info-circle"></i> Solo números, sin guiones
+                                </small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fecha_nacimiento">
+                                    <i class="fas fa-calendar"></i> Fecha de nacimiento *
+                                </label>
+                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="direccion">
+                                <i class="fas fa-map-marker-alt"></i> Dirección
+                            </label>
+                            <textarea id="direccion" name="direccion" rows="2" 
+                                      placeholder="Calle, número, sector..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN 2: CONTACTO - SIMPLIFICADO -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-phone"></i> Contacto
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">
+                                <i class="fas fa-envelope"></i> Correo electrónico *
+                            </label>
+                            <input type="email" id="email" name="email" 
+                                   placeholder="ejemplo@correo.com" required>
+                        </div>
+
+                        <!-- TELÉFONO - SIMPLIFICADO: UN SOLO CAMPO -->
+                        <div class="form-group">
+                            <label for="telefono">
+                                <i class="fas fa-phone"></i> Teléfono * (10 números)
+                            </label>
+                            <input type="tel" 
+                                   id="telefono" 
+                                   name="telefono" 
+                                   class="input-tel" 
+                                   placeholder="8095551234" 
+                                   maxlength="10" 
+                                   inputmode="numeric"
+                                   required
+                                   autocomplete="off">
+                            <div id="telefono-feedback" class="input-feedback"></div>
+                            <small style="color: #666; font-size: 0.85rem;">
+                                <i class="fas fa-info-circle"></i> Ingresa tu número completo: código de área + 7 dígitos (ej: 8095551234)
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN 3: SEGURIDAD -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-lock"></i> Seguridad
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="password">
+                                    <i class="fas fa-lock"></i> Contraseña *
+                                </label>
+                                <input type="password" id="password" name="password" required>
+                                <div class="password-strength">
+                                    <div class="strength-bar">
+                                        <div class="strength-progress" style="width: 0%;"></div>
+                                    </div>
+                                    <ul class="strength-requirements">
+                                        <li id="req-length"><i class="far fa-circle"></i> Mínimo 6 caracteres</li>
+                                        <li id="req-lower"><i class="far fa-circle"></i> Una minúscula</li>
+                                        <li id="req-upper"><i class="far fa-circle"></i> Una mayúscula</li>
+                                        <li id="req-number"><i class="far fa-circle"></i> Un número</li>
+                                        <li id="req-special"><i class="far fa-circle"></i> Un carácter especial</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmar_password">
+                                    <i class="fas fa-check-circle"></i> Confirmar contraseña *
+                                </label>
+                                <input type="password" id="confirmar_password" name="confirmar_password" required>
+                                <div class="input-feedback" id="password-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN 4: TÉRMINOS Y CONDICIONES -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-file-contract"></i> Términos y Condiciones
+                        </div>
+
+                        <div class="terms-summary">
+                            <p><strong>Términos y condiciones de uso</strong></p>
+                            <p>Al registrarte en el portal de la Junta Distrital de Villa Cutupú, aceptas:</p>
+                            <p>1. Proporcionar información veraz y actualizada.</p>
+                            <p>2. Ser responsable del uso de tu cuenta y contraseña.</p>
+                            <p>3. Aceptar que tus datos serán utilizados para trámites municipales.</p>
+                            <p>4. Recibir notificaciones sobre el estado de tus solicitudes.</p>
+                            <p>5. Cumplir con las normativas municipales vigentes.</p>
+                        </div>
+
+                        <div class="terms-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="terminos" name="terminos" required>
+                                <label for="terminos">
+                                    He leído y acepto los <a href="#">términos y condiciones</a> *
+                                </label>
+                            </div>
+
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="privacidad" name="privacidad" required>
+                                <label for="privacidad">
+                                    Acepto la <a href="#">política de privacidad</a> *
+                                </label>
+                            </div>
+
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="mayor_edad" name="mayor_edad" required>
+                                <label for="mayor_edad">
+                                    Confirmo que soy mayor de 18 años *
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-check-circle"></i> Completar Registro
+                    </button>
+                </form>
+
+                <div style="margin-top: 2rem; text-align: center; padding-top: 2rem; border-top: 1px solid #e0e0e0;">
+                    <p>¿Ya tienes cuenta? <a href="/login" style="color: #1a3b2e; font-weight: 600;">Inicia sesión aquí</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>Junta de Distrito Municipal</h3>
+                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+            </div>
+            <div class="footer-social">
+                <h3>Síguenos</h3>
+                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank">Facebook</a>
+                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank">Instagram</a>
+            </div>
+            <div class="footer-horario">
+                <h3>Horario de Oficina</h3>
+                <p>Lunes a Viernes<br>8:00 AM - 2:00 PM</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- JavaScript para validación - SIMPLIFICADO -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // TELÉFONO - VALIDACIÓN SIMPLIFICADA
+    const telefono = document.getElementById("telefono");
+    if (telefono) {
+        telefono.addEventListener("input", function () {
+            // Solo permitir números y limitar a 10 dígitos
+            this.value = this.value.replace(/\D/g, "").slice(0, 10);
+            
+            const feedback = document.getElementById("telefono-feedback");
+            
+            if (this.value.length === 10) {
+                feedback.innerHTML = "✓ Número válido";
+                feedback.style.color = "#28a745";
+            } else if (this.value.length > 0) {
+                const faltan = 10 - this.value.length;
+                feedback.innerHTML = `❌ Faltan ${faltan} dígito${faltan !== 1 ? 's' : ''}`;
+                feedback.style.color = "#dc3545";
+            } else {
+                feedback.innerHTML = "";
+            }
+        });
+    }
+
+    // VALIDAR CONTRASEÑAS
+    const password = document.getElementById('password');
+    const confirmar = document.getElementById('confirmar_password');
+    const passwordFeedback = document.getElementById('password-feedback');
+    
+    if (confirmar) {
+        confirmar.addEventListener('input', function() {
+            if (password.value !== this.value) {
+                passwordFeedback.innerHTML = '❌ Las contraseñas no coinciden';
+                passwordFeedback.style.color = '#dc3545';
+            } else if (this.value.length > 0) {
+                passwordFeedback.innerHTML = '✓ Coinciden';
+                passwordFeedback.style.color = '#28a745';
+            } else {
+                passwordFeedback.innerHTML = '';
+            }
+        });
+    }
+    
+    // VALIDACIÓN DEL FORMULARIO
+    const form = document.getElementById('registroForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const tel = document.getElementById('telefono');
+            if (tel && tel.value.length !== 10) {
+                e.preventDefault();
+                alert('El teléfono debe tener 10 dígitos (ej: 8095551234)');
+                tel.focus();
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>

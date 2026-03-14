@@ -1,0 +1,26 @@
+[
+  {
+    "fecha": "2026-03-08T11:09:36.289134",
+    "tipo": "config_guardar",
+    "descripcion": "Sección 'general' actualizada",
+    "admin": "admin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-03-08T13:05:05.141410",
+    "tipo": "crear_admin",
+    "descripcion": "Moderador moderador1@cutupu.gob.do creado",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-03-09T11:18:03.201898",
+    "tipo": "toggle_activo",
+    "descripcion": "Usuario moderador1@cutupu.gob.do desactivado",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-03-09T11:18:09.656063",
+    "tipo": "toggle_activo",
+    "descripcion": "Usuario moderador1@cutupu.gob.do activado",
+    "admin": "superadmin@cutupu.gob.do"
+  }
+]

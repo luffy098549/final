@@ -1,0 +1,78 @@
+<div class="info-grid">
+    <div class="info-item">
+        <div class="info-label"><i class="fas fa-hashtag"></i> Folio</div>
+        <div class="info-value">{{ item.folio }}</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label"><i class="fas fa-tag"></i> Tipo</div>
+        <div class="info-value">
+            {% if item.tipo == 'solicitud' %}
+                Solicitud
+            {% else %}
+                Denuncia
+            {% endif %}
+        </div>
+    </div>
+    <div class="info-item">
+        <div class="info-label"><i class="fas fa-calendar"></i> Fecha</div>
+        <div class="info-value">{{ item.fecha_creacion[:10] }}</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label"><i class="fas fa-clock"></i> Estado</div>
+        <div class="info-value">
+            <span class="estado-badge estado-{{ item.estado }}">
+                {{ item.estado|replace('_', ' ')|title }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="descripcion-box">
+    <strong>{{ item.servicio_nombre if item.servicio_nombre else item.tipo_nombre }}</strong>
+    <p style="margin-top: 0.5rem;">{{ item.descripcion }}</p>
+</div>
+
+{% if item.tipo == 'denuncia' and item.direccion %}
+<div class="info-item">
+    <div class="info-label"><i class="fas fa-map-marker-alt"></i> Dirección</div>
+    <div class="info-value">{{ item.direccion }}</div>
+</div>
+{% endif %}
+
+{% if item.historial %}
+<div class="historial">
+    <h3>Historial</h3>
+    {% for h in item.historial %}
+    <div class="historial-item">
+        <div>
+            <strong>{{ h.usuario or 'Sistema' }}</strong>
+            <p style="margin: 0.3rem 0;">{{ h.descripcion }}</p>
+            <small>{{ h.fecha[:16] }}</small>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if item.estado in ['pendiente', 'en_proceso'] %}
+<div class="respuesta-form">
+    <h3>Responder a este trámite</h3>
+    <form onsubmit="enviarRespuesta('{{ item.folio }}'); return false;">
+        <div class="form-group">
+            <label>Tu respuesta</label>
+            <textarea class="form-control" id="respuesta-{{ item.folio }}" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label>Cambiar estado</label>
+            <select class="form-control" id="estado-{{ item.folio }}">
+                <option value="en_proceso">En proceso</option>
+                <option value="completado">Completado</option>
+                <option value="rechazado">Rechazar</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i> Enviar respuesta
+        </button>
+    </form>
+</div>
+{% endif %}

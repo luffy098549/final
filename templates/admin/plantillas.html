@@ -1,0 +1,234 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Plantillas de Respuesta - Admin{% endblock %}
+
+{% block page_title %}Plantillas de Respuesta{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Dashboard</a> / <span>Plantillas</span>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center">
+    <h2><i class="fas fa-file-alt"></i> Gestionar Plantillas</h2>
+    <button class="btn btn-primary" onclick="abrirModalCrear()">
+        <i class="fas fa-plus"></i> Nueva Plantilla
+    </button>
+</div>
+
+<!-- Pestañas por categoría -->
+<div class="tabs-bar" style="margin-bottom:2rem">
+    <button class="tab-pill active" onclick="switchCategoria('todas')">Todas</button>
+    {% for key, nombre in categorias.items() %}
+        <button class="tab-pill" onclick="switchCategoria('{{ key }}')">{{ nombre }}</button>
+    {% endfor %}
+</div>
+
+<!-- Listado de plantillas -->
+<div class="plantillas-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:1.5rem">
+    {% for plantilla in plantillas %}
+    <div class="plantilla-card" data-categoria="{{ plantilla.categoria }}" 
+         style="background:white;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid var(--gray-200);overflow:hidden;{% if not plantilla.activa %}opacity:.6{% endif %}">
+        
+        <div style="padding:1.2rem;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center;background:var(--gray-50)">
+            <h3 style="font-size:1rem;margin:0">{{ plantilla.nombre }}</h3>
+            <span class="badge" style="background:var(--gray-200);color:var(--gray-700)">
+                {{ categorias[plantilla.categoria] }}
+            </span>
+        </div>
+        
+        <div style="padding:1.2rem">
+            <div style="font-size:.85rem;color:var(--gray-500);margin-bottom:.8rem">
+                <i class="fas fa-hashtag"></i> {{ plantilla.usos }} usos
+            </div>
+            
+            <div style="background:var(--gray-50);border-radius:8px;padding:.8rem;margin-bottom:1rem;font-size:.8rem;color:var(--gray-600);max-height:100px;overflow:hidden">
+                {{ plantilla.contenido[:150] }}{% if plantilla.contenido|length > 150 %}...{% endif %}
+            </div>
+            
+            <div style="margin-bottom:1rem">
+                <small style="color:var(--gray-400);display:block;margin-bottom:.3rem">Variables:</small>
+                <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+                    {% for var in plantilla.variables %}
+                        <span style="background:#e8f3ee;color:#1a3b2e;padding:.2rem .6rem;border-radius:20px;font-size:.7rem;font-family:monospace">
+                            {{{{ var }}}}
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div style="display:flex;gap:.5rem;justify-content:flex-end">
+                <button class="btn-icon" onclick="editarPlantilla('{{ plantilla.id }}')" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <form method="POST" action="{{ url_for('admin_toggle_plantilla', plantilla_id=plantilla.id) }}" style="display:inline">
+                    <button type="submit" class="btn-icon" title="{{ 'Desactivar' if plantilla.activa else 'Activar' }}">
+                        <i class="fas fa-{{ 'eye-slash' if plantilla.activa else 'eye' }}"></i>
+                    </button>
+                </form>
+                <form method="POST" action="{{ url_for('admin_eliminar_plantilla', plantilla_id=plantilla.id) }}" 
+                      onsubmit="return confirm('¿Eliminar esta plantilla?')" style="display:inline">
+                    <button type="submit" class="btn-icon" style="color:#b33c2f" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal crear/editar plantilla -->
+<div class="modal" id="plantillaModal">
+    <div class="modal-content" style="max-width:700px">
+        <div class="modal-header">
+            <h2 id="modalTitle"><i class="fas fa-plus"></i> Nueva Plantilla</h2>
+            <button class="modal-close" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" id="plantillaForm" action="{{ url_for('admin_crear_plantilla') }}">
+                <input type="hidden" name="plantilla_id" id="plantillaId">
+                
+                <div class="form-group" style="margin-bottom:1rem">
+                    <label class="form-label">Nombre de la plantilla *</label>
+                    <input type="text" name="nombre" id="plantillaNombre" class="form-control" required>
+                </div>
+                
+                <div class="form-group" style="margin-bottom:1rem">
+                    <label class="form-label">Categoría *</label>
+                    <select name="categoria" id="plantillaCategoria" class="form-control" required>
+                        {% for key, nombre in categorias.items() %}
+                            <option value="{{ key }}">{{ nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group" style="margin-bottom:1rem">
+                    <label class="form-label">Variables disponibles</label>
+                    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">
+                        <span class="variable-tag" onclick="insertarVariable('folio')" style="cursor:pointer;background:#e8f3ee;padding:.2rem .8rem;border-radius:20px;font-size:.8rem">
+                            {{folio}}
+                        </span>
+                        <span class="variable-tag" onclick="insertarVariable('nombre')" style="cursor:pointer;background:#e8f3ee;padding:.2rem .8rem;border-radius:20px;font-size:.8rem">
+                            {{nombre}}
+                        </span>
+                        <span class="variable-tag" onclick="insertarVariable('fecha')" style="cursor:pointer;background:#e8f3ee;padding:.2rem .8rem;border-radius:20px;font-size:.8rem">
+                            {{fecha}}
+                        </span>
+                        <span class="variable-tag" onclick="insertarVariable('fecha_cita')" style="cursor:pointer;background:#e8f3ee;padding:.2rem .8rem;border-radius:20px;font-size:.8rem">
+                            {{fecha_cita}}
+                        </span>
+                        <span class="variable-tag" onclick="insertarVariable('hora_cita')" style="cursor:pointer;background:#e8f3ee;padding:.2rem .8rem;border-radius:20px;font-size:.8rem">
+                            {{hora_cita}}
+                        </span>
+                        <span class="variable-tag" onclick="insertarVariable('motivo')" style="cursor:pointer;background:#e8f3ee;padding:.2rem .8rem;border-radius:20px;font-size:.8rem">
+                            {{motivo}}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom:1rem">
+                    <label class="form-label">Contenido *</label>
+                    <textarea name="contenido" id="plantillaContenido" class="form-control" rows="8" required></textarea>
+                    <small style="color:var(--gray-400);display:block;margin-top:.3rem">
+                        Usa las variables entre dobles llaves: {{ variable }}
+                    </small>
+                </div>
+                
+                <div class="form-group" style="margin-bottom:1rem">
+                    <label class="form-label">Vista previa</label>
+                    <div id="vistaPrevia" style="background:var(--gray-50);border-radius:8px;padding:1rem;font-size:.9rem;border:1px solid var(--gray-200);min-height:100px">
+                        La vista previa aparecerá aquí
+                    </div>
+                </div>
+                
+                <div class="btn-row">
+                    <button type="button" class="btn-ghost btn-sm" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary btn-sm">Guardar Plantilla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let plantillaEditando = null;
+
+function switchCategoria(categoria) {
+    document.querySelectorAll('.tab-pill').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.querySelectorAll('.plantilla-card').forEach(card => {
+        if (categoria === 'todas' || card.dataset.categoria === categoria) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function abrirModalCrear() {
+    plantillaEditando = null;
+    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus"></i> Nueva Plantilla';
+    document.getElementById('plantillaForm').action = "{{ url_for('admin_crear_plantilla') }}";
+    document.getElementById('plantillaNombre').value = '';
+    document.getElementById('plantillaCategoria').value = 'general';
+    document.getElementById('plantillaContenido').value = '';
+    document.getElementById('plantillaModal').classList.add('active');
+}
+
+function editarPlantilla(id) {
+    // Buscar plantilla en la lista (simulado - necesitarías cargar datos)
+    plantillaEditando = id;
+    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Editar Plantilla';
+    document.getElementById('plantillaForm').action = `/admin/plantillas/${id}/editar`;
+    
+    // Aquí cargarías los datos de la plantilla via AJAX
+    fetch(`/api/plantillas/${id}`)
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('plantillaNombre').value = data.nombre;
+            document.getElementById('plantillaCategoria').value = data.categoria;
+            document.getElementById('plantillaContenido').value = data.contenido;
+            document.getElementById('plantillaModal').classList.add('active');
+        });
+}
+
+function insertarVariable(varName) {
+    const textarea = document.getElementById('plantillaContenido');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    
+    textarea.value = text.substring(0, start) + `{{ ${varName} }}` + text.substring(end);
+    textarea.selectionStart = start + varName.length + 4;
+    textarea.selectionEnd = start + varName.length + 4;
+    
+    actualizarVistaPrevia();
+}
+
+function actualizarVistaPrevia() {
+    const contenido = document.getElementById('plantillaContenido').value;
+    const preview = document.getElementById('vistaPrevia');
+    
+    // Reemplazar variables con ejemplos
+    let previewText = contenido
+        .replace(/\{\{\s*fecha\s*\}\}/g, '15/03/2026')
+        .replace(/\{\{\s*fecha_cita\s*\}\}/g, '20/03/2026')
+        .replace(/\{\{\s*hora_cita\s*\}\}/g, '10:30 AM')
+        .replace(/\{\{\s*nombre\s*\}\}/g, 'Juan Pérez')
+        .replace(/\{\{\s*folio\s*\}\}/g, 'SOL-2026-001')
+        .replace(/\{\{\s*motivo\s*\}\}/g, 'Consulta general');
+    
+    preview.innerHTML = previewText.replace(/\n/g, '<br>');
+}
+
+document.getElementById('plantillaContenido').addEventListener('input', actualizarVistaPrevia);
+
+function cerrarModal() {
+    document.getElementById('plantillaModal').classList.remove('active');
+}
+</script>
+{% endblock %}

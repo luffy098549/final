@@ -1,0 +1,110 @@
+<!-- Modal de selección de plantillas -->
+<div class="modal" id="plantillasModal">
+    <div class="modal-content" style="max-width:800px">
+        <div class="modal-header">
+            <h2><i class="fas fa-file-alt"></i> Seleccionar Plantilla</h2>
+            <button class="modal-close" onclick="cerrarModalPlantillas()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div style="margin-bottom:1rem">
+                <input type="text" id="buscarPlantilla" class="form-control" 
+                       placeholder="Buscar plantillas..." style="width:100%">
+            </div>
+            
+            <div class="tabs-bar" style="margin-bottom:1rem">
+                <button class="tab-pill active" onclick="filtrarPlantillas('todas')">Todas</button>
+                {% for key, nombre in categorias.items() %}
+                    <button class="tab-pill" onclick="filtrarPlantillas('{{ key }}')">{{ nombre }}</button>
+                {% endfor %}
+            </div>
+            
+            <div id="listaPlantillas" style="max-height:400px;overflow-y:auto">
+                <!-- Se llenará con JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let plantillasCache = [];
+
+function abrirSelectorPlantillas(categoria) {
+    fetch(`/api/plantillas/${categoria}`)
+        .then(r => r.json())
+        .then(data => {
+            plantillasCache = data;
+            mostrarPlantillas(data);
+            document.getElementById('plantillasModal').classList.add('active');
+        });
+}
+
+function mostrarPlantillas(plantillas) {
+    const container = document.getElementById('listaPlantillas');
+    
+    if (plantillas.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-file-alt"></i><p>No hay plantillas en esta categoría</p></div>';
+        return;
+    }
+    
+    container.innerHTML = plantillas.map(p => `
+        <div class="plantilla-item" style="background:white;border:1px solid var(--gray-200);border-radius:8px;margin-bottom:.5rem;padding:1rem;cursor:pointer" onclick="seleccionarPlantilla('${p.id}')">
+            <h4 style="margin:0 0 .3rem 0">${p.nombre}</h4>
+            <p style="margin:0 0 .5rem 0;color:var(--gray-500);font-size:.8rem">${p.contenido.substring(0,100)}...</p>
+            <div style="display:flex;gap:.3rem">
+                ${p.variables.map(v => `<span style="background:#e8f3ee;color:#1a3b2e;padding:.1rem .5rem;border-radius:20px;font-size:.7rem">${v}</span>`).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+function filtrarPlantillas(categoria) {
+    document.querySelectorAll('#plantillasModal .tab-pill').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    if (categoria === 'todas') {
+        mostrarPlantillas(plantillasCache);
+    } else {
+        const filtradas = plantillasCache.filter(p => p.categoria === categoria);
+        mostrarPlantillas(filtradas);
+    }
+}
+
+function seleccionarPlantilla(plantillaId) {
+    // Aquí procesas la plantilla con los datos del trámite actual
+    const tramite = window.tramiteActual || {};
+    const data = {
+        nombre: tramite.usuario_nombre || 'Ciudadano',
+        folio: tramite.folio || 'FOLIO',
+        fecha: new Date().toLocaleDateString('es-DO')
+    };
+    
+    fetch(`/api/plantillas/${plantillaId}/procesar`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(res => {
+        // Insertar en el textarea de respuesta
+        const textarea = document.querySelector('textarea[name="respuesta"]');
+        if (textarea) {
+            textarea.value = res.contenido;
+        }
+        cerrarModalPlantillas();
+    });
+}
+
+function cerrarModalPlantillas() {
+    document.getElementById('plantillasModal').classList.remove('active');
+}
+
+// Búsqueda en tiempo real
+document.getElementById('buscarPlantilla')?.addEventListener('keyup', function() {
+    const term = this.value.toLowerCase();
+    const filtradas = plantillasCache.filter(p => 
+        p.nombre.toLowerCase().includes(term) || 
+        p.contenido.toLowerCase().includes(term)
+    );
+    mostrarPlantillas(filtradas);
+});
+</script>

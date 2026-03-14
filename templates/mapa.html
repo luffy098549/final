@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Mapa de Incidencias | Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    .mapa-container{max-width:1200px;margin:2rem auto;padding:0 1.5rem}
+    .mapa-header{background:linear-gradient(135deg,#1a3b2e,#2e7d5e);border-radius:16px;padding:2rem;margin-bottom:2rem;color:white}
+    .mapa-header h1{font-size:2rem;font-weight:700;margin-bottom:.5rem}
+    .mapa-filters{background:white;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+    .filter-group{display:flex;gap:.5rem;flex-wrap:wrap;flex:1}
+    .filter-select{padding:.6rem 1rem;border:1px solid var(--gray-300);border-radius:8px;font-size:.9rem;min-width:150px}
+    #map{height:600px;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.1);margin-bottom:2rem}
+    .stats-badge{background:var(--gray-100);padding:.5rem 1rem;border-radius:30px;font-size:.9rem}
+    .stats-badge i{color:#1a3b2e;margin-right:.3rem}
+    .denuncia-popup{min-width:200px}
+    .popup-titulo{font-weight:700;color:#1a3b2e;margin-bottom:.3rem}
+    .popup-tipo{font-size:.8rem;color:var(--gray-500);margin-bottom:.5rem}
+    .popup-desc{font-size:.85rem;color:var(--gray-700);margin-bottom:.5rem}
+    .popup-estado{display:inline-block;padding:.2rem .8rem;border-radius:20px;font-size:.7rem;font-weight:600;margin-top:.3rem}
+    .estado-pendiente{background:#fff8e1;color:#b85e00}
+    .estado-en_investigacion{background:#e0edff;color:#2563eb}
+    .estado-resuelto{background:#e1f7ed;color:#1e7b4c}
+    .estado-rechazado{background:#fee9e7;color:#b33c2f}
+    .btn-ver{display:inline-block;background:#1a3b2e;color:white;padding:.3rem 1rem;border-radius:6px;text-decoration:none;font-size:.8rem;margin-top:.5rem}
+    .btn-ver:hover{background:#2e7d5e}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mapa-container">
+    <div class="mapa-header">
+        <h1><i class="fas fa-map-marked-alt"></i> Mapa de Incidencias</h1>
+        <p>Visualiza las denuncias geolocalizadas en el municipio</p>
+    </div>
+
+    <div class="mapa-filters">
+        <div class="filter-group">
+            <select id="tipoFilter" class="filter-select">
+                <option value="todos">Todos los tipos</option>
+                {% for key, nombre in tipos.items() %}
+                    <option value="{{ key }}">{{ nombre }}</option>
+                {% endfor %}
+            </select>
+            <select id="estadoFilter" class="filter-select">
+                <option value="todos">Todos los estados</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en_investigacion">En investigación</option>
+                <option value="resuelto">Resuelto</option>
+                <option value="rechazado">Rechazado</option>
+            </select>
+        </div>
+        <div class="stats-badge">
+            <i class="fas fa-map-pin"></i> {{ denuncias|length }} incidencias
+        </div>
+    </div>
+
+    <div id="map"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+let map;
+let markers = [];
+let denuncias = {{ denuncias|tojson }};
+let tipos = {{ tipos|tojson }};
+
+// Inicializar mapa
+function initMap() {
+    // Centro aproximado de Villa Cutupú
+    map = L.map('map').setView([19.0, -70.5], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    cargarDenuncias();
+}
+
+// Cargar denuncias desde API
+async function cargarDenuncias() {
+    try {
+        const res = await fetch('/api/denuncias/geojson');
+        const data = await res.json();
+        mostrarDenuncias(data);
+    } catch (error) {
+        console.error('Error cargando denuncias:', error);
+    }
+}
+
+// Mostrar denuncias en el mapa
+function mostrarDenuncias(data) {
+    // Limpiar marcadores existentes
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+    
+    data.features.forEach(feature => {
+        const props = feature.properties;
+        const coords = feature.geometry.coordinates;
+        
+        // Crear marcador
+        const marker = L.marker([coords[1], coords[0]], {
+            icon: L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="background:${props.color};width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 5px rgba(0,0,0,0.2)"></div>`,
+                iconSize: [24, 24]
+            })
+        }).addTo(map);
+        
+        // Popup
+        marker.bindPopup(`
+            <div class="denuncia-popup">
+                <div class="popup-titulo">${props.folio}</div>
+                <div class="popup-tipo">${props.tipo_nombre}</div>
+                <div class="popup-desc">${props.descripcion}</div>
+                <div><strong>Dirección:</strong> ${props.direccion}</div>
+                <div><strong>Fecha:</strong> ${props.fecha}</div>
+                <div>
+                    <span class="popup-estado estado-${props.estado}">
+                        ${props.estado.replace('_',' ')}
+                    </span>
+                </div>
+                ${props.url !== '#' ? `<a href="${props.url}" class="btn-ver">Ver detalle</a>` : ''}
+            </div>
+        `);
+        
+        markers.push(marker);
+    });
+}
+
+// Filtros
+document.getElementById('tipoFilter').addEventListener('change', filtrar);
+document.getElementById('estadoFilter').addEventListener('change', filtrar);
+
+function filtrar() {
+    const tipo = document.getElementById('tipoFilter').value;
+    const estado = document.getElementById('estadoFilter').value;
+    
+    markers.forEach(marker => {
+        const popup = marker.getPopup();
+        if (!popup) return;
+        
+        const content = popup.getContent();
+        const tipoCoincide = tipo === 'todos' || content.includes(`"${tipo}"`);
+        const estadoCoincide = estado === 'todos' || content.includes(`estado-${estado}`);
+        
+        if (tipoCoincide && estadoCoincide) {
+            map.addLayer(marker);
+        } else {
+            map.removeLayer(marker);
+        }
+    });
+}
+
+// Inicializar cuando cargue la página
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+{% endblock %}

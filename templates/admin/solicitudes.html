@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+
+{% block title %}Administrar Solicitudes - Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #1a3b2e;
+        --primary-light: #2e7d5e;
+        --primary-soft: #e8f3ee;
+        --warning: #b85e00;
+        --warning-light: #fff1e0;
+        --success: #1e7b4c;
+        --success-light: #e1f7ed;
+        --danger: #b33c2f;
+        --danger-light: #fee9e7;
+        --info: #2563eb;
+        --info-light: #e0edff;
+        --gray-50: #f9fafb;
+        --gray-100: #f2f4f7;
+        --gray-200: #e4e7ec;
+        --gray-300: #d0d5dd;
+        --gray-400: #98a2b3;
+        --gray-500: #667085;
+        --gray-600: #475467;
+        --gray-700: #344054;
+        --gray-800: #1d2939;
+        --gray-900: #101828;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
+        --shadow-md: 0 4px 6px -2px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+    }
+
+    .admin-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .admin-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        border-radius: var(--radius-xl);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .admin-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+    }
+
+    .stat-icon.total { background: var(--primary-soft); color: var(--primary); }
+    .stat-icon.pendientes { background: var(--warning-light); color: var(--warning); }
+    .stat-icon.proceso { background: var(--info-light); color: var(--info); }
+    .stat-icon.completadas { background: var(--success-light); color: var(--success); }
+
+    .stat-content h3 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--gray-500);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+
+    .filters-section {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-200);
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .search-box {
+        flex: 2;
+        min-width: 280px;
+        position: relative;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-400);
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.875rem 1rem 0.875rem 2.75rem;
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        background: var(--gray-50);
+    }
+
+    .search-box input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(26, 59, 46, 0.1);
+        background: white;
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        flex: 1;
+    }
+
+    .filter-select {
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        background: var(--gray-50);
+        cursor: pointer;
+        min-width: 160px;
+    }
+
+    .btn-filter {
+        padding: 0.875rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th {
+        background: var(--gray-100);
+        padding: 1rem 1.5rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        color: var(--gray-600);
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .table td {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--gray-200);
+        color: var(--gray-700);
+        font-size: 0.95rem;
+        vertical-align: middle;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.9rem;
+        border-radius: 40px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        gap: 0.4rem;
+    }
+
+    .badge-pendiente { background: var(--warning-light); color: var(--warning); }
+    .badge-en_proceso { background: var(--info-light); color: var(--info); }
+    .badge-completado { background: var(--success-light); color: var(--success); }
+
+    .btn-view {
+        padding: 0.5rem 1rem;
+        background: var(--primary);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-view:hover {
+        background: var(--primary-light);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: var(--radius-lg);
+        border: 2px dashed var(--gray-300);
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .filter-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        .filter-select {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>
+            <i class="fas fa-file-alt"></i>
+            Gestión de Solicitudes
+        </h1>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon total"><i class="fas fa-file-alt"></i></div>
+            <div class="stat-content">
+                <h3>Total Solicitudes</h3>
+                <div class="stat-number">{{ stats.solicitudes|default(0) }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon pendientes"><i class="fas fa-clock"></i></div>
+            <div class="stat-content">
+                <h3>Pendientes</h3>
+                <div class="stat-number">{{ stats.pendientes|default(0) }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon proceso"><i class="fas fa-spinner"></i></div>
+            <div class="stat-content">
+                <h3>En Proceso</h3>
+                <div class="stat-number">{{ stats.en_proceso|default(0) }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon completadas"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-content">
+                <h3>Completados</h3>
+                <div class="stat-number">{{ stats.completados|default(0) }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filters-section">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Buscar por folio, usuario o email...">
+        </div>
+        <div class="filter-group">
+            <select id="estadoFilter" class="filter-select">
+                <option value="">Todos los estados</option>
+                {% for estado in estados %}
+                <option value="{{ estado }}">{{ estado|replace('_', ' ')|title }}</option>
+                {% endfor %}
+            </select>
+            <select id="servicioFilter" class="filter-select">
+                <option value="">Todos los servicios</option>
+                {% for id, nombre in servicios.items() %}
+                <option value="{{ id }}">{{ nombre }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn-filter" onclick="aplicarFiltros()">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
+        </div>
+    </div>
+
+    {% if solicitudes %}
+    <div class="table-container">
+        <table class="table" id="solicitudesTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Folio</th>
+                    <th>Usuario</th>
+                    <th>Servicio</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in solicitudes %}
+                <tr>
+                    <td>{{ s.id }}</td>
+                    <td><strong>{{ s.folio }}</strong></td>
+                    <td>
+                        <div>
+                            <strong>{{ s.usuario_nombre }}</strong>
+                            <br><small>{{ s.usuario_email }}</small>
+                        </div>
+                    </td>
+                    <td>{{ servicios.get(s.servicio_id|string, 'Desconocido') }}</td>
+                    <td>{{ s.fecha_creacion[:10] }}</td>
+                    <td>
+                        <span class="badge badge-{{ s.estado }}">
+                            <i class="fas fa-circle" style="font-size: 0.4rem;"></i>
+                            {{ s.estado|replace('_', ' ')|title }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('admin.detalle_solicitud', solicitud_id=s.id) }}" class="btn-view">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-folder-open" style="font-size: 4rem; color: var(--gray-400);"></i>
+        <h3>No hay solicitudes</h3>
+        <p>No se encontraron solicitudes con los filtros actuales.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let solicitudesData = {{ solicitudes_json|safe }};
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Solicitudes cargadas:', solicitudesData.length);
+    
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#solicitudesTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    }
+});
+
+function aplicarFiltros() {
+    const estado = document.getElementById('estadoFilter').value;
+    const servicio = document.getElementById('servicioFilter').value;
+    
+    let url = new URL(window.location.href);
+    url.searchParams.set('estado', estado);
+    url.searchParams.set('servicio', servicio);
+    
+    window.location.href = url.toString();
+}
+</script>
+{% endblock %}
