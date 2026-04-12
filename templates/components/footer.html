@@ -1,0 +1,169 @@
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" class="footer-logo-img">
+                    <span>Junta Distrital<br>Villa Cutupú · La Vega</span>
+                </div>
+                <p><i class="fas fa-map-marker-alt"></i> Río Verde Arriba, La Vega, República Dominicana</p>
+                <p><i class="fas fa-phone"></i> <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-pill"><i class="fab fa-facebook-f"></i> Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-pill"><i class="fab fa-instagram"></i> Instagram</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Navegación</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                    <li><a href="/mapa">Mapa de Incidencias</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Atención al Ciudadano</h3>
+                <p><strong>Horario de oficina:</strong><br>Lunes a Viernes<br>8:00 AM – 2:00 PM</p>
+                <a href="/servicios" class="btn-footer">Trámites en línea <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .footer {
+        background: var(--gris-900);
+        color: var(--gris-300);
+        border-top: 4px solid var(--verde);
+        padding: 4rem 0 2rem;
+    }
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1.5fr;
+        gap: 3rem;
+        margin-bottom: 3rem;
+    }
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .footer-logo-img {
+        height: 50px;
+        width: auto;
+    }
+    .footer-logo span {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        font-size: 1rem;
+        line-height: 1.3;
+        color: white;
+    }
+    .footer-col p {
+        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .footer-col a {
+        color: var(--gris-300);
+        text-decoration: none;
+        transition: color var(--transition);
+    }
+    .footer-col a:hover {
+        color: white;
+    }
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .social-pill {
+        background: rgba(255,255,255,0.1);
+        padding: 0.4rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .social-pill:hover {
+        background: var(--verde);
+        color: white;
+    }
+    .footer-col h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: white;
+        position: relative;
+    }
+    .footer-col h3::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 40px;
+        height: 2px;
+        background: var(--verde);
+    }
+    .footer-col ul {
+        list-style: none;
+        padding: 0;
+    }
+    .footer-col li {
+        margin-bottom: 0.7rem;
+    }
+    .btn-footer {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--verde);
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 2rem;
+        margin-top: 1rem;
+        transition: all var(--transition);
+    }
+    .btn-footer:hover {
+        background: var(--verde-med);
+        transform: translateY(-2px);
+    }
+    .footer-bottom {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        font-size: 0.8rem;
+    }
+
+    @media (max-width: 768px) {
+        .footer-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            text-align: center;
+        }
+        .footer-col h3::after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .footer-col p {
+            justify-content: center;
+        }
+        .social-links {
+            justify-content: center;
+        }
+        .btn-footer {
+            margin: 1rem auto 0;
+        }
+    }
+</style>

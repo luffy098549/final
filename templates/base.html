@@ -4,400 +4,252 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Junta Distrital de Villa Cutupú{% endblock %}</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+   <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/Adobe Express - file.png') }}">
+    <!-- Google Fonts: Playfair Display + DM Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     {% block extra_css %}{% endblock %}
     <style>
-        /* ════════════════════════════════
-           NOTIFICACIONES — campana header
-        ════════════════════════════════ */
-        .notif-wrap {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            margin-right: .25rem;
+        /* ===== VARIABLES GLOBALES ===== */
+        :root {
+            --verde:        #2D5016;
+            --verde-med:    #3D6B20;
+            --verde-light:  #5A8C35;
+            --verde-soft:   #8BB55F;
+            --verde-xlight: #EAF2DC;
+            --dorado:       #C8960C;
+            --dorado-light: #F5DFA0;
+            --crema:        #FBF7F0;
+            --texto:        #1A2410;
+            --gris-50:      #F9FAFB;
+            --gris-100:     #F3F4F6;
+            --gris-200:     #E5E7EB;
+            --gris-300:     #D1D5DB;
+            --gris-400:     #9CA3AF;
+            --gris-500:     #6B7280;
+            --gris-600:     #4B5563;
+            --gris-700:     #374151;
+            --gris-800:     #1F2937;
+            --gris-900:     #111827;
+            --border:       #E5E7EB;
+            --shadow-xs:    0 1px 2px rgba(0,0,0,0.05);
+            --shadow-sm:    0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md:    0 8px 30px rgba(0,0,0,0.08);
+            --shadow-lg:    0 20px 40px rgba(0,0,0,0.1);
+            --radius-card:  1rem;
+            --radius-block: 1.5rem;
+            --radius-full:  9999px;
+            --transition:   0.2s ease;
         }
 
-        .notif-btn {
-            width: 38px; height: 38px;
-            border-radius: 10px;
-            background: var(--green-xlight);
-            color: var(--green-dark);
-            border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: .95rem;
-            position: relative;
-            transition: background .2s, transform .2s, box-shadow .2s;
-        }
-        .notif-btn:hover {
-            background: var(--green-dark);
-            color: #fff;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* Badge contador */
-        .notif-badge {
-            position: absolute; top: -5px; right: -5px;
-            background: #c0392b; color: #fff;
-            font-size: .62rem; font-weight: 700;
-            min-width: 17px; height: 17px;
-            border-radius: 9px; padding: 0 4px;
-            display: none; align-items: center; justify-content: center;
-            border: 2px solid #fff;
-            line-height: 1;
-        }
-        .notif-badge.visible { display: flex; }
-
-        /* Panel desplegable */
-        .notif-panel {
-            display: none;
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            width: 340px;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 8px 30px rgba(0,0,0,.14);
-            border: 1px solid var(--border);
-            z-index: 500;
-            overflow: hidden;
-        }
-        .notif-panel.open { display: block; animation: notifIn .2s ease; }
-
-        @keyframes notifIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .notif-header {
-            padding: .9rem 1.1rem;
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .notif-header h4 {
-            font-size: .85rem; font-weight: 700; color: var(--text);
-            display: flex; align-items: center; gap: .5rem;
-        }
-        .notif-header h4 i { color: var(--green-dark); font-size: .8rem; }
-        .notif-mark-all {
-            font-size: .72rem; color: var(--green-dark); font-weight: 600;
-            cursor: pointer; text-decoration: none;
-            border: none; background: none;
-            transition: color .2s;
-        }
-        .notif-mark-all:hover { color: var(--green); text-decoration: underline; }
-
-        .notif-list { max-height: 320px; overflow-y: auto; }
-
-        .notif-item {
-            display: flex; align-items: flex-start; gap: .8rem;
-            padding: .85rem 1.1rem;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            transition: background .15s;
-            text-decoration: none;
-            color: inherit;
-        }
-        .notif-item:last-child { border-bottom: none; }
-        .notif-item:hover { background: var(--gray-50); }
-        .notif-item.unread { background: var(--green-xlight); }
-        .notif-item.unread:hover { background: #deebd9; }
-
-        .notif-icon {
-            width: 32px; height: 32px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: .75rem; flex-shrink: 0; margin-top: 1px;
-        }
-        .ni-sol   { background: var(--blue-sky-light); color: var(--blue-sky); }
-        .ni-den   { background: #fff0ee; color: #e8603c; }
-        .ni-msg   { background: var(--green-xlight); color: var(--green-dark); }
-        .ni-state { background: #fff8e1; color: #e65100; }
-
-        .notif-body { flex: 1; min-width: 0; }
-        .notif-title {
-            font-size: .83rem; font-weight: 600; color: var(--text);
-            margin-bottom: .15rem;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .notif-desc {
-            font-size: .75rem; color: var(--gray-500);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            margin-bottom: .15rem;
-        }
-        .notif-time {
-            font-size: .68rem; color: var(--gray-400);
-            display: flex; align-items: center; gap: .3rem;
-        }
-        .notif-dot {
-            width: 7px; height: 7px; border-radius: 50%;
-            background: var(--green-dark); flex-shrink: 0;
-            margin-top: 6px;
-        }
-        .notif-dot.read { background: transparent; }
-
-        .notif-empty {
-            padding: 2.5rem 1rem;
-            text-align: center; color: var(--gray-400);
-        }
-        .notif-empty i { font-size: 2rem; margin-bottom: .6rem; opacity: .3; display: block; }
-        .notif-empty p { font-size: .85rem; }
-
-        .notif-footer {
-            padding: .75rem 1.1rem;
-            border-top: 1px solid var(--border);
-            text-align: center;
-        }
-        .notif-footer a {
-            font-size: .78rem; font-weight: 600; color: var(--green-dark);
-            text-decoration: none; transition: color .2s;
-        }
-        .notif-footer a:hover { color: var(--green); text-decoration: underline; }
-
-        /* Animación shake en campana */
-        @keyframes bell-shake {
-            0%,100% { transform: rotate(0); }
-            15%      { transform: rotate(15deg); }
-            30%      { transform: rotate(-12deg); }
-            45%      { transform: rotate(10deg); }
-            60%      { transform: rotate(-8deg); }
-            75%      { transform: rotate(5deg); }
-        }
-        .notif-btn.has-new i {
-            animation: bell-shake .6s ease .3s;
-        }
-
-        /* Avatar en header */
-        .user-avatar-mini {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #2B6A9E, #1e4a72);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-            overflow: hidden;
-            margin-right: 8px;
-        }
-        .user-avatar-mini img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .user-avatar-mini .avatar-inicial {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-        }
-        .btn-user {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .dropdown li a i {
-            width: 20px;
-            text-align: center;
-            margin-right: 8px;
-            color: var(--green-dark);
-        }
-        .dropdown li a.text-danger i {
-            color: #dc3545;
-        }
-        .dropdown .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 4px 0;
-        }
-
-        /* Menú móvil */
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 30px;
-            height: 21px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
+        *, *::before, *::after {
+            margin: 0;
             padding: 0;
-            z-index: 101;
+            box-sizing: border-box;
         }
-        .menu-toggle span {
-            width: 100%;
-            height: 3px;
-            background: var(--green-dark);
-            border-radius: 3px;
-            transition: all 0.3s ease;
-        }
-        .mobile-menu {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 280px;
-            height: 100vh;
-            background: white;
-            z-index: 1000;
-            padding: 80px 20px 30px;
-            transition: right 0.3s ease;
-            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
-        }
-        .mobile-menu.active { right: 0; }
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-        .overlay.active { display: block; }
 
-        @media (max-width: 960px) {
-            .main-nav ul { display: none; }
-            .menu-toggle { display: flex; }
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 90px;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: white;
+            color: var(--texto);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        body.menu-open { overflow: hidden; }
+
+        img { max-width: 100%; height: auto; display: block; }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            width: 100%;
+        }
+
+        /* Tipografía base */
+        h1, h2, h3, h4, .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* ===== FIX BOTÓN REGISTRARSE — INFALIBLE ===== */
+        a[href="/registro"],
+        .btn-registro,
+        .nav-btn-register,
+        .btn-primary-nav {
+            background: #2D5016 !important;
+            color: white !important;
+            padding: 0.5rem 1.4rem !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+            white-space: nowrap !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-decoration: none !important;
+            font-size: 0.88rem !important;
+            font-family: 'DM Sans', sans-serif !important;
+            line-height: 1.5 !important;
+            width: auto !important;
+            min-width: max-content !important;
+            max-width: none !important;
+            overflow: visible !important;
+            clip: unset !important;
+            clip-path: none !important;
+            height: auto !important;
+            border: none !important;
+            cursor: pointer !important;
+            transition: background 0.2s ease, transform 0.2s ease !important;
+            box-shadow: 0 2px 8px rgba(45,80,22,0.25) !important;
+        }
+
+        a[href="/registro"]:hover,
+        .btn-registro:hover,
+        .nav-btn-register:hover,
+        .btn-primary-nav:hover {
+            background: #3D6B20 !important;
+            color: white !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 16px rgba(45,80,22,0.35) !important;
+            text-decoration: none !important;
+        }
+
+        /* Excepción: el botón de registro en móvil puede ser full width */
+        .mobile-menu a[href="/registro"] {
+            width: 100% !important;
+            display: block !important;
+            text-align: center !important;
+            padding: 0.85rem 1.4rem !important;
+            border-radius: 10px !important;
+            margin-top: 0.5rem !important;
+        }
+
+        /* ===== ANIMACIONES .anim ===== */
+        .anim {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1),
+                        transform 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .anim.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .anim-d1 { transition-delay: 0.1s !important; }
+        .anim-d2 { transition-delay: 0.2s !important; }
+        .anim-d3 { transition-delay: 0.3s !important; }
+        .anim-d4 { transition-delay: 0.4s !important; }
+
+        /* ===== FLASH MESSAGES ===== */
+        .flash-messages {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            z-index: 9999;
+            max-width: 400px;
+            pointer-events: none;
+        }
+        .flash-message {
+            background: white;
+            border-radius: var(--radius-card);
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-left: 4px solid;
+            animation: slideInRight 0.3s ease;
+            font-weight: 500;
+            pointer-events: all;
+        }
+        .flash-message.flash-success   { border-left-color: var(--verde); }
+        .flash-message.flash-success i { color: var(--verde); }
+        .flash-message.flash-error     { border-left-color: #dc2626; }
+        .flash-message.flash-error i   { color: #dc2626; }
+        .flash-message.flash-warning   { border-left-color: var(--dorado); }
+        .flash-message.flash-warning i { color: var(--dorado); }
+        .flash-message.flash-info      { border-left-color: var(--verde-med); }
+        .flash-message.flash-info i    { color: var(--verde-med); }
+        .flash-message.flash-login_required { border-left-color: var(--verde-med); }
+        .flash-message.flash-login_required i { color: var(--verde-med); }
+
+        .flash-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--gris-400);
+            transition: color var(--transition);
+            flex-shrink: 0;
+        }
+        .flash-close:hover { color: var(--gris-700); }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to   { transform: translateX(0);    opacity: 1; }
+        }
+
+        /* ===== BACK TO TOP ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            background: var(--verde);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition);
+            box-shadow: var(--shadow-md);
+            z-index: 99;
+        }
+        .back-to-top.visible  { opacity: 1; visibility: visible; }
+        .back-to-top:hover    { background: var(--verde-med); transform: translateY(-3px); }
+
+        /* ===== RESPONSIVE BASE ===== */
+        @media (max-width: 768px) {
+            .container { padding: 0 1.5rem; }
+            .flash-messages { right: 1rem; left: 1rem; max-width: none; }
         }
         @media (max-width: 480px) {
-            .notif-panel { width: calc(100vw - 32px); right: -60px; }
+            .container { padding: 0 1rem; }
+            .back-to-top { width: 40px; height: 40px; bottom: 1rem; right: 1rem; }
+        }
+
+        /* ===== REDUCIR MOVIMIENTO ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .anim { transition: none !important; }
         }
     </style>
 </head>
 <body>
 
-<header class="main-header" id="mainHeader">
-    <div class="container">
-        <div class="logo">
-            <a href="/">
-                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}"
-                     alt="Logo" class="header-logo">
-            </a>
-        </div>
-
-        <nav class="main-nav">
-            <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/municipio">Municipio</a></li>
-                <li><a href="/servicios">Servicios</a></li>
-                <li><a href="/transparencia">Transparencia</a></li>
-                <li><a href="/noticias">Noticias</a></li>
-                <li><a href="/contacto">Contacto</a></li>
-                <li><a href="/mapa"><i class="fas fa-map-marked-alt"></i> Mapa de Incidencias</a></li>
-
-                {% if logged %}
-
-                    <!-- ── CAMPANA DE NOTIFICACIONES ── -->
-                    <li style="display:flex;align-items:center;">
-                        <div class="notif-wrap" id="notifWrap">
-                            <button class="notif-btn" id="notifBtn"
-                                    onclick="toggleNotifPanel()"
-                                    aria-label="Notificaciones">
-                                <i class="fas fa-bell"></i>
-                                <span class="notif-badge" id="notifBadge"></span>
-                            </button>
-
-                            <div class="notif-panel" id="notifPanel">
-                                <div class="notif-header">
-                                    <h4><i class="fas fa-bell"></i> Notificaciones</h4>
-                                    <button class="notif-mark-all" onclick="marcarTodasLeidas()">
-                                        Marcar todo como leído
-                                    </button>
-                                </div>
-                                <div class="notif-list" id="notifList">
-                                    <div class="notif-empty">
-                                        <i class="fas fa-bell-slash"></i>
-                                        <p>Cargando...</p>
-                                    </div>
-                                </div>
-                                <div class="notif-footer">
-                                    <a href="/mis-tramites">Ver todos mis trámites</a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-
-                    <!-- ── MENÚ USUARIO CON FOTO ── -->
-                    <li class="user-menu">
-                        <a href="/mi-cuenta" class="btn-user">
-                            <div class="user-avatar-mini">
-                                {% if session.get('foto_perfil') %}
-                                    <img src="{{ url_for('uploaded_file', filename=session.get('foto_perfil')) }}" 
-                                         alt="Foto"
-                                         onerror="this.style.display='none';this.parentElement.classList.add('avatar-fallback-mini');">
-                                    <span class="avatar-fallback-mini-text" style="display:none;">{{ user_name[0]|upper }}</span>
-                                {% else %}
-                                    <span class="avatar-inicial">{{ user_name[0]|upper }}</span>
-                                {% endif %}
-                            </div>
-                            <span>{{ user_name }}</span>
-                        </a>
-                        <ul class="dropdown">
-                            <li><a href="/mi-cuenta"><i class="fas fa-user"></i> Mi Cuenta</a></li>
-                            <li><a href="/mis-tramites"><i class="fas fa-clipboard-list"></i> Mis Trámites</a></li>
-                            <li><a href="/mis-solicitudes"><i class="fas fa-file-alt"></i> Mis Solicitudes</a></li>
-                            <li><a href="/mis-denuncias"><i class="fas fa-exclamation-triangle"></i> Mis Denuncias</a></li>
-                            <li><a href="/citas/solicitar"><i class="fas fa-calendar-plus"></i> Solicitar Cita</a></li>
-                            <li><a href="/mis-citas"><i class="fas fa-calendar-alt"></i> Mis Citas</a></li>
-                            {% if is_admin %}
-                                <li class="divider"></li>
-                                <li><a href="/admin/dashboard"><i class="fas fa-shield-alt"></i> Panel Admin</a></li>
-                            {% endif %}
-                            <li class="divider"></li>
-                            <li><a href="/logout" class="text-danger">
-                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                            </a></li>
-                        </ul>
-                    </li>
-
-                {% else %}
-                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
-                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-
-        <button class="menu-toggle" id="menuToggle" aria-label="Menú">
-            <span></span><span></span><span></span>
-        </button>
-    </div>
-</header>
-
-<!-- Menú móvil -->
-<div class="mobile-menu" id="mobileMenu">
-    <ul>
-        <li><a href="/">Inicio</a></li>
-        <li><a href="/municipio">Municipio</a></li>
-        <li><a href="/servicios">Servicios</a></li>
-        <li><a href="/transparencia">Transparencia</a></li>
-        <li><a href="/noticias">Noticias</a></li>
-        <li><a href="/contacto">Contacto</a></li>
-        <li><a href="/mapa"><i class="fas fa-map-marked-alt"></i> Mapa de Incidencias</a></li>
-        <div class="divider"></div>
-        {% if logged %}
-        <li><a href="/mi-cuenta">Mi Cuenta</a></li>
-        <li><a href="/mis-tramites">Mis Trámites</a></li>
-        <li><a href="/mis-solicitudes">Mis Solicitudes</a></li>
-        <li><a href="/mis-denuncias">Mis Denuncias</a></li>
-        <li><a href="/citas/solicitar">Solicitar Cita</a></li>
-        <li><a href="/mis-citas">Mis Citas</a></li>
-        {% if is_admin %}<li><a href="/admin/dashboard">Panel Admin</a></li>{% endif %}
-        <li><a href="/logout" style="color:#dc3545;">Cerrar Sesión</a></li>
-        {% else %}
-        <li><a href="/login" class="btn-login-mobile">Iniciar sesión</a></li>
-        <li><a href="/registro" class="btn-registro-mobile">Registrarse</a></li>
-        {% endif %}
-    </ul>
-</div>
-<div class="overlay" id="overlay"></div>
+{% include 'components/header.html' %}
 
 <main>
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -405,7 +257,7 @@
             <div class="flash-messages">
                 {% for category, message in messages %}
                     <div class="flash-message flash-{{ category }}">
-                        <i class="fas fa-{% if category == 'success' %}check-circle{% else %}info-circle{% endif %}"></i>
+                        <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
                         <span>{{ message }}</span>
                         <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
                     </div>
@@ -417,281 +269,61 @@
     {% block content %}{% endblock %}
 </main>
 
-<footer>
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-info">
-                <h3>Junta de Distrito Municipal</h3>
-                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
-                <p><i class="fas fa-phone" style="color:var(--green-dark)"></i>
-                   <a href="tel:+18096917111"> (809) 691-7111</a></p>
-                <p><i class="fas fa-envelope" style="color:var(--green-dark)"></i>
-                   <a href="mailto:juntamunicipalrioverdearriba@gmail.com"> juntamunicipalrioverdearriba@gmail.com</a></p>
-            </div>
-            <div class="footer-social">
-                <h3>Síguenos</h3>
-                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank">Facebook</a>
-                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank">Instagram</a>
-            </div>
-            <div class="footer-horario">
-                <h3>Horario de Oficina</h3>
-                <p>Lunes a Viernes<br>8:00 AM - 2:00 PM</p>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>&copy; 2026 Junta de Distrito Municipal de Villa Cutupú.</p>
-        </div>
-    </div>
-</footer>
+{% include 'components/footer.html' %}
 
-<button class="back-to-top" id="backToTop">↑</button>
+<button class="back-to-top" id="backToTop" aria-label="Volver arriba">
+    <i class="fas fa-arrow-up"></i>
+</button>
 
 <script>
-/* ── Header scroll ── */
-const mainHeader = document.getElementById('mainHeader');
-window.addEventListener('scroll', () => {
-    if (mainHeader) mainHeader.classList.toggle('scrolled', window.scrollY > 10);
-}, { passive: true });
-
-/* ── Menú móvil ── */
-const menuToggle = document.getElementById('menuToggle');
-const mobileMenu = document.getElementById('mobileMenu');
-const overlay    = document.getElementById('overlay');
-
-function closeMobile() {
-    menuToggle?.classList.remove('active');
-    mobileMenu?.classList.remove('active');
-    overlay?.classList.remove('active');
-    document.body.classList.remove('menu-open');
-}
-menuToggle?.addEventListener('click', () => {
-    const open = mobileMenu.classList.toggle('active');
-    menuToggle.classList.toggle('active', open);
-    overlay.classList.toggle('active', open);
-    document.body.classList.toggle('menu-open', open);
-});
-overlay?.addEventListener('click', closeMobile);
-
-/* ── Back to top ── */
-const backToTop = document.getElementById('backToTop');
-if (backToTop) {
-    window.addEventListener('scroll', () =>
-        backToTop.classList.toggle('visible', window.scrollY > 300),
-        { passive: true }
-    );
-    backToTop.addEventListener('click', () =>
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-    );
-}
-
-/* ── Flash messages ── */
-setTimeout(() => {
-    document.querySelectorAll('.flash-message').forEach(msg => {
-        msg.style.transition = 'opacity .3s';
-        msg.style.opacity = '0';
-        setTimeout(() => msg.remove(), 300);
-    });
-}, 5000);
-
-/* ════════════════════════════════════════
-   SISTEMA DE NOTIFICACIONES
-════════════════════════════════════════ */
-{% if logged %}
-
-const NOTIF_KEY = 'notif_leidas_{{ session.get("user", "") | replace("@","_") | replace(".","_") }}';
-
-function getLeidas() {
-    try { return JSON.parse(localStorage.getItem(NOTIF_KEY) || '[]'); }
-    catch { return []; }
-}
-
-function setLeidas(arr) {
-    try { localStorage.setItem(NOTIF_KEY, JSON.stringify(arr)); }
-    catch {}
-}
-
-function notifIconClass(item) {
-    if (item.ultimo_tipo === 'mensaje_admin') return 'ni-msg';
-    if (item.tipo === 'denuncia')             return 'ni-den';
-    if (item.ultimo_tipo === 'estado_cambiado') return 'ni-state';
-    return 'ni-sol';
-}
-function notifIconFA(item) {
-    if (item.ultimo_tipo === 'mensaje_admin')    return 'fa-comment';
-    if (item.ultimo_tipo === 'estado_cambiado')  return 'fa-exchange-alt';
-    if (item.tipo === 'denuncia')                return 'fa-flag';
-    return 'fa-file-alt';
-}
-function notifTexto(item) {
-    if (item.ultimo_tipo === 'mensaje_admin')   return 'Nuevo mensaje del equipo municipal';
-    if (item.ultimo_tipo === 'estado_cambiado') return `Estado actualizado: ${(item.estado||'').replace(/_/g,' ')}`;
-    if (item.ultimo_tipo === 'comentario')      return 'Nuevo comentario en tu trámite';
-    return 'Actividad en tu trámite';
-}
-function fechaRelativa(iso) {
-    if (!iso) return '';
-    const diff = Date.now() - new Date(iso).getTime();
-    const min  = Math.floor(diff / 60000);
-    const hrs  = Math.floor(diff / 3600000);
-    const dias = Math.floor(diff / 86400000);
-    if (min < 1)   return 'Ahora';
-    if (min < 60)  return `Hace ${min} min`;
-    if (hrs < 24)  return `Hace ${hrs}h`;
-    if (dias < 7)  return `Hace ${dias}d`;
-    return new Date(iso).toLocaleDateString('es', { day:'numeric', month:'short' });
-}
-
-async function cargarNotificaciones() {
-    try {
-        const res  = await fetch('/api/notificaciones');
-        const data = await res.json();
-        renderNotificaciones(data.items || []);
-    } catch {
-        document.getElementById('notifList').innerHTML = `
-            <div class="notif-empty">
-                <i class="fas fa-wifi"></i>
-                <p>No se pudo cargar</p>
-            </div>`;
-    }
-}
-
-function renderNotificaciones(items) {
-    const list    = document.getElementById('notifList');
-    const badge   = document.getElementById('notifBadge');
-    const btn     = document.getElementById('notifBtn');
-    const leidas  = getLeidas();
-
-    if (!items.length) {
-        list.innerHTML = `
-            <div class="notif-empty">
-                <i class="fas fa-bell-slash"></i>
-                <p>No tienes notificaciones pendientes</p>
-            </div>`;
-        badge.classList.remove('visible');
-        btn.classList.remove('has-new');
-        return;
+    /* ===== HEADER SCROLL ===== */
+    const header = document.querySelector('.main-header');
+    if (header) {
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 10);
+        }, { passive: true });
     }
 
-    const noLeidas = items.filter(i => !leidas.includes(i.folio));
-    if (noLeidas.length > 0) {
-        badge.textContent = noLeidas.length > 9 ? '9+' : noLeidas.length;
-        badge.classList.add('visible');
-        btn.classList.add('has-new');
-    } else {
-        badge.classList.remove('visible');
-        btn.classList.remove('has-new');
+    /* ===== BACK TO TOP ===== */
+    const backBtn = document.getElementById('backToTop');
+    if (backBtn) {
+        window.addEventListener('scroll', () => {
+            backBtn.classList.toggle('visible', window.scrollY > 300);
+        }, { passive: true });
+        backBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     }
 
-    list.innerHTML = items.map(item => {
-        const esLeida = leidas.includes(item.folio);
-        return `
-        <a class="notif-item ${esLeida ? '' : 'unread'}"
-           href="/mis-tramites"
-           onclick="marcarLeida('${item.folio}')">
-            <div class="notif-icon ${notifIconClass(item)}">
-                <i class="fas ${notifIconFA(item)}"></i>
-            </div>
-            <div class="notif-body">
-                <div class="notif-title">${item.servicio || item.folio}</div>
-                <div class="notif-desc">${notifTexto(item)}</div>
-                <div class="notif-time">
-                    <i class="fas fa-clock"></i>
-                    ${fechaRelativa(item.fecha)}
-                    &nbsp;·&nbsp;
-                    <span style="font-family:monospace;">${item.folio}</span>
-                </div>
-            </div>
-            <div class="notif-dot ${esLeida ? 'read' : ''}"></div>
-        </a>`;
-    }).join('');
-}
+    /* ===== FLASH AUTO-DISMISS ===== */
+    setTimeout(() => {
+        document.querySelectorAll('.flash-message').forEach(msg => {
+            msg.style.transition = 'opacity 0.3s';
+            msg.style.opacity = '0';
+            setTimeout(() => msg.remove(), 300);
+        });
+    }, 5000);
 
-function toggleNotifPanel() {
-    const panel = document.getElementById('notifPanel');
-    const isOpen = panel.classList.toggle('open');
-    if (isOpen) cargarNotificaciones();
-}
-
-function marcarLeida(folio) {
-    const leidas = getLeidas();
-    if (!leidas.includes(folio)) {
-        leidas.push(folio);
-        setLeidas(leidas);
+    /* ===== INTERSECTION OBSERVER .anim ===== */
+    const animElements = document.querySelectorAll('.anim');
+    if (animElements.length) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        animElements.forEach(el => observer.observe(el));
     }
-    const badge = document.getElementById('notifBadge');
-    const items = document.querySelectorAll('.notif-item.unread');
-    const restantes = items.length - 1;
-    if (restantes <= 0) {
-        badge.classList.remove('visible');
-        document.getElementById('notifBtn').classList.remove('has-new');
-    } else {
-        badge.textContent = restantes > 9 ? '9+' : restantes;
-    }
-}
 
-function marcarTodasLeidas() {
-    const items = document.querySelectorAll('.notif-item');
-    const folios = [];
-    items.forEach(el => {
-        const onclick = el.getAttribute('onclick') || '';
-        const match = onclick.match(/'([^']+)'/);
-        if (match) folios.push(match[1]);
-        el.classList.remove('unread');
-        const dot = el.querySelector('.notif-dot');
-        if (dot) dot.classList.add('read');
-    });
-    const leidas = getLeidas();
-    folios.forEach(f => { if (!leidas.includes(f)) leidas.push(f); });
-    setLeidas(leidas);
-    document.getElementById('notifBadge').classList.remove('visible');
-    document.getElementById('notifBtn').classList.remove('has-new');
-}
-
-document.addEventListener('click', e => {
-    const wrap = document.getElementById('notifWrap');
-    if (wrap && !wrap.contains(e.target)) {
-        document.getElementById('notifPanel')?.classList.remove('open');
-    }
-});
-
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const res  = await fetch('/api/notificaciones');
-        const data = await res.json();
-        const items   = data.items || [];
-        const leidas  = getLeidas();
-        const noLeidas = items.filter(i => !leidas.includes(i.folio));
-        const badge = document.getElementById('notifBadge');
-        const btn   = document.getElementById('notifBtn');
-        if (noLeidas.length > 0) {
-            badge.textContent = noLeidas.length > 9 ? '9+' : noLeidas.length;
-            badge.classList.add('visible');
-            btn.classList.add('has-new');
+    /* ===== LINK ACTIVO EN NAV ===== */
+    document.querySelectorAll('.nav-link').forEach(link => {
+        if (link.getAttribute('href') === window.location.pathname) {
+            link.classList.add('active');
         }
-    } catch {}
-});
-
-setInterval(async () => {
-    try {
-        const res  = await fetch('/api/notificaciones');
-        const data = await res.json();
-        const items    = data.items || [];
-        const leidas   = getLeidas();
-        const noLeidas = items.filter(i => !leidas.includes(i.folio));
-        const badge = document.getElementById('notifBadge');
-        const btn   = document.getElementById('notifBtn');
-        if (noLeidas.length > 0) {
-            badge.textContent = noLeidas.length > 9 ? '9+' : noLeidas.length;
-            badge.classList.add('visible');
-            btn.classList.add('has-new');
-        } else {
-            badge.classList.remove('visible');
-            btn.classList.remove('has-new');
-        }
-    } catch {}
-}, 60000);
-
-{% endif %}
+    });
 </script>
 
 {% block extra_js %}{% endblock %}

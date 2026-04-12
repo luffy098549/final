@@ -13,11 +13,34 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* ===== ESTILOS PROFESIONALES PARA REGISTRO ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
+            min-height: 100vh;
+        }
+
         .registro-container {
             max-width: 800px;
             margin: 2rem auto;
             padding: 0 20px;
             animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .registro-card {
@@ -106,7 +129,6 @@
 
         .form-group {
             margin-bottom: 1.5rem;
-            position: relative;
         }
 
         .form-group label {
@@ -134,7 +156,6 @@
             transition: all 0.3s ease;
             background: white;
             font-family: inherit;
-            box-sizing: border-box;
         }
 
         .form-group input:focus,
@@ -145,7 +166,6 @@
             box-shadow: 0 0 0 4px rgba(46, 125, 94, 0.1);
         }
 
-        /* ===== INPUT DE TELÉFONO SIMPLIFICADO ===== */
         .input-tel {
             width: 100%;
             padding: 0.9rem 1rem;
@@ -162,30 +182,9 @@
             box-shadow: 0 0 0 4px rgba(46, 125, 94, 0.1);
         }
 
-        .input-tel:hover {
-            border-color: #999;
-        }
-
-        /* ===== VALIDACIÓN ===== */
         .input-feedback {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
             margin-top: 0.5rem;
             font-size: 0.85rem;
-            color: #666;
-        }
-
-        .input-feedback i {
-            font-size: 0.9rem;
-        }
-
-        .input-feedback.valid i {
-            color: #28a745;
-        }
-
-        .input-feedback.error i {
-            color: #dc3545;
         }
 
         /* ===== FORTALEZA DE CONTRASEÑA ===== */
@@ -232,7 +231,7 @@
             font-size: 0.8rem;
         }
 
-        /* ===== TÉRMINOS Y CONDICIONES ===== */
+        /* ===== TÉRMINOS Y CONDICIONES - VERSIÓN VISIBLE ===== */
         .terms-group {
             background: #f9f9f9;
             padding: 1.5rem;
@@ -242,23 +241,27 @@
 
         .checkbox-item {
             display: flex;
-            align-items: flex-start;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 5px 0;
         }
 
         .checkbox-item input[type="checkbox"] {
             width: 20px;
             height: 20px;
-            margin-top: 2px;
+            min-width: 20px;
+            cursor: pointer;
             accent-color: #1a3b2e;
+            margin: 0;
         }
 
         .checkbox-item label {
-            flex: 1;
+            margin: 0;
             font-size: 0.95rem;
             color: #333;
-            line-height: 1.5;
+            cursor: pointer;
+            line-height: 1.4;
         }
 
         .checkbox-item a {
@@ -283,7 +286,11 @@
             margin-bottom: 1rem;
         }
 
-        /* ===== BOTÓN DE ENVÍO ===== */
+        .terms-summary p {
+            margin: 5px 0;
+        }
+
+        /* ===== BOTÓN ===== */
         .btn-submit {
             width: 100%;
             padding: 1.2rem;
@@ -308,33 +315,115 @@
             box-shadow: 0 4px 12px rgba(46, 125, 94, 0.3);
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* ===== HEADER ===== */
+        .main-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .main-header .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 60px;
+        }
+
+        .main-nav ul {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .main-nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 2px solid #1a3b2e;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            color: #1a3b2e !important;
+        }
+
+        .btn-registro {
+            background: #1a3b2e;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            color: white !important;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+        }
+
+        footer .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-info h3, .footer-social h3, .footer-horario h3 {
+            color: #2e7d5e;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info a, .footer-social a {
+            color: #ccc;
+            text-decoration: none;
+        }
+
+        .footer-social a {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+
         @media (max-width: 768px) {
             .registro-body {
                 padding: 2rem;
             }
-
             .form-row {
                 grid-template-columns: 1fr;
                 gap: 0;
             }
-        }
-
-        /* ===== FIX PARA INPUTS ===== */
-        input, select, textarea {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
-
-        input[type="tel"] {
-            -webkit-appearance: textfield;
-            -moz-appearance: textfield;
-            appearance: textfield;
-        }
-
-        input[type="tel"]:focus {
-            outline: none;
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .main-nav ul {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -360,8 +449,6 @@
                 <li><a href="/contacto">Contacto</a></li>
                 {% if logged %}
                     <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
-                    <li><a href="/mis-solicitudes">Mis solicitudes</a></li>
-                    <li><a href="/mis-denuncias">Mis denuncias</a></li>
                     <li><a href="/logout" class="btn-logout">Salir</a></li>
                 {% else %}
                     <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
@@ -391,84 +478,52 @@
                         
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="nombre">
-                                    <i class="fas fa-user"></i> Nombres *
-                                </label>
-                                <input type="text" id="nombre" name="nombre" 
-                                       placeholder="Ej: Juan Carlos" required>
+                                <label for="nombre"><i class="fas fa-user"></i> Nombres *</label>
+                                <input type="text" id="nombre" name="nombre" placeholder="Ej: Juan Carlos" required>
                             </div>
-
                             <div class="form-group">
-                                <label for="apellidos">
-                                    <i class="fas fa-user"></i> Apellidos *
-                                </label>
-                                <input type="text" id="apellidos" name="apellidos" 
-                                       placeholder="Ej: Pérez Rodríguez" required>
+                                <label for="apellidos"><i class="fas fa-user"></i> Apellidos *</label>
+                                <input type="text" id="apellidos" name="apellidos" placeholder="Ej: Pérez Rodríguez" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="cedula">
-                                    <i class="fas fa-id-card"></i> Cédula * (11 números)
-                                </label>
-                                <input type="text" id="cedula" name="cedula" 
-                                       placeholder="40212345678" maxlength="11" required
+                                <label for="cedula"><i class="fas fa-id-card"></i> Cédula * (11 números)</label>
+                                <input type="text" id="cedula" name="cedula" placeholder="40212345678" maxlength="11" required
                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                <small style="color: #666; font-size: 0.85rem;">
-                                    <i class="fas fa-info-circle"></i> Solo números, sin guiones
-                                </small>
+                                <small style="color: #666;">Solo números, sin guiones</small>
                             </div>
-
                             <div class="form-group">
-                                <label for="fecha_nacimiento">
-                                    <i class="fas fa-calendar"></i> Fecha de nacimiento *
-                                </label>
+                                <label for="fecha_nacimiento"><i class="fas fa-calendar"></i> Fecha de nacimiento *</label>
                                 <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="direccion">
-                                <i class="fas fa-map-marker-alt"></i> Dirección
-                            </label>
-                            <textarea id="direccion" name="direccion" rows="2" 
-                                      placeholder="Calle, número, sector..."></textarea>
+                            <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                            <textarea id="direccion" name="direccion" rows="2" placeholder="Calle, número, sector..."></textarea>
                         </div>
                     </div>
 
-                    <!-- SECCIÓN 2: CONTACTO - SIMPLIFICADO -->
+                    <!-- SECCIÓN 2: CONTACTO -->
                     <div class="form-section">
                         <div class="section-title">
                             <i class="fas fa-phone"></i> Contacto
                         </div>
 
                         <div class="form-group">
-                            <label for="email">
-                                <i class="fas fa-envelope"></i> Correo electrónico *
-                            </label>
-                            <input type="email" id="email" name="email" 
-                                   placeholder="ejemplo@correo.com" required>
+                            <label for="email"><i class="fas fa-envelope"></i> Correo electrónico *</label>
+                            <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" required>
                         </div>
 
-                        <!-- TELÉFONO - SIMPLIFICADO: UN SOLO CAMPO -->
                         <div class="form-group">
-                            <label for="telefono">
-                                <i class="fas fa-phone"></i> Teléfono * (10 números)
-                            </label>
-                            <input type="tel" 
-                                   id="telefono" 
-                                   name="telefono" 
-                                   class="input-tel" 
-                                   placeholder="8095551234" 
-                                   maxlength="10" 
-                                   inputmode="numeric"
-                                   required
-                                   autocomplete="off">
+                            <label for="telefono"><i class="fas fa-phone"></i> Teléfono * (10 números)</label>
+                            <input type="tel" id="telefono" name="telefono" class="input-tel" 
+                                   placeholder="8095551234" maxlength="10" required
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             <div id="telefono-feedback" class="input-feedback"></div>
-                            <small style="color: #666; font-size: 0.85rem;">
-                                <i class="fas fa-info-circle"></i> Ingresa tu número completo: código de área + 7 dígitos (ej: 8095551234)
-                            </small>
+                            <small style="color: #666;">Ingresa tu número completo: código de área + 7 dígitos</small>
                         </div>
                     </div>
 
@@ -480,9 +535,7 @@
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="password">
-                                    <i class="fas fa-lock"></i> Contraseña *
-                                </label>
+                                <label for="password"><i class="fas fa-lock"></i> Contraseña *</label>
                                 <input type="password" id="password" name="password" required>
                                 <div class="password-strength">
                                     <div class="strength-bar">
@@ -499,16 +552,14 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="confirmar_password">
-                                    <i class="fas fa-check-circle"></i> Confirmar contraseña *
-                                </label>
+                                <label for="confirmar_password"><i class="fas fa-check-circle"></i> Confirmar contraseña *</label>
                                 <input type="password" id="confirmar_password" name="confirmar_password" required>
                                 <div class="input-feedback" id="password-feedback"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- SECCIÓN 4: TÉRMINOS Y CONDICIONES -->
+                    <!-- SECCIÓN 4: TÉRMINOS Y CONDICIONES - VERSIÓN VISIBLE -->
                     <div class="form-section">
                         <div class="section-title">
                             <i class="fas fa-file-contract"></i> Términos y Condiciones
@@ -525,20 +576,23 @@
                         </div>
 
                         <div class="terms-group">
+                            <!-- CASILLA 1: Términos -->
                             <div class="checkbox-item">
                                 <input type="checkbox" id="terminos" name="terminos" required>
                                 <label for="terminos">
-                                    He leído y acepto los <a href="#">términos y condiciones</a> *
+                                    He leído y acepto los <a href="#" target="_blank">términos y condiciones</a> *
                                 </label>
                             </div>
 
+                            <!-- CASILLA 2: Privacidad -->
                             <div class="checkbox-item">
                                 <input type="checkbox" id="privacidad" name="privacidad" required>
                                 <label for="privacidad">
-                                    Acepto la <a href="#">política de privacidad</a> *
+                                    Acepto la <a href="#" target="_blank">política de privacidad</a> *
                                 </label>
                             </div>
 
+                            <!-- CASILLA 3: Mayor de edad -->
                             <div class="checkbox-item">
                                 <input type="checkbox" id="mayor_edad" name="mayor_edad" required>
                                 <label for="mayor_edad">
@@ -586,18 +640,13 @@
     </div>
 </footer>
 
-<!-- JavaScript para validación - SIMPLIFICADO -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // TELÉFONO - VALIDACIÓN SIMPLIFICADA
+    // Validación de teléfono
     const telefono = document.getElementById("telefono");
     if (telefono) {
         telefono.addEventListener("input", function () {
-            // Solo permitir números y limitar a 10 dígitos
-            this.value = this.value.replace(/\D/g, "").slice(0, 10);
-            
             const feedback = document.getElementById("telefono-feedback");
-            
             if (this.value.length === 10) {
                 feedback.innerHTML = "✓ Número válido";
                 feedback.style.color = "#28a745";
@@ -611,7 +660,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // VALIDAR CONTRASEÑAS
+    // Validación de contraseñas
     const password = document.getElementById('password');
     const confirmar = document.getElementById('confirmar_password');
     const passwordFeedback = document.getElementById('password-feedback');
@@ -629,8 +678,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // VALIDACIÓN DEL FORMULARIO
+
+    // Validación del formulario antes de enviar
     const form = document.getElementById('registroForm');
     if (form) {
         form.addEventListener('submit', function(e) {
@@ -639,7 +688,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 alert('El teléfono debe tener 10 dígitos (ej: 8095551234)');
                 tel.focus();
+                return false;
             }
+            
+            const terminos = document.getElementById('terminos');
+            const privacidad = document.getElementById('privacidad');
+            const mayorEdad = document.getElementById('mayor_edad');
+            
+            if (!terminos.checked) {
+                e.preventDefault();
+                alert('Debes aceptar los términos y condiciones');
+                terminos.focus();
+                return false;
+            }
+            
+            if (!privacidad.checked) {
+                e.preventDefault();
+                alert('Debes aceptar la política de privacidad');
+                privacidad.focus();
+                return false;
+            }
+            
+            if (!mayorEdad.checked) {
+                e.preventDefault();
+                alert('Debes confirmar que eres mayor de 18 años');
+                mayorEdad.focus();
+                return false;
+            }
+            
+            return true;
         });
     }
 });

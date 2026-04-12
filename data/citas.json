@@ -1,0 +1,30 @@
+[
+  {
+    "id": "67863fea-0453-4283-aeec-55eb60cad8d7",
+    "folio": "CT-260314-63B159",
+    "usuario_email": "ciudadano@email.com",
+    "usuario_nombre": "Juan Pérez",
+    "servicio": "atencion_ciudadana",
+    "servicio_nombre": "Atención Ciudadana",
+    "fecha": "2026-06-09",
+    "hora": "09:00",
+    "motivo": "un policia agredio un ciudadano",
+    "estado": "pendiente",
+    "fecha_solicitud": "2026-03-14T19:37:00.369753",
+    "notas_admin": ""
+  },
+  {
+    "id": "7068385a-6dce-4b2c-8f3a-6f4ac6e3492c",
+    "folio": "CT-260323-701B4D",
+    "usuario_email": "ciudadano@email.com",
+    "usuario_nombre": "Juan Pérez",
+    "servicio": "asesoria_legal",
+    "servicio_nombre": "Asesoría Legal Municipal",
+    "fecha": "2026-03-24",
+    "hora": "10:00",
+    "motivo": "un policia me atraco",
+    "estado": "pendiente",
+    "fecha_solicitud": "2026-03-23T08:39:32.870751",
+    "notas_admin": ""
+  }
+]

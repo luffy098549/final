@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Desarrollador - Mi Gobierno{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0"><i class="fas fa-code me-2"></i>Panel de Desarrollador</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-database fa-3x text-primary mb-3"></i>
+                                    <h5>Base de Datos</h5>
+                                    <a href="/desarrollador/database" class="btn btn-outline-primary btn-sm">Acceder</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-history fa-3x text-success mb-3"></i>
+                                    <h5>Logs del Sistema</h5>
+                                    <a href="/desarrollador/logs" class="btn btn-outline-success btn-sm">Acceder</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-plug fa-3x text-warning mb-3"></i>
+                                    <h5>API Tester</h5>
+                                    <a href="/desarrollador/api/tester" class="btn btn-outline-warning btn-sm">Acceder</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <h5>Información del Sistema</h5>
+                    <table class="table">
+                        <tr><th>Python:</th><td>{{ system_info.python_version }}</td></tr>
+                        <tr><th>Flask:</th><td>{{ system_info.flask_version }}</td></tr>
+                        <tr><th>Debug:</th><td>{{ system_info.debug }}</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,160 @@
+<section class="gestion anim">
+    <div class="container gestion-container">
+        <div class="gestion-texto">
+            <div class="section-eyebrow">Gestión Municipal</div>
+            <h2 class="section-title-serif">Compromiso con el desarrollo</h2>
+            <blockquote class="gestion-cita">
+                “Trabajando juntos por el desarrollo y bienestar de Cutupú”
+            </blockquote>
+            <p class="gestion-descripcion">
+                Bajo la dirección del Alcalde <strong>Robert Donald Tolentino Grullón</strong>, nuestro ayuntamiento concentra sus esfuerzos en acciones concretas para transformar nuestro distrito municipal, priorizando el diálogo con la comunidad y la gestión eficiente de los recursos públicos.
+            </p>
+            <div class="gestion-firma">
+                <div class="firma-avatar">RT</div>
+                <div>
+                    <div class="firma-nombre">Robert Donald Tolentino Grullón</div>
+                    <div class="firma-cargo">Director Municipal (Alcalde)</div>
+                </div>
+            </div>
+        </div>
+        <div class="gestion-logros">
+            <div class="logro-card">
+                <div class="logro-icono"><i class="fas fa-road"></i></div>
+                <h3>Infraestructura</h3>
+                <p>Asfaltado, aceras y obras viales para conectar mejor nuestra comunidad.</p>
+            </div>
+            <div class="logro-card">
+                <div class="logro-icono"><i class="fas fa-lightbulb"></i></div>
+                <h3>Alumbrado</h3>
+                <p>Modernización del sistema de iluminación para mayor seguridad.</p>
+            </div>
+            <div class="logro-card">
+                <div class="logro-icono"><i class="fas fa-leaf"></i></div>
+                <h3>Limpieza</h3>
+                <p>Espacios públicos impecables y campañas de conciencia ambiental.</p>
+            </div>
+            <div class="logro-card">
+                <div class="logro-icono"><i class="fas fa-laptop"></i></div>
+                <h3>Digitalización</h3>
+                <p>Trámites en línea, transparencia y acceso a la información.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .gestion {
+        padding: 6rem 0;
+        background: white;
+    }
+    .gestion-container {
+        display: flex;
+        gap: 4rem;
+        align-items: flex-start;
+    }
+    .gestion-texto {
+        flex: 1;
+    }
+    .section-eyebrow {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #2D5016;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .section-title-serif {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        font-weight: 800;
+        margin-bottom: 2rem;
+        color: #1A2410;
+    }
+    .gestion-cita {
+        font-size: 1.4rem;
+        font-weight: 700;
+        font-family: 'Playfair Display', serif;
+        border-left: 4px solid #2D5016;
+        padding-left: 1.5rem;
+        margin: 1.5rem 0;
+        color: #374151;
+        font-style: italic;
+    }
+    .gestion-descripcion {
+        color: #4B5563;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+    .gestion-firma {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .firma-avatar {
+        width: 50px;
+        height: 50px;
+        background: #EAF2DC;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #2D5016;
+        font-size: 1.2rem;
+    }
+    .firma-nombre {
+        font-weight: 700;
+        color: #1A2410;
+    }
+    .firma-cargo {
+        font-size: 0.8rem;
+        color: #2D5016;
+        font-weight: 500;
+    }
+    .gestion-logros {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    .logro-card {
+        background: #FBF7F0;
+        border-radius: 1.5rem;
+        padding: 1.8rem;
+        transition: all 0.3s ease;
+    }
+    .logro-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+    .logro-icono {
+        font-size: 2rem;
+        color: #2D5016;
+        margin-bottom: 1rem;
+    }
+    .logro-card h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .logro-card p {
+        font-size: 0.9rem;
+        color: #6B7280;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 900px) {
+        .gestion-container {
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .gestion-logros {
+            width: 100%;
+        }
+    }
+    @media (max-width: 640px) {
+        .gestion-logros {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

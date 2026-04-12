@@ -1,0 +1,117 @@
+<section class="acciones anim">
+    <div class="container">
+        <div class="section-eyebrow text-center">Acciones Principales</div>
+        <h2 class="section-title-serif text-center">Transformando Cutupú</h2>
+        <div class="acciones-grid">
+            <div class="accion-card">
+                <div class="accion-imagen">
+                    <img src="{{ url_for('static', filename='img/asfaltado.jpeg') }}" alt="Asfaltado de Calles">
+                </div>
+                <h3>Asfaltado de Calles</h3>
+                <p>Mejorando la vialidad y conectividad de nuestras comunidades con obras de calidad.</p>
+            </div>
+            <div class="accion-card">
+                <div class="accion-imagen">
+                    <img src="{{ url_for('static', filename='img/limpieza.png') }}" alt="Limpieza de Espacios">
+                </div>
+                <h3>Limpieza de Espacios</h3>
+                <p>Manteniendo nuestros entornos públicos impecables y saludables para todos.</p>
+            </div>
+            <div class="accion-card">
+                <div class="accion-imagen">
+                    <img src="{{ url_for('static', filename='img/alumbrado.jpeg') }}" alt="Alumbrado Público">
+                </div>
+                <h3>Alumbrado Público</h3>
+                <p>Modernizando el sistema de iluminación para mayor seguridad en nuestras calles.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .acciones {
+        background: #2D5016;
+        padding: 6rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .acciones::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    }
+    .acciones .section-eyebrow,
+    .acciones .section-title-serif {
+        color: white;
+        text-align: center;
+    }
+    .section-eyebrow.text-center,
+    .section-title-serif.text-center {
+        text-align: center;
+    }
+    .acciones-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+    .accion-card {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(4px);
+        border-radius: 1.5rem;
+        padding: 1.8rem;
+        transition: all 0.3s ease;
+        text-align: center;
+        color: white;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    .accion-card:hover {
+        transform: translateY(-8px);
+        background: rgba(255,255,255,0.2);
+        border-color: rgba(255,255,255,0.4);
+    }
+    .accion-imagen {
+        width: 100%;
+        height: 180px;
+        border-radius: 1rem;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .accion-imagen img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .accion-card:hover .accion-imagen img {
+        transform: scale(1.05);
+    }
+    .accion-card h3 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
+    .accion-card p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        line-height: 1.5;
+        color: white;
+    }
+
+    @media (max-width: 900px) {
+        .acciones-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 640px) {
+        .acciones-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Configuración de Cuenta - Mi Gobierno{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Menú lateral de usuario -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <img src="{{ url_for('static', filename='uploads/' + (foto_perfil if foto_perfil else 'default-avatar.png')) }}" 
+                             class="rounded-circle img-fluid" style="width: 100px; height: 100px; object-fit: cover;" 
+                             alt="Avatar">
+                        <h5 class="mt-2">{{ user_name }}</h5>
+                        <p class="text-muted small">{{ user_email }}</p>
+                    </div>
+                    <hr>
+                    <div class="nav flex-column nav-pills">
+                        <a class="nav-link" href="/mi-cuenta">
+                            <i class="fas fa-user me-2"></i>Mi Cuenta
+                        </a>
+                        <a class="nav-link active" href="/mi-cuenta/configuracion">
+                            <i class="fas fa-cog me-2"></i>Configuración
+                        </a>
+                        <a class="nav-link" href="/mis-solicitudes">
+                            <i class="fas fa-clipboard-list me-2"></i>Mis Solicitudes
+                        </a>
+                        <a class="nav-link" href="/mis-denuncias">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Mis Denuncias
+                        </a>
+                        <a class="nav-link" href="/mis-citas">
+                            <i class="fas fa-calendar-check me-2"></i>Mis Citas
+                        </a>
+                        <a class="nav-link" href="/mis-tramites">
+                            <i class="fas fa-folder-open me-2"></i>Todos mis Trámites
+                        </a>
+                        <hr>
+                        <a class="nav-link text-danger" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">Configuración de la Cuenta</h4>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form method="POST" action="/mi-cuenta/configuracion" enctype="multipart/form-data">
+                        <h5 class="mb-3">Información Personal</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" name="nombre" value="{{ usuario.nombre }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Apellidos</label>
+                                <input type="text" class="form-control" name="apellidos" value="{{ usuario.apellidos }}">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" value="{{ usuario.email }}" disabled readonly>
+                                <small class="text-muted">El email no se puede cambiar</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" name="telefono" value="{{ usuario.telefono }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Dirección</label>
+                            <input type="text" class="form-control" name="direccion" value="{{ usuario.direccion }}">
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h5 class="mb-3">Cambiar Contraseña</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Contraseña actual</label>
+                                <input type="password" class="form-control" name="password_actual">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nueva contraseña</label>
+                                <input type="password" class="form-control" name="password_nueva">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Confirmar contraseña</label>
+                                <input type="password" class="form-control" name="password_confirmar">
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h5 class="mb-3">Foto de Perfil</h5>
+                        <div class="mb-3">
+                            <input type="file" class="form-control" name="foto_perfil" accept="image/*">
+                            <small class="text-muted">Formatos permitidos: JPG, PNG, GIF. Máximo 5MB</small>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h5 class="mb-3">Preferencias de Notificación</h5>
+                        <div class="mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="notificaciones_email" id="notifEmail" checked>
+                                <label class="form-check-label" for="notifEmail">
+                                    Recibir notificaciones por email
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="notificaciones_sms" id="notifSMS">
+                                <label class="form-check-label" for="notifSMS">
+                                    Recibir notificaciones por SMS
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                            <a href="/mi-cuenta" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,208 +1,258 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transparencia - Villa Cutupú</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-</head>
-<body>
+{% extends "base.html" %}
 
-<header class="main-header">
-    <div class="container">
-        <div class="logo">
-            <a href="/">
-                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}"
-                     alt="Logo Junta Distrital Villa Cutupú"
-                     class="header-logo">
-            </a>
-        </div>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/municipio">Municipio</a></li>
-                <li><a href="/servicios">Servicios</a></li>
-                <li><a href="/transparencia" class="active">Transparencia</a></li>
-                <li><a href="/noticias">Noticias</a></li>
-                <li><a href="/contacto">Contacto</a></li>
-                {% if logged %}
-                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
-                    <li><a href="/mis-solicitudes">Mis solicitudes</a></li>
-                    <li><a href="/mis-denuncias">Mis denuncias</a></li>
-                    <li><a href="/logout" class="btn-logout">Salir</a></li>
-                {% else %}
-                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
-                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
-</header>
+{% block title %}Transparencia — Villa Cutupú{% endblock %}
 
-<main>
-    <section class="page-header">
-        <h1>Portal de Transparencia</h1>
-        <p>Acceso libre a la información pública · Ley 200-04</p>
-    </section>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia.css') }}">
+{% endblock %}
 
-    <section class="page">
+{% block content %}
 
-        <!-- Bloque bienvenida -->
-        <div class="welcome-block">
-            <h2>Bienvenidos al Portal de Transparencia<br>Junta Municipal Río Verde Arriba</h2>
-            <p>En este portal interactivo hacemos disponible todo lo requerido en la <strong>Ley General de Libre Acceso a la Información Pública (Ley 200-04)</strong> y el <strong>Decreto No. 130-05</strong> que crea el reglamento de la ley.</p>
-
-            <div class="legal-quote">
-                <p><span class="ley-ref">Artículo 5.-</span> «Se dispone la informatización y la incorporación al sistema de comunicación por Internet, o a cualquier otro sistema similar que en el futuro se establezca, de todos los organismos públicos centralizados y descentralizados del Estado, incluyendo el Distrito Nacional y los Municipios, con la finalidad de garantizar a través de éste un acceso directo del público a la información del Estado.»</p>
-                <p>Todos los poderes y organismos del Estado deberán instrumentar la publicación de sus respectivas «Páginas Web» a los siguientes fines:</p>
-                <ul>
-                    <li><strong>Difusión de Información:</strong> Estructura, integrantes, normativas de funcionamiento, proyectos, informes de gestión, base de datos.</li>
-                    <li><strong>Centro de Intercambio y Atención al Cliente o Usuario:</strong> Consultas, quejas y sugerencias.</li>
-                    <li><strong>Trámites o Transacciones Bilaterales:</strong> «La información a que hace referencia el párrafo anterior será de libre acceso al público sin necesidad de petición previa».</li>
-                </ul>
-            </div>
-
-            <p class="nota-final">Nuestro Portal cumple con las especificaciones contempladas en la Ley 200-04, la cual establece la actualización permanente de las informaciones ofrecidas en el mismo.</p>
-        </div>
-
-        <!-- Badges de cumplimiento -->
-        <div class="compliance-badge">
-            <span class="badge-item"><span class="badge-icon">⚖️</span> Ley 200-04</span>
-            <span class="badge-item"><span class="badge-icon">📄</span> Decreto 130-05</span>
-            <span class="badge-item"><span class="badge-icon">🔄</span> Actualización permanente</span>
-        </div>
-
-        <h3 class="section-subtitle">
-            Categorías de información disponible
-            <span class="tag">Sin solicitud previa</span>
-        </h3>
-
-        <!-- Grid de cards -->
-        <div class="transparencia-grid">
-
-            <div class="service-card">
-                <span class="card-icono">🏛️</span>
-                <h3>Estructura orgánica</h3>
-                <p>Organigrama, funciones de cada área, base legal y responsables. Información actualizada de la Junta Municipal.</p>
-                <a href="/transparencia/estructura" class="btn-transparencia">Ver estructura</a>
-            </div>
-
-            <div class="service-card">
-                <span class="card-icono">👥</span>
-                <h3>Integrantes y autoridades</h3>
-                <p>Nómina de funcionarios, regidores, directores, y sus declaraciones juradas (si aplica).</p>
-                <a href="/transparencia/integrantes" class="btn-transparencia">Conocer equipo</a>
-            </div>
-
-            <div class="service-card">
-                <span class="card-icono">⚖️</span>
-                <h3>Normativas de funcionamiento</h3>
-                <p>Reglamentos internos, ordenanzas municipales, resoluciones y bandos.</p>
-                <a href="/transparencia/normativas" class="btn-transparencia">Consultar</a>
-            </div>
-
-            <div class="service-card">
-                <span class="card-icono">🏗️</span>
-                <h3>Proyectos y obras</h3>
-                <p>Planes, proyectos en ejecución, licitaciones, contratos y avances de obra.</p>
-                <a href="/transparencia/proyectos" class="btn-transparencia">Ver proyectos</a>
-            </div>
-
-            <div class="service-card">
-                <span class="card-icono">📊</span>
-                <h3>Informes de gestión</h3>
-                <p>Rendición de cuentas, informes trimestrales y anuales, ejecución presupuestaria.</p>
-                <a href="/transparencia/informes" class="btn-transparencia">Acceder</a>
-            </div>
-
-            <div class="service-card">
-                <span class="card-icono">🗄️</span>
-                <h3>Base de datos municipal</h3>
-                <p>Estadísticas, censos, indicadores socioeconómicos y conjuntos de datos abiertos.</p>
-                <a href="/transparencia/datos" class="btn-transparencia">Explorar datos</a>
-            </div>
-
-            <div class="service-card">
-                <span class="card-icono">💬</span>
-                <h3>Atención al usuario (SAC)</h3>
-                <p>Realice consultas, quejas o sugerencias sobre la gestión municipal. Sistema de seguimiento.</p>
-                <a href="/transparencia/atencion" class="btn-transparencia">Ingresar</a>
-            </div>
-
-            <div class="service-card">
-                <span class="card-icono">🤝</span>
-                <h3>Trámites y servicios</h3>
-                <p>Solicitudes de certificados, permisos, constancias. Ventanilla única virtual.</p>
-                <a href="/servicios" class="btn-transparencia">Ir a trámites</a>
-            </div>
-
-            <div class="service-card">
-                <span class="card-icono">📋</span>
-                <h3>Actas y acuerdos</h3>
-                <p>Actas de sesiones del concejo, acuerdos municipales y resoluciones administrativas.</p>
-                <a href="/transparencia/actas" class="btn-transparencia">Consultar</a>
-            </div>
-
-            <div class="service-card">
-                <span class="card-icono">🛒</span>
-                <h3>Compras y contrataciones</h3>
-                <p>Licitaciones, órdenes de compra, proveedores y contratos vigentes.</p>
-                <a href="/transparencia/compras" class="btn-transparencia">Ver detalles</a>
-            </div>
-
-        </div>
-
-        <p class="nota-actualizacion">
-            🕐 Esta sección se actualiza permanentemente conforme al Artículo 5 de la Ley 200-04.
-            Para solicitar información específica, puede usar el formulario de
-            <a href="/transparencia/atencion">Atención al Usuario</a>.
-        </p>
-
-    </section>
-</main>
-
-<footer>
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-info">
-                <h3>Junta Distrital de Villa Cutupú</h3>
-                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
-                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                <div class="social-links">
-                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
-                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+<!-- HERO INTERNO -->
+<section class="transp-hero">
+    <div class="transp-hero-pattern"></div>
+    <div class="container transp-hero-container">
+        <div class="transp-hero-content">
+            <h1 class="transp-hero-title">
+                Portal de <span class="transp-hero-accent">Transparencia</span>
+            </h1>
+            <div class="transp-hero-line"></div>
+            <p class="transp-hero-description">
+                Acceso libre a la información pública · Ley 200-04
+            </p>
+            <div class="transp-hero-stats">
+                <div class="transp-stat-card">
+                    <span class="transp-stat-number">Ley 200-04</span>
+                    <span class="transp-stat-label">Libre Acceso</span>
+                </div>
+                <div class="transp-stat-card">
+                    <span class="transp-stat-number">Decreto 130-05</span>
+                    <span class="transp-stat-label">Reglamento</span>
+                </div>
+                <div class="transp-stat-card">
+                    <span class="transp-stat-number">Actualización</span>
+                    <span class="transp-stat-label">Permanente</span>
                 </div>
             </div>
-            <div class="footer-links">
-                <h3>Enlaces rápidos</h3>
-                <ul>
-                    <li><a href="/">Inicio</a></li>
-                    <li><a href="/municipio">Municipio</a></li>
-                    <li><a href="/servicios">Servicios</a></li>
-                    <li><a href="/transparencia">Transparencia</a></li>
-                    <li><a href="/noticias">Noticias</a></li>
-                    <li><a href="/contacto">Contacto</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact">
-                <h3>Contacto</h3>
-                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
-</footer>
+</section>
 
-<script src="{{ url_for('static', filename='js/transparencia.js') }}"></script>
-</body>
-</html>
+<!-- BLOQUE LEGAL -->
+<section class="transp-legal">
+    <div class="container">
+        <div class="transp-legal-card">
+            <div class="transp-legal-badge">Ley 200-04 · Decreto 130-05</div>
+            <h2 class="transp-legal-title">Bienvenidos al Portal de Transparencia<br>Junta Municipal Río Verde Arriba</h2>
+            <p class="transp-legal-intro">
+                En este portal hacemos disponible todo lo requerido en la <strong>Ley General de Libre Acceso a la Información Pública (Ley 200-04)</strong> y el <strong>Decreto No. 130-05</strong> que crea el reglamento de la ley.
+            </p>
+            <div class="transp-legal-quote">
+                <div class="transp-quote-badge">Artículo 5</div>
+                <p class="transp-quote-text">
+                    «Se dispone la informatización y la incorporación al sistema de comunicación por Internet, o a cualquier otro sistema similar que en el futuro se establezca, de todos los organismos públicos centralizados y descentralizados del Estado, incluyendo el Distrito Nacional y los Municipios, con la finalidad de garantizar a través de éste un acceso directo del público a la información del Estado.»
+                </p>
+            </div>
+            <div class="transp-legal-grid">
+                <div class="transp-legal-item">
+                    <div class="transp-legal-icon"><i class="fas fa-share-alt"></i></div>
+                    <h3>Difusión de Información</h3>
+                    <p>Estructura, integrantes, normativas, proyectos, informes de gestión y base de datos municipal.</p>
+                </div>
+                <div class="transp-legal-item">
+                    <div class="transp-legal-icon"><i class="fas fa-headset"></i></div>
+                    <h3>Atención al Usuario</h3>
+                    <p>Consultas, quejas y sugerencias sobre la gestión municipal, con seguimiento personalizado.</p>
+                </div>
+                <div class="transp-legal-item">
+                    <div class="transp-legal-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <h3>Trámites Bilaterales</h3>
+                    <p>Información de libre acceso sin necesidad de petición previa, conforme a la ley.</p>
+                </div>
+            </div>
+            <div class="transp-legal-footer">
+                <i class="fas fa-star-of-life"></i>
+                <span>Nuestro Portal cumple con las especificaciones contempladas en la Ley 200-04, con actualización permanente de las informaciones.</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BADGES DE CUMPLIMIENTO -->
+<div class="transp-badges">
+    <div class="container">
+        <div class="transp-badges-group">
+            <div class="transp-badge transp-badge-green">
+                <i class="fas fa-gavel"></i>
+                <span>Ley 200-04</span>
+            </div>
+            <div class="transp-badge transp-badge-gold">
+                <i class="fas fa-file-alt"></i>
+                <span>Decreto 130-05</span>
+            </div>
+            <div class="transp-badge transp-badge-blue">
+                <i class="fas fa-sync-alt"></i>
+                <span>Actualización permanente</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- GRID DE CATEGORÍAS -->
+<section class="transp-categories">
+    <div class="container">
+        <div class="transp-section-header">
+            <h3 class="transp-section-title">Categorías de información disponible</h3>
+            <span class="transp-section-badge">Sin solicitud previa</span>
+        </div>
+
+        <div class="transp-grid">
+
+            <!-- 01 -->
+            <div class="transp-card">
+                <div class="transp-card-band"></div>
+                <div class="transp-card-number">01</div>
+                <div class="transp-card-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3>Estructura orgánica</h3>
+                <p>Organigrama, funciones de cada área, base legal y responsables de la Junta Municipal.</p>
+                <a href="/transparencia/estructura" class="transp-card-btn">Ver estructura <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <!-- 02 -->
+            <div class="transp-card">
+                <div class="transp-card-band"></div>
+                <div class="transp-card-number">02</div>
+                <div class="transp-card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Integrantes y autoridades</h3>
+                <p>Nómina de funcionarios, regidores, directores y sus declaraciones juradas.</p>
+                <a href="/transparencia/integrantes" class="transp-card-btn">Conocer equipo <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <!-- 03 -->
+            <div class="transp-card">
+                <div class="transp-card-band"></div>
+                <div class="transp-card-number">03</div>
+                <div class="transp-card-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <h3>Normativas de funcionamiento</h3>
+                <p>Reglamentos internos, ordenanzas municipales, resoluciones y bandos.</p>
+                <a href="/transparencia/normativas" class="transp-card-btn">Consultar <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <!-- 04 -->
+            <div class="transp-card">
+                <div class="transp-card-band"></div>
+                <div class="transp-card-number">04</div>
+                <div class="transp-card-icon">
+                    <i class="fas fa-hard-hat"></i>
+                </div>
+                <h3>Proyectos y obras</h3>
+                <p>Planes, proyectos en ejecución, licitaciones, contratos y avances de obra.</p>
+                <a href="/transparencia/proyectos" class="transp-card-btn">Ver proyectos <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <!-- 05 -->
+            <div class="transp-card">
+                <div class="transp-card-band"></div>
+                <div class="transp-card-number">05</div>
+                <div class="transp-card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Informes de gestión</h3>
+                <p>Rendición de cuentas, informes trimestrales y anuales, ejecución presupuestaria.</p>
+                <a href="/transparencia/informes" class="transp-card-btn">Acceder <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <!-- 06 -->
+            <div class="transp-card">
+                <div class="transp-card-band"></div>
+                <div class="transp-card-number">06</div>
+                <div class="transp-card-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3>Base de datos municipal</h3>
+                <p>Estadísticas, censos, indicadores socioeconómicos y conjuntos de datos abiertos.</p>
+                <a href="/transparencia/datos" class="transp-card-btn">Explorar datos <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <!-- 07 -->
+            <div class="transp-card">
+                <div class="transp-card-band"></div>
+                <div class="transp-card-number">07</div>
+                <div class="transp-card-icon">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+                <h3>Atención al usuario (SAC)</h3>
+                <p>Realice consultas, quejas o sugerencias sobre la gestión municipal.</p>
+                <a href="/transparencia/atencion" class="transp-card-btn">Ingresar <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <!-- 08 -->
+            <div class="transp-card">
+                <div class="transp-card-band"></div>
+                <div class="transp-card-number">08</div>
+                <div class="transp-card-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Trámites y servicios</h3>
+                <p>Solicitudes de certificados, permisos, constancias. Ventanilla única virtual.</p>
+                <a href="/servicios" class="transp-card-btn">Ir a trámites <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <!-- 09 -->
+            <div class="transp-card">
+                <div class="transp-card-band"></div>
+                <div class="transp-card-number">09</div>
+                <div class="transp-card-icon">
+                    <i class="fas fa-file-signature"></i>
+                </div>
+                <h3>Actas y acuerdos</h3>
+                <p>Actas de sesiones del concejo, acuerdos municipales y resoluciones administrativas.</p>
+                <a href="/transparencia/actas" class="transp-card-btn">Consultar <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <!-- 10 -->
+            <div class="transp-card">
+                <div class="transp-card-band"></div>
+                <div class="transp-card-number">10</div>
+                <div class="transp-card-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h3>Compras y contrataciones</h3>
+                <p>Licitaciones, órdenes de compra, proveedores y contratos vigentes.</p>
+                <a href="/transparencia/compras" class="transp-card-btn">Ver detalles <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+        </div>
+
+        <div class="transp-note">
+            <i class="fas fa-clock"></i>
+            <span>Esta sección se actualiza permanentemente conforme al Artículo 5 de la Ley 200-04. Para solicitar información específica use el formulario de</span>
+            <a href="/transparencia/atencion">Atención al Usuario</a>.
+        </div>
+    </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="transp-cta">
+    <div class="transp-cta-pattern"></div>
+    <div class="container transp-cta-container">
+        <h2 class="transp-cta-title">¿Necesitas información específica?</h2>
+        <p class="transp-cta-description">Estamos aquí para servirte con transparencia y compromiso.</p>
+        <div class="transp-cta-buttons">
+            <a href="/transparencia/atencion" class="transp-cta-btn-primary">
+                Solicitar información <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="/servicios" class="transp-cta-btn-secondary">
+                Ver servicios <i class="fas fa-clipboard-list"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

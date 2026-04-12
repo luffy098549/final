@@ -22,5 +22,17 @@
     "tipo": "toggle_activo",
     "descripcion": "Usuario moderador1@cutupu.gob.do activado",
     "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-03-16T11:17:55.915242",
+    "tipo": "comentar",
+    "descripcion": "Comentario agregado a solicitud SOL-2603-2698",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-04-12T17:04:23.980258",
+    "tipo": "crear_admin",
+    "descripcion": "Moderador duransebastian623@gmail.com creado",
+    "admin": "superadmin@cutupu.gob.do"
   }
 ]

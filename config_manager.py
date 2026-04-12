@@ -1,3 +1,8 @@
+class Config:
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:1234@localhost:5432/ayuntamiento"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
 """
 config_manager.py
 Gestión de configuración persistente del sistema sin base de datos.
@@ -281,3 +286,5 @@ def limpiar_exports_viejos(max_archivos: int = 5):
     zips = sorted(exports_dir.glob('backup_*.zip'), key=os.path.getmtime)
     while len(zips) > max_archivos:
         zips.pop(0).unlink()
+
+        
