@@ -3,58 +3,394 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actas y Acuerdos - Transparencia | Villa Cutupú</title>
-    <link rel="icon" type="image/png" href="img/logo.png">
-    <!-- RUTAS CORREGIDAS: archivos en la misma carpeta -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/actas.css') }}">
+    <title>Actas y Documentos - Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* RESPALDO POR SI LOS ARCHIVOS NO CARGAN */
-        :root {
-            --green: #7E8F76;
-            --green-dark: #5A684F;
-            --green-light: #A9B7A2;
-            --green-xlight: #EFF3EE;
-            --text: #1C1C1C;
-            --text-soft: #3D3D3D;
-            --border: #E8E8E8;
-            --gray-50: #FAFAFA;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; background: white; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        .main-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 60px;
+            width: auto;
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .main-nav a {
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .main-nav a:hover,
+        .main-nav a.active {
+            color: #2d6a4f;
+        }
+
+        .btn-login, .btn-registro, .btn-logout {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .btn-login {
+            background: #2d6a4f;
+            color: white !important;
+        }
+
+        .btn-registro {
+            border: 1px solid #2d6a4f;
+            color: #2d6a4f !important;
+        }
+
+        .btn-logout {
+            background: #dc2626;
+            color: white !important;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #1a3c2c 0%, #2d6a4f 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Intro Block */
+        .intro-block {
+            background: #f0f7f2;
+            border-left: 4px solid #2d6a4f;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .bloque-titulo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin: 2.5rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #2d6a4f;
+            display: inline-block;
+        }
+
+        /* Grid de información */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #2d6a4f;
+        }
+
+        .info-icono {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin-bottom: 0.75rem;
+        }
+
+        .info-card p {
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        /* Procedimiento */
+        .procedimiento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .procedimiento-paso {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .procedimiento-paso:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .paso-numero {
+            background: #2d6a4f;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin: 0 auto 1rem auto;
+        }
+
+        .procedimiento-paso h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin-bottom: 0.5rem;
+        }
+
+        .procedimiento-paso p {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        /* Contacto Grid */
+        .contacto-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .contacto-item {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .contacto-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .ci-icono {
+            font-size: 2rem;
+        }
+
+        .contacto-item h4 {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .contacto-item p, .contacto-item a {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a3c2c;
+            text-decoration: none;
+        }
+
+        .contacto-item a:hover {
+            color: #2d6a4f;
+        }
+
+        /* Nota legal */
+        .nota-legal {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-info h3,
+        .footer-links h3,
+        .footer-contact h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info p,
+        .footer-contact p {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+
+        .footer-info a,
+        .footer-contact a {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .footer-info a:hover {
+            color: white;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin: 0.5rem 0;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #1e293b;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-header .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .bloque-titulo {
+                font-size: 1.4rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header class="main-header">
-        <div class="container">
-            <div class="logo">
-                <a href="/">
-                    <img src="img/Adobe%20Express%20-%20file.png" alt="Logo Villa Cutupú" class="header-logo" onerror="this.src='https://via.placeholder.com/70x70?text=Logo'">
-                </a>
-            </div>
-            
-            <button class="menu-toggle" aria-label="Menú" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="/">Inicio</a></li>
-                    <li><a href="/municipio">Municipio</a></li>
-                    <li><a href="/servicios">Servicios</a></li>
-                    <li><a href="/transparencia" class="active">Transparencia</a></li>
-                    <li><a href="/noticias">Noticias</a></li>
-                    <li><a href="/contacto">Contacto</a></li>
-                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
-                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
-                </ul>
-            </nav>
+
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/"><img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" class="header-logo"></a>
         </div>
-        
-        <div class="mobile-menu">
+        <nav class="main-nav">
             <ul>
                 <li><a href="/">Inicio</a></li>
                 <li><a href="/municipio">Municipio</a></li>
@@ -62,160 +398,194 @@
                 <li><a href="/transparencia" class="active">Transparencia</a></li>
                 <li><a href="/noticias">Noticias</a></li>
                 <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
                 <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
                 <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
             </ul>
-        </div>
-        <div class="overlay"></div>
-    </header>
+        </nav>
+    </div>
+</header>
 
-    <main>
-        <!-- PAGE HEADER -->
-        <section class="page-header">
-            <div class="breadcrumb">
-                <a href="/transparencia">Transparencia</a> 
-                <span>/</span> 
-                <span>Actas y Acuerdos</span>
-            </div>
-            <h1>Actas y Acuerdos</h1>
-            <p>Actas del Concejo de Regidores y acuerdos municipales vigentes</p>
-        </section>
-
-        <!-- CONTENIDO PRINCIPAL -->
-        <section class="page">
-            <!-- Bloque introductorio -->
-            <div class="intro-block">
-                <p>Publicación de actas conforme al <strong>Artículo 3 de la Ley 200-04</strong>. Las actas del Concejo de Regidores son documentos públicos aprobados en sesión. Se publican en un plazo no mayor de 5 días hábiles tras su aprobación.</p>
-            </div>
-
-            <!-- ACTAS 2025 -->
-            <h2 class="bloque-titulo">Actas de sesiones del Concejo de Regidores — 2025</h2>
-            <div class="tabla-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Acta N°</th>
-                            <th>Fecha</th>
-                            <th>Tipo de sesión</th>
-                            <th>Temas principales</th>
-                            <th>Descargar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>005-2025</strong></td>
-                            <td>10/03/2025</td>
-                            <td><span class="badge badge-verde">Ordinaria</span></td>
-                            <td>Aprobación proyecto parque central, informes de comisiones</td>
-                            <td><a href="#" class="doc-btn">PDF</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>004-2025</strong></td>
-                            <td>24/02/2025</td>
-                            <td><span class="badge badge-verde">Ordinaria</span></td>
-                            <td>Revisión de ordenanza de tasas, quejas ciudadanas</td>
-                            <td><a href="#" class="doc-btn">PDF</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>003-2025</strong></td>
-                            <td>10/02/2025</td>
-                            <td><span class="badge badge-verde">Ordinaria</span></td>
-                            <td>Aprobación resolución 003-2025, aceras sector Multifamiliares</td>
-                            <td><a href="#" class="doc-btn">PDF</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>002-2025</strong></td>
-                            <td>27/01/2025</td>
-                            <td><span class="badge badge-gold">Extraordinaria</span></td>
-                            <td>Presupuesto participativo 2025</td>
-                            <td><a href="#" class="doc-btn">PDF</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>001-2025</strong></td>
-                            <td>13/01/2025</td>
-                            <td><span class="badge badge-verde">Ordinaria</span></td>
-                            <td>Elección de comisiones 2025, juramentación de nuevos regidores</td>
-                            <td><a href="#" class="doc-btn">PDF</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- ACTAS 2024 - COMPILADO -->
-            <h2 class="bloque-titulo">Actas de sesiones — 2024</h2>
-            <div class="docs-lista">
-                <div class="doc-item">
-                    <span class="doc-icono">📋</span>
-                    <div class="doc-info">
-                        <strong>Actas del Concejo de Regidores — Año 2024 (compilado)</strong>
-                        <span>24 sesiones ordinarias · 3 extraordinarias · PDF — 12.4 MB</span>
-                    </div>
-                    <a href="#" class="doc-btn">Descargar</a>
-                </div>
-            </div>
-
-            <!-- ACUERDOS MUNICIPALES VIGENTES -->
-            <h2 class="bloque-titulo">Acuerdos municipales vigentes</h2>
-            <div class="tabla-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Acuerdo</th>
-                            <th>Fecha</th>
-                            <th>Contraparte</th>
-                            <th>Objeto</th>
-                            <th>Vigencia</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>001-2024</strong></td>
-                            <td>15/03/2024</td>
-                            <td>MOPC</td>
-                            <td>Mantenimiento de caminos vecinales del Distrito Municipal</td>
-                            <td><span class="badge badge-azul">2 años</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>008-2023</strong></td>
-                            <td>20/10/2023</td>
-                            <td>EDUCA</td>
-                            <td>Programa de becas municipales para estudiantes del distrito</td>
-                            <td><span class="badge badge-azul">3 años</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>005-2023</strong></td>
-                            <td>05/06/2023</td>
-                            <td>Ministerio de Cultura</td>
-                            <td>Festival del Café y el Cacao — apoyo logístico y financiero</td>
-                            <td><span class="badge badge-gris">Anual</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- NOTA INFORMATIVA -->
-            <div class="intro-block" style="margin-top: 2rem;">
-                <p><strong>📢 Actualización:</strong> Las actas más recientes se publican dentro de los primeros 5 días hábiles de cada mes. Para solicitar copias certificadas de actas anteriores al 2023, puede contactar a la Secretaría Municipal a través del <a href="/contacto" style="color: var(--green-dark); font-weight: 600;">formulario de contacto</a> o presencialmente en nuestras oficinas.</p>
-            </div>
-        </section>
-    </main>
-
-    <!-- FOOTER -->
-    <footer>
+<main>
+    <section class="page-header">
         <div class="container">
-            <div class="footer-grid">
-                <div class="footer-info">
-                    <h3>Junta Distrital de Villa Cutupú</h3>
-                    <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
-                    <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                    <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                    <div class="social-links">
-                        <a href="#" class="social-link">Facebook</a>
-                        <a href="#" class="social-link">Instagram</a>
-                    </div>
+            <div class="breadcrumb">
+                <a href="/transparencia">Transparencia</a> <span>/</span> <span>Actas y Documentos</span>
+            </div>
+            <h1>Actas y Documentos</h1>
+            <p>Acceso a actas, resoluciones y documentos oficiales del Ayuntamiento de Cutupú</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="intro-block">
+            <p>Conforme al <strong>Artículo 3 de la Ley 200-04</strong> sobre Libre Acceso a la Información Pública, toda persona tiene derecho a acceder a las actas, resoluciones y documentos oficiales del Ayuntamiento de Cutupú. A continuación, presentamos la información disponible y el procedimiento para solicitar documentos.</p>
+        </div>
+
+        <!-- ¿QUÉ SON LAS ACTAS MUNICIPALES? -->
+        <h2 class="bloque-titulo">📋 ¿Qué son las Actas Municipales?</h2>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-icono">📄</div>
+                <h3>Definición</h3>
+                <p>Las actas municipales son documentos oficiales que registran las decisiones, acuerdos y resoluciones tomadas por las autoridades del ayuntamiento en sus reuniones ordinarias y extraordinarias.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icono">⚖️</div>
+                <h3>Base Legal</h3>
+                <p>Según la <strong>Ley 176-07</strong> y la <strong>Ley 200-04</strong>, todas las actas de las sesiones del ayuntamiento son documentos públicos y deben estar disponibles para consulta ciudadana.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icono">👥</div>
+                <h3>¿Quién las genera?</h3>
+                <p>El Ayuntamiento de Cutupú genera actas de todas sus reuniones, incluyendo sesiones del alcalde con los vocales y reuniones administrativas de los departamentos.</p>
+            </div>
+        </div>
+
+        <!-- DOCUMENTOS DISPONIBLES -->
+        <h2 class="bloque-titulo">📂 Documentos Disponibles</h2>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-icono">📜</div>
+                <h3>Resoluciones Municipales</h3>
+                <p>Decisiones oficiales del alcalde y los vocales sobre asuntos administrativos y comunitarios del distrito.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icono">📊</div>
+                <h3>Informes de Gestión</h3>
+                <p>Reportes trimestrales y anuales sobre la ejecución presupuestaria y avance de proyectos municipales.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icono">🏛️</div>
+                <h3>Reglamentos Internos</h3>
+                <p>Normativas que rigen el funcionamiento de los departamentos del ayuntamiento.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icono">💰</div>
+                <h3>Presupuestos Municipales</h3>
+                <p>Documentos financieros que detallan los ingresos y gastos del ayuntamiento aprobados anualmente.</p>
+            </div>
+        </div>
+
+        <!-- CÓMO SOLICITAR ACTAS Y DOCUMENTOS -->
+        <h2 class="bloque-titulo">📝 ¿Cómo Solicitar Actas y Documentos?</h2>
+        
+        <div class="procedimiento-grid">
+            <div class="procedimiento-paso">
+                <div class="paso-numero">1</div>
+                <h4>Identifica el documento</h4>
+                <p>Determina qué acta, resolución o documento necesitas (fecha aproximada o tema).</p>
+            </div>
+            <div class="procedimiento-paso">
+                <div class="paso-numero">2</div>
+                <h4>Presenta tu solicitud</h4>
+                <p>Dirígete a la Oficina Administrativa o envía un correo a la OAI/M.</p>
+            </div>
+            <div class="procedimiento-paso">
+                <div class="paso-numero">3</div>
+                <h4>Incluye tus datos</h4>
+                <p>Nombre completo, cédula, descripción clara del documento solicitado y correo de contacto.</p>
+            </div>
+            <div class="procedimiento-paso">
+                <div class="paso-numero">4</div>
+                <h4>Recibe respuesta</h4>
+                <p>Recibirás respuesta en un plazo máximo de <strong>15 días hábiles</strong> según la Ley 200-04.</p>
+            </div>
+        </div>
+
+        <!-- OFICINAS RESPONSABLES -->
+        <h2 class="bloque-titulo">🏢 Oficinas Responsables</h2>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-icono">📋</div>
+                <h3>Oficina Administrativa</h3>
+                <p>Atiende solicitudes de documentos y gestiones no publicadas en la página web oficial del ayuntamiento.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icono">📢</div>
+                <h3>Libre Acceso a la Información (OAI/M)</h3>
+                <p>Garantiza que los ciudadanos puedan acceder a la información del ayuntamiento de manera transparente, conforme a la Ley 200-04.</p>
+            </div>
+        </div>
+
+        <!-- DATOS DE CONTACTO -->
+        <h2 class="bloque-titulo">📞 Contacto para Solicitudes</h2>
+        
+        <div class="contacto-grid">
+            <div class="contacto-item">
+                <span class="ci-icono">📞</span>
+                <div>
+                    <h4>Teléfono</h4>
+                    <p><a href="tel:+18096917111">(809) 691-7111</a></p>
                 </div>
-                
-                 <div class="footer-links">
+            </div>
+            <div class="contacto-item">
+                <span class="ci-icono">✉️</span>
+                <div>
+                    <h4>Correo Electrónico</h4>
+                    <p><a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                </div>
+            </div>
+            <div class="contacto-item">
+                <span class="ci-icono">🕐</span>
+                <div>
+                    <h4>Horario de Atención</h4>
+                    <p>Lunes a Viernes<br>8:00 AM – 4:00 PM</p>
+                </div>
+            </div>
+            <div class="contacto-item">
+                <span class="ci-icono">📍</span>
+                <div>
+                    <h4>Dirección</h4>
+                    <p>Calle Principal, Cutupú<br>Río Verde Arriba, La Vega</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BASE LEGAL -->
+        <div class="nota-legal">
+            <strong>📌 Base Legal (Ley 200-04 sobre Libre Acceso a la Información Pública)</strong><br><br>
+            <strong>Artículo 3:</strong> El Estado está obligado a publicar información actualizada sobre sus funcionarios y procedimientos.<br>
+            <strong>Artículo 5:</strong> Toda persona tiene derecho a solicitar y recibir información de las instituciones públicas.<br>
+            <strong>Artículo 13:</strong> El plazo máximo para responder una solicitud de información es de 15 días hábiles.<br>
+            <strong>Artículo 18:</strong> El acceso a la información pública es gratuito. El solicitante solo asumirá el costo de reproducción.
+        </div>
+
+        <!-- NOTA IMPORTANTE -->
+        <div class="intro-block" style="margin-top: 1rem;">
+            <p><strong>📢 Importante:</strong> Si el documento que solicitas no está disponible en formato digital, la Oficina Administrativa te indicará el procedimiento para obtener una copia física o certificada. Todas las solicitudes deben ser respondidas dentro del plazo establecido por la ley.</p>
+        </div>
+
+        <div style="margin: 2rem 0; text-align: center; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
+            <p style="color: #64748b;">¿Necesitas hacer una solicitud de actas o documentos oficiales?</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="/contacto" style="background: #2d6a4f; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 600;">📞 Contáctanos ahora</a>
+            </p>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            <div class="footer-links">
                 <h3>Enlaces rápidos</h3>
                 <ul>
                     <li><a href="/">Inicio</a></li>
@@ -226,74 +596,19 @@
                     <li><a href="/contacto">Contacto</a></li>
                 </ul>
             </div>
-                <div class="footer-contact">
-                    <h3>Contacto</h3>
-                    <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                    <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                    <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            <div class="footer-contact">
+                <h3>Horario de Atención</h3>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+                <p>📍 Oficina Central: Calle Principal, Cutupú</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
             </div>
         </div>
-    </footer>
+        <div class="footer-bottom">
+            <p>© 2025-2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
 
-    <!-- BOTÓN VOLVER ARRIBA -->
-    <button class="back-to-top" aria-label="Volver arriba">↑</button>
-
-    <!-- SCRIPT -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuToggle = document.querySelector('.menu-toggle');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            const overlay = document.querySelector('.overlay');
-            const header = document.querySelector('.main-header');
-            const backToTop = document.querySelector('.back-to-top');
-            
-            // Menú móvil
-            if (menuToggle) {
-                menuToggle.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    mobileMenu.classList.toggle('active');
-                    overlay.classList.toggle('active');
-                    document.body.classList.toggle('menu-open');
-                });
-            }
-            
-            // Cerrar menú
-            if (overlay) {
-                overlay.addEventListener('click', function() {
-                    menuToggle.classList.remove('active');
-                    mobileMenu.classList.remove('active');
-                    overlay.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                });
-            }
-            
-            // Header scroll
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 50) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-                
-                if (window.scrollY > 400) {
-                    backToTop.classList.add('visible');
-                } else {
-                    backToTop.classList.remove('visible');
-                }
-            });
-            
-            // Volver arriba
-            if (backToTop) {
-                backToTop.addEventListener('click', function() {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            }
-        });
-    </script>
+<script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
 </body>
 </html>

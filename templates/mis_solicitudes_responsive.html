@@ -137,15 +137,26 @@
 
 {% block extra_js %}
 <script>
-// IMPORTANTE: Esta es la línea corregida (reemplaza a {{ tramites|tojson|safe }})
-let solicitudes = {{ solicitudes_json|safe }};
+// ✅ CORREGIDO: Verificar si existe la variable
+let solicitudes = [];
+{% if solicitudes_json %}
+    solicitudes = {{ solicitudes_json|safe }};
+{% else %}
+    console.log('No hay solicitudes_json, usando datos de la tabla');
+    // Extraer datos de la tabla como fallback
+    document.querySelectorAll('#solicitudesTable tbody tr').forEach(row => {
+        const folio = row.cells[1]?.innerText || '';
+        const usuario = row.cells[2]?.innerText || '';
+        if (folio) {
+            solicitudes.push({ folio, usuario });
+        }
+    });
+{% endif %}
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Solicitudes cargadas:', solicitudes.length);
     
-    // Aquí puedes agregar funcionalidad JavaScript adicional
-    // Por ejemplo, búsqueda en tiempo real, ordenamiento, etc.
-    
+    // Búsqueda en tiempo real
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('keyup', function() {

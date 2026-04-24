@@ -10,6 +10,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 <style>
     .admin-mapa-container{padding:1.5rem}
     .stats-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
@@ -26,6 +27,11 @@
     .btn-geocode{background:#1a3b2e;color:white;padding:.6rem 1.5rem;border:none;border-radius:8px;cursor:pointer}
     .btn-geocode:hover{background:#2e7d5e}
     .coords-result{background:var(--gray-50);padding:.8rem;border-radius:8px;margin-top:.5rem;font-family:monospace;font-size:.8rem}
+    .btn-ayuntamiento{background:#2563eb;color:white;padding:.6rem 1.5rem;border:none;border-radius:8px;cursor:pointer;margin-bottom:1rem}
+    .btn-ayuntamiento:hover{background:#1d4ed8}
+    .ayuntamiento-marker-icon{background:white;border-radius:50%;padding:8px;border:3px solid #1a3b2e;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
+    .leaflet-popup-content-wrapper{border-radius:10px;border-left:4px solid #1a3b2e}
+    .map-buttons{display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
 </style>
 {% endblock %}
 
@@ -71,6 +77,16 @@
         </div>
     </div>
 
+    <!-- Botones de navegación rápida -->
+    <div class="map-buttons">
+        <button class="btn-ayuntamiento" onclick="irAlAyuntamiento()">
+            <i class="fas fa-landmark"></i> 🏛️ Ayuntamiento Río Verde Arriba (Cutupú)
+        </button>
+        <button class="btn-geocode" onclick="centrarEnDenuncias()">
+            <i class="fas fa-map-marker-alt"></i> Ver todas las denuncias
+        </button>
+    </div>
+
     <!-- Mapa -->
     <div id="adminMap"></div>
 
@@ -109,15 +125,63 @@
 let map;
 let markers = [];
 let denunciasData = {{ denuncias|tojson }};
+let ayuntamientoMarker = null;
+
+// Coordenadas del Ayuntamiento Río Verde Arriba (Cutupú)
+const AYUNTAMIENTO = {
+    lat: 19.316891981862504,
+    lng: -70.54179958830814,
+    nombre: "Ayuntamiento Río Verde Arriba (Cutupú)",
+    direccion: "Calle Principal, Cutupú, República Dominicana"
+};
 
 function initMap() {
-    map = L.map('adminMap').setView([19.0, -70.5], 13);
+    // Inicializar mapa centrado en el ayuntamiento
+    map = L.map('adminMap').setView([AYUNTAMIENTO.lat, AYUNTAMIENTO.lng], 16);
     
+    // Capa de mapa
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+        attribution: '© OpenStreetMap contributors | © Ayuntamiento Río Verde Arriba'
     }).addTo(map);
     
+    // Agregar marcador especial del ayuntamiento
+    agregarMarcadorAyuntamiento();
+    
+    // Cargar todas las denuncias
     cargarDenuncias();
+}
+
+function agregarMarcadorAyuntamiento() {
+    // Ícono personalizado para el ayuntamiento
+    const ayuntamientoIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: '<div style="background:white;border-radius:50%;padding:10px;border:3px solid #1a3b2e;box-shadow:0 2px 10px rgba(0,0,0,0.2)"><i class="fas fa-landmark" style="font-size:24px;color:#1a3b2e"></i></div>',
+        iconSize: [44, 44],
+        popupAnchor: [0, -22]
+    });
+    
+    ayuntamientoMarker = L.marker([AYUNTAMIENTO.lat, AYUNTAMIENTO.lng], { icon: ayuntamientoIcon }).addTo(map);
+    
+    ayuntamientoMarker.bindPopup(`
+        <div style="min-width:250px">
+            <strong style="color:#1a3b2e;font-size:1rem">🏛️ ${AYUNTAMIENTO.nombre}</strong><br>
+            <span style="color:#666;font-size:.8rem">📌 ${AYUNTAMIENTO.direccion}</span><br>
+            <hr style="margin:.5rem 0">
+            <div style="font-size:.8rem">
+                <i class="fas fa-phone"></i> Tel: (809) XXX-XXXX<br>
+                <i class="fas fa-envelope"></i> info@rioverde.gob.do<br>
+                <i class="fas fa-clock"></i> Lun-Vie: 8am - 4pm
+            </div>
+            <hr style="margin:.5rem 0">
+            <a href="https://www.google.com/maps?q=${AYUNTAMIENTO.lat},${AYUNTAMIENTO.lng}" 
+               target="_blank" style="color:#2563eb;text-decoration:none">
+                <i class="fas fa-external-link-alt"></i> Abrir en Google Maps
+            </a>
+        </div>
+    `);
+    
+    // Abrir popup automáticamente al cargar
+    ayuntamientoMarker.openPopup();
 }
 
 async function cargarDenuncias() {
@@ -125,39 +189,83 @@ async function cargarDenuncias() {
         const res = await fetch('/api/denuncias/geojson');
         const data = await res.json();
         
-        data.features.forEach(feature => {
-            const props = feature.properties;
-            const coords = feature.geometry.coordinates;
-            
-            const marker = L.marker([coords[1], coords[0]]).addTo(map);
-            
-            marker.bindPopup(`
-                <div style="min-width:200px">
-                    <strong style="color:#1a3b2e">${props.folio}</strong><br>
-                    <span style="color:#666;font-size:.8rem">${props.tipo_nombre}</span><br>
-                    <span>${props.direccion}</span><br>
-                    <span class="badge badge-${props.estado}">${props.estado.replace('_',' ')}</span><br>
-                    <a href="${props.url}" style="display:inline-block;margin-top:.5rem;color:#1a3b2e">Ver detalle</a>
-                </div>
-            `);
-            
-            markers.push(marker);
-        });
+        if (data.features && data.features.length > 0) {
+            data.features.forEach(feature => {
+                const props = feature.properties;
+                const coords = feature.geometry.coordinates;
+                
+                // Determinar color según estado
+                let markerColor = '#1a3b2e';
+                if (props.estado === 'pendiente') markerColor = '#b85e00';
+                if (props.estado === 'en_proceso') markerColor = '#2563eb';
+                if (props.estado === 'resuelta') markerColor = '#1e7b4c';
+                
+                const customIcon = L.divIcon({
+                    className: 'custom-marker',
+                    html: `<div style="background:${markerColor};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 0 4px rgba(0,0,0,0.5)"></div>`,
+                    iconSize: [12, 12],
+                    popupAnchor: [0, -6]
+                });
+                
+                const marker = L.marker([coords[1], coords[0]], { icon: customIcon }).addTo(map);
+                
+                marker.bindPopup(`
+                    <div style="min-width:220px">
+                        <strong style="color:#1a3b2e">📋 ${props.folio}</strong><br>
+                        <span style="color:#666;font-size:.8rem">
+                            <i class="fas fa-tag"></i> ${props.tipo_nombre}
+                        </span><br>
+                        <span style="font-size:.8rem">
+                            <i class="fas fa-location-dot"></i> ${props.direccion}
+                        </span><br>
+                        <span class="badge" style="background:${markerColor}20;color:${markerColor};padding:2px 8px;border-radius:12px;font-size:.7rem">
+                            ${props.estado.replace('_',' ')}
+                        </span><br>
+                        <a href="${props.url}" style="display:inline-block;margin-top:.5rem;color:#1a3b2e;text-decoration:none">
+                            <i class="fas fa-eye"></i> Ver detalle
+                        </a>
+                    </div>
+                `);
+                
+                markers.push(marker);
+            });
+        }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error al cargar denuncias:', error);
+    }
+}
+
+function irAlAyuntamiento() {
+    map.setView([AYUNTAMIENTO.lat, AYUNTAMIENTO.lng], 18);
+    if (ayuntamientoMarker) {
+        ayuntamientoMarker.openPopup();
+    }
+}
+
+function centrarEnDenuncias() {
+    if (markers.length > 0) {
+        const group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.1));
+    } else {
+        map.setView([AYUNTAMIENTO.lat, AYUNTAMIENTO.lng], 13);
     }
 }
 
 async function geocodificar() {
     const denunciaSelect = document.getElementById('denunciaSelect');
-    const direccion = document.getElementById('direccionInput').value || 
-                     denunciaSelect.selectedOptions[0]?.dataset.direccion;
+    const direccionInput = document.getElementById('direccionInput');
+    const direccion = direccionInput.value || denunciaSelect.selectedOptions[0]?.dataset.direccion;
     const denunciaId = denunciaSelect.value;
     
     if (!direccion) {
-        alert('Por favor ingresa una dirección');
+        alert('⚠️ Por favor ingresa una dirección o selecciona una denuncia');
         return;
     }
+    
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
+    btn.disabled = true;
     
     try {
         const res = await fetch('/api/geocodificar', {
@@ -172,29 +280,72 @@ async function geocodificar() {
         const data = await res.json();
         
         if (data.success) {
-            document.getElementById('coordsResult').style.display = 'block';
-            document.getElementById('coordsResult').innerHTML = `
+            const resultDiv = document.getElementById('coordsResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
                 <strong>✅ Coordenadas encontradas:</strong><br>
-                Latitud: ${data.latitud}<br>
-                Longitud: ${data.longitud}<br>
-                <small>${data.display_name}</small>
+                📍 Latitud: ${data.latitud}<br>
+                📍 Longitud: ${data.longitud}<br>
+                <small>🏷️ ${data.display_name || direccion}</small>
+                <br><br>
+                <button onclick="window.open('https://www.google.com/maps?q=${data.latitud},${data.longitud}', '_blank')" 
+                        style="background:#2563eb;color:white;border:none;padding:4px 12px;border-radius:6px;cursor:pointer">
+                    <i class="fas fa-external-link-alt"></i> Ver en Google Maps
+                </button>
             `;
             
-            // Agregar marcador
-            L.marker([data.latitud, data.longitud])
-                .addTo(map)
-                .bindPopup(`<strong>${direccion}</strong>`)
-                .openPopup();
+            // Agregar marcador temporal
+            const tempIcon = L.divIcon({
+                html: '<div style="background:#2563eb;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(37,99,235,0.8);animation:pulse 1s infinite"></div>',
+                iconSize: [16, 16]
+            });
+            
+            const tempMarker = L.marker([data.latitud, data.longitud], { icon: tempIcon }).addTo(map);
+            tempMarker.bindPopup(`<strong>📍 ${direccion}</strong><br><small>Geocodificado recientemente</small>`).openPopup();
             
             map.setView([data.latitud, data.longitud], 16);
+            
+            // Eliminar marcador temporal después de 5 segundos
+            setTimeout(() => map.removeLayer(tempMarker), 5000);
+            
+            // Limpiar input
+            direccionInput.value = '';
         } else {
-            alert('No se pudo encontrar la dirección');
+            alert('❌ No se pudo encontrar la dirección. Intenta con más detalles (ej: Calle, Sector, Ciudad)');
         }
     } catch (error) {
-        alert('Error al geocodificar');
+        console.error('Error:', error);
+        alert('❌ Error al geocodificar. Verifica tu conexión.');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
     }
 }
 
+// Animación CSS para el marcador temporal
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes pulse {
+        0% { transform: scale(0.8); opacity: 1; }
+        100% { transform: scale(1.5); opacity: 0; }
+    }
+    .custom-marker:hover {
+        transform: scale(1.2);
+        transition: transform 0.2s;
+        cursor: pointer;
+    }
+`;
+document.head.appendChild(style);
+
+// Auto-completar dirección al seleccionar denuncia
+document.getElementById('denunciaSelect').addEventListener('change', function() {
+    const direccion = this.selectedOptions[0]?.dataset.direccion;
+    if (direccion) {
+        document.getElementById('direccionInput').value = direccion;
+    }
+});
+
+// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', initMap);
 </script>
 {% endblock %}

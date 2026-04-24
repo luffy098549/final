@@ -1,14 +1,361 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estructura Orgánica - Transparencia | Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/estructura.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para estructura orgánica */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        .main-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 60px;
+            width: auto;
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .main-nav a {
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .main-nav a:hover,
+        .main-nav a.active {
+            color: #2d6a4f;
+        }
+
+        .btn-login, .btn-registro, .btn-logout {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .btn-login {
+            background: #2d6a4f;
+            color: white !important;
+        }
+
+        .btn-registro {
+            border: 1px solid #2d6a4f;
+            color: #2d6a4f !important;
+        }
+
+        .btn-logout {
+            background: #dc2626;
+            color: white !important;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #1a3c2c 0%, #2d6a4f 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Intro Block */
+        .intro-block {
+            background: #f0f7f2;
+            border-left: 4px solid #2d6a4f;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .intro-block p {
+            margin: 0;
+            line-height: 1.6;
+            color: #1e293b;
+        }
+
+        /* Títulos */
+        .bloque-titulo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin: 2.5rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #2d6a4f;
+            display: inline-block;
+        }
+
+        /* Grid de departamentos */
+        .departamentos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .departamento-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .departamento-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #2d6a4f;
+        }
+
+        .departamento-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #2d6a4f;
+            transition: width 0.3s ease;
+        }
+
+        .departamento-card:hover::before {
+            width: 6px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icono {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .card-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .card-funcion {
+            color: #475569;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* Estadísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2d6a4f;
+        }
+
+        .stat-label {
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-info h3,
+        .footer-links h3,
+        .footer-contact h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info p,
+        .footer-contact p {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+
+        .footer-info a,
+        .footer-contact a {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .footer-info a:hover {
+            color: white;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin: 0.5rem 0;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #1e293b;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-header .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .bloque-titulo {
+                font-size: 1.4rem;
+            }
+            
+            .departamentos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
+
 <header class="main-header">
     <div class="container">
         <div class="logo">
@@ -36,74 +383,207 @@
 
 <main>
     <section class="page-header">
-        <div class="breadcrumb">
-            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Estructura Orgánica</span>
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/transparencia">Transparencia</a> <span>/</span> <span>Estructura Orgánica</span>
+            </div>
+            <h1>Estructura Orgánica</h1>
+            <p>Los 17 departamentos que conforman el Ayuntamiento de Cutupú</p>
         </div>
-        <h1>Estructura Orgánica</h1>
-        <p>Organigrama, funciones y base legal de la Junta Distrital de Villa Cutupú</p>
     </section>
 
-    <section class="page">
+    <div class="container">
         <div class="intro-block">
-            <p>La Junta Distrital de Villa Cutupú (Río Verde Arriba) está organizada conforme a la <strong>Ley 176-07 del Distrito Nacional y los Municipios</strong>. Toda persona tiene derecho a conocer esta estructura según el <strong>Artículo 5 de la Ley 200-04</strong>.</p>
+            <p>La Junta Distrital de Villa Cutupú está organizada en <strong>17 departamentos</strong> que trabajan coordinadamente para brindar servicios de calidad a los ciudadanos. Esta estructura está conformada conforme a la <strong>Ley 176-07 del Distrito Nacional y los Municipios</strong> y el <strong>Artículo 5 de la Ley 200-04</strong> sobre Libre Acceso a la Información Pública.</p>
         </div>
 
-        <h2 class="bloque-titulo">Organigrama funcional</h2>
-        <div class="organigrama">
-            <div class="org-root">🏛️ ALCALDÍA (Director Municipal)</div>
-            <div class="org-sub">
-                <div class="org-item">VICE ALCALDÍA (Subdirección)</div>
-                <div class="org-item">CONSEJO DE REGIDORES</div>
-                <div class="org-sub">
-                    <div class="org-item">Presidente del Concejo</div>
-                    <div class="org-item">Vicepresidente</div>
-                    <div class="org-item last">Secretario del Concejo</div>
-                </div>
-                <div class="org-item">SECRETARÍA MUNICIPAL</div>
-                <div class="org-item">TESORERÍA MUNICIPAL</div>
-                <div class="org-item">DIRECCIÓN DE PLANEAMIENTO URBANO</div>
-                <div class="org-item">OFICINA DE ACCESO A LA INFORMACIÓN (OAI)</div>
-                <div class="org-item">UNIDAD DE COMPRAS Y CONTRATACIONES</div>
-                <div class="org-item">DEPARTAMENTO DE RECURSOS HUMANOS</div>
-                <div class="org-item">DEPARTAMENTO DE OBRAS PÚBLICAS MUNICIPALES</div>
-                <div class="org-item">DEPARTAMENTO DE SERVICIOS MUNICIPALES</div>
-                <div class="org-item">DEPARTAMENTO DE JUVENTUD Y DEPORTES</div>
-                <div class="org-item last">DEPARTAMENTO DE CULTURA Y TURISMO</div>
+        <!-- Estadísticas rápidas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">17</div>
+                <div class="stat-label">Departamentos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">160+</div>
+                <div class="stat-label">Empleados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Sectores</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Servicios</div>
             </div>
         </div>
 
-        <h2 class="bloque-titulo">Funciones por área</h2>
-        <div class="tabla-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Área</th>
-                        <th>Base Legal</th>
-                        <th>Funciones Principales</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td><strong>Alcaldía (Dirección)</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Dirección general, representación del municipio, ejecución de políticas públicas</td></tr>
-                    <tr><td><strong>Vice Alcaldía</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Apoyo a la alcaldía, coordinación de comisiones, suplencia del alcalde</td></tr>
-                    <tr><td><strong>Consejo de Regidores</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Órgano normativo y fiscalizador, aprobación de ordenanzas y presupuesto</td></tr>
-                    <tr><td><strong>Secretaría Municipal</strong></td><td><span class="badge badge-gris">Reglamento Interno</span></td><td>Gestión documental, actas de sesiones, certificaciones</td></tr>
-                    <tr><td><strong>Tesorería</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Administración financiera, gestión de ingresos y pagos</td></tr>
-                    <tr><td><strong>Planeamiento Urbano</strong></td><td><span class="badge badge-azul">Ley 6232</span></td><td>Ordenamiento territorial, licencias de construcción, uso de suelos</td></tr>
-                    <tr><td><strong>OAI</strong></td><td><span class="badge badge-azul">Ley 200-04</span></td><td>Recepción y gestión de solicitudes de información, actualización del portal</td></tr>
-                    <tr><td><strong>Compras y Contrataciones</strong></td><td><span class="badge badge-azul">Ley 340-06</span></td><td>Procesos de licitación, contrataciones, gestión de proveedores</td></tr>
-                    <tr><td><strong>Recursos Humanos</strong></td><td><span class="badge badge-gris">Reglamento Interno</span></td><td>Gestión de nómina, reclutamiento, capacitación del personal</td></tr>
-                    <tr><td><strong>Obras Públicas</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Ejecución y supervisión de proyectos de infraestructura municipal</td></tr>
-                    <tr><td><strong>Servicios Municipales</strong></td><td><span class="badge badge-verde">Ley 176-07</span></td><td>Aseo urbano, cementerio, alumbrado público, parques</td></tr>
-                </tbody>
-            </table>
+        <h2 class="bloque-titulo">Departamentos del Ayuntamiento</h2>
+        
+        <div class="departamentos-grid">
+            <!-- 1. Oficina Administrativa -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">📋</div>
+                    <h3>Oficina Administrativa</h3>
+                </div>
+                <p class="card-funcion">Atiende a los ciudadanos, especialmente cuando desean realizar solicitudes o gestiones que no están publicadas en la página oficial del ayuntamiento.</p>
+            </div>
+
+            <!-- 2. Caja Municipal -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">💰</div>
+                    <h3>Caja Municipal</h3>
+                </div>
+                <p class="card-funcion">Responsable de cobrar recibos y realizar pagos mediante la entrega de cheques.</p>
+            </div>
+
+            <!-- 3. Libre Acceso a la Información Pública -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">📢</div>
+                    <h3>Libre Acceso a la Información Pública</h3>
+                </div>
+                <p class="card-funcion">Garantiza que los ciudadanos puedan acceder a la información del ayuntamiento de manera transparente.</p>
+            </div>
+
+            <!-- 4. Salón de Reuniones -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">🏛️</div>
+                    <h3>Salón de Reuniones</h3>
+                </div>
+                <p class="card-funcion">Espacio destinado para realizar reuniones, actividades administrativas y toma de decisiones.</p>
+            </div>
+
+            <!-- 5. Departamento de Tecnología -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">💻</div>
+                    <h3>Departamento de Tecnología</h3>
+                </div>
+                <p class="card-funcion">Encargado de gestionar y dar seguimiento a las redes sociales y la página web del ayuntamiento.</p>
+            </div>
+
+            <!-- 6. Cocina -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">🍳</div>
+                    <h3>Cocina</h3>
+                </div>
+                <p class="card-funcion">Se encarga de preparar café y desayuno, principalmente para el personal del área trasera del ayuntamiento, donde se encuentran los departamentos de ingeniería y transportación.</p>
+            </div>
+
+            <!-- 7. Gestión / Recursos Humanos -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">👥</div>
+                    <h3>Gestión / Recursos Humanos</h3>
+                </div>
+                <p class="card-funcion">Administra todo lo relacionado con el personal, como nóminas y seguros médicos. También contribuye al crecimiento organizado del distrito y al bienestar de los empleados.</p>
+            </div>
+
+            <!-- 8. Sindicatura -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">⚖️</div>
+                    <h3>Sindicatura</h3>
+                </div>
+                <p class="card-funcion">Oficina principal del síndico, quien dirige y representa el ayuntamiento.</p>
+            </div>
+
+            <!-- 9. Policía Municipal / Seguridad -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">👮</div>
+                    <h3>Policía Municipal / Seguridad</h3>
+                </div>
+                <p class="card-funcion">Encargada de brindar protección al ayuntamiento y mantener la seguridad en el distrito municipal.</p>
+            </div>
+
+            <!-- 10. Departamento de Transportación -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">🚛</div>
+                    <h3>Departamento de Transportación</h3>
+                </div>
+                <p class="card-funcion">Responsable del mantenimiento de equipos pesados y vehículos, además de apoyar en labores como la limpieza de parques y espacios públicos.</p>
+            </div>
+
+            <!-- 11. Departamento de Ingeniería -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">🏗️</div>
+                    <h3>Departamento de Ingeniería</h3>
+                </div>
+                <p class="card-funcion">Se encarga de supervisar obras, construcciones y proyectos de infraestructura en el distrito.</p>
+            </div>
+
+            <!-- 12. Arbitrio -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">📊</div>
+                    <h3>Arbitrio</h3>
+                </div>
+                <p class="card-funcion">Responsable de recaudar y gestionar los impuestos dentro del distrito municipal.</p>
+            </div>
+
+            <!-- 13. Cementerio -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">🪦</div>
+                    <h3>Cementerio</h3>
+                </div>
+                <p class="card-funcion">Encargado de la administración, mantenimiento y organización del cementerio municipal.</p>
+            </div>
+
+            <!-- 14. Tesorería -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">💵</div>
+                    <h3>Tesorería</h3>
+                </div>
+                <p class="card-funcion">Se ocupa de procesar los pagos y manejar los recursos económicos del ayuntamiento.</p>
+            </div>
+
+            <!-- 15. Finanzas -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">📈</div>
+                    <h3>Finanzas</h3>
+                </div>
+                <p class="card-funcion">Supervisa que los expedientes estén completos y que los procesos financieros se cumplan correctamente. Verifica que los ingresos y gastos se manejen adecuadamente.</p>
+            </div>
+
+            <!-- 16. Compras -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">🛒</div>
+                    <h3>Compras</h3>
+                </div>
+                <p class="card-funcion">Adquiere los materiales necesarios para construcciones y mantenimiento de camiones y equipos municipales.</p>
+            </div>
+
+            <!-- 17. Contabilidad -->
+            <div class="departamento-card">
+                <div class="card-header">
+                    <div class="card-icono">📒</div>
+                    <h3>Contabilidad</h3>
+                </div>
+                <p class="card-funcion">Elabora comprobantes de gastos, gestiona cuentas por pagar y lleva el registro contable del ayuntamiento.</p>
+            </div>
         </div>
-    </section>
+
+        <!-- Información adicional -->
+        <div class="intro-block" style="margin-top: 2rem;">
+            <p><strong>📌 Nota:</strong> El Ayuntamiento de Cutupú está dirigido por el alcalde <strong>Rober Donald Tolentino</strong>, junto a los vocales: William Mata, Yumiri Bueno, Xiomara Romano, Francisco Peña y Colinson Sevalle. La función principal es mantener el distrito limpio, organizado y en condiciones saludables para todos los habitantes.</p>
+        </div>
+    </div>
 </main>
 
 <footer>
     <div class="container">
         <div class="footer-grid">
-            <!-- Columna 1: Información institucional -->
             <div class="footer-info">
                 <h3>Junta Distrital de Villa Cutupú</h3>
                 <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
@@ -114,8 +594,6 @@
                     <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
                 </div>
             </div>
-            
-            <!-- Columna 2: ENLACES RÁPIDOS (corregido) -->
             <div class="footer-links">
                 <h3>Enlaces rápidos</h3>
                 <ul>
@@ -127,18 +605,15 @@
                     <li><a href="/contacto">Contacto</a></li>
                 </ul>
             </div>
-            
-            <!-- Columna 3: Contacto -->
             <div class="footer-contact">
-                <h3>Contacto</h3>
+                <h3>Horario de Atención</h3>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+                <p>📍 Oficina Central: Calle Principal, Cutupú</p>
                 <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
             </div>
         </div>
-        
         <div class="footer-bottom">
-            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            <p>© 2025-2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>

@@ -1,0 +1,641 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Bitácora del Sistema{% endblock %}
+
+{% block content %}
+<div class="bit-wrapper">
+
+  <!-- Encabezado -->
+  <div class="bit-header">
+    <div>
+      <p class="bit-breadcrumb">Panel Admin › Herramientas</p>
+      <h1 class="bit-titulo">Bitácora del Sistema</h1>
+      <p class="bit-subtitulo">Registro completo de todas las acciones administrativas.</p>
+    </div>
+    <div class="bit-header-acciones">
+      <a href="{{ url_for('admin.dashboard') }}" class="bit-btn bit-btn--secondary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Volver
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats rápidos -->
+  <div class="bit-stats-grid">
+    <div class="bit-stat-card">
+      <span class="bit-stat-label">Total registros</span>
+      <span class="bit-stat-num">{{ acciones | length }}</span>
+    </div>
+    <div class="bit-stat-card">
+      <span class="bit-stat-label">Página actual</span>
+      <span class="bit-stat-num">{{ pagina }} / {{ total_paginas }}</span>
+    </div>
+    <div class="bit-stat-card">
+      <span class="bit-stat-label">Registros por página</span>
+      <span class="bit-stat-num">50</span>
+    </div>
+    <div class="bit-stat-card">
+      <span class="bit-stat-label">Último registro</span>
+      <span class="bit-stat-num" style="font-size: 0.85rem;">
+        {% if acciones %}
+          {{ acciones[0].fecha[:10] if acciones[0].fecha else '—' }}
+        {% else %}
+          Sin registros
+        {% endif %}
+      </span>
+    </div>
+  </div>
+
+  <!-- Tabla de acciones -->
+  <div class="bit-card">
+
+    <!-- Toolbar -->
+    <div class="bit-toolbar">
+      <div class="bit-toolbar-left">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--bit-accent);">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        <span class="bit-toolbar-titulo">Registro de acciones</span>
+      </div>
+      <div class="bit-toolbar-right">
+        <input type="text" id="bit-busqueda" class="bit-input-busqueda" placeholder="Filtrar por acción o admin...">
+      </div>
+    </div>
+
+    {% if acciones %}
+
+    <!-- Cabecera de tabla -->
+    <div class="bit-tabla-header">
+      <span>Fecha y hora</span>
+      <span>Tipo de acción</span>
+      <span>Descripción</span>
+      <span>Administrador</span>
+    </div>
+
+    <!-- Filas -->
+    <div id="bit-lista">
+      {% for accion in acciones %}
+
+      {% set tipo_lower = accion.tipo | lower %}
+
+      {% if 'eliminar' in tipo_lower or 'delete' in tipo_lower %}
+        {% set clase_tipo = 'bit-tipo--rojo' %}
+        {% set label_tipo = 'Eliminar' %}
+      {% elif 'crear' in tipo_lower or 'crear_admin' in tipo_lower %}
+        {% set clase_tipo = 'bit-tipo--verde' %}
+        {% set label_tipo = 'Crear' %}
+      {% elif 'editar' in tipo_lower or 'actualizar' in tipo_lower or 'cambiar' in tipo_lower %}
+        {% set clase_tipo = 'bit-tipo--azul' %}
+        {% set label_tipo = 'Editar' %}
+      {% elif 'login' in tipo_lower or 'logout' in tipo_lower %}
+        {% set clase_tipo = 'bit-tipo--morado' %}
+        {% set label_tipo = 'Sesión' %}
+      {% elif 'config' in tipo_lower or 'guardar_configuracion' in tipo_lower %}
+        {% set clase_tipo = 'bit-tipo--naranja' %}
+        {% set label_tipo = 'Config' %}
+      {% elif 'cache' in tipo_lower or 'limpiar' in tipo_lower %}
+        {% set clase_tipo = 'bit-tipo--gris' %}
+        {% set label_tipo = 'Sistema' %}
+      {% elif 'exportar' in tipo_lower %}
+        {% set clase_tipo = 'bit-tipo--celeste' %}
+        {% set label_tipo = 'Exportar' %}
+      {% else %}
+        {% set clase_tipo = 'bit-tipo--gris' %}
+        {% set label_tipo = accion.tipo | capitalize %}
+      {% endif %}
+
+      <div class="bit-fila" data-busqueda="{{ accion.tipo | lower }} {{ accion.descripcion | lower }} {{ accion.admin | lower }}">
+        
+        <!-- Fecha -->
+        <div class="bit-celda-fecha">
+          {% if accion.fecha %}
+            <span class="bit-fecha-dia">{{ accion.fecha[:10] }}</span>
+            <span class="bit-fecha-hora">{{ accion.fecha[11:19] if accion.fecha | length > 10 else '' }}</span>
+          {% else %}
+            <span class="bit-fecha-dia">—</span>
+          {% endif %}
+        </div>
+
+        <!-- Tipo -->
+        <div>
+          <span class="bit-tipo {{ clase_tipo }}">{{ label_tipo }}</span>
+          <span class="bit-tipo-raw">{{ accion.tipo }}</span>
+        </div>
+
+        <!-- Descripción -->
+        <div class="bit-descripcion">
+          {{ accion.descripcion | default('Sin descripción') }}
+        </div>
+
+        <!-- Admin -->
+        <div class="bit-admin">
+          <div class="bit-admin-avatar">
+            {{ accion.admin[0] | upper if accion.admin else '?' }}
+          </div>
+          <span class="bit-admin-email">{{ accion.admin | default('Desconocido') }}</span>
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Sin resultados (oculto por defecto) -->
+    <div id="bit-sin-resultados" style="display: none; text-align: center; padding: 3rem; color: #6b7280;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1rem; display: block; opacity: 0.4;">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <p style="font-weight: 600;">No se encontraron resultados</p>
+    </div>
+
+    {% else %}
+    <!-- Estado vacío -->
+    <div style="text-align: center; padding: 4rem 2rem;">
+      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1.2rem; display: block; opacity: 0.25;">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: #374151; margin-bottom: 0.5rem;">Sin registros en la bitácora</h3>
+      <p style="color: #9ca3af; font-size: 0.95rem;">Las acciones administrativas aparecerán aquí automáticamente.</p>
+    </div>
+    {% endif %}
+
+    <!-- Paginación -->
+    {% if total_paginas > 1 %}
+    <div class="bit-paginacion">
+      <div class="bit-pag-info">
+        Página {{ pagina }} de {{ total_paginas }}
+      </div>
+      <div class="bit-pag-botones">
+        {% if pagina > 1 %}
+        <a href="{{ url_for('admin.bitacora', pagina=pagina-1) }}" class="bit-pag-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Anterior
+        </a>
+        {% else %}
+        <span class="bit-pag-btn bit-pag-btn--disabled">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Anterior
+        </span>
+        {% endif %}
+
+        <!-- Números de página -->
+        {% for p in range(1, total_paginas + 1) %}
+          {% if p == pagina %}
+            <span class="bit-pag-num bit-pag-num--activo">{{ p }}</span>
+          {% elif p == 1 or p == total_paginas or (p >= pagina - 2 and p <= pagina + 2) %}
+            <a href="{{ url_for('admin.bitacora', pagina=p) }}" class="bit-pag-num">{{ p }}</a>
+          {% elif p == pagina - 3 or p == pagina + 3 %}
+            <span class="bit-pag-dots">…</span>
+          {% endif %}
+        {% endfor %}
+
+        {% if pagina < total_paginas %}
+        <a href="{{ url_for('admin.bitacora', pagina=pagina+1) }}" class="bit-pag-btn">
+          Siguiente
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+        {% else %}
+        <span class="bit-pag-btn bit-pag-btn--disabled">
+          Siguiente
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </span>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<style>
+:root {
+  --bit-accent: #5A684F;
+  --bit-bg:     #F7F8FA;
+  --bit-white:  #FFFFFF;
+  --bit-border: #E5E7EB;
+  --bit-text:   #111827;
+  --bit-muted:  #6B7280;
+  --bit-sm:     0.82rem;
+}
+
+.bit-wrapper {
+  padding: 2rem 2.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ── Encabezado ── */
+.bit-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.bit-breadcrumb {
+  font-size: var(--bit-sm);
+  font-weight: 600;
+  color: var(--bit-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.35rem;
+}
+
+.bit-titulo {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 800;
+  color: var(--bit-text);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.3rem;
+}
+
+.bit-subtitulo {
+  font-size: 0.95rem;
+  color: var(--bit-muted);
+}
+
+.bit-header-acciones {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+}
+
+/* ── Stats ── */
+.bit-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.bit-stat-card {
+  background: var(--bit-white);
+  border: 1px solid var(--bit-border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.bit-stat-label {
+  font-size: var(--bit-sm);
+  color: var(--bit-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bit-stat-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--bit-text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* ── Card contenedor ── */
+.bit-card {
+  background: var(--bit-white);
+  border: 1px solid var(--bit-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ── Toolbar ── */
+.bit-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--bit-border);
+  background: #FAFAFA;
+}
+
+.bit-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.bit-toolbar-titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--bit-text);
+}
+
+.bit-toolbar-right {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.bit-input-busqueda {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.88rem;
+  font-family: inherit;
+  border: 1.5px solid var(--bit-border);
+  border-radius: 8px;
+  outline: none;
+  width: 240px;
+  color: var(--bit-text);
+  background: var(--bit-white);
+  transition: border-color 0.2s;
+}
+
+.bit-input-busqueda:focus {
+  border-color: var(--bit-accent);
+  box-shadow: 0 0 0 3px rgba(90, 104, 79, 0.1);
+}
+
+/* ── Cabecera tabla ── */
+.bit-tabla-header {
+  display: grid;
+  grid-template-columns: 160px 130px 1fr 200px;
+  gap: 1rem;
+  padding: 0.7rem 1.5rem;
+  background: #F3F4F6;
+  border-bottom: 1px solid var(--bit-border);
+  font-size: var(--bit-sm);
+  font-weight: 700;
+  color: var(--bit-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Fila ── */
+.bit-fila {
+  display: grid;
+  grid-template-columns: 160px 130px 1fr 200px;
+  gap: 1rem;
+  padding: 0.9rem 1.5rem;
+  border-bottom: 1px solid var(--bit-border);
+  align-items: center;
+  transition: background 0.15s;
+}
+
+.bit-fila:last-child {
+  border-bottom: none;
+}
+
+.bit-fila:hover {
+  background: #F9FAFB;
+}
+
+/* ── Celda fecha ── */
+.bit-celda-fecha {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.bit-fecha-dia {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--bit-text);
+}
+
+.bit-fecha-hora {
+  font-size: var(--bit-sm);
+  color: var(--bit-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Tipo badge ── */
+.bit-tipo {
+  display: inline-block;
+  font-size: 0.73rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bit-tipo--rojo    { background: #FEE2E2; color: #991B1B; }
+.bit-tipo--verde   { background: #D1FAE5; color: #065F46; }
+.bit-tipo--azul    { background: #DBEAFE; color: #1E40AF; }
+.bit-tipo--morado  { background: #EDE9FE; color: #5B21B6; }
+.bit-tipo--naranja { background: #FEF3C7; color: #92400E; }
+.bit-tipo--gris    { background: #F3F4F6; color: #374151; }
+.bit-tipo--celeste { background: #E0F2FE; color: #075985; }
+
+.bit-tipo-raw {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--bit-muted);
+  margin-top: 0.2rem;
+  font-family: 'Courier New', monospace;
+}
+
+/* ── Descripción ── */
+.bit-descripcion {
+  font-size: 0.9rem;
+  color: var(--bit-text);
+  line-height: 1.5;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ── Admin ── */
+.bit-admin {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.bit-admin-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5A684F, #7E8F76);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bit-admin-email {
+  font-size: 0.83rem;
+  color: var(--bit-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Paginación ── */
+.bit-paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--bit-border);
+  background: #FAFAFA;
+  flex-wrap: wrap;
+}
+
+.bit-pag-info {
+  font-size: var(--bit-sm);
+  color: var(--bit-muted);
+  font-weight: 600;
+}
+
+.bit-pag-botones {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.bit-pag-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 0.9rem;
+  font-size: var(--bit-sm);
+  font-weight: 600;
+  border: 1.5px solid var(--bit-border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--bit-text);
+  background: var(--bit-white);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.bit-pag-btn:hover {
+  border-color: var(--bit-accent);
+  color: var(--bit-accent);
+}
+
+.bit-pag-btn--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 0.9rem;
+  font-size: var(--bit-sm);
+  font-weight: 600;
+  border: 1.5px solid var(--bit-border);
+  border-radius: 8px;
+  color: var(--bit-muted);
+  background: var(--bit-white);
+}
+
+.bit-pag-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: var(--bit-sm);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--bit-text);
+  border: 1.5px solid var(--bit-border);
+  background: var(--bit-white);
+  transition: all 0.15s;
+}
+
+.bit-pag-num:hover {
+  border-color: var(--bit-accent);
+  color: var(--bit-accent);
+}
+
+.bit-pag-num--activo {
+  background: var(--bit-accent);
+  color: white;
+  border-color: var(--bit-accent);
+}
+
+.bit-pag-dots {
+  color: var(--bit-muted);
+  font-size: var(--bit-sm);
+  padding: 0 0.2rem;
+}
+
+/* ── Botones ── */
+.bit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 8px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+  font-family: inherit;
+}
+
+.bit-btn--secondary {
+  background: transparent;
+  color: var(--bit-muted);
+  border: 1.5px solid var(--bit-border);
+}
+
+.bit-btn--secondary:hover {
+  border-color: var(--bit-accent);
+  color: var(--bit-accent);
+  transform: translateY(-1px);
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .bit-wrapper { padding: 1.25rem; }
+  .bit-tabla-header { display: none; }
+  .bit-fila {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+  .bit-header { flex-direction: column; }
+  .bit-input-busqueda { width: 100%; }
+  .bit-toolbar { flex-direction: column; align-items: flex-start; }
+}
+</style>
+
+<script>
+const input = document.getElementById('bit-busqueda');
+const filas = document.querySelectorAll('.bit-fila');
+const sinResultados = document.getElementById('bit-sin-resultados');
+
+input.addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  let visibles = 0;
+
+  filas.forEach(function(fila) {
+    const texto = fila.getAttribute('data-busqueda') || '';
+    const coincide = q === '' || texto.includes(q);
+    fila.style.display = coincide ? '' : 'none';
+    if (coincide) visibles++;
+  });
+
+  if (sinResultados) {
+    sinResultados.style.display = (visibles === 0 && q !== '') ? 'block' : 'none';
+  }
+});
+</script>
+{% endblock %}

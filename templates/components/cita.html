@@ -1,43 +1,134 @@
 <section class="cita anim">
     <div class="container">
-        <div class="cita-contenido">
-            <i class="fas fa-quote-left cita-icon"></i>
+        <div class="cita-card">
+            <div class="cita-iconos">
+                <i class="fas fa-quote-left"></i>
+                <i class="fas fa-handshake cita-main-icon"></i>
+                <i class="fas fa-quote-right"></i>
+            </div>
             <blockquote class="cita-texto">
                 "Juntos construimos el Cutupú que todos merecemos"
             </blockquote>
-            <i class="fas fa-quote-right cita-icon"></i>
+            <div class="cita-autor">
+                <div class="autor-linea"></div>
+                <div class="autor-info">
+                    <strong>Rober Donald Tolentino</strong>
+                    <span>Alcalde / Director Municipal</span>
+                    <span class="autor-periodo">Período 2024-2028</span>
+                </div>
+                <div class="autor-linea"></div>
+            </div>
         </div>
     </div>
 </section>
 
 <style>
     .cita {
-        padding: 5rem 0;
-        background: var(--verde-xlight);
+        padding: 4rem 0;
+        background: linear-gradient(135deg, #EAF2DC 0%, #FBF7F0 100%);
         text-align: center;
     }
-    .cita-contenido {
-        position: relative;
-        max-width: 800px;
+    .container {
+        max-width: 1280px;
         margin: 0 auto;
+        padding: 0 2rem;
     }
-    .cita-icon {
-        font-size: 2.5rem;
-        color: var(--verde-soft);
-        opacity: 0.5;
+    .cita-card {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 2rem;
+        padding: 3rem 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid #E5E7EB;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .cita-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    .cita-iconos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .cita-iconos i {
+        font-size: 2rem;
+        color: #2D5016;
+        opacity: 0.6;
+    }
+    .cita-main-icon {
+        font-size: 2.5rem !important;
+        opacity: 1 !important;
+        color: #C8960C !important;
     }
     .cita-texto {
         font-family: 'Playfair Display', serif;
-        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
         font-weight: 800;
-        color: var(--texto);
+        color: #1A2410;
         line-height: 1.3;
-        margin: 1.5rem 0;
+        margin: 1rem 0 1.5rem 0;
+        font-style: normal;
     }
-    .fa-quote-left {
-        margin-right: 1rem;
+    .cita-autor {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 1rem;
     }
-    .fa-quote-right {
-        margin-left: 1rem;
+    .autor-linea {
+        width: 50px;
+        height: 2px;
+        background: linear-gradient(90deg, #2D5016, #C8960C);
+    }
+    .autor-info {
+        text-align: center;
+    }
+    .autor-info strong {
+        display: block;
+        font-size: 1rem;
+        font-weight: 800;
+        color: #1A2410;
+        margin-bottom: 0.25rem;
+    }
+    .autor-info span {
+        display: block;
+        font-size: 0.8rem;
+        color: #6B7280;
+    }
+    .autor-periodo {
+        font-size: 0.7rem !important;
+        color: #2D5016 !important;
+        font-weight: 600;
+        margin-top: 0.25rem;
+    }
+
+    @media (max-width: 640px) {
+        .cita {
+            padding: 2rem 0;
+        }
+        .cita-card {
+            padding: 2rem 1rem;
+        }
+        .cita-autor {
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .autor-linea {
+            width: 80px;
+        }
+        .cita-texto {
+            font-size: 1.3rem;
+        }
+        .cita-iconos i {
+            font-size: 1.5rem;
+        }
+        .cita-main-icon {
+            font-size: 2rem !important;
+        }
     }
 </style>

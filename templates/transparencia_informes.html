@@ -1,14 +1,452 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informes de Gestión - Transparencia | Villa Cutupú</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informes y Servicios - Transparencia | Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/informes.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        .main-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 60px;
+            width: auto;
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .main-nav a {
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .main-nav a:hover,
+        .main-nav a.active {
+            color: #2d6a4f;
+        }
+
+        .btn-login, .btn-registro, .btn-logout {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .btn-login {
+            background: #2d6a4f;
+            color: white !important;
+        }
+
+        .btn-registro {
+            border: 1px solid #2d6a4f;
+            color: #2d6a4f !important;
+        }
+
+        .btn-logout {
+            background: #dc2626;
+            color: white !important;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #1a3c2c 0%, #2d6a4f 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Intro Block */
+        .intro-block {
+            background: #f0f7f2;
+            border-left: 4px solid #2d6a4f;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .bloque-titulo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin: 2.5rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #2d6a4f;
+            display: inline-block;
+        }
+
+        /* Grid de tarjetas para preguntas/respuestas */
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .faq-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .faq-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #2d6a4f;
+        }
+
+        .faq-pregunta {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .faq-pregunta .icono {
+            font-size: 1.3rem;
+        }
+
+        .faq-respuesta {
+            color: #475569;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .stat-valor {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #2d6a4f;
+            display: block;
+        }
+
+        .stat-label {
+            color: #64748b;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Grid de servicios sociales */
+        .servicios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .servicio-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .servicio-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #2d6a4f;
+        }
+
+        .servicio-icono {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .servicio-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin-bottom: 0.5rem;
+        }
+
+        .servicio-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Valores */
+        .valores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .valor-card {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .valor-card:hover {
+            transform: scale(1.05);
+        }
+
+        .valor-icono {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .valor-card h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a3c2c;
+        }
+
+        /* Tablas */
+        .tabla-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #1a3c2c;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-verde {
+            background: #e8f5e9;
+            color: #2d6a4f;
+        }
+
+        /* Nota legal */
+        .nota-legal {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-info h3,
+        .footer-links h3,
+        .footer-contact h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info p,
+        .footer-contact p {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+
+        .footer-info a,
+        .footer-contact a {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .footer-info a:hover {
+            color: white;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin: 0.5rem 0;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #1e293b;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-header .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .bloque-titulo {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
 </head>
 <body>
+
 <header class="main-header">
     <div class="container">
         <div class="logo">
@@ -36,118 +474,196 @@
 
 <main>
     <section class="page-header">
-        <div class="breadcrumb">
-            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Informes de Gestión</span>
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/transparencia">Transparencia</a> <span>/</span> <span>Informes y Servicios</span>
+            </div>
+            <h1>Informes y Servicios Municipales</h1>
+            <p>Sistema de recolección de basura, servicios sociales y programas de apoyo</p>
         </div>
-        <h1>Informes de Gestión</h1>
-        <p>Rendición de cuentas, informes trimestrales y ejecución presupuestaria</p>
     </section>
 
-    <section class="page">
+    <div class="container">
         <div class="intro-block">
-            <p>Publicación periódica conforme al <strong>Artículo 3 de la Ley 200-04</strong>. El municipio publica trimestralmente sus informes de gestión y anualmente su memoria de rendición de cuentas ante la ciudadanía.</p>
+            <p>Conforme al <strong>Artículo 3 de la Ley 200-04</strong> sobre Libre Acceso a la Información Pública, presentamos los informes sobre el sistema de recolección de basura y los servicios sociales que ofrece el Ayuntamiento de Cutupú.</p>
         </div>
 
+        <!-- ============================================ -->
+        <!-- SISTEMA DE RECOLECCIÓN DE BASURA -->
+        <!-- ============================================ -->
+        <h2 class="bloque-titulo">🗑️ Sistema de Recolección de Basura</h2>
+        
         <div class="stats-grid">
-            <div class="stat-card"><span class="stat-valor">RD$ 24.5M</span><span class="stat-label">Presupuesto aprobado 2024</span></div>
-            <div class="stat-card"><span class="stat-valor">91%</span><span class="stat-label">Ejecución presupuestaria 2024</span></div>
-            <div class="stat-card"><span class="stat-valor">96%</span><span class="stat-label">Ejecución presupuestaria 2023</span></div>
-            <div class="stat-card"><span class="stat-valor">4</span><span class="stat-label">Informes trimestrales 2024</span></div>
-        </div>
-
-        <h2 class="bloque-titulo">Informes trimestrales 2024</h2>
-        <div class="docs-lista">
-            <div class="doc-item">
-                <span class="doc-icono">📊</span>
-                <div class="doc-info">
-                    <strong>4to trimestre 2024 (Octubre – Diciembre)</strong>
-                    <span>Publicado: 15/01/2025 · PDF — 2.4 MB</span>
-                </div>
-                <a href="#" class="doc-btn">Descargar</a>
+            <div class="stat-card">
+                <span class="stat-valor">🚛 Camiones</span>
+                <span class="stat-label">Recolección mediante camiones</span>
             </div>
-            <div class="doc-item">
-                <span class="doc-icono">📊</span>
-                <div class="doc-info">
-                    <strong>3er trimestre 2024 (Julio – Septiembre)</strong>
-                    <span>Publicado: 15/10/2024 · PDF — 2.1 MB</span>
-                </div>
-                <a href="#" class="doc-btn">Descargar</a>
+            <div class="stat-card">
+                <span class="stat-valor">📍 Soto, La Vega</span>
+                <span class="stat-label">Vertedero municipal</span>
             </div>
-            <div class="doc-item">
-                <span class="doc-icono">📊</span>
-                <div class="doc-info">
-                    <strong>2do trimestre 2024 (Abril – Junio)</strong>
-                    <span>Publicado: 15/07/2024 · PDF — 1.9 MB</span>
-                </div>
-                <a href="#" class="doc-btn">Descargar</a>
-            </div>
-            <div class="doc-item">
-                <span class="doc-icono">📊</span>
-                <div class="doc-info">
-                    <strong>1er trimestre 2024 (Enero – Marzo)</strong>
-                    <span>Publicado: 15/04/2024 · PDF — 1.8 MB</span>
-                </div>
-                <a href="#" class="doc-btn">Descargar</a>
+            <div class="stat-card">
+                <span class="stat-valor">🚚 Transportación</span>
+                <span class="stat-label">Departamento responsable</span>
             </div>
         </div>
 
-        <h2 class="bloque-titulo">Memorias anuales de rendición de cuentas</h2>
-        <div class="docs-lista">
-            <div class="doc-item">
-                <span class="doc-icono">📋</span>
-                <div class="doc-info">
-                    <strong>Memoria anual de gestión 2024</strong>
-                    <span>Presentada: 27/02/2025 · PDF — 5.2 MB</span>
-                </div>
-                <a href="#" class="doc-btn">Descargar</a>
+        <div class="faq-grid">
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Cuál es el sistema de recolección de basura?</div>
+                <div class="faq-respuesta">Recolección mediante camiones, los cuales transportan los desechos hacia el vertedero llamado Soto, ubicado en La Vega.</div>
             </div>
-            <div class="doc-item">
-                <span class="doc-icono">📋</span>
-                <div class="doc-info">
-                    <strong>Memoria anual de gestión 2023</strong>
-                    <span>Presentada: 28/02/2024 · PDF — 4.8 MB</span>
-                </div>
-                <a href="#" class="doc-btn">Descargar</a>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Función principal del ayuntamiento?</div>
+                <div class="faq-respuesta">Garantizar la recolección, el traslado y la correcta disposición de los desechos sólidos en el municipio.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Por qué es importante un buen sistema?</div>
+                <div class="faq-respuesta">Ayuda a mantener la limpieza, evita la contaminación y protege la salud de la comunidad.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Qué departamento es responsable?</div>
+                <div class="faq-respuesta">El departamento de Transportación.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Qué tipo de residuos se recolectan?</div>
+                <div class="faq-respuesta">Residuos orgánicos (restos de comida), inorgánicos (plásticos, fundas, botellas), papel, cartón, vidrio, metales y desechos domésticos en general.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Cómo afecta la acumulación de basura?</div>
+                <div class="faq-respuesta">Provoca enfermedades, malos olores y la aparición de mosquitos y otras plagas.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Consecuencias de no sacar la basura en días establecidos?</div>
+                <div class="faq-respuesta">Genera contaminación, desorden, malos olores y puede atraer insectos y enfermedades.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Por qué es importante la colaboración ciudadana?</div>
+                <div class="faq-respuesta">Así se mantiene la limpieza del municipio y se evita la contaminación.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Cómo contribuye al medio ambiente?</div>
+                <div class="faq-respuesta">Ayuda a mantener los espacios limpios y reduce la contaminación ambiental.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Qué problemas si no funciona correctamente?</div>
+                <div class="faq-respuesta">Se acumula la basura, aumentan las enfermedades, los malos olores y la contaminación.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Qué papel juegan los camiones recolectores?</div>
+                <div class="faq-respuesta">Son los encargados de recoger y transportar la basura hacia el vertedero.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Cómo puede mejorar el sistema?</div>
+                <div class="faq-respuesta">Organizando mejor el servicio y asegurando un buen funcionamiento de los camiones recolectores.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Acciones de los estudiantes para reducir basura?</div>
+                <div class="faq-respuesta">Evitar tirar basura, ser más conscientes y mantener limpios sus espacios.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Por qué separar los residuos?</div>
+                <div class="faq-respuesta">Facilita el manejo de la basura y ayuda a reducir la contaminación.</div>
+            </div>
+            <div class="faq-card">
+                <div class="faq-pregunta"><span class="icono">❓</span> ¿Impacto de un sistema eficiente?</div>
+                <div class="faq-respuesta">Permite que el distrito se vea más limpio, organizado y favorece su desarrollo.</div>
             </div>
         </div>
 
-        <h2 class="bloque-titulo">Ejecución presupuestaria</h2>
-        <div class="tabla-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Período</th>
-                        <th>Presupuesto aprobado</th>
-                        <th>Ejecutado</th>
-                        <th>Porcentaje</th>
-                        <th>Detalle</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>2024</strong></td>
-                        <td>RD$ 24,580,000</td>
-                        <td>RD$ 22,345,000</td>
-                        <td><span class="badge badge-verde">91%</span></td>
-                        <td><a href="#" class="doc-btn">Ver PDF</a></td>
-                    </tr>
-                    <tr>
-                        <td><strong>2023</strong></td>
-                        <td>RD$ 22,150,000</td>
-                        <td>RD$ 21,280,000</td>
-                        <td><span class="badge badge-verde">96%</span></td>
-                        <td><a href="#" class="doc-btn">Ver PDF</a></td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- ============================================ -->
+        <!-- SERVICIOS SOCIALES -->
+        <!-- ============================================ -->
+        <h2 class="bloque-titulo">❤️ Servicios Sociales</h2>
+        
+        <div class="servicios-grid">
+            <div class="servicio-card">
+                <div class="servicio-icono">👴</div>
+                <h3>Envejecientes</h3>
+                <p>Apoyo y protección para adultos mayores</p>
+            </div>
+            <div class="servicio-card">
+                <div class="servicio-icono">🎓</div>
+                <h3>Estudiantes</h3>
+                <p>Becas y apoyo educativo</p>
+            </div>
+            <div class="servicio-card">
+                <div class="servicio-icono">🏠</div>
+                <h3>Familias de bajos recursos</h3>
+                <p>Asistencia alimentaria y económica</p>
+            </div>
+            <div class="servicio-card">
+                <div class="servicio-icono">♿</div>
+                <h3>Personas con necesidades especiales</h3>
+                <p>Apoyo y recursos adaptados</p>
+            </div>
         </div>
-    </section>
+
+        <!-- Tipos de ayudas -->
+        <h3 style="font-size: 1.3rem; margin: 1.5rem 0 1rem 0; color: #1a3c2c;">📦 Tipos de ayudas que ofrece</h3>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-valor">💰 Económicas</span>
+                <span class="stat-label">Apoyo financiero a familias</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-valor">🎓 Becas</span>
+                <span class="stat-label">Estudiantiles para jóvenes</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-valor">🏥 Asistencia médica</span>
+                <span class="stat-label">Atención y medicamentos</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-valor">🍞 Apoyo alimentario</span>
+                <span class="stat-label">Alimentos para familias</span>
+            </div>
+        </div>
+
+        <!-- Valores que promueve -->
+        <h3 style="font-size: 1.3rem; margin: 1.5rem 0 1rem 0; color: #1a3c2c;">🌟 Valores que promueve este departamento</h3>
+        <div class="valores-grid">
+            <div class="valor-card">
+                <div class="valor-icono">🤝</div>
+                <h4>Solidaridad</h4>
+            </div>
+            <div class="valor-card">
+                <div class="valor-icono">💚</div>
+                <h4>Empatía</h4>
+            </div>
+            <div class="valor-card">
+                <div class="valor-icono">🙏</div>
+                <h4>Respeto</h4>
+            </div>
+            <div class="valor-card">
+                <div class="valor-icono">🤲</div>
+                <h4>Compromiso social</h4>
+            </div>
+        </div>
+
+        <!-- Importancia -->
+        <div class="intro-block" style="margin-top: 1rem;">
+            <p><strong>¿Por qué es importante que el ayuntamiento apoye a las personas más vulnerables?</strong><br>
+            Porque contribuye a mejorar la calidad de vida de estas personas, garantizando que tengan acceso a recursos básicos y oportunidades para su bienestar.</p>
+        </div>
+
+        <div class="nota-legal">
+            <strong>📌 ¿Cómo contribuyen los Servicios Sociales a mejorar la calidad de vida?</strong><br>
+            Contribuyen facilitando recursos y atendiendo necesidades específicas de las personas, lo que permite reducir desigualdades y mejorar las condiciones de vida en la comunidad.
+        </div>
+
+        <div style="margin: 2rem 0; text-align: center; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
+            <p style="color: #64748b;">¿Necesita ayuda o desea solicitar algún servicio social?</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="/contacto" style="color: #2d6a4f; text-decoration: none; font-weight: 600;">📞 Contáctenos</a> o visite nuestras oficinas en horario de atención.
+            </p>
+        </div>
+    </div>
 </main>
 
 <footer>
     <div class="container">
         <div class="footer-grid">
-            <!-- Columna 1: Información institucional -->
             <div class="footer-info">
                 <h3>Junta Distrital de Villa Cutupú</h3>
                 <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
@@ -158,8 +674,6 @@
                     <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
                 </div>
             </div>
-            
-            <!-- Columna 2: ENLACES RÁPIDOS (corregido) -->
             <div class="footer-links">
                 <h3>Enlaces rápidos</h3>
                 <ul>
@@ -171,18 +685,15 @@
                     <li><a href="/contacto">Contacto</a></li>
                 </ul>
             </div>
-            
-            <!-- Columna 3: Contacto -->
             <div class="footer-contact">
-                <h3>Contacto</h3>
+                <h3>Horario de Atención</h3>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+                <p>📍 Oficina Central: Calle Principal, Cutupú</p>
                 <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
             </div>
         </div>
-        
         <div class="footer-bottom">
-            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            <p>© 2025-2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>

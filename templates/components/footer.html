@@ -3,12 +3,12 @@
         <div class="footer-grid">
             <div class="footer-col">
                 <div class="footer-logo">
-                    <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" class="footer-logo-img">
-                    <span>Junta Distrital<br>Villa Cutupú · La Vega</span>
+                    <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="{{ config.nombre_municipio if config else 'Logo' }}" class="footer-logo-img">
+                    <span class="footer-municipio-name">{{ config.nombre_municipio if config else 'Junta Distrital' }}<br>{{ config.siglas if config else 'Villa Cutupú · La Vega' }}</span>
                 </div>
-                <p><i class="fas fa-map-marker-alt"></i> Río Verde Arriba, La Vega, República Dominicana</p>
-                <p><i class="fas fa-phone"></i> <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p><i class="fas fa-envelope"></i> <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p class="footer-direccion"><i class="fas fa-map-marker-alt"></i> {{ config.direccion if config else 'Río Verde Arriba, La Vega, República Dominicana' }}</p>
+                <p class="footer-telefono"><i class="fas fa-phone"></i> <a href="tel:{{ config.telefono if config else '+18096917111' }}">{{ config.telefono if config else '(809) 691-7111' }}</a></p>
+                <p class="footer-email"><i class="fas fa-envelope"></i> <a href="mailto:{{ config.email_institucional if config else 'juntamunicipalrioverdearriba@gmail.com' }}">{{ config.email_institucional if config else 'juntamunicipalrioverdearriba@gmail.com' }}</a></p>
                 <div class="social-links">
                     <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-pill"><i class="fab fa-facebook-f"></i> Facebook</a>
                     <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-pill"><i class="fab fa-instagram"></i> Instagram</a>
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            <p>&copy; {{ now.year }} {{ config.nombre_municipio if config else 'Junta de Distrito Municipal de Villa Cutupú' }}. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
@@ -42,7 +42,7 @@
     .footer {
         background: var(--gris-900);
         color: var(--gris-300);
-        border-top: 4px solid var(--verde);
+        border-top: 4px solid var(--color-primary, #2D5016);
         padding: 4rem 0 2rem;
     }
     .footer-grid {
@@ -98,7 +98,7 @@
         gap: 0.5rem;
     }
     .social-pill:hover {
-        background: var(--verde);
+        background: var(--color-primary, #2D5016);
         color: white;
     }
     .footer-col h3 {
@@ -115,7 +115,7 @@
         left: 0;
         width: 40px;
         height: 2px;
-        background: var(--verde);
+        background: var(--color-primary, #2D5016);
     }
     .footer-col ul {
         list-style: none;
@@ -128,7 +128,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: var(--verde);
+        background: var(--color-primary, #2D5016);
         color: white;
         padding: 0.6rem 1.2rem;
         border-radius: 2rem;
@@ -136,7 +136,7 @@
         transition: all var(--transition);
     }
     .btn-footer:hover {
-        background: var(--verde-med);
+        background: var(--color-primary-med, #3D6B20);
         transform: translateY(-2px);
     }
     .footer-bottom {

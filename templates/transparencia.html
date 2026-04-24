@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Transparencia — Villa Cutupú{% endblock %}
+{% block title %}Portal de Transparencia - Villa Cutupú{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia.css') }}">
@@ -8,251 +8,283 @@
 
 {% block content %}
 
-<!-- HERO INTERNO -->
+<!-- SECCION 1 - HERO DRAMATICO -->
 <section class="transp-hero">
-    <div class="transp-hero-pattern"></div>
+    <div class="transp-hero-left-line"></div>
     <div class="container transp-hero-container">
         <div class="transp-hero-content">
+            <div class="transp-hero-eyebrow">PORTAL OFICIAL · VILLA CUTUPU</div>
             <h1 class="transp-hero-title">
                 Portal de <span class="transp-hero-accent">Transparencia</span>
             </h1>
             <div class="transp-hero-line"></div>
-            <p class="transp-hero-description">
-                Acceso libre a la información pública · Ley 200-04
-            </p>
+            <p class="transp-hero-subtitle">Acceso libre a la informacion publica · Ley 200-04</p>
             <div class="transp-hero-stats">
-                <div class="transp-stat-card">
-                    <span class="transp-stat-number">Ley 200-04</span>
-                    <span class="transp-stat-label">Libre Acceso</span>
-                </div>
-                <div class="transp-stat-card">
-                    <span class="transp-stat-number">Decreto 130-05</span>
-                    <span class="transp-stat-label">Reglamento</span>
-                </div>
-                <div class="transp-stat-card">
-                    <span class="transp-stat-number">Actualización</span>
-                    <span class="transp-stat-label">Permanente</span>
-                </div>
+                <div class="transp-hero-stat">Ley 200-04 / Libre Acceso</div>
+                <div class="transp-hero-stat">Decreto 130-05 / Reglamento</div>
+                <div class="transp-hero-stat">Permanente / Actualizacion</div>
             </div>
         </div>
     </div>
+    
+    <!-- Particulas flotantes -->
+    <div class="transp-particle transp-particle-1"></div>
+    <div class="transp-particle transp-particle-2"></div>
+    <div class="transp-particle transp-particle-3"></div>
 </section>
 
-<!-- BLOQUE LEGAL -->
+<!-- SECCION 2 - BLOQUE LEGAL PREMIUM -->
 <section class="transp-legal">
     <div class="container">
-        <div class="transp-legal-card">
+        <div class="transp-legal-card transp-observe">
+            <div class="transp-legal-card-top"></div>
             <div class="transp-legal-badge">Ley 200-04 · Decreto 130-05</div>
-            <h2 class="transp-legal-title">Bienvenidos al Portal de Transparencia<br>Junta Municipal Río Verde Arriba</h2>
-            <p class="transp-legal-intro">
-                En este portal hacemos disponible todo lo requerido en la <strong>Ley General de Libre Acceso a la Información Pública (Ley 200-04)</strong> y el <strong>Decreto No. 130-05</strong> que crea el reglamento de la ley.
+            <h2 class="transp-legal-title">Bienvenidos al Portal de Transparencia</h2>
+            <p class="transp-legal-text">
+                La <strong>Ley 200-04 sobre Libre Acceso a la Informacion Publica</strong> garantiza el derecho 
+                de toda persona a solicitar y recibir informacion veraz, completa y actualizada de las instituciones 
+                del Estado dominicano.
             </p>
             <div class="transp-legal-quote">
-                <div class="transp-quote-badge">Artículo 5</div>
-                <p class="transp-quote-text">
-                    «Se dispone la informatización y la incorporación al sistema de comunicación por Internet, o a cualquier otro sistema similar que en el futuro se establezca, de todos los organismos públicos centralizados y descentralizados del Estado, incluyendo el Distrito Nacional y los Municipios, con la finalidad de garantizar a través de éste un acceso directo del público a la información del Estado.»
-                </p>
+                <div class="transp-quote-badge">Articulo 5</div>
+                <p>"Toda persona tiene derecho a solicitar y recibir informacion completa, veraz, adecuada y oportuna, por cualquier medio de comunicacion, de los poderes publicos."</p>
             </div>
             <div class="transp-legal-grid">
-                <div class="transp-legal-item">
-                    <div class="transp-legal-icon"><i class="fas fa-share-alt"></i></div>
-                    <h3>Difusión de Información</h3>
-                    <p>Estructura, integrantes, normativas, proyectos, informes de gestión y base de datos municipal.</p>
+                <div class="transp-legal-item transp-observe">
+                    <div class="transp-legal-icon">
+                        <i class="fas fa-universal-access"></i>
+                    </div>
+                    <h4>Acceso Universal</h4>
+                    <p>Sin necesidad de justificar motivos</p>
                 </div>
-                <div class="transp-legal-item">
-                    <div class="transp-legal-icon"><i class="fas fa-headset"></i></div>
-                    <h3>Atención al Usuario</h3>
-                    <p>Consultas, quejas y sugerencias sobre la gestión municipal, con seguimiento personalizado.</p>
+                <div class="transp-legal-item transp-observe">
+                    <div class="transp-legal-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4>Plazo Maximo</h4>
+                    <p>Respuesta en 15 dias habiles</p>
                 </div>
-                <div class="transp-legal-item">
-                    <div class="transp-legal-icon"><i class="fas fa-exchange-alt"></i></div>
-                    <h3>Trámites Bilaterales</h3>
-                    <p>Información de libre acceso sin necesidad de petición previa, conforme a la ley.</p>
+                <div class="transp-legal-item transp-observe">
+                    <div class="transp-legal-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h4>Gratuito</h4>
+                    <p>Solo costo de reproduccion</p>
                 </div>
             </div>
             <div class="transp-legal-footer">
                 <i class="fas fa-star-of-life"></i>
-                <span>Nuestro Portal cumple con las especificaciones contempladas en la Ley 200-04, con actualización permanente de las informaciones.</span>
+                <span>Actualizacion permanente · Datos abiertos · Gobierno transparente</span>
             </div>
         </div>
     </div>
 </section>
 
-<!-- BADGES DE CUMPLIMIENTO -->
-<div class="transp-badges">
+<!-- SECCION 3 - BADGES DE CUMPLIMIENTO -->
+<section class="transp-badges">
     <div class="container">
-        <div class="transp-badges-group">
-            <div class="transp-badge transp-badge-green">
-                <i class="fas fa-gavel"></i>
-                <span>Ley 200-04</span>
-            </div>
-            <div class="transp-badge transp-badge-gold">
-                <i class="fas fa-file-alt"></i>
-                <span>Decreto 130-05</span>
-            </div>
-            <div class="transp-badge transp-badge-blue">
-                <i class="fas fa-sync-alt"></i>
-                <span>Actualización permanente</span>
-            </div>
+        <div class="transp-badges-grid">
+            <div class="transp-badge">Ley 200-04</div>
+            <div class="transp-badge">Decreto 130-05</div>
+            <div class="transp-badge">Actualizacion permanente</div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- GRID DE CATEGORÍAS -->
+<!-- SECCION 4 - GRID DE CATEGORIAS (10 CARDS) -->
 <section class="transp-categories">
     <div class="container">
-        <div class="transp-section-header">
-            <h3 class="transp-section-title">Categorías de información disponible</h3>
-            <span class="transp-section-badge">Sin solicitud previa</span>
+        <div class="transp-categories-header">
+            <div class="transp-categories-badge">Sin solicitud previa</div>
+            <h3 class="transp-categories-title">Categorias de informacion disponible</h3>
+            <div class="transp-categories-line"></div>
         </div>
-
-        <div class="transp-grid">
-
-            <!-- 01 -->
-            <div class="transp-card">
+        
+        <div class="transp-categories-grid">
+            <!-- Card 01 - Estructura Organica -->
+            <div class="transp-card transp-observe" style="animation-delay: 0.05s">
                 <div class="transp-card-band"></div>
                 <div class="transp-card-number">01</div>
                 <div class="transp-card-icon">
                     <i class="fas fa-building"></i>
                 </div>
-                <h3>Estructura orgánica</h3>
-                <p>Organigrama, funciones de cada área, base legal y responsables de la Junta Municipal.</p>
+                <h3 class="transp-card-title">Estructura organica</h3>
+                <p class="transp-card-desc">Organigrama, funciones y base legal de la Junta Distrital</p>
+                <div class="transp-card-divider"></div>
                 <a href="/transparencia/estructura" class="transp-card-btn">Ver estructura <i class="fas fa-arrow-right"></i></a>
+                <div class="transp-card-meta">Tiempo estimado: 3 min</div>
             </div>
-
-            <!-- 02 -->
-            <div class="transp-card">
+            
+            <!-- Card 02 - Integrantes y autoridades -->
+            <div class="transp-card transp-observe" style="animation-delay: 0.10s">
                 <div class="transp-card-band"></div>
                 <div class="transp-card-number">02</div>
                 <div class="transp-card-icon">
                     <i class="fas fa-users"></i>
                 </div>
-                <h3>Integrantes y autoridades</h3>
-                <p>Nómina de funcionarios, regidores, directores y sus declaraciones juradas.</p>
+                <h3 class="transp-card-title">Integrantes y autoridades</h3>
+                <p class="transp-card-desc">Nomina oficial de autoridades electas y funcionarios designados</p>
+                <div class="transp-card-divider"></div>
                 <a href="/transparencia/integrantes" class="transp-card-btn">Conocer equipo <i class="fas fa-arrow-right"></i></a>
+                <div class="transp-card-meta">Periodo 2024-2028</div>
             </div>
-
-            <!-- 03 -->
-            <div class="transp-card">
+            
+            <!-- Card 03 - Normativas de funcionamiento -->
+            <div class="transp-card transp-observe" style="animation-delay: 0.15s">
                 <div class="transp-card-band"></div>
                 <div class="transp-card-number">03</div>
                 <div class="transp-card-icon">
                     <i class="fas fa-balance-scale"></i>
                 </div>
-                <h3>Normativas de funcionamiento</h3>
-                <p>Reglamentos internos, ordenanzas municipales, resoluciones y bandos.</p>
+                <h3 class="transp-card-title">Normativas de funcionamiento</h3>
+                <p class="transp-card-desc">Leyes, ordenanzas y reglamentos que rigen el municipio</p>
+                <div class="transp-card-divider"></div>
                 <a href="/transparencia/normativas" class="transp-card-btn">Consultar <i class="fas fa-arrow-right"></i></a>
+                <div class="transp-card-meta">Actualizado 2025</div>
             </div>
-
-            <!-- 04 -->
-            <div class="transp-card">
+            
+            <!-- Card 04 - Proyectos y obras -->
+            <div class="transp-card transp-observe" style="animation-delay: 0.20s">
                 <div class="transp-card-band"></div>
                 <div class="transp-card-number">04</div>
                 <div class="transp-card-icon">
                     <i class="fas fa-hard-hat"></i>
                 </div>
-                <h3>Proyectos y obras</h3>
-                <p>Planes, proyectos en ejecución, licitaciones, contratos y avances de obra.</p>
+                <h3 class="transp-card-title">Proyectos y obras</h3>
+                <p class="transp-card-desc">Planes, proyectos y obras en ejecucion y finalizadas</p>
+                <div class="transp-card-divider"></div>
                 <a href="/transparencia/proyectos" class="transp-card-btn">Ver proyectos <i class="fas fa-arrow-right"></i></a>
+                <div class="transp-card-meta">10+ proyectos</div>
             </div>
-
-            <!-- 05 -->
-            <div class="transp-card">
+            
+            <!-- Card 05 - Informes de gestion -->
+            <div class="transp-card transp-observe" style="animation-delay: 0.25s">
                 <div class="transp-card-band"></div>
                 <div class="transp-card-number">05</div>
                 <div class="transp-card-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
-                <h3>Informes de gestión</h3>
-                <p>Rendición de cuentas, informes trimestrales y anuales, ejecución presupuestaria.</p>
+                <h3 class="transp-card-title">Informes de gestion</h3>
+                <p class="transp-card-desc">Rendicion de cuentas, informes trimestrales y ejecucion presupuestaria</p>
+                <div class="transp-card-divider"></div>
                 <a href="/transparencia/informes" class="transp-card-btn">Acceder <i class="fas fa-arrow-right"></i></a>
+                <div class="transp-card-meta">PDF descargables</div>
             </div>
-
-            <!-- 06 -->
-            <div class="transp-card">
+            
+            <!-- Card 06 - Base de datos municipal -->
+            <div class="transp-card transp-observe" style="animation-delay: 0.30s">
                 <div class="transp-card-band"></div>
                 <div class="transp-card-number">06</div>
                 <div class="transp-card-icon">
                     <i class="fas fa-database"></i>
                 </div>
-                <h3>Base de datos municipal</h3>
-                <p>Estadísticas, censos, indicadores socioeconómicos y conjuntos de datos abiertos.</p>
+                <h3 class="transp-card-title">Base de datos municipal</h3>
+                <p class="transp-card-desc">Estadisticas demograficas, indicadores socioeconomicos y datos abiertos</p>
+                <div class="transp-card-divider"></div>
                 <a href="/transparencia/datos" class="transp-card-btn">Explorar datos <i class="fas fa-arrow-right"></i></a>
+                <div class="transp-card-meta">Fuente: ONE</div>
             </div>
-
-            <!-- 07 -->
-            <div class="transp-card">
+            
+            <!-- Card 07 - Atencion al usuario SAC -->
+            <div class="transp-card transp-observe" style="animation-delay: 0.35s">
                 <div class="transp-card-band"></div>
                 <div class="transp-card-number">07</div>
                 <div class="transp-card-icon">
                     <i class="fas fa-comment-dots"></i>
                 </div>
-                <h3>Atención al usuario (SAC)</h3>
-                <p>Realice consultas, quejas o sugerencias sobre la gestión municipal.</p>
+                <h3 class="transp-card-title">Atencion al usuario SAC</h3>
+                <p class="transp-card-desc">Oficina de Acceso a la Informacion (OAI) - Consultas, quejas y sugerencias</p>
+                <div class="transp-card-divider"></div>
                 <a href="/transparencia/atencion" class="transp-card-btn">Ingresar <i class="fas fa-arrow-right"></i></a>
+                <div class="transp-card-meta">Respuesta 15 dias</div>
             </div>
-
-            <!-- 08 -->
-            <div class="transp-card">
+            
+            <!-- Card 08 - Tramites y servicios -->
+            <div class="transp-card transp-observe" style="animation-delay: 0.40s">
                 <div class="transp-card-band"></div>
                 <div class="transp-card-number">08</div>
                 <div class="transp-card-icon">
                     <i class="fas fa-handshake"></i>
                 </div>
-                <h3>Trámites y servicios</h3>
-                <p>Solicitudes de certificados, permisos, constancias. Ventanilla única virtual.</p>
-                <a href="/servicios" class="transp-card-btn">Ir a trámites <i class="fas fa-arrow-right"></i></a>
+                <h3 class="transp-card-title">Tramites y servicios</h3>
+                <p class="transp-card-desc">Solicitudes, denuncias y consultas disponibles para los ciudadanos</p>
+                <div class="transp-card-divider"></div>
+                <a href="/servicios" class="transp-card-btn">Ir a tramites <i class="fas fa-arrow-right"></i></a>
+                <div class="transp-card-meta">100% en linea</div>
             </div>
-
-            <!-- 09 -->
-            <div class="transp-card">
+            
+            <!-- Card 09 - Actas y acuerdos -->
+            <div class="transp-card transp-observe" style="animation-delay: 0.45s">
                 <div class="transp-card-band"></div>
                 <div class="transp-card-number">09</div>
                 <div class="transp-card-icon">
                     <i class="fas fa-file-signature"></i>
                 </div>
-                <h3>Actas y acuerdos</h3>
-                <p>Actas de sesiones del concejo, acuerdos municipales y resoluciones administrativas.</p>
+                <h3 class="transp-card-title">Actas y acuerdos</h3>
+                <p class="transp-card-desc">Actas del Concejo de Regidores y acuerdos municipales vigentes</p>
+                <div class="transp-card-divider"></div>
                 <a href="/transparencia/actas" class="transp-card-btn">Consultar <i class="fas fa-arrow-right"></i></a>
+                <div class="transp-card-meta">Documentos oficiales</div>
             </div>
-
-            <!-- 10 -->
-            <div class="transp-card">
+            
+            <!-- Card 10 - Compras y contrataciones -->
+            <div class="transp-card transp-observe" style="animation-delay: 0.50s">
                 <div class="transp-card-band"></div>
                 <div class="transp-card-number">10</div>
                 <div class="transp-card-icon">
                     <i class="fas fa-shopping-cart"></i>
                 </div>
-                <h3>Compras y contrataciones</h3>
-                <p>Licitaciones, órdenes de compra, proveedores y contratos vigentes.</p>
+                <h3 class="transp-card-title">Compras y contrataciones</h3>
+                <p class="transp-card-desc">Licitaciones, contratos vigentes, proveedores y compras menores</p>
+                <div class="transp-card-divider"></div>
                 <a href="/transparencia/compras" class="transp-card-btn">Ver detalles <i class="fas fa-arrow-right"></i></a>
+                <div class="transp-card-meta">Ley 340-06</div>
             </div>
-
-        </div>
-
-        <div class="transp-note">
-            <i class="fas fa-clock"></i>
-            <span>Esta sección se actualiza permanentemente conforme al Artículo 5 de la Ley 200-04. Para solicitar información específica use el formulario de</span>
-            <a href="/transparencia/atencion">Atención al Usuario</a>.
         </div>
     </div>
 </section>
 
-<!-- CTA FINAL -->
+<!-- SECCION 5 - NOTA DE ACTUALIZACION -->
+<section class="transp-update">
+    <div class="container">
+        <div class="transp-update-pill">
+            <i class="fas fa-sync-alt"></i>
+            <span>Ultima actualizacion: <strong>15 de abril 2026</strong></span>
+            <a href="#">Ver historial</a>
+        </div>
+    </div>
+</section>
+
+<!-- SECCION 6 - CTA FINAL IMPACTANTE -->
 <section class="transp-cta">
-    <div class="transp-cta-pattern"></div>
-    <div class="container transp-cta-container">
-        <h2 class="transp-cta-title">¿Necesitas información específica?</h2>
-        <p class="transp-cta-description">Estamos aquí para servirte con transparencia y compromiso.</p>
-        <div class="transp-cta-buttons">
-            <a href="/transparencia/atencion" class="transp-cta-btn-primary">
-                Solicitar información <i class="fas fa-arrow-right"></i>
-            </a>
-            <a href="/servicios" class="transp-cta-btn-secondary">
-                Ver servicios <i class="fas fa-clipboard-list"></i>
-            </a>
+    <div class="container">
+        <div class="transp-cta-content">
+            <div class="transp-cta-eyebrow">CONTACTO DIRECTO</div>
+            <h2 class="transp-cta-title">Necesitas informacion especifica?</h2>
+            <p class="transp-cta-subtitle">Estamos aqui para servirte con transparencia y compromiso.</p>
+            <div class="transp-cta-buttons">
+                <a href="/transparencia/atencion" class="transp-cta-btn-primary">Solicitar informacion <i class="fas fa-arrow-right"></i></a>
+                <a href="/servicios" class="transp-cta-btn-secondary">Ver servicios <i class="fas fa-clipboard-list"></i></a>
+            </div>
         </div>
     </div>
 </section>
+
+<script>
+(function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('transp-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    
+    document.querySelectorAll('.transp-observe').forEach(el => {
+        observer.observe(el);
+    });
+})();
+</script>
 
 {% endblock %}

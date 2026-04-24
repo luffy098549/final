@@ -51,6 +51,31 @@
         </div>
     </section>
 
+    <!-- OFICINAS DE ATENCIÓN -->
+    <div class="oficinas-container">
+        <div class="oficinas-header">
+            <h2>Oficinas de Atención al Ciudadano</h2>
+            <p>Conozca nuestras oficinas y los servicios que ofrecemos</p>
+        </div>
+        <div class="oficinas-grid">
+            <div class="oficina-card">
+                <div class="oficina-icon">📋</div>
+                <h3>Oficina Administrativa</h3>
+                <p>Atiende a los ciudadanos, especialmente cuando desean realizar solicitudes o gestiones que no están publicadas en la página oficial del ayuntamiento.</p>
+            </div>
+            <div class="oficina-card">
+                <div class="oficina-icon">📢</div>
+                <h3>Oficina de Libre Acceso a la Información (OAI/M)</h3>
+                <p>Garantiza que los ciudadanos puedan acceder a la información del ayuntamiento de manera transparente, conforme a la Ley 200-04.</p>
+            </div>
+            <div class="oficina-card">
+                <div class="oficina-icon">🏛️</div>
+                <h3>Salón de Reuniones</h3>
+                <p>Espacio destinado para realizar reuniones, actividades administrativas y toma de decisiones del ayuntamiento.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- GRID PRINCIPAL -->
     <div class="contacto-container">
 
@@ -75,11 +100,9 @@
             <div class="info-item">
                 <div class="info-icon" aria-hidden="true">📞</div>
                 <div class="info-body">
-                    <h3>Teléfonos</h3>
+                    <h3>Teléfono</h3>
                     <p>
-                        Tel.: <a href="tel:+18096917111">(809) 691-7111</a><br>
-                        Fax: <a href="tel:+18096917112">(809) 691-7112</a><br>
-                        Emergencias: <a href="tel:911">911</a>
+                        <a href="tel:+18096917111">(809) 691-7111</a>
                     </p>
                 </div>
             </div>
@@ -89,8 +112,7 @@
                 <div class="info-body">
                     <h3>Correo electrónico</h3>
                     <p>
-                        Contacto: <a href="mailto:info@tudominio.gob.do">info@tudominio.gob.do</a><br>
-                        General: <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a>
+                        <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a>
                     </p>
                 </div>
             </div>
@@ -100,9 +122,8 @@
                 <div class="info-body">
                     <h3>Horario de atención</h3>
                     <p>
-                        Lunes a Viernes: 8:00 am – 2:00 pm<br>
-                        Sábados: Cerrado <br>
-                        Domingos: Cerrado
+                        Lunes a Viernes: 8:00 AM – 4:00 PM<br>
+                        Sábados y Domingos: Cerrado
                     </p>
                 </div>
             </div>
@@ -162,19 +183,27 @@
     </div>
 
     <!-- MAPA -->
-   <section class="mapa">
-    <h2 class="mapa-titulo">Ubicación</h2>
+    <section class="mapa">
+        <h2 class="mapa-titulo">Ubicación</h2>
+        <div class="mapa-container">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3765.2053859271678!2d-70.54179958830814!3d19.316891981862504!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eb1d39032b62f21%3A0xbca30595419d1733!2sAyuntamiento%20Rio%20Verde%20Arriba%20(Cutupu)!5e0!3m2!1ses!2sdo!4v1772416027520!5m2!1ses!2sdo"
+                title="Ubicación Junta Distrital de Villa Cutupú"
+                allowfullscreen
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </section>
 
-    <div class="mapa-container">
-        <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3765.2053859271678!2d-70.54179958830814!3d19.316891981862504!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eb1d39032b62f21%3A0xbca30595419d1733!2sAyuntamiento%20Rio%20Verde%20Arriba%20(Cutupu)!5e0!3m2!1ses!2sdo!4v1772416027520!5m2!1ses!2sdo"
-            title="Ubicación Junta Distrital de Villa Cutupú"
-            allowfullscreen
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-    </div>
-</section>
+    <!-- LLAMADO A LA ACCIÓN -->
+    <section class="contacto-cta">
+        <div class="cta-content">
+            <h3>¿Necesitas asistencia inmediata?</h3>
+            <p>Visítanos en nuestras oficinas o llámanos en horario laboral</p>
+            <a href="/servicios" class="cta-button">Ver servicios disponibles <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
 
 </main>
 
@@ -207,17 +236,115 @@
             <div class="footer-contact">
                 <h3>Contacto</h3>
                 <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p>📠 Fax: <a href="tel:+18096917112">(809) 691-7112</a></p>
-                <p>✉️ <a href="mailto:info@tudominio.gob.do">info@tudominio.gob.do</a></p>
-                <p>🕒 Lun–Vie: 8:00 AM – 2:00 PM</p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕒 Lun–Vie: 8:00 AM – 4:00 PM</p>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            <p>© 2025-2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
+
+<style>
+    /* Estilos adicionales para las nuevas secciones */
+    .oficinas-container {
+        max-width: 1280px;
+        margin: 3rem auto;
+        padding: 0 2rem;
+    }
+    .oficinas-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .oficinas-header h2 {
+        font-size: 1.8rem;
+        color: #1A2410;
+        margin-bottom: 0.5rem;
+    }
+    .oficinas-header p {
+        color: #6B7280;
+    }
+    .oficinas-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    .oficina-card {
+        background: #FBF7F0;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid #E5E7EB;
+    }
+    .oficina-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        border-color: #2D5016;
+    }
+    .oficina-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+    }
+    .oficina-card h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #2D5016;
+        margin-bottom: 0.75rem;
+    }
+    .oficina-card p {
+        font-size: 0.85rem;
+        color: #4B5563;
+        line-height: 1.5;
+    }
+    .contacto-cta {
+        background: linear-gradient(135deg, #2D5016, #1A2410);
+        margin: 3rem 0 0;
+        padding: 3rem 2rem;
+        text-align: center;
+        color: white;
+    }
+    .cta-content h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .cta-content p {
+        opacity: 0.85;
+        margin-bottom: 1.5rem;
+    }
+    .cta-button {
+        background: #C8960C;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 2rem;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    .cta-button:hover {
+        background: #B87A0A;
+        transform: translateY(-2px);
+    }
+    @media (max-width: 768px) {
+        .oficinas-container {
+            padding: 0 1rem;
+        }
+        .oficinas-header h2 {
+            font-size: 1.4rem;
+        }
+        .contacto-cta {
+            padding: 2rem 1rem;
+        }
+        .cta-content h3 {
+            font-size: 1.2rem;
+        }
+    }
+</style>
 
 <!-- ===================================================
      JS — CONTACTO
@@ -226,9 +353,6 @@
 (function () {
     'use strict';
 
-    // -----------------------------------------------
-    // UTILIDAD — throttle
-    // -----------------------------------------------
     function throttle(fn, limit) {
         let inThrottle;
         return function () {
@@ -240,42 +364,27 @@
         };
     }
 
-    // -----------------------------------------------
-    // 1. HEADER — OCULTAR AL BAJAR, MOSTRAR AL SUBIR
-    // -----------------------------------------------
+    // Header scroll
     const header = document.getElementById('mainHeader');
-
     if (header) {
         let lastScrollTop = 0;
-
         function handleHeaderScroll() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-            // Sombra al hacer scroll
             header.classList.toggle('scrolled', scrollTop > 10);
-
-            // Ocultar/mostrar
             if (scrollTop > lastScrollTop && scrollTop > header.offsetHeight) {
                 header.classList.add('header-hidden');
             } else {
                 header.classList.remove('header-hidden');
             }
-
             lastScrollTop = Math.max(0, scrollTop);
         }
-
         window.addEventListener('scroll', throttle(handleHeaderScroll, 80), { passive: true });
     }
 
-    // -----------------------------------------------
-    // 2. VALIDACIÓN DE FORMULARIO EN TIEMPO REAL
-    // -----------------------------------------------
+    // Validación de formulario
     const form = document.getElementById('contactoForm');
-
     if (form) {
         const requiredFields = form.querySelectorAll('[required]');
-
-        // Estilo de error inline
         function setError(input, msg) {
             input.style.borderColor = '#c0392b';
             input.style.boxShadow = '0 0 0 3px rgba(192,57,43,0.1)';
@@ -288,15 +397,12 @@
             }
             err.textContent = msg;
         }
-
         function clearError(input) {
             input.style.borderColor = '';
             input.style.boxShadow = '';
             const err = input.parentNode.querySelector('.field-error');
             if (err) err.remove();
         }
-
-        // Validación live al salir del campo
         requiredFields.forEach(input => {
             input.addEventListener('blur', () => {
                 if (!input.value.trim()) {
@@ -307,16 +413,12 @@
                     clearError(input);
                 }
             });
-
             input.addEventListener('input', () => {
                 if (input.value.trim()) clearError(input);
             });
         });
-
-        // Submit
         form.addEventListener('submit', function (e) {
             let hasError = false;
-
             requiredFields.forEach(input => {
                 if (!input.value.trim()) {
                     setError(input, 'Este campo es requerido.');
@@ -326,10 +428,8 @@
                     hasError = true;
                 }
             });
-
             if (hasError) {
                 e.preventDefault();
-                // Scroll al primer error
                 const firstError = form.querySelector('.field-error');
                 if (firstError) {
                     firstError.closest('.form-group').querySelector('input, textarea').focus();
@@ -338,18 +438,14 @@
         });
     }
 
-    // -----------------------------------------------
-    // 3. ANIMACIONES DE ENTRADA (Intersection Observer)
-    // -----------------------------------------------
-    const animTargets = document.querySelectorAll('.contacto-info, .contacto-form, .mapa-container');
-
+    // Animaciones de entrada
+    const animTargets = document.querySelectorAll('.contacto-info, .contacto-form, .mapa-container, .oficinas-container');
     if (animTargets.length > 0) {
         animTargets.forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(24px)';
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         });
-
         const io = new IntersectionObserver((entries) => {
             entries.forEach((entry, i) => {
                 if (entry.isIntersecting) {
@@ -361,24 +457,15 @@
                 }
             });
         }, { threshold: 0.1 });
-
         animTargets.forEach(el => io.observe(el));
     }
 
-    // -----------------------------------------------
-    // 4. DISPOSITIVOS TÁCTILES
-    // -----------------------------------------------
     if ('ontouchstart' in window) {
         document.body.classList.add('touch-device');
     }
-
-    // -----------------------------------------------
-    // 5. PREVENIR CLICKS EN ENLACES VACÍOS
-    // -----------------------------------------------
     document.querySelectorAll('a[href="#"]').forEach(link => {
         link.addEventListener('click', e => e.preventDefault());
     });
-
 })();
 </script>
 

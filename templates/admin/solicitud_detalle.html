@@ -677,6 +677,9 @@
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Chat de mensajes -->
+            {% include "admin/partials/chat_mensajes.html" %}
         </div>
 
         <!-- Columna derecha - Acciones -->
@@ -845,6 +848,22 @@ document.addEventListener('keydown', function(e) {
         if (modal && modal.classList.contains('active')) {
             cerrarModalPlantillas();
         }
+    }
+});
+
+// Cargar mensajes cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    const folio = '{{ solicitud.folio }}';
+    const tipo = 'solicitud';
+    cargarMensajes(folio, tipo);
+    
+    // Configurar el formulario
+    const form = document.getElementById('formResponderMensaje');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            enviarMensaje(folio, tipo);
+        });
     }
 });
 </script>

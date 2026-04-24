@@ -1,3 +1,4 @@
+# admin.py
 """
 Blueprint de administración profesional.
 Maneja todas las funciones exclusivas de administradores.
@@ -10,6 +11,7 @@ from pathlib import Path
 import json
 import os
 import sys
+import flask
 from collections import defaultdict
 
 # Importar modelos
@@ -18,17 +20,14 @@ from models.reportes import Reportes
 from extensions import db
 
 # Importar roles desde rol.py
-from rol import tiene_permiso, Permiso, obtener_roles
-
-# Decoradores personalizados
-from decorators import permiso_requerido, solo_super_admin, admin_o_super, moderador_o_superior
+from rol import tiene_permiso, Permiso, obtener_roles, permiso_requerido, solo_super_admin, admin_o_super, moderador_o_superior
 
 # Módulo de configuración persistente
 import config_manager as cfg
 
 # Intentar importar nombres desde app.py
 try:
-    from app import NOMBRES_SERVICIOS, NOMBRES_DENUNCIAS, SERVICIOS_CITAS
+    from app import NOMBRES_SERVICIOS, NOMBRES_DENUNCIAS, SERVICIOS_CITAS, cache, REDIS_AVAILABLE
 except ImportError:
     # Valores por defecto
     NOMBRES_SERVICIOS = {
@@ -57,8 +56,99 @@ except ImportError:
         "atencion-vecinal": "Atención Vecinal",
         "otro": "Otro trámite"
     }
+    
+    # Valores por defecto para cache y redis
+    cache = None
+    REDIS_AVAILABLE = False
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+
+# ================================================================
+# FUNCIONES DE NOTIFICACIONES
+# ================================================================
+
+from models.notificacion import Notificacion
+
+def enviar_notificacion_solicitud(solicitud, estado_anterior, comentario=None):
+    """Envía notificación al usuario cuando su solicitud es actualizada"""
+    titulo = f"Actualización de tu solicitud {solicitud.folio}"
+    
+    if estado_anterior != solicitud.estado:
+        mensaje = f"Tu solicitud ha cambiado de estado: **{estado_anterior}** → **{solicitud.estado}**"
+    elif comentario:
+        mensaje = f"El administrador ha respondido a tu solicitud: {comentario[:200]}"
+    else:
+        mensaje = f"Tu solicitud ha sido actualizada. Nuevo estado: {solicitud.estado}"
+    
+    datos_extra = {
+        'folio': solicitud.folio,
+        'tipo': 'solicitud',
+        'estado': solicitud.estado,
+        'url': url_for('mis_tramites')
+    }
+    
+    Notificacion.crear_notificacion(
+        usuario_email=solicitud.usuario_email,
+        tipo='solicitud',
+        titulo=titulo,
+        mensaje=mensaje,
+        datos_extra=datos_extra
+    )
+
+
+def enviar_notificacion_denuncia(denuncia, estado_anterior, comentario=None):
+    """Envía notificación al usuario cuando su denuncia es actualizada"""
+    titulo = f"Actualización de tu denuncia {denuncia.folio}"
+    
+    if estado_anterior != denuncia.estado:
+        mensaje = f"Tu denuncia ha cambiado de estado: **{estado_anterior}** → **{denuncia.estado}**"
+    elif comentario:
+        mensaje = f"El administrador ha respondido a tu denuncia: {comentario[:200]}"
+    else:
+        mensaje = f"Tu denuncia ha sido actualizada. Nuevo estado: {denuncia.estado}"
+    
+    datos_extra = {
+        'folio': denuncia.folio,
+        'tipo': 'denuncia',
+        'estado': denuncia.estado,
+        'url': url_for('mis_tramites')
+    }
+    
+    Notificacion.crear_notificacion(
+        usuario_email=denuncia.usuario_email if not getattr(denuncia, 'anonimo', False) else None,
+        tipo='denuncia',
+        titulo=titulo,
+        mensaje=mensaje,
+        datos_extra=datos_extra
+    )
+
+
+def enviar_notificacion_cita(cita, estado_anterior, notas=None):
+    """Envía notificación al usuario cuando su cita es actualizada"""
+    titulo = f"Actualización de tu cita {cita.folio}"
+    
+    if estado_anterior != cita.estado:
+        mensaje = f"Tu cita ha cambiado de estado: **{estado_anterior}** → **{cita.estado}**"
+    elif notas:
+        mensaje = f"El administrador ha agregado notas a tu cita: {notas[:200]}"
+    else:
+        mensaje = f"Tu cita ha sido actualizada. Nuevo estado: {cita.estado}"
+    
+    datos_extra = {
+        'folio': cita.folio,
+        'tipo': 'cita',
+        'estado': cita.estado,
+        'url': url_for('mis_citas')
+    }
+    
+    Notificacion.crear_notificacion(
+        usuario_email=cita.usuario_email,
+        tipo='cita',
+        titulo=titulo,
+        mensaje=mensaje,
+        datos_extra=datos_extra
+    )
 
 
 # ================================================================
@@ -164,6 +254,7 @@ def admin_required(f):
 # ================================================================
 
 @admin_bp.route("/")
+@admin_bp.route("/dashboard")
 @admin_required
 @moderador_o_superior
 def dashboard():
@@ -307,7 +398,7 @@ def listar_solicitudes():
     )
 
 
-@admin_bp.route("/solicitudes/<int:solicitud_id>")
+@admin_bp.route("/solicitudes/<string:solicitud_id>")
 @admin_required
 @permiso_requerido(Permiso.VER_SOLICITUDES)
 def detalle_solicitud(solicitud_id):
@@ -318,18 +409,36 @@ def detalle_solicitud(solicitud_id):
             flash("Solicitud no encontrada.", "error")
             return redirect(url_for("admin.listar_solicitudes"))
         
+        # Definir categorias para plantillas
+        categorias = {
+            'solicitud': 'Solicitudes',
+            'denuncia': 'Denuncias',
+            'cita': 'Citas',
+            'general': 'General'
+        }
+        
+        # Cargar plantillas disponibles
+        try:
+            from models.plantilla import Plantilla
+            plantillas_disponibles = Plantilla.buscar_por_categoria('solicitud')
+        except:
+            plantillas_disponibles = []
+        
         return render_template(
             "admin/solicitud_detalle.html",
             solicitud=solicitud,
             servicios=NOMBRES_SERVICIOS,
-            estados=Solicitud.ESTADOS
+            estados=Solicitud.ESTADOS,
+            categorias=categorias,
+            plantillas=plantillas_disponibles,
+            now=datetime.now()
         )
     except Exception as e:
         flash(f"Error al cargar solicitud: {str(e)}", "error")
         return redirect(url_for("admin.listar_solicitudes"))
 
 
-@admin_bp.route("/solicitudes/<int:solicitud_id>/actualizar", methods=["POST"])
+@admin_bp.route("/solicitudes/<string:solicitud_id>/actualizar", methods=["POST"])
 @admin_required
 @permiso_requerido(Permiso.EDITAR_SOLICITUDES)
 def actualizar_solicitud(solicitud_id):
@@ -340,6 +449,7 @@ def actualizar_solicitud(solicitud_id):
             flash("Solicitud no encontrada.", "error")
             return redirect(url_for("admin.listar_solicitudes"))
         
+        estado_anterior = solicitud.estado
         nuevo_estado = request.form.get('estado')
         comentario = request.form.get('comentario', '')
         admin_email = session.get('user')
@@ -348,6 +458,9 @@ def actualizar_solicitud(solicitud_id):
             solicitud.actualizar_estado(nuevo_estado, comentario, admin_email)
             flash(f"Solicitud actualizada a: {nuevo_estado}", "success")
             registrar_accion('actualizar_solicitud', f"Solicitud {solicitud.folio} actualizada a {nuevo_estado}")
+            
+            # Enviar notificación al usuario
+            enviar_notificacion_solicitud(solicitud, estado_anterior, comentario)
         else:
             flash("Estado no válido.", "error")
         
@@ -357,7 +470,7 @@ def actualizar_solicitud(solicitud_id):
         return redirect(url_for("admin.listar_solicitudes"))
 
 
-@admin_bp.route("/solicitudes/<int:solicitud_id>/eliminar", methods=["POST"])
+@admin_bp.route("/solicitudes/<string:solicitud_id>/eliminar", methods=["POST"])
 @admin_required
 @permiso_requerido(Permiso.ELIMINAR_SOLICITUDES)
 def eliminar_solicitud(solicitud_id):
@@ -380,7 +493,7 @@ def eliminar_solicitud(solicitud_id):
 
 
 # ================================================================
-# GESTIÓN DE DENUNCIAS (COMPLETO)
+# GESTIÓN DE DENUNCIAS (COMPLETO - CORREGIDO)
 # ================================================================
 
 @admin_bp.route("/denuncias")
@@ -406,16 +519,26 @@ def listar_denuncias():
     
     denuncias.sort(key=lambda x: x.fecha_creacion, reverse=True)
     
+    # Obtener filtros de la URL para mantenerlos en la plantilla
+    filtros = {
+        'estado': request.args.get('estado', ''),
+        'tipo': request.args.get('tipo', ''),
+        'fecha_inicio': request.args.get('fecha_inicio', ''),
+        'fecha_fin': request.args.get('fecha_fin', ''),
+        'busqueda': request.args.get('busqueda', '')
+    }
+    
     return render_template(
         "admin/denuncias.html",
         denuncias=denuncias,
         stats=stats,
         estados=Denuncia.ESTADOS,
-        tipos=NOMBRES_DENUNCIAS
+        tipos=NOMBRES_DENUNCIAS,
+        filtros=filtros  # CORREGIDO: Se pasa la variable filtros
     )
 
 
-@admin_bp.route("/denuncias/<int:denuncia_id>")
+@admin_bp.route("/denuncias/<string:denuncia_id>")
 @admin_required
 @permiso_requerido(Permiso.VER_DENUNCIAS)
 def detalle_denuncia(denuncia_id):
@@ -426,18 +549,36 @@ def detalle_denuncia(denuncia_id):
             flash("Denuncia no encontrada.", "error")
             return redirect(url_for("admin.listar_denuncias"))
         
+        # Definir categorias para plantillas
+        categorias = {
+            'solicitud': 'Solicitudes',
+            'denuncia': 'Denuncias',
+            'cita': 'Citas',
+            'general': 'General'
+        }
+        
+        # Cargar plantillas disponibles
+        try:
+            from models.plantilla import Plantilla
+            plantillas_disponibles = Plantilla.buscar_por_categoria('denuncia')
+        except:
+            plantillas_disponibles = []
+        
         return render_template(
             "admin/denuncia_detalle.html",
             denuncia=denuncia,
             tipos=NOMBRES_DENUNCIAS,
-            estados=Denuncia.ESTADOS
+            estados=Denuncia.ESTADOS,
+            categorias=categorias,
+            plantillas=plantillas_disponibles,
+            now=datetime.now()
         )
     except Exception as e:
         flash(f"Error al cargar denuncia: {str(e)}", "error")
         return redirect(url_for("admin.listar_denuncias"))
 
 
-@admin_bp.route("/denuncias/<int:denuncia_id>/actualizar", methods=["POST"])
+@admin_bp.route("/denuncias/<string:denuncia_id>/actualizar", methods=["POST"])
 @admin_required
 @permiso_requerido(Permiso.EDITAR_DENUNCIAS)
 def actualizar_denuncia(denuncia_id):
@@ -448,6 +589,7 @@ def actualizar_denuncia(denuncia_id):
             flash("Denuncia no encontrada.", "error")
             return redirect(url_for("admin.listar_denuncias"))
         
+        estado_anterior = denuncia.estado
         nuevo_estado = request.form.get('estado')
         comentario = request.form.get('comentario', '')
         admin_email = session.get('user')
@@ -474,6 +616,10 @@ def actualizar_denuncia(denuncia_id):
             
             flash(f"Denuncia actualizada a: {nuevo_estado}", "success")
             registrar_accion('actualizar_denuncia', f"Denuncia {denuncia.folio} actualizada a {nuevo_estado}")
+            
+            # Enviar notificación al usuario (si no es anónimo)
+            if not getattr(denuncia, 'anonimo', False):
+                enviar_notificacion_denuncia(denuncia, estado_anterior, comentario)
         else:
             flash("Estado no válido.", "error")
         
@@ -483,7 +629,7 @@ def actualizar_denuncia(denuncia_id):
         return redirect(url_for("admin.listar_denuncias"))
 
 
-@admin_bp.route("/denuncias/<int:denuncia_id>/eliminar", methods=["POST"])
+@admin_bp.route("/denuncias/<string:denuncia_id>/eliminar", methods=["POST"])
 @admin_required
 @permiso_requerido(Permiso.ELIMINAR_DENUNCIAS)
 def eliminar_denuncia(denuncia_id):
@@ -674,12 +820,12 @@ def cambiar_password_usuario(email):
 
 
 # ================================================================
-# 🔥 CREAR ADMIN - CORREGIDO CON @solo_super_admin 🔥
+# CREAR ADMIN - CORREGIDO CON @solo_super_admin
 # ================================================================
 
 @admin_bp.route("/usuarios/crear-admin", methods=["GET", "POST"])
 @admin_required
-@solo_super_admin  # ← CORREGIDO: antes era @permiso_requerido(Permiso.CREAR_ADMINS)
+@solo_super_admin
 def crear_admin():
     if request.method == "POST":
         nombre = request.form.get('nombre', '').strip()
@@ -823,6 +969,7 @@ def admin_cambiar_estado_cita(cita_id):
             flash("❌ Cita no encontrada.", "error")
             return redirect(url_for('admin.admin_citas'))
         
+        estado_anterior = cita.estado
         nuevo_estado = request.form.get("estado")
         notas = request.form.get("notas", "")
         
@@ -842,6 +989,10 @@ def admin_cambiar_estado_cita(cita_id):
         Cita.guardar_todos(citas)
         
         flash(f"✅ Estado de cita actualizado a: {nuevo_estado}", "success")
+        
+        # Enviar notificación al usuario
+        enviar_notificacion_cita(cita, estado_anterior, notas)
+        
         return redirect(url_for('admin.admin_citas'))
     except Exception as e:
         flash(f"Error: {str(e)}", "error")
@@ -989,13 +1140,14 @@ def admin_encuestas():
 
 
 # ================================================================
-# BITÁCORA
+# BITÁCORA (CORREGIDA Y COMPLETA)
 # ================================================================
 
 @admin_bp.route("/bitacora")
 @admin_required
 @permiso_requerido(Permiso.VER_BITACORA)
 def bitacora():
+    """Muestra el registro de acciones de los administradores"""
     acciones_file = "data/admin_actions.json"
     acciones = []
 
@@ -1003,51 +1155,530 @@ def bitacora():
         try:
             with open(acciones_file, 'r', encoding='utf-8') as f:
                 acciones = json.load(f)
-        except:
+        except Exception as e:
+            print(f"Error cargando bitácora: {e}")
             acciones = []
 
+    # Ordenar por fecha (más reciente primero)
     acciones.sort(key=lambda x: x.get('fecha', ''), reverse=True)
 
+    # Paginación
     pagina = int(request.args.get('pagina', 1))
     por_pagina = 50
     inicio = (pagina - 1) * por_pagina
     fin = inicio + por_pagina
-    total_pags = (len(acciones) + por_pagina - 1) // por_pagina
+    total_pags = (len(acciones) + por_pagina - 1) // por_pagina if acciones else 1
 
     return render_template(
         "admin/bitacora.html",
         acciones=acciones[inicio:fin],
         pagina=pagina,
-        total_paginas=total_pags
+        total_paginas=total_pags,
+        total_acciones=len(acciones)
     )
+
+
+# ================================================================
+# GESTIÓN DE MENSAJES EN TRÁMITES
+# ================================================================
+
+from models.mensaje import Mensaje
+
+@admin_bp.route("/api/tramite/<folio>/mensajes", methods=["GET"])
+@admin_required
+def api_obtener_mensajes_tramite(folio):
+    """Obtiene todos los mensajes de un trámite"""
+    try:
+        tramite_tipo = request.args.get('tipo', 'solicitud')
+        mensajes = Mensaje.obtener_mensajes_tramite(folio, tramite_tipo)
+        
+        # Marcar como leídos los mensajes del usuario
+        for m in mensajes:
+            if not m.es_admin and not m.leido:
+                m.marcar_leido()
+        
+        return jsonify({
+            'success': True,
+            'mensajes': [m.to_dict() for m in mensajes]
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@admin_bp.route("/api/tramite/<folio>/responder", methods=["POST"])
+@admin_required
+def api_responder_mensaje_admin(folio):
+    """Admin responde a un trámite"""
+    try:
+        data = request.get_json()
+        mensaje_texto = data.get('mensaje', '').strip()
+        tramite_tipo = data.get('tipo', 'solicitud')
+        
+        if not mensaje_texto:
+            return jsonify({'success': False, 'error': 'El mensaje no puede estar vacío'}), 400
+        
+        if len(mensaje_texto) > 1000:
+            return jsonify({'success': False, 'error': 'El mensaje es demasiado largo'}), 400
+        
+        # Obtener información del trámite
+        usuario_email = None
+        nombre_tramite = ''
+        
+        if tramite_tipo == 'solicitud':
+            solicitud = Solicitud.buscar_por_folio(folio)
+            if solicitud:
+                usuario_email = solicitud.usuario_email
+                nombre_tramite = NOMBRES_SERVICIOS.get(solicitud.servicio_id, solicitud.servicio_id)
+        elif tramite_tipo == 'denuncia':
+            denuncias = Denuncia.cargar_todos()
+            for d in denuncias:
+                if d.folio == folio:
+                    usuario_email = d.usuario_email
+                    nombre_tramite = NOMBRES_DENUNCIAS.get(d.tipo, d.tipo)
+                    break
+        elif tramite_tipo == 'cita':
+            from models.cita import Cita
+            cita = Cita.buscar_por_folio(folio)
+            if cita:
+                usuario_email = cita.usuario_email
+                nombre_tramite = SERVICIOS_CITAS.get(cita.servicio, cita.servicio)
+        
+        if not usuario_email:
+            return jsonify({'success': False, 'error': 'Trámite no encontrado'}), 404
+        
+        admin_email = session.get('user')
+        admin_nombre = session.get('user_name', 'Administrador')
+        
+        # Crear mensaje
+        Mensaje.crear_mensaje(
+            tramite_folio=folio,
+            tramite_tipo=tramite_tipo,
+            usuario_email=usuario_email,
+            autor_email=admin_email,
+            autor_nombre=admin_nombre,
+            mensaje=mensaje_texto,
+            es_admin=True
+        )
+        
+        # También enviar una notificación al usuario
+        try:
+            titulo = f"Nuevo mensaje en tu {nombre_tramite}"
+            descripcion = f"El administrador ha respondido a tu trámite {folio}"
+            
+            Notificacion.crear_notificacion(
+                usuario_email=usuario_email,
+                tipo='mensaje',
+                titulo=titulo,
+                mensaje=descripcion,
+                datos_extra={
+                    'folio': folio,
+                    'tipo': tramite_tipo,
+                    'url': url_for('mis_tramites')
+                }
+            )
+        except:
+            pass
+        
+        registrar_accion('responder_tramite', f"Admin respondió en {tramite_tipo} {folio}")
+        
+        return jsonify({'success': True, 'mensaje': 'Respuesta enviada correctamente'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 # ================================================================
 # CONFIGURACIÓN
 # ================================================================
 
-@admin_bp.route("/configuracion")
+@admin_bp.route("/configuracion", methods=["GET"])
 @admin_required
 @permiso_requerido(Permiso.VER_CONFIG)
 def configuracion():
+    """Muestra la página de configuración"""
     config_actual = cfg.cargar_config()
     return render_template("admin/configuracion.html", config=config_actual)
 
 
+@admin_bp.route("/configuracion/guardar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def guardar_configuracion():
+    """Guarda la configuración enviada desde el formulario (método POST tradicional)"""
+    from models.configuracion import Configuracion
+    
+    # Guardar cada configuración
+    for clave, valor in request.form.items():
+        Configuracion.set(clave, valor)
+    
+    # Limpiar caché global
+    Configuracion.clear_cache()
+    
+    flash('✅ Configuración actualizada correctamente', 'success')
+    return redirect(url_for('admin.configuracion'))
+
+
 # ================================================================
-# API PARA ADMIN
+# API DE CONFIGURACIÓN (CORREGIDA - USA MODELO CONFIGURACION)
+# ================================================================
+
+@admin_bp.route("/api/config/sistema-info", methods=["GET"])
+@admin_required
+@permiso_requerido(Permiso.VER_CONFIG)
+def api_sistema_info():
+    """Devuelve información del sistema para la página de configuración"""
+    try:
+        info = {
+            'version': '2.0.0',
+            'python_version': sys.version.split()[0],
+            'flask_version': flask.__version__,
+            'database': 'PostgreSQL',
+            'debug': True,
+            'redis_available': REDIS_AVAILABLE,
+            'cloudinary_configured': True,
+            'total_usuarios': Usuario.query.count(),
+            'total_solicitudes': len(Solicitud.cargar_todos()),
+            'total_denuncias': len(Denuncia.cargar_todos()),
+            'ultimo_backup': None,
+            'mantenimiento': cfg.get('sistema', 'maintenance', False)
+        }
+        return jsonify({"ok": True, "datos": info})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@admin_bp.route("/api/config/guardar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def api_guardar_config():
+    """Guarda la configuración del sistema en la base de datos usando modelo Configuracion"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({"ok": False, "error": "No se recibieron datos"}), 400
+        
+        seccion = data.get('seccion')
+        valores = data.get('datos', {})
+        
+        if not valores:
+            return jsonify({"ok": False, "error": "No se recibieron valores para guardar"}), 400
+        
+        # Importar modelo de configuración
+        from models.configuracion import Configuracion
+        
+        contador = 0
+        if seccion:
+            # Guardar sección completa
+            for clave, valor in valores.items():
+                # Detectar tipo automáticamente
+                tipo = 'string'
+                if isinstance(valor, bool):
+                    tipo = 'bool'
+                elif isinstance(valor, int):
+                    tipo = 'int'
+                elif isinstance(valor, float):
+                    tipo = 'float'
+                elif isinstance(valor, (dict, list)):
+                    tipo = 'json'
+                
+                Configuracion.set(clave, valor, tipo, seccion)
+                contador += 1
+        else:
+            # Guardar config general
+            for clave, valor in valores.items():
+                tipo = 'string'
+                if isinstance(valor, bool):
+                    tipo = 'bool'
+                elif isinstance(valor, int):
+                    tipo = 'int'
+                elif isinstance(valor, float):
+                    tipo = 'float'
+                elif isinstance(valor, (dict, list)):
+                    tipo = 'json'
+                Configuracion.set(clave, valor, tipo, 'general')
+                contador += 1
+        
+        # Confirmar transacción
+        db.session.commit()
+        
+        # Registrar acción en bitácora
+        registrar_accion(
+            'guardar_configuracion', 
+            f"Configuración actualizada - Sección: {seccion or 'general'} - {contador} valores guardados"
+        )
+        
+        return jsonify({
+            "ok": True, 
+            "mensaje": f"✅ Configuración guardada correctamente ({contador} valores actualizados)",
+            "guardados": contador
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error guardando configuración: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@admin_bp.route("/api/config/test-smtp", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def api_test_smtp():
+    """Prueba la conexión SMTP"""
+    try:
+        data = request.get_json()
+        exito, mensaje = cfg.test_smtp(
+            host=data.get('smtp_host', ''),
+            port=data.get('smtp_port', 587),
+            user=data.get('smtp_user', ''),
+            password=data.get('smtp_pass', ''),
+            nombre=data.get('smtp_name', 'Villa Cutupú'),
+            email_destino=data.get('email_destino', '')
+        )
+        return jsonify({"ok": exito, "msg": mensaje})
+    except Exception as e:
+        return jsonify({"ok": False, "msg": str(e)}), 500
+
+
+@admin_bp.route("/api/config/subir-imagen", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def api_subir_imagen():
+    """Sube imágenes de configuración (logo, favicon, banner)"""
+    try:
+        tipo = request.form.get('tipo')
+        archivo = request.files.get('archivo')
+        
+        if not tipo or not archivo or archivo.filename == '':
+            return jsonify({"ok": False, "msg": "Tipo y archivo requeridos"}), 400
+        
+        exito, resultado = cfg.guardar_imagen_config(archivo, tipo)
+        
+        if exito:
+            registrar_accion('subir_imagen', f"Imagen '{tipo}' actualizada")
+            return jsonify({"ok": True, "ruta": resultado, "msg": f"{tipo.capitalize()} guardado correctamente"})
+        else:
+            return jsonify({"ok": False, "msg": resultado}), 400
+    except Exception as e:
+        return jsonify({"ok": False, "msg": str(e)}), 500
+
+
+@admin_bp.route("/api/config/exportar", methods=["GET"])
+@admin_required
+@permiso_requerido(Permiso.EXPORTAR_DATOS)
+def api_exportar_datos():
+    """Exporta los datos del sistema como ZIP"""
+    try:
+        exito, ruta = cfg.exportar_datos_zip()
+        if exito:
+            registrar_accion('exportar_datos', "Exportación ZIP generada")
+            return send_file(
+                ruta,
+                as_attachment=True,
+                download_name=Path(ruta).name,
+                mimetype='application/zip'
+            )
+        else:
+            return jsonify({"ok": False, "msg": ruta}), 500
+    except Exception as e:
+        return jsonify({"ok": False, "msg": str(e)}), 500
+
+
+@admin_bp.route("/api/config/limpiar-cache", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.MANTENIMIENTO)
+def api_limpiar_cache():
+    """Limpia la caché del sistema"""
+    try:
+        if cache:
+            cache.clear()
+        registrar_accion('limpiar_cache', "Caché del sistema limpiada")
+        return jsonify({"ok": True, "msg": "✅ Caché limpiada correctamente"})
+    except Exception as e:
+        return jsonify({"ok": False, "msg": str(e)}), 500
+
+
+@admin_bp.route("/api/config/mantenimiento", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.MANTENIMIENTO)
+def api_mantenimiento():
+    """Activa o desactiva el modo mantenimiento"""
+    try:
+        data = request.get_json()
+        activo = data.get('activo', False)
+        cfg.guardar_seccion('sistema', {'maintenance': activo})
+        estado = 'activado' if activo else 'desactivado'
+        registrar_accion('mantenimiento', f"Modo mantenimiento {estado}")
+        return jsonify({"ok": True, "msg": f"Modo mantenimiento {estado}"})
+    except Exception as e:
+        return jsonify({"ok": False, "msg": str(e)}), 500
+
+
+# ================================================================
+# API PARA ADMIN (ENDPOINTS SIN @admin_required PARA AJAX)
 # ================================================================
 
 @admin_bp.route("/api/citas-pendientes")
-@admin_required
 def api_citas_pendientes():
+    if "user" not in session:
+        return jsonify({"count": 0}), 401
     try:
         from models.cita import Cita
         citas = Cita.cargar_todos()
+        print(f"[DEBUG] Total citas cargadas: {len(citas)}")
         pendientes = len([c for c in citas if c.estado == 'pendiente'])
+        print(f"[DEBUG] Citas pendientes: {pendientes}")
         return jsonify({"count": pendientes})
     except Exception as e:
+        print(f"[ERROR] api_citas_pendientes: {str(e)}")
         return jsonify({"count": 0, "error": str(e)}), 500
+
+
+@admin_bp.route("/api/solicitudes-pendientes")
+def api_solicitudes_pendientes():
+    if "user" not in session:
+        return jsonify({"count": 0}), 401
+    try:
+        solicitudes = Solicitud.cargar_todos()
+        print(f"[DEBUG] Total solicitudes cargadas: {len(solicitudes)}")
+        for s in solicitudes:
+            print(f"[DEBUG] Solicitud: {s.folio} - estado: {s.estado}")
+        pendientes = len([s for s in solicitudes if s.estado in ['pendiente', 'en_proceso']])
+        print(f"[DEBUG] Solicitudes pendientes: {pendientes}")
+        return jsonify({"count": pendientes})
+    except Exception as e:
+        print(f"[ERROR] api_solicitudes_pendientes: {str(e)}")
+        return jsonify({"count": 0, "error": str(e)}), 500
+
+
+@admin_bp.route("/api/denuncias-pendientes")
+def api_denuncias_pendientes():
+    if "user" not in session:
+        return jsonify({"count": 0}), 401
+    try:
+        denuncias = Denuncia.cargar_todos()
+        print(f"[DEBUG] Total denuncias cargadas: {len(denuncias)}")
+        for d in denuncias:
+            print(f"[DEBUG] Denuncia: {d.folio} - estado: {d.estado}")
+        pendientes = len([d for d in denuncias if d.estado in ['pendiente', 'en_investigacion']])
+        print(f"[DEBUG] Denuncias pendientes: {pendientes}")
+        return jsonify({"count": pendientes})
+    except Exception as e:
+        print(f"[ERROR] api_denuncias_pendientes: {str(e)}")
+        return jsonify({"count": 0, "error": str(e)}), 500
+
+
+# ================================================================
+# API PARA DENUNCIAS EN MAPA (GEOJSON)
+# ================================================================
+
+@admin_bp.route("/api/denuncias/geojson")
+@admin_required
+def api_denuncias_geojson():
+    """Devuelve las denuncias en formato GeoJSON para el mapa de incidencias"""
+    try:
+        denuncias = Denuncia.cargar_todos()
+        
+        # Filtrar solo denuncias con coordenadas
+        features = []
+        for d in denuncias:
+            # Verificar si tiene coordenadas
+            lat = None
+            lng = None
+            
+            # Intentar obtener coordenadas de diferentes formas
+            if hasattr(d, 'lat') and d.lat and hasattr(d, 'lng') and d.lng:
+                try:
+                    lat = float(d.lat)
+                    lng = float(d.lng)
+                except (ValueError, TypeError):
+                    pass
+            elif hasattr(d, 'latitud') and d.latitud and hasattr(d, 'longitud') and d.longitud:
+                try:
+                    lat = float(d.latitud)
+                    lng = float(d.longitud)
+                except (ValueError, TypeError):
+                    pass
+            elif hasattr(d, 'geolocalizada') and d.geolocalizada and hasattr(d, 'coordenadas') and d.coordenadas:
+                # Si tiene coordenadas como string "lat,lng"
+                if isinstance(d.coordenadas, str) and ',' in d.coordenadas:
+                    parts = d.coordenadas.split(',')
+                    if len(parts) == 2:
+                        try:
+                            lat = float(parts[0].strip())
+                            lng = float(parts[1].strip())
+                        except (ValueError, TypeError):
+                            pass
+            elif hasattr(d, 'ubicacion') and d.ubicacion:
+                # Si tiene ubicación como string "lat,lng"
+                if isinstance(d.ubicacion, str) and ',' in d.ubicacion:
+                    parts = d.ubicacion.split(',')
+                    if len(parts) == 2:
+                        try:
+                            lat = float(parts[0].strip())
+                            lng = float(parts[1].strip())
+                        except (ValueError, TypeError):
+                            pass
+            
+            if lat and lng:
+                # Obtener nombre del tipo de denuncia
+                tipo_nombre = NOMBRES_DENUNCIAS.get(d.tipo, d.tipo)
+                
+                # Obtener color según estado
+                color = "#ffc107"  # amarillo por defecto
+                if d.estado == 'pendiente':
+                    color = "#ffc107"  # amarillo
+                elif d.estado == 'en_investigacion':
+                    color = "#17a2b8"  # azul
+                elif d.estado == 'resuelto':
+                    color = "#28a745"  # verde
+                elif d.estado == 'rechazado':
+                    color = "#dc3545"  # rojo
+                
+                feature = {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [lng, lat]  # GeoJSON usa [longitud, latitud]
+                    },
+                    "properties": {
+                        "id": d.id,
+                        "folio": d.folio,
+                        "tipo": d.tipo,
+                        "tipo_nombre": tipo_nombre,
+                        "estado": d.estado,
+                        "estado_label": d.estado.replace('_', ' ').title(),
+                        "color": color,
+                        "descripcion": d.descripcion[:200] if hasattr(d, 'descripcion') and d.descripcion else "",
+                        "direccion": getattr(d, 'direccion', ''),
+                        "fecha": d.fecha_creacion,
+                        "fecha_formateada": datetime.strptime(d.fecha_creacion, "%Y-%m-%d").strftime("%d/%m/%Y") if d.fecha_creacion else "",
+                        "url": url_for('admin.detalle_denuncia', denuncia_id=d.id)
+                    }
+                }
+                features.append(feature)
+        
+        geojson = {
+            "type": "FeatureCollection",
+            "features": features,
+            "total": len(features),
+            "total_denuncias": len(denuncias)
+        }
+        
+        return jsonify(geojson)
+        
+    except Exception as e:
+        print(f"Error generando GeoJSON para mapa: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            "type": "FeatureCollection",
+            "features": [],
+            "error": str(e),
+            "total": 0
+        }), 500
 
 
 @admin_bp.route("/api/estadisticas")
@@ -1066,6 +1697,7 @@ def api_estadisticas():
 # ================================================================
 
 def registrar_accion(tipo: str, descripcion: str, admin: str = None):
+    """Registra una acción en la bitácora de administración"""
     acciones_file = "data/admin_actions.json"
     acciones = []
 
@@ -1083,6 +1715,7 @@ def registrar_accion(tipo: str, descripcion: str, admin: str = None):
         'admin': admin or session.get('user', 'desconocido')
     })
 
+    # Mantener solo las últimas 1000 acciones
     if len(acciones) > 1000:
         acciones = acciones[-1000:]
 

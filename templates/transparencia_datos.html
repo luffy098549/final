@@ -1,14 +1,388 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base de Datos Municipal - Transparencia | Villa Cutupú</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos y Finanzas - Transparencia | Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/datos.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        .main-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 60px;
+            width: auto;
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .main-nav a {
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .main-nav a:hover,
+        .main-nav a.active {
+            color: #2d6a4f;
+        }
+
+        .btn-login, .btn-registro, .btn-logout {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .btn-login {
+            background: #2d6a4f;
+            color: white !important;
+        }
+
+        .btn-registro {
+            border: 1px solid #2d6a4f;
+            color: #2d6a4f !important;
+        }
+
+        .btn-logout {
+            background: #dc2626;
+            color: white !important;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #1a3c2c 0%, #2d6a4f 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Intro Block */
+        .intro-block {
+            background: #f0f7f2;
+            border-left: 4px solid #2d6a4f;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .bloque-titulo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin: 2.5rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #2d6a4f;
+            display: inline-block;
+        }
+
+        /* Grid de tarjetas */
+        .finanzas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .finanza-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .finanza-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #2d6a4f;
+        }
+
+        .card-icono {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .finanza-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin-bottom: 0.75rem;
+        }
+
+        .finanza-card p {
+            color: #475569;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .stat-valor {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #2d6a4f;
+            display: block;
+        }
+
+        .stat-label {
+            color: #64748b;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Tablas */
+        .tabla-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #1a3c2c;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-verde {
+            background: #e8f5e9;
+            color: #2d6a4f;
+        }
+
+        .badge-azul {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .badge-rojo {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Nota legal */
+        .nota-legal {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-info h3,
+        .footer-links h3,
+        .footer-contact h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info p,
+        .footer-contact p {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+
+        .footer-info a,
+        .footer-contact a {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .footer-info a:hover {
+            color: white;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin: 0.5rem 0;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #1e293b;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-header .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .bloque-titulo {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
 </head>
 <body>
+
 <header class="main-header">
     <div class="container">
         <div class="logo">
@@ -36,93 +410,160 @@
 
 <main>
     <section class="page-header">
-        <div class="breadcrumb">
-            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Base de Datos Municipal</span>
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/transparencia">Transparencia</a> <span>/</span> <span>Datos y Finanzas</span>
+            </div>
+            <h1>Datos y Finanzas Municipales</h1>
+            <p>Información financiera, gestión de recursos y transparencia fiscal del Ayuntamiento de Cutupú</p>
         </div>
-        <h1>Base de Datos Municipal</h1>
-        <p>Estadísticas demográficas, indicadores socioeconómicos y datos abiertos</p>
     </section>
 
-    <section class="page">
+    <div class="container">
         <div class="intro-block">
-            <p>Datos publicados conforme al <strong>Artículo 5 de la Ley 200-04</strong>. Fuentes: <strong>Oficina Nacional de Estadística (ONE)</strong> — Censo 2022 e indicadores municipales actualizados por la Junta Distrital.</p>
+            <p>Conforme al <strong>Artículo 5 de la Ley 200-04</strong> sobre Libre Acceso a la Información Pública, presentamos los datos financieros y la gestión de recursos del Ayuntamiento de Cutupú. La transparencia fiscal es fundamental para garantizar la confianza de los ciudadanos.</p>
         </div>
 
-        <h2 class="bloque-titulo">Datos demográficos — Censo ONE 2022</h2>
+        <!-- DEPARTAMENTO DE FINANZAS -->
+        <h2 class="bloque-titulo">Departamento de Finanzas</h2>
+        
+        <div class="finanzas-grid">
+            <!-- Función -->
+            <div class="finanza-card">
+                <div class="card-icono">📋</div>
+                <h3>Función del Departamento</h3>
+                <p>Verificar que los expedientes estén completos y controlar que los ingresos y gastos del ayuntamiento se manejen correctamente, garantizando el uso adecuado de los recursos económicos.</p>
+            </div>
+
+            <!-- Ingresos -->
+            <div class="finanza-card">
+                <div class="card-icono">💰</div>
+                <h3>¿De dónde provienen los ingresos?</h3>
+                <p>Los ingresos provienen principalmente del pago de la recogida de basura, impuestos municipales, arbitrios, tasas por servicios y otras contribuciones realizadas por los ciudadanos y negocios del distrito.</p>
+            </div>
+
+            <!-- Importancia -->
+            <div class="finanza-card">
+                <div class="card-icono">⭐</div>
+                <h3>Importancia de la buena administración</h3>
+                <p>Permite que el ayuntamiento pueda cumplir con sus funciones, realizar obras, ofrecer servicios públicos de calidad y asegurar el desarrollo del distrito de manera organizada y eficiente.</p>
+            </div>
+
+            <!-- Consecuencias de mala gestión -->
+            <div class="finanza-card">
+                <div class="card-icono">⚠️</div>
+                <h3>Consecuencias de una mala gestión</h3>
+                <p>Falta de recursos, retraso en obras, servicios deficientes, pérdida de confianza de la comunidad y problemas legales para los responsables.</p>
+            </div>
+
+            <!-- Fondos mal manejados -->
+            <div class="finanza-card">
+                <div class="card-icono">🚫</div>
+                <h3>¿Qué ocurre si no se manejan correctamente?</h3>
+                <p>Puede ocasionar que no se ejecuten las obras de manera correcta, que se desperdicien recursos y que los responsables enfrenten sanciones legales, incluso consecuencias judiciales.</p>
+            </div>
+
+            <!-- Beneficios -->
+            <div class="finanza-card">
+                <div class="card-icono">✅</div>
+                <h3>Beneficios de una correcta inversión</h3>
+                <p>Permite mejorar los servicios públicos, construir y mantener infraestructuras, mantener la limpieza, la seguridad y mejorar la calidad de vida de los ciudadanos.</p>
+            </div>
+        </div>
+
+        <!-- INGRESOS MUNICIPALES -->
+        <h2 class="bloque-titulo">Ingresos Municipales</h2>
         <div class="stats-grid">
-            <div class="stat-card"><span class="stat-valor">8,547</span><span class="stat-label">Población total del Distrito Municipal</span></div>
-            <div class="stat-card"><span class="stat-valor">4,312</span><span class="stat-label">Población masculina</span></div>
-            <div class="stat-card"><span class="stat-valor">4,235</span><span class="stat-label">Población femenina</span></div>
-            <div class="stat-card"><span class="stat-valor">2,843</span><span class="stat-label">Total de viviendas</span></div>
-            <div class="stat-card"><span class="stat-valor">1,950</span><span class="stat-label">Hogares en zona urbana</span></div>
-            <div class="stat-card"><span class="stat-valor">893</span><span class="stat-label">Hogares en zona rural</span></div>
+            <div class="stat-card">
+                <span class="stat-valor">Recogida de Basura</span>
+                <span class="stat-label">Principal fuente de ingresos</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-valor">Impuestos Municipales</span>
+                <span class="stat-label">Contribución de negocios y ciudadanos</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-valor">Arbitrios</span>
+                <span class="stat-label">Tasas por servicios municipales</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-valor">Tasas por Servicios</span>
+                <span class="stat-label">Trámites y gestiones</span>
+            </div>
         </div>
 
-        <h2 class="bloque-titulo">Indicadores socioeconómicos</h2>
+        <!-- COMPARATIVA GESTIÓN -->
+        <h2 class="bloque-titulo">Buenas vs Malas Prácticas Financieras</h2>
         <div class="tabla-wrapper">
             <table>
                 <thead>
                     <tr>
-                        <th>Indicador</th>
-                        <th>Porcentaje / Valor</th>
-                        <th>Año</th>
+                        <th>Buena Gestión</th>
+                        <th>Mala Gestión</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>Tasa de alfabetización</td><td><span class="badge badge-verde">91.5%</span></td><td>2022</td></tr>
-                    <tr><td>Hogares con acceso a agua potable</td><td><span class="badge badge-azul">78%</span></td><td>2023</td></tr>
-                    <tr><td>Hogares con acceso a energía eléctrica</td><td><span class="badge badge-verde">95%</span></td><td>2023</td></tr>
-                    <tr><td>Hogares con servicio de recogida de basura</td><td><span class="badge badge-gold">72%</span></td><td>2023</td></tr>
+                    <tr>
+                        <td>✅ Cumplimiento de funciones municipales</td>
+                        <td>❌ Falta de recursos</td>
+                    </tr>
+                    <tr>
+                        <td>✅ Obras ejecutadas correctamente</td>
+                        <td>❌ Retraso en obras</td>
+                    </tr>
+                    <tr>
+                        <td>✅ Servicios públicos de calidad</td>
+                        <td>❌ Servicios deficientes</td>
+                    </tr>
+                    <tr>
+                        <td>✅ Desarrollo organizado del distrito</td>
+                        <td>❌ Pérdida de confianza de la comunidad</td>
+                    </tr>
+                    <tr>
+                        <td>✅ Mejora en limpieza y seguridad</td>
+                        <td>❌ Problemas legales y sanciones</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
-        <h2 class="bloque-titulo">Datos abiertos disponibles para descarga</h2>
-        <div class="docs-lista">
-            <div class="doc-item">
-                <span class="doc-icono">📊</span>
-                <div class="doc-info">
-                    <strong>Nómina de empleados municipales</strong>
-                    <span>CSV / Excel · Actualizado: Enero 2025</span>
-                </div>
-                <a href="#" class="doc-btn">Descargar</a>
+        <!-- DEPARTAMENTOS RELACIONADOS -->
+        <h2 class="bloque-titulo">Departamentos Financieros</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-valor">🏦 Tesorería</span>
+                <span class="stat-label">Procesa pagos y maneja recursos económicos</span>
             </div>
-            <div class="doc-item">
-                <span class="doc-icono">📊</span>
-                <div class="doc-info">
-                    <strong>Proveedores del municipio</strong>
-                    <span>CSV / Excel · Actualizado: Enero 2025</span>
-                </div>
-                <a href="#" class="doc-btn">Descargar</a>
+            <div class="stat-card">
+                <span class="stat-valor">📊 Arbitrio</span>
+                <span class="stat-label">Recauda y gestiona impuestos municipales</span>
             </div>
-            <div class="doc-item">
-                <span class="doc-icono">📊</span>
-                <div class="doc-info">
-                    <strong>Permisos de construcción otorgados 2024</strong>
-                    <span>CSV / Excel · Actualizado: Diciembre 2024</span>
-                </div>
-                <a href="#" class="doc-btn">Descargar</a>
+            <div class="stat-card">
+                <span class="stat-valor">📒 Contabilidad</span>
+                <span class="stat-label">Comprobantes de gastos, cuentas por pagar</span>
             </div>
-            <div class="doc-item">
-                <span class="doc-icono">📊</span>
-                <div class="doc-info">
-                    <strong>Registro de organizaciones comunitarias</strong>
-                    <span>CSV / Excel · Actualizado: 2024</span>
-                </div>
-                <a href="#" class="doc-btn">Descargar</a>
+            <div class="stat-card">
+                <span class="stat-valor">🛒 Compras</span>
+                <span class="stat-label">Adquiere materiales para construcciones</span>
             </div>
         </div>
 
         <div class="nota-legal">
-            Los datos abiertos se publican bajo licencia de uso libre. Se permite su reutilización citando como fuente: <strong>Junta Distrital de Villa Cutupú / ONE — Censo 2022</strong>. Para solicitar datos adicionales utilice el formulario de <a href="/transparencia/atencion">Atención al Usuario</a>.
+            <strong>📌 Ley 311-14 y Ley 200-04</strong> — Todo funcionario electo o designado debe presentar declaración jurada de bienes ante la Cámara de Cuentas. La ciudadanía tiene derecho a solicitar información sobre el uso de los fondos municipales en cualquier momento.
         </div>
-    </section>
+
+        <div style="margin: 2rem 0; text-align: center; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
+            <p style="color: #64748b;">¿Desea más información sobre las finanzas municipales?</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="/contacto" style="color: #2d6a4f; text-decoration: none; font-weight: 600;">📞 Contáctenos</a> o visite nuestras oficinas en horario de atención.
+            </p>
+        </div>
+    </div>
 </main>
 
 <footer>
     <div class="container">
         <div class="footer-grid">
-            <!-- Columna 1: Información institucional -->
             <div class="footer-info">
                 <h3>Junta Distrital de Villa Cutupú</h3>
                 <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
@@ -133,8 +574,6 @@
                     <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
                 </div>
             </div>
-            
-            <!-- Columna 2: ENLACES RÁPIDOS (como pediste) -->
             <div class="footer-links">
                 <h3>Enlaces rápidos</h3>
                 <ul>
@@ -146,18 +585,15 @@
                     <li><a href="/contacto">Contacto</a></li>
                 </ul>
             </div>
-            
-            <!-- Columna 3: Contacto -->
             <div class="footer-contact">
-                <h3>Contacto</h3>
+                <h3>Horario de Atención</h3>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+                <p>📍 Oficina Central: Calle Principal, Cutupú</p>
                 <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
             </div>
         </div>
-        
         <div class="footer-bottom">
-            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            <p>© 2025-2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>

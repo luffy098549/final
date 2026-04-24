@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}Mis Denuncias{% endblock %}
+
+{% block content %}
+<section class="section-light" style="min-height: 80vh; padding: var(--space-7) 0;">
+  <div class="container" style="max-width: 1100px;">
+
+    <div style="margin-bottom: var(--space-5);">
+      <p style="font-size: 0.85rem; font-weight: 700; color: var(--green-dark); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem;">
+        Panel de usuario
+      </p>
+      <h1 style="font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 800; color: var(--text); letter-spacing: -0.025em; margin-bottom: 0.5rem;">
+        Mis Denuncias
+      </h1>
+      <p style="color: var(--text-light); font-size: 1rem;">
+        Revisa el estado de todas las denuncias que has presentado ante el municipio.
+      </p>
+    </div>
+
+    {% if denuncias %}
+    <div style="margin-bottom: var(--space-4);">
+      <span style="background: var(--green-xlight); color: var(--green-dark); font-size: 0.85rem; font-weight: 700; padding: 0.3rem 1rem; border-radius: var(--radius-full);">
+        {{ denuncias | length }} denuncia{{ 's' if denuncias | length != 1 else '' }} registrada{{ 's' if denuncias | length != 1 else '' }}
+      </span>
+    </div>
+    {% endif %}
+
+    {% if denuncias %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-4);">
+
+      {% for denuncia in denuncias %}
+
+      {% set es_resuelta   = denuncia.estado == 'resuelta' %}
+      {% set es_en_proceso = denuncia.estado == 'en_proceso' %}
+      {% set es_rechazada  = denuncia.estado == 'rechazada' %}
+
+      {% set label_estado = 'Resuelta' if es_resuelta else 'En proceso' if es_en_proceso else 'Rechazada' if es_rechazada else denuncia.estado | capitalize %}
+      {% set label_pie    = 'Completada' if es_resuelta else 'En revisión' if es_en_proceso else 'No procedió' if es_rechazada else denuncia.estado | capitalize %}
+
+      {# Clase CSS según estado — sin colores inline #}
+      {% set clase_estado = 'estado-resuelta' if es_resuelta else 'estado-en-proceso' if es_en_proceso else 'estado-rechazada' if es_rechazada else 'estado-otro' %}
+
+      <div class="den-card"
+           onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-md)'"
+           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-xs)'">
+
+        <div class="den-barra {{ clase_estado }}-barra"></div>
+
+        <div style="padding: var(--space-4);">
+
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; margin-bottom: var(--space-2);">
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text); margin: 0; line-height: 1.35; flex: 1;">
+              {{ denuncia.titulo | default('Sin título') }}
+            </h3>
+            <span class="den-badge {{ clase_estado }}-badge">
+              {{ label_estado }}
+            </span>
+          </div>
+
+          <p style="font-size: 0.93rem; color: var(--text-soft); line-height: 1.65; margin: 0 0 var(--space-3); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+            {{ denuncia.descripcion | default('Sin descripción proporcionada.') }}
+          </p>
+
+          <div style="border-top: 1px solid var(--border); padding-top: var(--space-2); display: flex; align-items: center; justify-content: space-between;">
+
+            <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+              <span style="font-size: 0.78rem; color: var(--text-light); font-weight: 600;">
+                Denuncia #{{ denuncia.id }}
+              </span>
+              <span style="font-size: 0.8rem; color: var(--text-light);">
+                📅
+                {% if denuncia.fecha %}
+                  {{ denuncia.fecha.strftime('%d/%m/%Y') if denuncia.fecha is not string else denuncia.fecha }}
+                {% else %}
+                  Fecha no disponible
+                {% endif %}
+              </span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.35rem;">
+              <div class="den-punto {{ clase_estado }}-punto"></div>
+              <span class="den-label-pie {{ clase_estado }}-texto">
+                {{ label_pie }}
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+    <div style="text-align: center; padding: var(--space-7) var(--space-4); background: var(--white); border-radius: var(--radius-block); box-shadow: var(--shadow-sm);">
+      <div style="font-size: 3.5rem; margin-bottom: var(--space-3);">🔍</div>
+      <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">No tienes denuncias registradas</h2>
+      <p style="color: var(--text-light); font-size: 1rem; max-width: 420px; margin: 0 auto var(--space-4);">
+        Si tienes un problema que reportar en tu comunidad, puedes presentar una denuncia desde aquí.
+      </p>
+      <a href="{{ url_for('servicios') }}" class="btn btn-primary">Presentar una denuncia</a>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: var(--space-4);">
+      <a href="{{ url_for('mi_cuenta') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--green-dark); text-decoration: none; font-weight: 600; font-size: 0.95rem;">
+        ← Volver a mi cuenta
+      </a>
+    </div>
+
+  </div>
+</section>
+
+{# ── Estilos estáticos: cero {{ }} dentro de CSS ── #}
+<style>
+.den-card {
+  background: var(--white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.den-barra {
+  height: 4px;
+  width: 100%;
+}
+
+.den-badge {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.den-punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.den-label-pie {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* ── Resuelta ── */
+.estado-resuelta-barra   { background: linear-gradient(90deg, #1A7A42, #2ECC71); }
+.estado-resuelta-badge   { background: #EAF7EF; color: #1A7A42; }
+.estado-resuelta-punto   { background: #1A7A42; }
+.estado-resuelta-texto   { color: #1A7A42; }
+
+/* ── En proceso ── */
+.estado-en-proceso-barra  { background: linear-gradient(90deg, #E6A800, #F5D020); }
+.estado-en-proceso-badge  { background: #FFF8E6; color: #9A6E00; }
+.estado-en-proceso-punto  { background: #E6A800; }
+.estado-en-proceso-texto  { color: #9A6E00; }
+
+/* ── Rechazada ── */
+.estado-rechazada-barra  { background: linear-gradient(90deg, #C0392B, #E74C3C); }
+.estado-rechazada-badge  { background: #FDECEA; color: #922B21; }
+.estado-rechazada-punto  { background: #C0392B; }
+.estado-rechazada-texto  { color: #922B21; }
+
+/* ── Otro/desconocido ── */
+.estado-otro-barra  { background: linear-gradient(90deg, var(--green), var(--green-light)); }
+.estado-otro-badge  { background: var(--gray-100); color: var(--gray-600); }
+.estado-otro-punto  { background: var(--gray-400); }
+.estado-otro-texto  { color: var(--text-light); }
+</style>
+{% endblock %}

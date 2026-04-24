@@ -1,94 +1,174 @@
 <section class="vocales anim">
     <div class="container">
         <div class="section-eyebrow text-center">Vocales Distritales</div>
-        <h2 class="section-title-serif text-center">Equipo de trabajo</h2>
+        <h2 class="section-title-serif text-center">Nuestro <span style="color: #2D5016;">Equipo de Trabajo</span></h2>
+        <p class="vocales-subtitle">Los vocales acompañan al alcalde en la gestión municipal, participando en las decisiones y velando por el bienestar del distrito. Período 2024-2028.</p>
         <div class="vocales-grid">
             <div class="vocal-card">
                 <div class="vocal-avatar">YB</div>
                 <div class="vocal-info">
-                    <div class="vocal-name">Yumirí A. Bueno Coste</div>
-                    <div class="vocal-role">Vocal</div>
+                    <div class="vocal-name">Yumiri Bueno</div>
+                    <div class="vocal-role">Vocal Municipal</div>
                 </div>
             </div>
             <div class="vocal-card">
                 <div class="vocal-avatar">WM</div>
                 <div class="vocal-info">
-                    <div class="vocal-name">Willian Mata Herrera</div>
-                    <div class="vocal-role">Vocal</div>
+                    <div class="vocal-name">William Mata</div>
+                    <div class="vocal-role">Vocal Municipal</div>
                 </div>
             </div>
             <div class="vocal-card">
                 <div class="vocal-avatar">XR</div>
                 <div class="vocal-info">
-                    <div class="vocal-name">Xiomara A. Romano Fernández</div>
-                    <div class="vocal-role">Vocal</div>
+                    <div class="vocal-name">Xiomara Romano</div>
+                    <div class="vocal-role">Vocal Municipal</div>
                 </div>
             </div>
             <div class="vocal-card">
-                <div class="vocal-avatar">CC</div>
+                <div class="vocal-avatar">CS</div>
                 <div class="vocal-info">
-                    <div class="vocal-name">Colipson M. Ceballos López</div>
-                    <div class="vocal-role">Vocal</div>
+                    <div class="vocal-name">Colinson Sevalle</div>
+                    <div class="vocal-role">Vocal Municipal</div>
                 </div>
             </div>
             <div class="vocal-card">
                 <div class="vocal-avatar">FP</div>
                 <div class="vocal-info">
-                    <div class="vocal-name">Francisco Peña García</div>
-                    <div class="vocal-role">Vocal</div>
+                    <div class="vocal-name">Francisco Peña</div>
+                    <div class="vocal-role">Vocal Municipal</div>
                 </div>
             </div>
+        </div>
+        <div class="vocales-footer">
+            <i class="fas fa-gavel"></i>
+            <p>Los vocales trabajan junto al Alcalde <strong>Rober Donald Tolentino</strong> para mantener el distrito limpio, organizado y en condiciones saludables para todos los habitantes.</p>
         </div>
     </div>
 </section>
 
 <style>
     .vocales {
-        padding: 6rem 0;
+        padding: 5rem 0;
         background: white;
+    }
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .section-eyebrow {
+        display: inline-block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #2D5016;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        background: #EAF2DC;
+        padding: 0.3rem 1.2rem;
+        border-radius: 2rem;
+    }
+    .section-eyebrow.text-center,
+    .section-title-serif.text-center {
+        text-align: center;
+        display: block;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .section-title-serif {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: #1A2410;
+    }
+    .vocales-subtitle {
+        text-align: center;
+        color: #6B7280;
+        max-width: 700px;
+        margin: 0 auto 2rem auto;
+        line-height: 1.6;
+        font-size: 0.95rem;
     }
     .vocales-grid {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        gap: 1rem;
-        margin-top: 3rem;
+        gap: 1.2rem;
+        margin-top: 2rem;
     }
     .vocal-card {
-        background: var(--crema);
+        background: #FBF7F0;
         border-radius: 1rem;
         padding: 1rem;
         display: flex;
         align-items: center;
         gap: 1rem;
-        transition: all var(--transition);
+        transition: all 0.3s ease;
+        border: 1px solid #E5E7EB;
     }
     .vocal-card:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-sm);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
         background: white;
+        border-color: #2D5016;
     }
     .vocal-avatar {
         width: 50px;
         height: 50px;
-        background: var(--verde-xlight);
+        background: #EAF2DC;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 800;
-        color: var(--verde);
-        font-size: 1.2rem;
+        color: #2D5016;
+        font-size: 1.1rem;
         flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+    .vocal-card:hover .vocal-avatar {
+        background: #2D5016;
+        color: white;
+    }
+    .vocal-info {
+        flex: 1;
     }
     .vocal-name {
         font-weight: 700;
         font-size: 0.9rem;
         margin-bottom: 0.2rem;
+        color: #1A2410;
     }
     .vocal-role {
         font-size: 0.7rem;
-        color: var(--verde);
+        color: #2D5016;
         font-weight: 600;
+    }
+    .vocales-footer {
+        margin-top: 3rem;
+        padding: 1.5rem;
+        background: #EAF2DC;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+    .vocales-footer i {
+        font-size: 1.5rem;
+        color: #2D5016;
+    }
+    .vocales-footer p {
+        color: #374151;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    .vocales-footer strong {
+        color: #2D5016;
     }
 
     @media (max-width: 1024px) {
@@ -97,13 +177,35 @@
         }
     }
     @media (max-width: 768px) {
+        .vocales {
+            padding: 3rem 0;
+        }
         .vocales-grid {
             grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        .vocal-card {
+            padding: 0.8rem;
+        }
+        .vocal-avatar {
+            width: 45px;
+            height: 45px;
+            font-size: 0.9rem;
+        }
+        .vocal-name {
+            font-size: 0.8rem;
+        }
+        .vocales-footer {
+            flex-direction: column;
+            gap: 0.5rem;
         }
     }
     @media (max-width: 480px) {
         .vocales-grid {
             grid-template-columns: 1fr;
+        }
+        .vocales-subtitle {
+            font-size: 0.85rem;
         }
     }
 </style>

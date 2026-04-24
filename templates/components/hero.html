@@ -3,13 +3,13 @@
     <div class="container hero-container">
         <div class="hero-content">
             <div class="hero-eyebrow">
-                <span>Municipio Turístico · Gestión 2026</span>
+                <span>Junta Distrital · Gestión 2024-2028</span>
             </div>
             <h1 class="hero-title">
-                Río Verde Arriba, <span class="hero-accent">Cutupú</span>
+                Junta Distrital de <span class="hero-accent">Villa Cutupú</span>
             </h1>
             <p class="hero-description">
-                Cerca de ti, trabajando por el progreso de nuestra comunidad con transparencia y compromiso.
+                Comprometidos con el desarrollo, la transparencia y el bienestar de nuestro distrito. Trabajando por el progreso de nuestra comunidad.
             </p>
             <div class="hero-buttons">
                 <a href="/servicios" class="btn btn-primary">Ver Servicios <i class="fas fa-arrow-right"></i></a>
@@ -19,16 +19,16 @@
             </div>
             <div class="hero-stats">
                 <div class="stat">
-                    <span class="stat-number">2026</span>
-                    <span class="stat-label">Gestión activa</span>
+                    <span class="stat-number">12</span>
+                    <span class="stat-label">Sectores</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-number">100%</span>
-                    <span class="stat-label">Transparencia</span>
+                    <span class="stat-number">17</span>
+                    <span class="stat-label">Departamentos</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-number">24/7</span>
-                    <span class="stat-label">Trámites en línea</span>
+                    <span class="stat-number">160+</span>
+                    <span class="stat-label">Empleados</span>
                 </div>
             </div>
         </div>
@@ -44,6 +44,24 @@
             <div class="hero-decoration decoration-2"></div>
         </div>
     </div>
+    <div class="hero-info-bar">
+        <div class="info-item">
+            <i class="fas fa-user-tie"></i>
+            <span>Alcalde: <strong>Rober Donald Tolentino</strong></span>
+        </div>
+        <div class="info-item">
+            <i class="fas fa-phone-alt"></i>
+            <span>Tel: <strong>(809) 691-7111</strong></span>
+        </div>
+        <div class="info-item">
+            <i class="fas fa-clock"></i>
+            <span>Horario: <strong>Lun-Vie 8AM - 4PM</strong></span>
+        </div>
+        <div class="info-item">
+            <i class="fas fa-envelope"></i>
+            <span>Email: <strong>juntamunicipalrioverdearriba@gmail.com</strong></span>
+        </div>
+    </div>
 </section>
 
 <style>
@@ -51,9 +69,10 @@
         background: linear-gradient(135deg, #FBF7F0 0%, #FFF9EF 100%);
         position: relative;
         overflow: hidden;
-        padding: 5rem 0 6rem;
+        padding: 5rem 0 0rem;
         min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
     }
     .hero-left-line {
@@ -74,6 +93,7 @@
         max-width: 1400px;
         margin: 0 auto;
         padding: 0 2rem;
+        flex: 1;
     }
     .hero-content {
         flex: 1;
@@ -232,10 +252,36 @@
         height: 220px;
         background: radial-gradient(circle, #EAF2DC 0%, transparent 70%);
     }
+    .hero-info-bar {
+        background: #1A2410;
+        width: 100%;
+        margin-top: 5rem;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+        border-top: 2px solid #C8960C;
+    }
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #E5E7EB;
+        font-size: 0.9rem;
+    }
+    .info-item i {
+        color: #C8960C;
+        font-size: 1rem;
+    }
+    .info-item strong {
+        color: white;
+        font-weight: 600;
+    }
 
     @media (max-width: 900px) {
         .hero {
-            padding: 4rem 0;
+            padding: 4rem 0 0rem;
             min-height: auto;
         }
         .hero-container {
@@ -264,6 +310,14 @@
             max-width: 500px;
             margin: 0 auto;
         }
+        .hero-info-bar {
+            gap: 1.5rem;
+            margin-top: 3rem;
+            padding: 1rem;
+        }
+        .info-item {
+            font-size: 0.75rem;
+        }
     }
     @media (max-width: 640px) {
         .hero-stats {
@@ -275,6 +329,11 @@
         .btn {
             padding: 0.7rem 1.5rem;
             font-size: 0.85rem;
+        }
+        .hero-info-bar {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
         }
     }
     @media (max-width: 480px) {

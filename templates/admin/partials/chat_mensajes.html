@@ -1,0 +1,217 @@
+<div class="chat-mensajes">
+    <div class="chat-header">
+        <h4><i class="fas fa-comments"></i> Conversación</h4>
+    </div>
+    <div class="chat-body" id="chatMensajes">
+        <div class="mensajes-container" id="mensajesContainer">
+            <div class="loading-mensajes">Cargando conversación...</div>
+        </div>
+    </div>
+    <div class="chat-footer">
+        <form id="formResponderMensaje">
+            <textarea id="mensajeTexto" placeholder="Escribe tu respuesta..." rows="2" maxlength="1000"></textarea>
+            <button type="submit" class="btn-send-message">
+                <i class="fas fa-paper-plane"></i> Enviar
+            </button>
+        </form>
+        <small class="char-counter">0/1000</small>
+    </div>
+</div>
+
+<style>
+.chat-mensajes {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-top: 1.5rem;
+}
+.chat-header {
+    padding: 1rem 1.5rem;
+    background: var(--green-xlight);
+    border-bottom: 1px solid var(--border);
+}
+.chat-header h4 {
+    margin: 0;
+    color: var(--green-dark);
+}
+.chat-body {
+    height: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #fafafa;
+}
+.mensaje-item {
+    display: flex;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease;
+}
+.mensaje-item.admin {
+    justify-content: flex-end;
+}
+.mensaje-item.usuario {
+    justify-content: flex-start;
+}
+.mensaje-bubble {
+    max-width: 70%;
+    padding: 0.75rem 1rem;
+    border-radius: 18px;
+    position: relative;
+}
+.mensaje-item.admin .mensaje-bubble {
+    background: var(--green-dark);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+.mensaje-item.usuario .mensaje-bubble {
+    background: white;
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+}
+.mensaje-autor {
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: flex;
+    gap: 0.5rem;
+}
+.mensaje-item.admin .mensaje-autor {
+    color: rgba(255,255,255,0.7);
+}
+.mensaje-texto {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+.mensaje-fecha {
+    font-size: 0.65rem;
+    margin-top: 0.25rem;
+    opacity: 0.6;
+}
+.chat-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--border);
+    background: white;
+}
+.chat-footer form {
+    display: flex;
+    gap: 0.5rem;
+}
+.chat-footer textarea {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: inherit;
+    resize: vertical;
+    font-size: 0.85rem;
+}
+.chat-footer textarea:focus {
+    outline: none;
+    border-color: var(--green);
+}
+.btn-send-message {
+    background: var(--green-dark);
+    color: white;
+    border: none;
+    padding: 0 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn-send-message:hover {
+    background: var(--green);
+    transform: translateY(-2px);
+}
+.char-counter {
+    display: block;
+    text-align: right;
+    font-size: 0.7rem;
+    color: var(--gray-400);
+    margin-top: 0.25rem;
+}
+.loading-mensajes, .empty-mensajes {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray-400);
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<script>
+function cargarMensajes(folio, tipo) {
+    fetch(`/admin/api/tramite/${folio}/mensajes?tipo=${tipo}`)
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('mensajesContainer');
+            if (data.success && data.mensajes && data.mensajes.length > 0) {
+                container.innerHTML = data.mensajes.map(m => `
+                    <div class="mensaje-item ${m.es_admin ? 'admin' : 'usuario'}">
+                        <div class="mensaje-bubble">
+                            <div class="mensaje-autor">
+                                <strong>${m.autor_nombre}</strong>
+                                <span>${m.autor_rol === 'admin' ? '📋 Administrador' : '👤 Ciudadano'}</span>
+                            </div>
+                            <div class="mensaje-texto">${escapeHtml(m.mensaje)}</div>
+                            <div class="mensaje-fecha">${m.fecha || ''}</div>
+                        </div>
+                    </div>
+                `).join('');
+                // Scroll al final
+                const chatBody = document.querySelector('.chat-body');
+                if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+            } else {
+                container.innerHTML = '<div class="empty-mensajes">No hay mensajes. Escribe el primero.</div>';
+            }
+        })
+        .catch(err => {
+            console.error('Error cargando mensajes:', err);
+            document.getElementById('mensajesContainer').innerHTML = '<div class="empty-mensajes">Error al cargar mensajes</div>';
+        });
+}
+
+function enviarMensaje(folio, tipo) {
+    const texto = document.getElementById('mensajeTexto').value.trim();
+    if (!texto) return;
+    
+    fetch(`/admin/api/tramite/${folio}/responder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mensaje: texto, tipo: tipo })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('mensajeTexto').value = '';
+            document.getElementById('mensajeTexto').dispatchEvent(new Event('input'));
+            cargarMensajes(folio, tipo);
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(err => alert('Error al enviar mensaje: ' + err));
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Contador de caracteres
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.getElementById('mensajeTexto');
+    const counter = document.querySelector('.char-counter');
+    if (textarea && counter) {
+        textarea.addEventListener('input', function() {
+            const len = this.value.length;
+            counter.textContent = `${len}/1000`;
+            if (len > 950) counter.style.color = '#dc3545';
+            else counter.style.color = '';
+        });
+    }
+});
+</script>

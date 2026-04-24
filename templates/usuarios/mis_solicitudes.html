@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block title %}Mis Solicitudes{% endblock %}
+
+{% block content %}
+<section class="section-light" style="min-height: 80vh; padding: var(--space-7) 0;">
+  <div class="container" style="max-width: 1100px;">
+
+    <!-- Encabezado -->
+    <div style="margin-bottom: var(--space-5);">
+      <p style="font-size: 0.85rem; font-weight: 700; color: var(--green-dark); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem;">
+        Panel de usuario
+      </p>
+      <h1 style="font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 800; color: var(--text); letter-spacing: -0.025em; margin-bottom: 0.5rem;">
+        Mis Solicitudes
+      </h1>
+      <p style="color: var(--text-light); font-size: 1rem;">
+        Aquí puedes ver y gestionar todas las solicitudes que has realizado.
+      </p>
+    </div>
+
+    <!-- Contador -->
+    {% if solicitudes %}
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: var(--space-4);">
+      <span style="background: var(--green-xlight); color: var(--green-dark); font-size: 0.85rem; font-weight: 700; padding: 0.3rem 1rem; border-radius: var(--radius-full);">
+        {{ solicitudes | length }} solicitud{{ 'es' if solicitudes | length != 1 else '' }} registrada{{ 's' if solicitudes | length != 1 else '' }}
+      </span>
+    </div>
+    {% endif %}
+
+    <!-- Tabla / Lista -->
+    {% if solicitudes %}
+    <div style="background: var(--white); border-radius: var(--radius-block); box-shadow: var(--shadow-sm); overflow: hidden;">
+
+      <!-- Cabecera de tabla (solo escritorio) -->
+      <div style="display: grid; grid-template-columns: 2fr 3fr 1.5fr 1.5fr 1fr; gap: 1rem; padding: 0.85rem var(--space-4); background: var(--gray-50); border-bottom: 1px solid var(--border);">
+        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em;">Servicio</span>
+        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em;">Descripción</span>
+        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em;">Fecha</span>
+        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em;">Estado</span>
+        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em;">Acción</span>
+      </div>
+
+      <!-- Filas -->
+      {% for solicitud in solicitudes %}
+      <div style="display: grid; grid-template-columns: 2fr 3fr 1.5fr 1.5fr 1fr; gap: 1rem; padding: 1.1rem var(--space-4); border-bottom: 1px solid var(--border); align-items: center; transition: background var(--transition-fast);"
+           onmouseover="this.style.background='var(--gray-50)'"
+           onmouseout="this.style.background='transparent'">
+
+        <!-- Tipo de servicio -->
+        <div>
+          <span style="font-weight: 700; color: var(--text); font-size: 0.95rem;">
+            {{ solicitud.tipo_servicio | default('Sin especificar') }}
+          </span>
+          <br>
+          <span style="font-size: 0.78rem; color: var(--text-light);">#{{ solicitud.id }}</span>
+        </div>
+
+        <!-- Descripción -->
+        <div>
+          <p style="color: var(--text-soft); font-size: 0.93rem; line-height: 1.5; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            {{ solicitud.descripcion | default('Sin descripción') }}
+          </p>
+        </div>
+
+        <!-- Fecha -->
+        <div>
+          <span style="font-size: 0.9rem; color: var(--text-light);">
+            {% if solicitud.fecha %}
+              {{ solicitud.fecha.strftime('%d/%m/%Y') if solicitud.fecha is not string else solicitud.fecha }}
+            {% else %}
+              —
+            {% endif %}
+          </span>
+        </div>
+
+        <!-- Estado con color -->
+        <div>
+          {% if solicitud.estado == 'aprobada' %}
+            <span style="display: inline-flex; align-items: center; gap: 0.4rem; background: #EAF7EF; color: #1A7A42; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.9rem; border-radius: var(--radius-full);">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #1A7A42; display: inline-block;"></span>
+              Aprobada
+            </span>
+          {% elif solicitud.estado == 'pendiente' %}
+            <span style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF8E6; color: #9A6E00; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.9rem; border-radius: var(--radius-full);">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #E6A800; display: inline-block;"></span>
+              Pendiente
+            </span>
+          {% elif solicitud.estado == 'rechazada' %}
+            <span style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FDECEA; color: #922B21; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.9rem; border-radius: var(--radius-full);">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #C0392B; display: inline-block;"></span>
+              Rechazada
+            </span>
+          {% else %}
+            <span style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--gray-100); color: var(--gray-600); font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.9rem; border-radius: var(--radius-full);">
+              {{ solicitud.estado | capitalize }}
+            </span>
+          {% endif %}
+        </div>
+
+        <!-- Acción cancelar (solo si está pendiente) -->
+        <div>
+          {% if solicitud.estado == 'pendiente' %}
+          <form method="POST" action="{{ url_for('cancelar_solicitud', solicitud_id=solicitud.id) }}"
+                onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta solicitud?')">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token is defined else '' }}">
+            <button type="submit"
+                    style="background: transparent; border: 1.5px solid #C0392B; color: #922B21; font-size: 0.8rem; font-weight: 700; padding: 0.3rem 0.8rem; border-radius: var(--radius-card); cursor: pointer; transition: background var(--transition-fast), color var(--transition-fast);"
+                    onmouseover="this.style.background='#FDECEA'"
+                    onmouseout="this.style.background='transparent'">
+              Cancelar
+            </button>
+          </form>
+          {% else %}
+          <span style="color: var(--gray-400); font-size: 0.85rem;">—</span>
+          {% endif %}
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+    <!-- Estado vacío -->
+    <div style="text-align: center; padding: var(--space-7) var(--space-4); background: var(--white); border-radius: var(--radius-block); box-shadow: var(--shadow-sm);">
+      <div style="font-size: 3.5rem; margin-bottom: var(--space-3);">📋</div>
+      <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">No tienes solicitudes registradas</h2>
+      <p style="color: var(--text-light); font-size: 1rem; max-width: 400px; margin: 0 auto var(--space-4);">
+        Cuando realices una solicitud de servicio, aparecerá aquí para que puedas darle seguimiento.
+      </p>
+      <a href="{{ url_for('servicios') }}" class="btn btn-primary">
+        Ver servicios disponibles
+      </a>
+    </div>
+    {% endif %}
+
+    <!-- Botón volver -->
+    <div style="margin-top: var(--space-4);">
+      <a href="{{ url_for('mi_cuenta') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--green-dark); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color var(--transition-fast);">
+        ← Volver a mi cuenta
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- Responsive: ocultar columnas en móvil -->
+<style>
+@media (max-width: 768px) {
+  .sol-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .sol-desc, .sol-accion {
+    display: none !important;
+  }
+}
+@media (max-width: 480px) {
+  .sol-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
+{% endblock %}

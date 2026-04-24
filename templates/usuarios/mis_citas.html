@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Citas | Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<style>
+    .citas-container{max-width:1000px;margin:2rem auto;padding:0 1.5rem}
+    .citas-header{background:linear-gradient(135deg,#1a3b2e,#2e7d5e);border-radius:16px;padding:2rem;margin-bottom:2rem;color:white}
+    .citas-header h1{font-size:2rem;font-weight:700;margin-bottom:.5rem}
+    .citas-header p{opacity:.9;font-size:1rem}
+    .citas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+    .cita-card{background:white;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.05);padding:1.5rem;border:1px solid var(--gray-200);transition:all .2s}
+    .cita-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.1);border-color:#1a3b2e}
+    .cita-folio{font-family:monospace;font-size:.8rem;color:var(--gray-400);margin-bottom:.5rem}
+    .cita-servicio{font-size:1.1rem;font-weight:600;color:var(--gray-800);margin-bottom:.5rem}
+    .cita-fecha{display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;color:var(--gray-600)}
+    .cita-fecha i{width:16px;color:#1a3b2e}
+    .cita-estado{display:inline-block;padding:.25rem 1rem;border-radius:30px;font-size:.75rem;font-weight:600;margin:.75rem 0}
+    .estado-pendiente{background:#fff8e1;color:#b85e00;border:1px solid #ffd9b0}
+    .estado-confirmada{background:#e1f7ed;color:#1e7b4c;border:1px solid #b0e5c0}
+    .estado-cancelada{background:#fee9e7;color:#b33c2f;border:1px solid #ffcfc9}
+    .estado-completada{background:#e0edff;color:#2563eb;border:1px solid #b8d3ff}
+    .btn-cancelar{background:none;border:1px solid var(--gray-300);color:var(--gray-600);padding:.4rem 1rem;border-radius:8px;font-size:.8rem;cursor:pointer;transition:all .2s}
+    .btn-cancelar:hover{background:#fee9e7;border-color:#b33c2f;color:#b33c2f}
+    .empty-state{text-align:center;padding:4rem;background:white;border-radius:16px;border:2px dashed var(--gray-300)}
+    .empty-state i{font-size:3rem;color:var(--gray-400);margin-bottom:1rem}
+    .btn-nueva-cita{display:inline-block;background:#1a3b2e;color:white;padding:.875rem 2rem;border-radius:12px;text-decoration:none;font-weight:600;margin-top:1rem}
+    .btn-nueva-cita:hover{background:#2e7d5e}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="citas-container">
+    <div class="citas-header">
+        <h1><i class="fas fa-calendar-alt"></i> Mis Citas</h1>
+        <p>Gestiona tus citas programadas con las oficinas municipales</p>
+    </div>
+
+    {% if citas %}
+        <div class="citas-grid">
+            {% for cita in citas %}
+                <div class="cita-card">
+                    <div class="cita-folio">
+                        <i class="fas fa-hashtag"></i> {{ cita.folio }}
+                    </div>
+                    <div class="cita-servicio">
+                        {% if cita.servicio == 'asesoria_legal' %}Asesoría Legal
+                        {% elif cita.servicio == 'catastro' %}Trámites de Catastro
+                        {% elif cita.servicio == 'licencias' %}Licencias y Permisos
+                        {% elif cita.servicio == 'atencion_ciudadana' %}Atención Ciudadana
+                        {% elif cita.servicio == 'tesoreria' %}Tesorería Municipal
+                        {% elif cita.servicio == 'planeamiento' %}Planeamiento Urbano
+                        {% elif cita.servicio == 'oaim' %}Oficina de Acceso a la Información
+                        {% elif cita.servicio == 'funeraria' %}Servicios Funerarios
+                        {% else %}{{ cita.servicio }}
+                        {% endif %}
+                    </div>
+                    <div class="cita-fecha">
+                        <i class="fas fa-calendar-day"></i> {{ cita.fecha }}
+                    </div>
+                    <div class="cita-fecha">
+                        <i class="fas fa-clock"></i> {{ cita.hora }}
+                    </div>
+                    {% if cita.motivo %}
+                        <div style="font-size:.9rem;color:var(--gray-500);margin:.5rem 0">
+                            <i class="fas fa-comment"></i> {{ cita.motivo }}
+                        </div>
+                    {% endif %}
+                    <div>
+                        <span class="cita-estado estado-{{ cita.estado }}">
+                            {{ cita.estado|title }}
+                        </span>
+                    </div>
+                    {% if cita.estado in ['pendiente', 'confirmada'] %}
+                        <form action="{{ url_for('cancelar_cita', cita_id=cita.id) }}" 
+                              method="POST" style="margin-top:.5rem">
+                            <button type="submit" class="btn-cancelar" 
+                                    onclick="return confirm('¿Cancelar esta cita?')">
+                                <i class="fas fa-times"></i> Cancelar cita
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-calendar-times"></i>
+            <h3>No tienes citas programadas</h3>
+            <p>Puedes solicitar una cita en línea con nuestras oficinas municipales</p>
+            <a href="{{ url_for('solicitar_cita') }}" class="btn-nueva-cita">
+                <i class="fas fa-plus"></i> Solicitar nueva cita
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

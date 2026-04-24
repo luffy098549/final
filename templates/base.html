@@ -3,46 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Junta Distrital de Villa Cutupú{% endblock %}</title>
-   <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/Adobe Express - file.png') }}">
+    <title>{% block title %}{{ config.nombre_municipio if config else 'Junta Distrital de Villa Cutupú' }}{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/Adobe Express - file.png') }}">
     <!-- Google Fonts: Playfair Display + DM Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    {% block extra_css %}{% endblock %}
     <style>
-        /* ===== VARIABLES GLOBALES ===== */
+        /* ===== VARIABLES GLOBALES DINÁMICAS ===== */
         :root {
-            --verde:        #2D5016;
-            --verde-med:    #3D6B20;
-            --verde-light:  #5A8C35;
-            --verde-soft:   #8BB55F;
-            --verde-xlight: #EAF2DC;
-            --dorado:       #C8960C;
-            --dorado-light: #F5DFA0;
-            --crema:        #FBF7F0;
-            --texto:        #1A2410;
-            --gris-50:      #F9FAFB;
-            --gris-100:     #F3F4F6;
-            --gris-200:     #E5E7EB;
-            --gris-300:     #D1D5DB;
-            --gris-400:     #9CA3AF;
-            --gris-500:     #6B7280;
-            --gris-600:     #4B5563;
-            --gris-700:     #374151;
-            --gris-800:     #1F2937;
-            --gris-900:     #111827;
-            --border:       #E5E7EB;
-            --shadow-xs:    0 1px 2px rgba(0,0,0,0.05);
-            --shadow-sm:    0 2px 8px rgba(0,0,0,0.05);
-            --shadow-md:    0 8px 30px rgba(0,0,0,0.08);
-            --shadow-lg:    0 20px 40px rgba(0,0,0,0.1);
-            --radius-card:  1rem;
+            --color-primary: {{ config.color_primario if config and config.color_primario else '#2D5016' }};
+            --color-accent: {{ config.color_acento if config and config.color_acento else '#C8960C' }};
+            --color-sidebar: {{ config.color_sidebar if config and config.color_sidebar else '#1F2937' }};
+            
+            /* Variables derivadas para compatibilidad */
+            --verde: var(--color-primary);
+            --verde-med: {{ config.color_primario_med if config and config.color_primario_med else '#3D6B20' }};
+            --verde-light: {{ config.color_primario_light if config and config.color_primario_light else '#5A8C35' }};
+            --verde-soft: {{ config.color_primario_soft if config and config.color_primario_soft else '#8BB55F' }};
+            --verde-xlight: {{ config.color_primario_xlight if config and config.color_primario_xlight else '#EAF2DC' }};
+            --dorado: var(--color-accent);
+            --dorado-light: {{ config.color_acento_light if config and config.color_acento_light else '#F5DFA0' }};
+            --crema: {{ config.color_crema if config and config.color_crema else '#FBF7F0' }};
+            --texto: {{ config.color_texto if config and config.color_texto else '#1A2410' }};
+            --gris-50: #F9FAFB;
+            --gris-100: #F3F4F6;
+            --gris-200: #E5E7EB;
+            --gris-300: #D1D5DB;
+            --gris-400: #9CA3AF;
+            --gris-500: #6B7280;
+            --gris-600: #4B5563;
+            --gris-700: #374151;
+            --gris-800: #1F2937;
+            --gris-900: #111827;
+            --border: #E5E7EB;
+            --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 30px rgba(0,0,0,0.08);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.1);
+            --radius-card: 1rem;
             --radius-block: 1.5rem;
-            --radius-full:  9999px;
-            --transition:   0.2s ease;
+            --radius-full: 9999px;
+            --transition: 0.2s ease;
         }
 
         *, *::before, *::after {
@@ -62,7 +65,6 @@
             color: var(--texto);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden;
         }
 
@@ -77,64 +79,255 @@
             width: 100%;
         }
 
-        /* Tipografía base */
         h1, h2, h3, h4, .serif {
             font-family: 'Playfair Display', serif;
         }
 
-        /* ===== FIX BOTÓN REGISTRARSE — INFALIBLE ===== */
-        a[href="/registro"],
-        .btn-registro,
-        .nav-btn-register,
-        .btn-primary-nav {
-            background: #2D5016 !important;
+        /* ===== HEADER ===== */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 0.75rem 0;
+        }
+        .main-header.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: var(--shadow-md);
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        .logo a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .header-logo {
+            height: 55px;
+            width: auto;
+            transition: height 0.3s ease;
+        }
+        .main-header.scrolled .header-logo {
+            height: 48px;
+        }
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .main-nav a {
+            text-decoration: none;
+            color: var(--texto);
+            font-weight: 500;
+            transition: color 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .main-nav a:hover,
+        .main-nav a.active {
+            color: var(--verde);
+        }
+        .nav-link.active {
+            color: var(--verde) !important;
+            font-weight: 600;
+        }
+        .btn-login {
+            background: transparent;
+            border: 2px solid var(--verde);
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            color: var(--verde) !important;
+        }
+        .btn-login:hover {
+            background: var(--verde);
             color: white !important;
-            padding: 0.5rem 1.4rem !important;
-            border-radius: 10px !important;
-            font-weight: 600 !important;
-            white-space: nowrap !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            text-decoration: none !important;
-            font-size: 0.88rem !important;
-            font-family: 'DM Sans', sans-serif !important;
-            line-height: 1.5 !important;
-            width: auto !important;
-            min-width: max-content !important;
-            max-width: none !important;
-            overflow: visible !important;
-            clip: unset !important;
-            clip-path: none !important;
-            height: auto !important;
-            border: none !important;
-            cursor: pointer !important;
-            transition: background 0.2s ease, transform 0.2s ease !important;
-            box-shadow: 0 2px 8px rgba(45,80,22,0.25) !important;
         }
-
-        a[href="/registro"]:hover,
-        .btn-registro:hover,
-        .nav-btn-register:hover,
-        .btn-primary-nav:hover {
-            background: #3D6B20 !important;
+        .btn-registro-nav {
+            background: var(--verde);
             color: white !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 16px rgba(45,80,22,0.35) !important;
-            text-decoration: none !important;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+        }
+        .btn-registro-nav:hover {
+            background: var(--verde-med);
+            transform: translateY(-2px);
+        }
+        .btn-logout {
+            background: #dc2626;
+            color: white !important;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+        }
+        .btn-logout:hover {
+            background: #b91c1c;
+        }
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        .menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--texto);
+            transition: 0.3s;
+        }
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100vh;
+            background: white;
+            z-index: 1001;
+            padding: 5rem 1.5rem 2rem;
+            transition: right 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            overflow-y: auto;
+        }
+        .mobile-menu.active {
+            right: 0;
+        }
+        .mobile-menu ul {
+            list-style: none;
+        }
+        .mobile-menu li {
+            margin-bottom: 1rem;
+        }
+        .mobile-menu a {
+            text-decoration: none;
+            color: var(--texto);
+            font-weight: 500;
+            display: block;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+        .mobile-menu a:hover {
+            background: var(--verde-xlight);
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        /* Excepción: el botón de registro en móvil puede ser full width */
-        .mobile-menu a[href="/registro"] {
-            width: 100% !important;
-            display: block !important;
-            text-align: center !important;
-            padding: 0.85rem 1.4rem !important;
-            border-radius: 10px !important;
-            margin-top: 0.5rem !important;
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--texto);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .footer-info h3,
+        .footer-links h3,
+        .footer-contact h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--dorado);
+        }
+        .footer-info p,
+        .footer-contact p {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+            opacity: 0.85;
+            font-size: 0.85rem;
+        }
+        .footer-info a,
+        .footer-contact a {
+            color: white;
+            text-decoration: none;
+        }
+        .footer-info a:hover {
+            color: var(--dorado);
+        }
+        .footer-links ul {
+            list-style: none;
+        }
+        .footer-links li {
+            margin: 0.5rem 0;
+        }
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.85;
+            font-size: 0.85rem;
+        }
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--dorado);
+        }
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .social-link {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .social-link:hover {
+            background: var(--dorado);
+            transform: translateY(-3px);
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.75rem;
+            opacity: 0.7;
         }
 
-        /* ===== ANIMACIONES .anim ===== */
+        /* ===== ANIMACIONES ===== */
         .anim {
             opacity: 0;
             transform: translateY(30px);
@@ -145,10 +338,6 @@
             opacity: 1;
             transform: translateY(0);
         }
-        .anim-d1 { transition-delay: 0.1s !important; }
-        .anim-d2 { transition-delay: 0.2s !important; }
-        .anim-d3 { transition-delay: 0.3s !important; }
-        .anim-d4 { transition-delay: 0.4s !important; }
 
         /* ===== FLASH MESSAGES ===== */
         .flash-messages {
@@ -174,16 +363,8 @@
             pointer-events: all;
         }
         .flash-message.flash-success   { border-left-color: var(--verde); }
-        .flash-message.flash-success i { color: var(--verde); }
         .flash-message.flash-error     { border-left-color: #dc2626; }
-        .flash-message.flash-error i   { color: #dc2626; }
         .flash-message.flash-warning   { border-left-color: var(--dorado); }
-        .flash-message.flash-warning i { color: var(--dorado); }
-        .flash-message.flash-info      { border-left-color: var(--verde-med); }
-        .flash-message.flash-info i    { color: var(--verde-med); }
-        .flash-message.flash-login_required { border-left-color: var(--verde-med); }
-        .flash-message.flash-login_required i { color: var(--verde-med); }
-
         .flash-close {
             margin-left: auto;
             background: none;
@@ -191,11 +372,7 @@
             font-size: 1.2rem;
             cursor: pointer;
             color: var(--gris-400);
-            transition: color var(--transition);
-            flex-shrink: 0;
         }
-        .flash-close:hover { color: var(--gris-700); }
-
         @keyframes slideInRight {
             from { transform: translateX(100%); opacity: 0; }
             to   { transform: translateX(0);    opacity: 1; }
@@ -212,44 +389,99 @@
             color: white;
             border: none;
             border-radius: 50%;
-            font-size: 1rem;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             opacity: 0;
             visibility: hidden;
             transition: all var(--transition);
-            box-shadow: var(--shadow-md);
             z-index: 99;
         }
-        .back-to-top.visible  { opacity: 1; visibility: visible; }
-        .back-to-top:hover    { background: var(--verde-med); transform: translateY(-3px); }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover {
+            background: var(--verde-med);
+            transform: translateY(-3px);
+        }
 
-        /* ===== RESPONSIVE BASE ===== */
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .main-nav { display: none; }
+            .menu-toggle { display: flex; }
+            .header-container { padding: 0 1rem; }
+            .hero-stats { gap: 1.5rem; }
+        }
         @media (max-width: 768px) {
             .container { padding: 0 1.5rem; }
             .flash-messages { right: 1rem; left: 1rem; max-width: none; }
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .social-links { justify-content: center; }
         }
-        @media (max-width: 480px) {
-            .container { padding: 0 1rem; }
-            .back-to-top { width: 40px; height: 40px; bottom: 1rem; right: 1rem; }
+        @media (max-width: 640px) {
+            .hero-stats { gap: 1rem; flex-wrap: wrap; justify-content: center; }
+            .stat-number { font-size: 1.6rem; }
         }
-
-        /* ===== REDUCIR MOVIMIENTO ===== */
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
             .anim { transition: none !important; }
         }
     </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-{% include 'components/header.html' %}
+<!-- HEADER -->
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo Villa Cutupú" class="header-logo">
+            </a>
+        </div>
+        
+        <button class="menu-toggle" aria-label="Menú" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/" class="nav-link">Inicio</a></li>
+                <li><a href="/municipio" class="nav-link">Municipio</a></li>
+                <li><a href="/servicios" class="nav-link">Servicios</a></li>
+                <li><a href="/transparencia" class="nav-link">Transparencia</a></li>
+                <li><a href="/noticias" class="nav-link">Noticias</a></li>
+                <li><a href="/contacto" class="nav-link">Contacto</a></li>
+                {% if logged %}
+                <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/registro" class="btn-registro-nav">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    
+    <div class="mobile-menu">
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/municipio">Municipio</a></li>
+            <li><a href="/servicios">Servicios</a></li>
+            <li><a href="/transparencia">Transparencia</a></li>
+            <li><a href="/noticias">Noticias</a></li>
+            <li><a href="/contacto">Contacto</a></li>
+            {% if logged %}
+            <li><a href="/mi-cuenta">Mi Cuenta</a></li>
+            <li><a href="/logout">Salir</a></li>
+            {% else %}
+            <li><a href="/login">Iniciar sesión</a></li>
+            <li><a href="/registro">Registrarse</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="overlay"></div>
+</header>
 
 <main>
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -269,42 +501,77 @@
     {% block content %}{% endblock %}
 </main>
 
-{% include 'components/footer.html' %}
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Horario de Atención</h3>
+                <p>🕐 Lunes a Viernes<br>8:00 AM – 4:00 PM</p>
+                <p>📍 Oficina Central: Calle Principal, Cutupú</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025-2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
 
 <button class="back-to-top" id="backToTop" aria-label="Volver arriba">
     <i class="fas fa-arrow-up"></i>
 </button>
 
 <script>
-    /* ===== HEADER SCROLL ===== */
+    // Header scroll
     const header = document.querySelector('.main-header');
     if (header) {
         window.addEventListener('scroll', () => {
             header.classList.toggle('scrolled', window.scrollY > 10);
-        }, { passive: true });
+        });
     }
-
-    /* ===== BACK TO TOP ===== */
+    
+    // Back to top
     const backBtn = document.getElementById('backToTop');
     if (backBtn) {
         window.addEventListener('scroll', () => {
             backBtn.classList.toggle('visible', window.scrollY > 300);
-        }, { passive: true });
+        });
         backBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
-
-    /* ===== FLASH AUTO-DISMISS ===== */
+    
+    // Flash auto-dismiss
     setTimeout(() => {
         document.querySelectorAll('.flash-message').forEach(msg => {
-            msg.style.transition = 'opacity 0.3s';
             msg.style.opacity = '0';
             setTimeout(() => msg.remove(), 300);
         });
     }, 5000);
-
-    /* ===== INTERSECTION OBSERVER .anim ===== */
+    
+    // Animations observer
     const animElements = document.querySelectorAll('.anim');
     if (animElements.length) {
         const observer = new IntersectionObserver((entries) => {
@@ -317,16 +584,62 @@
         }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
         animElements.forEach(el => observer.observe(el));
     }
-
-    /* ===== LINK ACTIVO EN NAV ===== */
+    
+    // Mobile menu
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const overlay = document.querySelector('.overlay');
+    
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.classList.toggle('menu-open');
+        });
+    }
+    
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.classList.remove('menu-open');
+        });
+    }
+    
+    // Active nav link
     document.querySelectorAll('.nav-link').forEach(link => {
         if (link.getAttribute('href') === window.location.pathname) {
             link.classList.add('active');
         }
     });
+    
+    // API config loader
+    async function actualizarConfiguracionDinamica() {
+        try {
+            const response = await fetch('/api/configuracion');
+            const data = await response.json();
+            if (data.success && data.config) {
+                if (data.config.color_primario) {
+                    document.documentElement.style.setProperty('--color-primary', data.config.color_primario);
+                }
+                if (data.config.color_acento) {
+                    document.documentElement.style.setProperty('--color-accent', data.config.color_acento);
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', actualizarConfiguracionDinamica);
+    } else {
+        actualizarConfiguracionDinamica();
+    }
 </script>
 
 {% block extra_js %}{% endblock %}
-
 </body>
 </html>

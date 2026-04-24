@@ -51,7 +51,11 @@ def inject_auth_variables():
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     """Página de inicio de sesión."""
+    # Si ya está logueado, redirigir a la página solicitada o al dashboard
     if esta_logueado():
+        next_url = request.args.get('next')
+        if next_url:
+            return redirect(next_url)
         if session.get("is_admin"):
             return redirect(url_for("admin.dashboard"))
         return redirect(url_for("index"))
@@ -59,14 +63,16 @@ def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
+        
+        # Guardar next URL si existe
+        next_url = request.form.get("next") or request.args.get("next")
 
-        # 🔥 DEBUG - VERIFICAR QUÉ LLEGA
         print("=" * 50)
         print("🔍 DEBUG LOGIN")
         print("EMAIL ESCRITO:", email)
         print("PASSWORD LENGTH:", len(password) if password else 0)
+        print("NEXT URL:", next_url)
 
-        # 🔥 DEBUG - VER USUARIOS EN BD
         usuarios = Usuario.query.all()
         print(f"📊 Total usuarios en BD: {len(usuarios)}")
         for u in usuarios:
@@ -75,12 +81,10 @@ def login():
 
         if not email or not password:
             flash("❌ Por favor, completa todos los campos.", "error")
-            return render_template("login.html")
+            return render_template("login.html", next=next_url)
 
-        # 🔥 BUSCAR USUARIO EN BASE DE DATOS
         usuario = Usuario.query.filter_by(email=email).first()
 
-        # 🔥 DEBUG - RESULTADO DE BÚSQUEDA
         if usuario:
             print(f"✅ Usuario encontrado: {usuario.email}")
             print(f"   Password en BD: {usuario.password}")
@@ -89,14 +93,13 @@ def login():
         else:
             print(f"❌ Usuario NO encontrado: {email}")
 
-        # 🔥 VALIDACIÓN DE CREDENCIALES
         if not usuario or usuario.password != password:
             flash("❌ Credenciales incorrectas.", "error")
-            return render_template("login.html")
+            return render_template("login.html", next=next_url)
 
         if not usuario.activo:
             flash("❌ Tu cuenta ha sido desactivada.", "error")
-            return render_template("login.html")
+            return render_template("login.html", next=next_url)
 
         # Registrar último acceso
         usuario.ultimo_acceso = datetime.now()
@@ -119,12 +122,17 @@ def login():
         print(f"✅ Login exitoso: {usuario.email} -> {rol_nombre}")
         flash(f"✅ ¡Bienvenido, {session['user_name']}! ({rol_nombre})", "success")
 
-        # Redirigir según rol
+        # 🔥 REDIRIGIR A LA PÁGINA SOLICITADA (next)
+        if next_url:
+            return redirect(next_url)
+        
         if usuario.rol in ["super_admin", "admin", "moderador"] or usuario.tipo == "admin":
             return redirect(url_for("admin.dashboard"))
         return redirect(url_for("index"))
 
-    return render_template("login.html")
+    # Para GET, pasar next al template
+    next_url = request.args.get('next', '')
+    return render_template("login.html", next=next_url)
 
 
 @auth.route("/registro", methods=["GET", "POST"])
@@ -153,7 +161,6 @@ def registro():
         print("NOMBRE:", nombre)
         print("=" * 50)
 
-        # Validaciones
         if not nombre or not apellidos or not email or not password:
             flash("❌ Los campos nombre, apellidos, email y contraseña son obligatorios.", "error")
             return render_template("registro.html")
@@ -170,13 +177,11 @@ def registro():
             flash("❌ Debes aceptar los términos y condiciones.", "error")
             return render_template("registro.html")
 
-        # Verificar si ya existe
         existe = Usuario.query.filter_by(email=email).first()
         if existe:
             flash("❌ Este correo electrónico ya está registrado.", "error")
             return render_template("registro.html")
 
-        # 🔥 CREAR USUARIO EN BASE DE DATOS
         nombre_completo = f"{nombre} {apellidos}"
         nuevo_usuario = Usuario(
             nombre=nombre,
@@ -327,14 +332,15 @@ def crear_usuarios_por_defecto():
 
 
 # ================================================================
-# DECORADORES
+# DECORADORES CORREGIDOS (con soporte para next)
 # ================================================================
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not esta_logueado():
             flash("🔐 Necesitas iniciar sesión.", "login_required")
-            return redirect(url_for("auth.login"))
+            # Guardar la URL actual para redirigir después del login
+            return redirect(url_for("auth.login", next=request.url))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -344,7 +350,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if not esta_logueado():
             flash("🔐 Necesitas iniciar sesión.", "login_required")
-            return redirect(url_for("auth.login"))
+            return redirect(url_for("auth.login", next=request.url))
         if not es_admin():
             flash("⛔ No tienes permisos de administrador.", "error")
             return redirect(url_for("index"))

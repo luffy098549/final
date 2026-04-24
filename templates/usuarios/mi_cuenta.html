@@ -336,7 +336,7 @@
 
         /* ── Rol card (admin) ── */
         .rol-card {
-            background: linear-gradient(135deg, var(--green-dark) 0%, #2e4828 100%);
+            background: linear-gradient(135deg, var(--green-dark) 0%, #3a5732 55%, #2B6A9E 100%);
             border-radius: var(--radius-card);
             padding: 1.2rem 1.5rem;
             display: flex; align-items: center; gap: 1rem;
@@ -566,7 +566,7 @@
                 <div class="banner-avatar {% if is_admin %}is-admin{% endif %}"
                      onclick="document.getElementById('fotoInputBanner').click()">
                     {% if usuario.foto_perfil %}
-                        <img src="{{ url_for('uploaded_file', filename=usuario.foto_perfil) }}"
+                        <img src="{{ usuario.foto_perfil }}"
                              alt="Foto" onerror="this.style.display='none'">
                     {% else %}
                         {{ usuario.nombre[0]|upper if usuario.nombre else usuario.email[0]|upper }}
@@ -607,7 +607,7 @@
         <!-- Form oculto para subida rápida desde el banner -->
         <form id="formFotoBanner" action="{{ url_for('subir_foto_perfil') }}"
               method="POST" enctype="multipart/form-data" style="display:none;">
-            <input type="file" id="fotoInputBanner" name="foto"
+            <input type="file" id="fotoInputBanner" name="foto_perfil"
                    accept="image/png,image/jpeg,image/gif,image/webp"
                    onchange="document.getElementById('formFotoBanner').submit();">
         </form>
@@ -632,7 +632,7 @@
                                  onclick="document.getElementById('fotoInputCard').click()">
                                 {% if usuario.foto_perfil %}
                                     <img id="fotoImgPreview"
-                                         src="{{ url_for('uploaded_file', filename=usuario.foto_perfil) }}"
+                                         src="{{ usuario.foto_perfil }}"
                                          alt="Foto" onerror="this.style.display='none'">
                                 {% else %}
                                     <span id="fotoLetraPreview">
@@ -646,7 +646,7 @@
 
                             <form id="formFotoCard" action="{{ url_for('subir_foto_perfil') }}"
                                   method="POST" enctype="multipart/form-data">
-                                <input type="file" id="fotoInputCard" name="foto"
+                                <input type="file" id="fotoInputCard" name="foto_perfil"
                                        class="foto-input-hidden"
                                        accept="image/png,image/jpeg,image/gif,image/webp"
                                        onchange="previsualizarFoto(this)">
@@ -689,11 +689,11 @@
                     <div class="pcard-body-sm">
                         <div class="stats-duo">
                             <div class="stat-box">
-                                <div class="stat-num">{{ solicitudes_count }}</div>
+                                <div class="stat-num">{{ usuario.solicitudes_count or 0 }}</div>
                                 <div class="stat-lbl">Solicitudes</div>
                             </div>
                             <div class="stat-box">
-                                <div class="stat-num blue">{{ denuncias_count }}</div>
+                                <div class="stat-num blue">{{ usuario.denuncias_count or 0 }}</div>
                                 <div class="stat-lbl">Denuncias</div>
                             </div>
                         </div>
@@ -767,22 +767,6 @@
                                     <label class="flabel">Dirección</label>
                                     <input type="text" name="direccion" class="finput" value="{{ usuario.direccion }}" placeholder="Ej. Calle Principal No. 4, Villa Cutupú">
                                 </div>
-                                {% if usuario.cedula or usuario.fecha_nacimiento %}
-                                <div class="fsec"><span class="fsec-lbl">Identificación</span></div>
-                                {% if usuario.cedula %}
-                                <div class="fgroup">
-                                    <label class="flabel">Cédula</label>
-                                    <input type="text" class="finput" value="{{ usuario.cedula }}" readonly>
-                                    <span class="fhint">Dato de registro no editable</span>
-                                </div>
-                                {% endif %}
-                                {% if usuario.fecha_nacimiento %}
-                                <div class="fgroup">
-                                    <label class="flabel">Fecha de nacimiento</label>
-                                    <input type="text" class="finput" value="{{ usuario.fecha_nacimiento }}" readonly>
-                                </div>
-                                {% endif %}
-                                {% endif %}
                             </div>
                             <div class="btn-row">
                                 <button type="submit" class="btn btn-primary btn-sm">
@@ -944,7 +928,7 @@
                         <div class="foto-preview-grande"
                              onclick="document.getElementById('fotoInputAdmin').click()">
                             {% if usuario.foto_perfil %}
-                                <img src="{{ url_for('uploaded_file', filename=usuario.foto_perfil) }}"
+                                <img src="{{ usuario.foto_perfil }}"
                                      alt="Foto" onerror="this.style.display='none'">
                             {% else %}
                                 <span>{{ usuario.nombre[0]|upper if usuario.nombre else usuario.email[0]|upper }}</span>
@@ -954,7 +938,7 @@
 
                         <form id="formFotoAdmin" action="{{ url_for('subir_foto_perfil') }}"
                               method="POST" enctype="multipart/form-data">
-                            <input type="file" id="fotoInputAdmin" name="foto"
+                            <input type="file" id="fotoInputAdmin" name="foto_perfil"
                                    class="foto-input-hidden"
                                    accept="image/png,image/jpeg,image/gif,image/webp"
                                    onchange="previsualizarFotoAdmin(this)">
@@ -994,7 +978,7 @@
                     {% set pm = {
                         'super_admin': ['ver_solicitudes','editar_solicitudes','eliminar_solicitudes','ver_denuncias','editar_denuncias','eliminar_denuncias','ver_usuarios','editar_usuarios','crear_admins','ver_configuracion','editar_configuracion','ver_bitacora','exportar_datos','modo_mantenimiento','comentar','asignar'],
                         'admin':       ['ver_solicitudes','editar_solicitudes','ver_denuncias','editar_denuncias','ver_usuarios','editar_usuarios','ver_configuracion','ver_bitacora','exportar_datos','comentar','asignar'],
-                        'moderador':   ['ver_solicitudes','ver_denuncias','ver_usuarios','comentar']
+                        'moderador':   ['ver_solicitudes','ver_denuncias','comentar']
                     } %}
                     {% set todos = [
                         ('ver_solicitudes','Ver solicitudes'),('editar_solicitudes','Editar solicitudes'),
