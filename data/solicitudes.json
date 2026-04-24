@@ -11,10 +11,7 @@
     "estado": "pendiente",
     "fecha_creacion": "2026-03-08T13:08:16.007239",
     "fecha_actualizacion": "2026-03-08T13:08:16.007245",
-    "fecha_resolucion": null,
-    "asignado_a": null,
     "comentarios_admin": [],
-    "documentos": [],
     "historial": [
       {
         "fecha": "2026-03-08T13:08:16.007250",
@@ -22,7 +19,9 @@
         "descripcion": "Solicitud creada por el usuario",
         "usuario": "sistema"
       }
-    ]
+    ],
+    "documentos": [],
+    "asignado_a": null
   },
   {
     "id": 2,
@@ -36,10 +35,7 @@
     "estado": "pendiente",
     "fecha_creacion": "2026-03-08T20:50:02.573250",
     "fecha_actualizacion": "2026-03-08T20:50:02.573251",
-    "fecha_resolucion": null,
-    "asignado_a": null,
     "comentarios_admin": [],
-    "documentos": [],
     "historial": [
       {
         "fecha": "2026-03-08T20:50:02.573253",
@@ -47,7 +43,9 @@
         "descripcion": "Solicitud creada por el usuario",
         "usuario": "sistema"
       }
-    ]
+    ],
+    "documentos": [],
+    "asignado_a": null
   },
   {
     "id": 3,
@@ -61,10 +59,7 @@
     "estado": "pendiente",
     "fecha_creacion": "2026-03-09T11:15:46.185108",
     "fecha_actualizacion": "2026-03-09T11:15:46.185109",
-    "fecha_resolucion": null,
-    "asignado_a": null,
     "comentarios_admin": [],
-    "documentos": [],
     "historial": [
       {
         "fecha": "2026-03-09T11:15:46.185111",
@@ -72,6 +67,118 @@
         "descripcion": "Solicitud creada por el usuario",
         "usuario": "sistema"
       }
-    ]
+    ],
+    "documentos": [],
+    "asignado_a": null
+  },
+  {
+    "id": "4cb2cc2b-e87c-4623-b598-c3c7e1cdd738",
+    "folio": "SOL-260419-71027",
+    "usuario_email": "maco@gmail.com",
+    "usuario_nombre": "maco starling",
+    "usuario_cedula": "04701923122",
+    "servicio_id": "funeraria",
+    "servicio_nombre": "Funerarias Municipales",
+    "descripcion": "hola",
+    "estado": "cancelado",
+    "fecha_creacion": "2026-04-19T21:30:05.878815",
+    "fecha_actualizacion": "2026-04-22T09:53:19.049872",
+    "comentarios_admin": [],
+    "historial": [
+      {
+        "fecha": "2026-04-19T21:30:05.878815",
+        "tipo": "creada",
+        "descripcion": "Solicitud creada",
+        "usuario": "maco@gmail.com",
+        "nombre": "maco starling"
+      },
+      {
+        "fecha": "2026-04-22T09:53:19.049872",
+        "tipo": "estado_cambiado",
+        "descripcion": "Estado cambiado a: cancelado",
+        "usuario": "maco@gmail.com",
+        "comentario": "Cancelada por el usuario"
+      }
+    ],
+    "documentos": [],
+    "asignado_a": null
+  },
+  {
+    "id": "0ccb83a0-e49c-48c8-aeca-c35570fbac66",
+    "folio": "SOL-260419-79728",
+    "usuario_email": "maco@gmail.com",
+    "usuario_nombre": "maco starling",
+    "usuario_cedula": "04701923122",
+    "servicio_id": "funeraria",
+    "servicio_nombre": "Funerarias Municipales",
+    "descripcion": "hola",
+    "estado": "cancelado",
+    "fecha_creacion": "2026-04-19T21:51:43.467258",
+    "fecha_actualizacion": "2026-04-22T09:53:15.361125",
+    "comentarios_admin": [],
+    "historial": [
+      {
+        "fecha": "2026-04-19T21:51:43.467258",
+        "tipo": "creada",
+        "descripcion": "Solicitud creada",
+        "usuario": "maco@gmail.com",
+        "nombre": "maco starling"
+      },
+      {
+        "fecha": "2026-04-19T22:00:06.649320",
+        "tipo": "estado_cambiado",
+        "descripcion": "Estado cambiado a: pendiente",
+        "usuario": "superadmin@cutupu.gob.do",
+        "comentario": ""
+      },
+      {
+        "fecha": "2026-04-19T22:00:11.979925",
+        "tipo": "estado_cambiado",
+        "descripcion": "Estado cambiado a: pendiente",
+        "usuario": "superadmin@cutupu.gob.do",
+        "comentario": "bien"
+      },
+      {
+        "fecha": "2026-04-22T09:53:15.361125",
+        "tipo": "estado_cambiado",
+        "descripcion": "Estado cambiado a: cancelado",
+        "usuario": "maco@gmail.com",
+        "comentario": "Cancelada por el usuario"
+      }
+    ],
+    "documentos": [],
+    "asignado_a": null
+  },
+  {
+    "id": "7aed11e0-7efb-4b2e-8b0d-2de1fb2de854",
+    "folio": "SOL-260422-13658",
+    "usuario_email": "maco@gmail.com",
+    "usuario_nombre": "maco starling",
+    "usuario_cedula": "04701923122",
+    "servicio_id": "funeraria",
+    "servicio_nombre": "Funerarias Municipales",
+    "descripcion": "quiero solicitar una cita de funerarias vivo en el once",
+    "estado": "pendiente",
+    "fecha_creacion": "2026-04-22T09:53:06.434260",
+    "fecha_actualizacion": "2026-04-22T09:54:39.678258",
+    "comentarios_admin": [],
+    "historial": [
+      {
+        "fecha": "2026-04-22T09:53:06.434260",
+        "tipo": "creada",
+        "descripcion": "Solicitud creada",
+        "usuario": "maco@gmail.com",
+        "nombre": "maco starling"
+      },
+      {
+        "fecha": "2026-04-22T09:54:39.678258",
+        "tipo": "estado_cambiado",
+        "descripcion": "Estado cambiado a: pendiente",
+        "usuario": "superadmin@cutupu.gob.do",
+        "comentario": "bien su cita se realizara el 23/4-2026 puede pasar a el ayuntamineot se le pediran algunos datos"
+      }
+    ],
+    "documentos": [],
+    "asignado_a": null
   }
 ]

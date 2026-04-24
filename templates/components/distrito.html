@@ -2,31 +2,39 @@
     <div class="container distrito-container">
         <div class="distrito-info">
             <div class="section-eyebrow">Nuestro Distrito</div>
-            <h2 class="section-title-serif">Río Verde Arriba (Cutupú)</h2>
-            <p>Un distrito municipal con una rica historia en la provincia de La Vega. Hogar de cientos de familias trabajadoras que día a día contribuyen al desarrollo de nuestra comunidad.</p>
-            <div class="distrito-chips">
-                <span><i class="fas fa-map-marker-alt"></i> La Vega, R.D.</span>
-                <span><i class="fas fa-tree"></i> Municipio Turístico</span>
-                <span><i class="fas fa-users"></i> Comunidad Unida</span>
-                <span><i class="fas fa-calendar-alt"></i> Gestión 2026</span>
+            <h2 class="section-title-serif">Los <span style="color: #F5DFA0;">12 Sectores</span> de Cutupú</h2>
+            <p>El distrito de Cutupú está conformado por 12 sectores que conforman nuestra comunidad. Un distrito municipal con una rica historia en la provincia de La Vega, hogar de cientos de familias trabajadoras que día a día contribuyen al desarrollo de nuestra comunidad.</p>
+            <div class="sectores-lista">
+                <div class="sector-item"><i class="fas fa-city"></i> Casco urbano de Cutupú</div>
+                <div class="sector-item"><i class="fas fa-mountain"></i> Mirador</div>
+                <div class="sector-item"><i class="fas fa-water"></i> La Susei</div>
+                <div class="sector-item"><i class="fas fa-tree"></i> Arroyo Hondo</div>
+                <div class="sector-item"><i class="fas fa-leaf"></i> Bonagua El Llano</div>
+                <div class="sector-item"><i class="fas fa-road"></i> Manga Larga</div>
+                <div class="sector-item"><i class="fas fa-home"></i> La Vereda</div>
+                <div class="sector-item"><i class="fas fa-church"></i> Pueblo Viejo</div>
+                <div class="sector-item"><i class="fas fa-tint"></i> Río Verde</div>
+                <div class="sector-item"><i class="fas fa-seedling"></i> Naranjal</div>
+                <div class="sector-item"><i class="fas fa-sun"></i> Romero</div>
+                <div class="sector-item"><i class="fas fa-mountain-city"></i> (Sector 12 - Por confirmar)</div>
             </div>
         </div>
         <div class="distrito-stats">
             <div class="stat-card">
-                <span class="stat-number">+10</span>
-                <span class="stat-label">Años de gestión</span>
+                <span class="stat-number">12</span>
+                <span class="stat-label">Sectores</span>
             </div>
             <div class="stat-card">
-                <span class="stat-number">15k+</span>
+                <span class="stat-number">8,547</span>
                 <span class="stat-label">Habitantes</span>
             </div>
             <div class="stat-card">
-                <span class="stat-number">100%</span>
-                <span class="stat-label">Compromiso</span>
+                <span class="stat-number">2,843</span>
+                <span class="stat-label">Viviendas</span>
             </div>
             <div class="stat-card">
-                <span class="stat-number">2026</span>
-                <span class="stat-label">Metas cumplidas</span>
+                <span class="stat-number">2024-2028</span>
+                <span class="stat-label">Gestión Actual</span>
             </div>
         </div>
     </div>
@@ -34,90 +42,121 @@
 
 <style>
     .distrito {
-        background: linear-gradient(135deg, var(--texto) 0%, #2A3A1A 100%);
-        padding: 6rem 0;
+        background: linear-gradient(135deg, #1A2410 0%, #2D5016 100%);
+        padding: 5rem 0;
         color: white;
+    }
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 2rem;
     }
     .distrito-container {
         display: flex;
         gap: 4rem;
-        align-items: center;
+        align-items: flex-start;
     }
     .distrito-info {
-        flex: 1;
+        flex: 1.2;
     }
-    .distrito-info .section-eyebrow {
-        color: var(--dorado-light);
-    }
-    .distrito-info .section-title-serif {
-        color: white;
+    .section-eyebrow {
+        display: inline-block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #F5DFA0;
+        font-weight: 600;
         margin-bottom: 1rem;
+        background: rgba(255,255,255,0.15);
+        padding: 0.3rem 1.2rem;
+        border-radius: 2rem;
+    }
+    .section-title-serif {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        color: white;
     }
     .distrito-info p {
         line-height: 1.7;
         margin-bottom: 2rem;
         opacity: 0.9;
+        color: rgba(255,255,255,0.85);
     }
-    .distrito-chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.8rem;
-    }
-    .distrito-chips span {
-        background: rgba(255,255,255,0.15);
-        backdrop-filter: blur(4px);
-        padding: 0.5rem 1rem;
-        border-radius: 2rem;
-        font-size: 0.8rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all var(--transition);
-    }
-    .distrito-chips span:hover {
-        background: rgba(255,255,255,0.25);
-        transform: translateY(-2px);
-    }
-    .distrito-stats {
-        flex: 1;
+    .sectores-lista {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
+        gap: 0.8rem;
+        background: rgba(255,255,255,0.1);
+        border-radius: 1rem;
+        padding: 1.2rem;
+        backdrop-filter: blur(4px);
+    }
+    .sector-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.85rem;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        color: rgba(255,255,255,0.9);
+    }
+    .sector-item:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateX(5px);
+    }
+    .sector-item i {
+        color: #F5DFA0;
+        width: 20px;
+        font-size: 0.9rem;
+    }
+    .distrito-stats {
+        flex: 0.8;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.2rem;
     }
     .stat-card {
         background: rgba(255,255,255,0.1);
         border-radius: 1rem;
         padding: 1.5rem;
         text-align: center;
-        transition: all var(--transition);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.1);
     }
     .stat-card:hover {
         background: rgba(255,255,255,0.2);
         transform: translateY(-5px);
+        border-color: #F5DFA0;
     }
     .stat-card .stat-number {
-        font-size: 2.5rem;
+        font-size: 2rem;
         font-weight: 800;
         display: block;
         line-height: 1;
         margin-bottom: 0.5rem;
-        color: var(--dorado);
+        color: #F5DFA0;
     }
     .stat-card .stat-label {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 1px;
         font-weight: 500;
+        color: rgba(255,255,255,0.8);
     }
 
     @media (max-width: 900px) {
+        .distrito {
+            padding: 3rem 0;
+        }
         .distrito-container {
             flex-direction: column;
             gap: 2rem;
-            text-align: center;
         }
-        .distrito-chips {
-            justify-content: center;
+        .sectores-lista {
+            grid-template-columns: 1fr;
         }
         .distrito-stats {
             width: 100%;
@@ -126,6 +165,9 @@
     @media (max-width: 640px) {
         .distrito-stats {
             grid-template-columns: 1fr;
+        }
+        .sector-item {
+            font-size: 0.8rem;
         }
     }
 </style>

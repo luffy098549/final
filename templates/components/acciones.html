@@ -1,36 +1,59 @@
 <section class="acciones anim">
     <div class="container">
-        <div class="section-eyebrow text-center">Acciones Principales</div>
-        <h2 class="section-title-serif text-center">Transformando Cutupú</h2>
+        <div class="section-eyebrow text-center">Servicios Municipales</div>
+        <h2 class="section-title-serif text-center">Lo que <span style="color: #F5DFA0;">ofrecemos</span> para ti</h2>
+        <p class="acciones-subtitle">Trámites, solicitudes y denuncias disponibles para los ciudadanos de Villa Cutupú. Rápido, transparente y a tu alcance.</p>
         <div class="acciones-grid">
+            <!-- Solicitudes -->
             <div class="accion-card">
-                <div class="accion-imagen">
-                    <img src="{{ url_for('static', filename='img/asfaltado.jpeg') }}" alt="Asfaltado de Calles">
+                <div class="accion-icono">
+                    <i class="fas fa-file-alt"></i>
                 </div>
-                <h3>Asfaltado de Calles</h3>
-                <p>Mejorando la vialidad y conectividad de nuestras comunidades con obras de calidad.</p>
+                <h3>Solicitudes Municipales</h3>
+                <p>Realiza solicitudes de servicios como funerarias, certificado de uso de suelo, catastro, planeamiento urbano y más.</p>
+                <a href="/servicios" class="accion-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
             </div>
+
+            <!-- Denuncias -->
             <div class="accion-card">
-                <div class="accion-imagen">
-                    <img src="{{ url_for('static', filename='img/limpieza.png') }}" alt="Limpieza de Espacios">
+                <div class="accion-icono">
+                    <i class="fas fa-exclamation-triangle"></i>
                 </div>
-                <h3>Limpieza de Espacios</h3>
-                <p>Manteniendo nuestros entornos públicos impecables y saludables para todos.</p>
+                <h3>Denuncias Ciudadanas</h3>
+                <p>Reporta problemas de limpieza, acumulación de basura, policía municipal, alumbrado público y otras irregularidades.</p>
+                <a href="/servicios" class="accion-btn">Denunciar <i class="fas fa-arrow-right"></i></a>
             </div>
+
+            <!-- Recolección de Basura -->
             <div class="accion-card">
-                <div class="accion-imagen">
-                    <img src="{{ url_for('static', filename='img/alumbrado.jpeg') }}" alt="Alumbrado Público">
+                <div class="accion-icono">
+                    <i class="fas fa-trash-alt"></i>
                 </div>
-                <h3>Alumbrado Público</h3>
-                <p>Modernizando el sistema de iluminación para mayor seguridad en nuestras calles.</p>
+                <h3>Recolección de Basura</h3>
+                <p>Sistema de recolección mediante camiones que transportan los desechos hacia el vertedero Soto, ubicado en La Vega.</p>
+                <a href="/servicios" class="accion-btn">Más info <i class="fas fa-arrow-right"></i></a>
             </div>
+
+            <!-- Transparencia -->
+            <div class="accion-card">
+                <div class="accion-icono">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Transparencia</h3>
+                <p>Accede a información pública sobre finanzas municipales, actas, compras y contrataciones del ayuntamiento.</p>
+                <a href="/transparencia" class="accion-btn">Ver más <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        <div class="acciones-cta">
+            <p>¿No encuentras lo que buscas?</p>
+            <a href="/contacto" class="btn-outline">Contáctanos <i class="fas fa-headset"></i></a>
         </div>
     </div>
 </section>
 
 <style>
     .acciones {
-        background: #2D5016;
+        background: linear-gradient(135deg, #1A2410 0%, #2D5016 100%);
         padding: 6rem 0;
         position: relative;
         overflow: hidden;
@@ -43,75 +66,202 @@
         width: 300px;
         height: 300px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
     }
-    .acciones .section-eyebrow,
-    .acciones .section-title-serif {
-        color: white;
-        text-align: center;
+    .acciones::after {
+        content: '';
+        position: absolute;
+        bottom: -100px;
+        left: -100px;
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    }
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .section-eyebrow {
+        display: inline-block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #F5DFA0;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        background: rgba(255,255,255,0.15);
+        padding: 0.3rem 1.2rem;
+        border-radius: 2rem;
     }
     .section-eyebrow.text-center,
     .section-title-serif.text-center {
         text-align: center;
+        display: block;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .section-title-serif {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: white;
+    }
+    .acciones-subtitle {
+        text-align: center;
+        color: rgba(255,255,255,0.85);
+        max-width: 700px;
+        margin: 0 auto 3rem auto;
+        line-height: 1.6;
+        font-size: 1rem;
     }
     .acciones-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 2rem;
-        margin-top: 3rem;
+        margin-bottom: 3rem;
+        position: relative;
+        z-index: 2;
     }
     .accion-card {
         background: rgba(255,255,255,0.1);
         backdrop-filter: blur(4px);
         border-radius: 1.5rem;
-        padding: 1.8rem;
+        padding: 2rem;
         transition: all 0.3s ease;
         text-align: center;
-        color: white;
-        border: 1px solid rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.15);
     }
     .accion-card:hover {
         transform: translateY(-8px);
         background: rgba(255,255,255,0.2);
-        border-color: rgba(255,255,255,0.4);
+        border-color: rgba(255,255,255,0.3);
     }
-    .accion-imagen {
-        width: 100%;
-        height: 180px;
-        border-radius: 1rem;
-        overflow: hidden;
-        margin-bottom: 1.5rem;
+    .accion-icono {
+        width: 70px;
+        height: 70px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        transition: all 0.3s ease;
     }
-    .accion-imagen img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
+    .accion-card:hover .accion-icono {
+        background: #F5DFA0;
     }
-    .accion-card:hover .accion-imagen img {
-        transform: scale(1.05);
+    .accion-icono i {
+        font-size: 2rem;
+        color: #F5DFA0;
+        transition: all 0.3s ease;
+    }
+    .accion-card:hover .accion-icono i {
+        color: #2D5016;
     }
     .accion-card h3 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         font-weight: 700;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
         color: white;
     }
     .accion-card p {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        line-height: 1.5;
+        color: rgba(255,255,255,0.85);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+    }
+    .accion-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255,255,255,0.15);
         color: white;
+        padding: 0.6rem 1.5rem;
+        border-radius: 2rem;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    .accion-btn:hover {
+        background: #F5DFA0;
+        color: #2D5016;
+        gap: 0.75rem;
+        border-color: #F5DFA0;
+    }
+    .acciones-cta {
+        text-align: center;
+        padding: 2rem;
+        background: rgba(255,255,255,0.08);
+        border-radius: 1.5rem;
+        margin-top: 1rem;
+        position: relative;
+        z-index: 2;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .acciones-cta p {
+        font-size: 1rem;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    .btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: transparent;
+        border: 2px solid #F5DFA0;
+        color: #F5DFA0;
+        padding: 0.7rem 1.8rem;
+        border-radius: 2rem;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    .btn-outline:hover {
+        background: #F5DFA0;
+        color: #2D5016;
+        transform: translateY(-2px);
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1100px) {
         .acciones-grid {
             grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 768px) {
+        .acciones {
+            padding: 3rem 0;
+        }
+        .acciones-grid {
+            gap: 1rem;
+        }
+        .accion-card {
+            padding: 1.5rem;
+        }
+        .accion-icono {
+            width: 55px;
+            height: 55px;
+        }
+        .accion-icono i {
+            font-size: 1.5rem;
         }
     }
     @media (max-width: 640px) {
         .acciones-grid {
             grid-template-columns: 1fr;
+        }
+        .acciones-subtitle {
+            font-size: 0.9rem;
+        }
+        .acciones-cta {
+            padding: 1.5rem;
         }
     }
 </style>

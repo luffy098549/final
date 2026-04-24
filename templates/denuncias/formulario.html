@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+{% block title %}Denuncia — {{ nombre_denuncia }} — Villa Cutupú{% endblock %}
+
+{% block content %}
+<section style="min-height: 85vh; padding: var(--space-7) 0; background: var(--gray-50);">
+  <div class="container" style="max-width: 780px;">
+
+    <!-- Breadcrumb -->
+    <nav style="margin-bottom: var(--space-4);">
+      <span style="font-size: 0.85rem; color: var(--text-light);">
+        <a href="{{ url_for('index') }}" style="color: var(--green-dark); text-decoration: none; font-weight: 600;">Inicio</a>
+        <span style="margin: 0 0.5rem; color: var(--gray-400);">›</span>
+        <a href="{{ url_for('servicios') }}" style="color: var(--green-dark); text-decoration: none; font-weight: 600;">Servicios</a>
+        <span style="margin: 0 0.5rem; color: var(--gray-400);">›</span>
+        <span style="color: var(--text-light);">{{ nombre_denuncia }}</span>
+      </span>
+    </nav>
+
+    <!-- Encabezado -->
+    <div style="margin-bottom: var(--space-5);">
+      <p style="font-size: 0.82rem; font-weight: 700; color: #922B21; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem;">
+        Denuncias ciudadanas
+      </p>
+      <h1 style="font-size: clamp(1.7rem, 3vw, 2.2rem); font-weight: 800; color: var(--text); letter-spacing: -0.025em; margin-bottom: 0.5rem; line-height: 1.2;">
+        Presentar denuncia
+      </h1>
+      <p style="color: var(--text-light); font-size: 1rem;">
+        Su identidad está protegida. Todos los campos marcados son obligatorios.
+      </p>
+    </div>
+
+    <!-- Tarjeta principal -->
+    <div class="form-card">
+
+      <!-- Header -->
+      <div class="form-card-header form-card-header--red">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div class="form-card-icon form-card-icon--red">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div>
+            <p style="font-size: 0.75rem; font-weight: 600; opacity: 0.8; margin: 0; text-transform: uppercase; letter-spacing: 0.08em;">Tipo de denuncia</p>
+            <h2 style="font-size: 1.15rem; font-weight: 800; margin: 0; line-height: 1.3;">{{ nombre_denuncia }}</h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerta confidencialidad -->
+      <div class="form-alert form-alert--shield">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span><strong>Confidencialidad garantizada:</strong> Su identidad será protegida. Las denuncias se investigan en un plazo máximo de <strong>10 días hábiles</strong>.</span>
+      </div>
+
+      <!-- Alerta específica por tipo -->
+      {% if tipo == 'policia' %}
+      <div class="form-alert form-alert--info">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span><strong>Emergencias:</strong> Si es urgente, llame al <strong>911</strong>. Para situaciones no urgentes, complete este formulario.</span>
+      </div>
+      {% elif tipo == 'basura' %}
+      <div class="form-alert form-alert--info">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>Indique los días y horarios en que ocurre el problema, si hay contenedores dañados o acumulación irregular.</span>
+      </div>
+      {% elif tipo == 'alumbrado' %}
+      <div class="form-alert form-alert--info">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>Indique el poste o zona afectada y cuántos días lleva sin servicio. Incluya referencias cercanas.</span>
+      </div>
+      {% endif %}
+
+      <!-- Formulario -->
+      <form method="POST" action="{{ url_for('procesar_denuncia') }}" class="form-body">
+        <input type="hidden" name="tipo" value="{{ tipo }}">
+
+        <!-- Tipo de denuncia (solo lectura) -->
+        <div class="form-group">
+          <label class="form-label">Tipo de denuncia</label>
+          <input type="text" class="form-input form-input--disabled" value="{{ nombre_denuncia }}" disabled>
+        </div>
+
+        <!-- Ubicación -->
+        <div class="form-group">
+          <label class="form-label">
+            Ubicación del incidente
+            <span class="form-required">*</span>
+          </label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--text-light); pointer-events: none;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+            </span>
+            <input type="text" class="form-input" name="ubicacion" required
+                   style="padding-left: 2.4rem;"
+                   placeholder="Ej: Calle Principal #45, frente a la farmacia">
+          </div>
+          <span class="form-hint">Indique la dirección exacta o un punto de referencia claro.</span>
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group">
+          <label class="form-label">
+            Descripción de la denuncia
+            <span class="form-required">*</span>
+          </label>
+          <textarea class="form-input form-textarea" name="descripcion" rows="6" required
+                    placeholder="Describa detalladamente lo ocurrido. Incluya fechas, horarios y cualquier dato relevante..."></textarea>
+          <span class="form-hint">Cuanto más detallada sea su descripción, más rápido podremos actuar.</span>
+        </div>
+
+        <!-- Evidencia -->
+        <div class="form-group">
+          <label class="form-label">
+            Evidencia disponible
+            <span class="form-optional">Opcional</span>
+          </label>
+          <textarea class="form-input form-textarea" name="evidencia" rows="3"
+                    placeholder="Mencione si tiene fotos, videos, nombres de testigos u otro tipo de evidencia..."></textarea>
+          <span class="form-hint">No adjunte archivos aquí; solo describa qué evidencia tiene disponible.</span>
+        </div>
+
+        <!-- Botones -->
+        <div class="form-actions">
+          <a href="{{ url_for('servicios') }}" class="btn-form btn-form--secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Cancelar
+          </a>
+          <button type="submit" class="btn-form btn-form--danger">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            Enviar denuncia
+          </button>
+        </div>
+      </form>
+
+    </div>
+
+    <p style="text-align: center; font-size: 0.82rem; color: var(--text-light); margin-top: var(--space-4);">
+      Al enviar este formulario, acepta que sus datos serán procesados con fines de gestión municipal conforme a la normativa vigente.
+    </p>
+
+  </div>
+</section>
+
+<style>
+.form-card {
+  background: var(--white);
+  border-radius: var(--radius-block);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: var(--space-3);
+}
+
+.form-card-header {
+  padding: var(--space-4) var(--space-5);
+  color: white;
+}
+
+.form-card-header--red {
+  background: linear-gradient(135deg, #922B21 0%, #C0392B 100%);
+}
+
+.form-card-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.form-card-icon--red {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.form-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: var(--space-3) var(--space-5);
+  font-size: 0.93rem;
+  line-height: 1.6;
+  border-bottom: 1px solid transparent;
+}
+
+.form-alert--shield {
+  background: #EAF7EF;
+  color: #1A4D2E;
+  border-color: rgba(26,122,66,0.15);
+}
+
+.form-alert--info {
+  background: var(--blue-sky-light);
+  color: #1a4f75;
+  border-color: rgba(43,106,158,0.15);
+}
+
+.form-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.form-list li { font-size: 0.9rem; }
+
+.form-body {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.form-required { color: #C0392B; font-weight: 700; }
+
+.form-optional {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background: var(--gray-100);
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.97rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text);
+  background: var(--white);
+  border: 1.5px solid var(--gray-300);
+  border-radius: var(--radius-card);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+  appearance: none;
+}
+
+.form-input:focus {
+  border-color: #C0392B;
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.12);
+}
+
+.form-input--disabled {
+  background: var(--gray-50);
+  color: var(--text-light);
+  cursor: not-allowed;
+  border-color: var(--gray-200);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.form-hint {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+  margin-top: var(--space-2);
+}
+
+.btn-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border-radius: var(--radius-card);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-form--danger {
+  background: #C0392B;
+  color: white;
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-form--danger:hover {
+  background: #922B21;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-form--secondary {
+  background: transparent;
+  color: var(--text-soft);
+  border: 1.5px solid var(--gray-300);
+}
+
+.btn-form--secondary:hover {
+  border-color: var(--gray-500);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 540px) {
+  .form-body { padding: var(--space-4); }
+  .form-card-header { padding: var(--space-3) var(--space-4); }
+  .form-alert { padding: var(--space-3) var(--space-4); }
+  .form-actions { flex-direction: column-reverse; }
+  .btn-form { width: 100%; justify-content: center; }
+}
+</style>
+{% endblock %}

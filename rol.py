@@ -39,23 +39,30 @@ class Permiso(Enum):
 # ================================================================
 
 PERMISOS_POR_ROL = {
-    'super_admin': [
-        Permiso.VER_USUARIOS, Permiso.EDITAR_USUARIOS, Permiso.CREAR_ADMINS, Permiso.ELIMINAR_USUARIOS,
-        Permiso.VER_SOLICITUDES, Permiso.EDITAR_SOLICITUDES, Permiso.ELIMINAR_SOLICITUDES,
-        Permiso.VER_DENUNCIAS, Permiso.EDITAR_DENUNCIAS, Permiso.ELIMINAR_DENUNCIAS,
-        Permiso.VER_CONFIG, Permiso.EDITAR_CONFIG,
-        Permiso.VER_BITACORA, Permiso.EXPORTAR_DATOS, Permiso.MANTENIMIENTO,
-    ],
+    'super_admin': list(Permiso),  # 🔥 TODOS los permisos
+
     'admin': [
-        Permiso.VER_USUARIOS, Permiso.EDITAR_USUARIOS,
-        Permiso.VER_SOLICITUDES, Permiso.EDITAR_SOLICITUDES,
-        Permiso.VER_DENUNCIAS, Permiso.EDITAR_DENUNCIAS,
+        Permiso.VER_USUARIOS,
+        Permiso.EDITAR_USUARIOS,
+        Permiso.CREAR_ADMINS,
+        Permiso.ELIMINAR_USUARIOS,
+        Permiso.VER_SOLICITUDES,
+        Permiso.EDITAR_SOLICITUDES,
+        Permiso.ELIMINAR_SOLICITUDES,
+        Permiso.VER_DENUNCIAS,
+        Permiso.EDITAR_DENUNCIAS,
+        Permiso.ELIMINAR_DENUNCIAS,
         Permiso.VER_CONFIG,
+        Permiso.EDITAR_CONFIG,
         Permiso.VER_BITACORA,
+        Permiso.EXPORTAR_DATOS,
     ],
+
     'moderador': [
-        Permiso.VER_SOLICITUDES, Permiso.EDITAR_SOLICITUDES,
-        Permiso.VER_DENUNCIAS, Permiso.EDITAR_DENUNCIAS,
+        Permiso.VER_SOLICITUDES,
+        Permiso.EDITAR_SOLICITUDES,
+        Permiso.VER_DENUNCIAS,
+        Permiso.EDITAR_DENUNCIAS,
     ],
 }
 
@@ -68,19 +75,16 @@ def tiene_permiso(rol, permiso):
     """Verifica si un rol tiene un permiso específico"""
     if not rol:
         return False
-    permisos = PERMISOS_POR_ROL.get(rol, [])
-    return permiso in permisos
+    return permiso in PERMISOS_POR_ROL.get(rol, [])
 
 
 def tiene_permisos(rol, permisos, require_all=False):
     """Verifica si un rol tiene múltiples permisos"""
     if not rol:
-        return False if require_all else False
-    
+        return False
     if require_all:
         return all(tiene_permiso(rol, p) for p in permisos)
-    else:
-        return any(tiene_permiso(rol, p) for p in permisos)
+    return any(tiene_permiso(rol, p) for p in permisos)
 
 
 def obtener_permisos_rol(rol):
@@ -105,7 +109,7 @@ def obtener_nombre_rol(rol):
 
 
 # ================================================================
-# DECORADORES
+# DECORADORES DE PERMISOS
 # ================================================================
 
 def permiso_requerido(permiso):
@@ -118,10 +122,9 @@ def permiso_requerido(permiso):
                 return redirect(url_for("auth.login"))
             
             user_rol = session.get('user_rol')
-            permiso_valor = permiso.value if hasattr(permiso, 'value') else permiso
             
-            if not tiene_permiso(user_rol, permiso_valor):
-                nombre_permiso = permiso_valor.replace('_', ' ').title()
+            if not tiene_permiso(user_rol, permiso):
+                nombre_permiso = permiso.value.replace('_', ' ').title() if hasattr(permiso, 'value') else str(permiso).replace('_', ' ').title()
                 flash(f"⛔ No tienes permiso: {nombre_permiso}", "error")
                 return redirect(request.referrer or url_for("admin.dashboard"))
             
@@ -138,7 +141,9 @@ def solo_super_admin(f):
             flash("🔐 Necesitas iniciar sesión.", "error")
             return redirect(url_for("auth.login"))
         
-        if session.get('user_rol') != 'super_admin':
+        user_rol = session.get('user_rol')
+        
+        if user_rol != 'super_admin':
             flash("⛔ Solo disponible para Super Administradores.", "error")
             return redirect(url_for("admin.dashboard"))
         return f(*args, **kwargs)
@@ -153,7 +158,8 @@ def admin_o_super(f):
             flash("🔐 Necesitas iniciar sesión.", "error")
             return redirect(url_for("auth.login"))
         
-        if session.get('user_rol') not in ['super_admin', 'admin']:
+        user_rol = session.get('user_rol')
+        if user_rol not in ['super_admin', 'admin']:
             flash("⛔ Acceso restringido a administradores.", "error")
             return redirect(url_for("admin.dashboard"))
         return f(*args, **kwargs)
@@ -168,7 +174,8 @@ def moderador_o_superior(f):
             flash("🔐 Necesitas iniciar sesión.", "error")
             return redirect(url_for("auth.login"))
         
-        if session.get('user_rol') not in ['super_admin', 'admin', 'moderador']:
+        user_rol = session.get('user_rol')
+        if user_rol not in ['super_admin', 'admin', 'moderador']:
             flash("⛔ No tienes permisos suficientes.", "error")
             return redirect(url_for("index"))
         return f(*args, **kwargs)

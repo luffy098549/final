@@ -1,8 +1,3 @@
-class Config:
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:1234@localhost:5432/ayuntamiento"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-
 """
 config_manager.py
 Gestión de configuración persistente del sistema sin base de datos.
@@ -95,6 +90,21 @@ DEFAULT_CONFIG = {
         "file_log": False,
         "cache_sessions": 3600,
         "cache_static": 30
+    },
+    "cloudinary": {
+        "enabled": True,
+        "cloud_name": "dwst50un4",
+        "api_key": "637837677376111",
+        "api_secret": "i8zTmAcN3st4OJw8",
+        "upload_folder": "fotos_perfil",
+        "transformation": {
+            "width": 300,
+            "height": 300,
+            "crop": "fill",
+            "gravity": "face",
+            "quality": "auto",
+            "fetch_format": "auto"
+        }
     }
 }
 
@@ -154,7 +164,34 @@ def _merge_defaults(data: dict, defaults: dict) -> dict:
     return result
 
 
-# ── Subida de archivos (logo, favicon, banner) ─────────────────
+# ================================================================
+# CLOUDINARY CONFIGURATION
+# ================================================================
+
+def get_cloudinary_config() -> dict:
+    """Devuelve la configuración de Cloudinary"""
+    return obtener_seccion('cloudinary')
+
+
+def is_cloudinary_enabled() -> bool:
+    """Verifica si Cloudinary está habilitado"""
+    return get('cloudinary', 'enabled', True)
+
+
+def get_cloudinary_credentials() -> dict:
+    """Devuelve las credenciales de Cloudinary"""
+    cloud_config = get_cloudinary_config()
+    return {
+        'cloud_name': cloud_config.get('cloud_name'),
+        'api_key': cloud_config.get('api_key'),
+        'api_secret': cloud_config.get('api_secret'),
+        'upload_folder': cloud_config.get('upload_folder', 'fotos_perfil')
+    }
+
+
+# ================================================================
+# Subida de archivos (logo, favicon, banner) - LOCAL
+# ================================================================
 
 UPLOAD_FOLDER = Path(__file__).parent / 'static' / 'uploads' / 'config'
 ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'svg', 'ico', 'webp'}
@@ -189,7 +226,9 @@ def guardar_imagen_config(archivo, tipo: str) -> tuple[bool, str]:
         return False, str(e)
 
 
-# ── Test SMTP real ─────────────────────────────────────────────
+# ================================================================
+# Test SMTP real
+# ================================================================
 
 def test_smtp(host: str, port: int, user: str, password: str,
               nombre: str, email_destino: str) -> tuple[bool, str]:
@@ -206,8 +245,8 @@ def test_smtp(host: str, port: int, user: str, password: str,
 
     try:
         msg = MIMEMultipart()
-        msg['From']    = f"{nombre} <{user}>"
-        msg['To']      = email_destino
+        msg['From'] = f"{nombre} <{user}>"
+        msg['To'] = email_destino
         msg['Subject'] = "✅ Prueba de configuración SMTP - Villa Cutupú"
 
         cuerpo = f"""
@@ -237,7 +276,9 @@ def test_smtp(host: str, port: int, user: str, password: str,
         return False, f"Error: {str(e)}"
 
 
-# ── Exportar datos como ZIP ────────────────────────────────────
+# ================================================================
+# Exportar datos como ZIP
+# ================================================================
 
 DATA_FOLDER = Path(__file__).parent / 'data'
 
@@ -275,7 +316,9 @@ def exportar_datos_zip() -> tuple[bool, str]:
         return False, str(e)
 
 
-# ── Limpiar exportaciones viejas ───────────────────────────────
+# ================================================================
+# Limpiar exportaciones viejas
+# ================================================================
 
 def limpiar_exports_viejos(max_archivos: int = 5):
     """Mantiene solo los últimos N ZIPs de exportación."""
@@ -287,4 +330,45 @@ def limpiar_exports_viejos(max_archivos: int = 5):
     while len(zips) > max_archivos:
         zips.pop(0).unlink()
 
-        
+
+# ================================================================
+# Configuración de PostgreSQL (para app.py)
+# ================================================================
+
+class Config:
+    """Configuración principal de la aplicación Flask"""
+    
+    # Base de datos PostgreSQL
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:1234@localhost:5432/ayuntamiento"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Clave secreta
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'clave_secreta_muy_segura_cambiar_en_produccion_123')
+    
+    # Modo desarrollo
+    DEBUG = True
+    TEMPLATES_AUTO_RELOAD = True
+    
+    # Uploads
+    MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB
+    
+    # Cloudinary (desde config.json)
+    @property
+    def CLOUDINARY_CLOUD_NAME(self):
+        return get('cloudinary', 'cloud_name', 'dwst50un4')
+    
+    @property
+    def CLOUDINARY_API_KEY(self):
+        return get('cloudinary', 'api_key', '637837677376111')
+    
+    @property
+    def CLOUDINARY_API_SECRET(self):
+        return get('cloudinary', 'api_secret', 'i8zTmAcN3st4OJw8')
+    
+    @property
+    def CLOUDINARY_ENABLED(self):
+        return get('cloudinary', 'enabled', True)
+
+
+# Instancia de configuración para usar en app.py
+config = Config()

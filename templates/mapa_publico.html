@@ -1,0 +1,532 @@
+{% extends "base.html" %}
+
+{% block title %}Mapa de Incidencias - {{ config.nombre_municipio }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    /* Estilos específicos para el mapa público */
+    .mapa-hero {
+        background: linear-gradient(135deg, var(--crema-home) 0%, #FFF9EF 100%);
+        padding: 3rem 0 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .mapa-hero::before {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, var(--verde-xlight-home) 0%, transparent 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+    
+    .mapa-hero .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .mapa-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 800;
+        color: var(--texto-home);
+        margin-bottom: 1rem;
+    }
+    
+    .mapa-hero h1 i {
+        color: var(--verde-home);
+        margin-right: 0.5rem;
+    }
+    
+    .mapa-hero p {
+        color: var(--gray-600);
+        max-width: 600px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+    }
+    
+    /* Stats mini */
+    .stats-mapa {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }
+    
+    .stat-mapa-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1rem 2rem;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        min-width: 140px;
+        transition: transform var(--transition-fast);
+    }
+    
+    .stat-mapa-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .stat-mapa-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--verde-home);
+        font-family: 'Playfair Display', serif;
+    }
+    
+    .stat-mapa-label {
+        font-size: 0.8rem;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Contenedor del mapa */
+    .mapa-container {
+        padding: 2rem 0 4rem;
+        background: var(--gray-50);
+    }
+    
+    .mapa-wrapper {
+        background: white;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+        margin-bottom: 2rem;
+    }
+    
+    #incidenciasMap {
+        height: 500px;
+        width: 100%;
+        background: #e8e4df;
+    }
+    
+    /* Leyenda */
+    .mapa-legend {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: white;
+        border-radius: 2rem;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--gray-600);
+    }
+    
+    .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+    }
+    
+    .legend-color.pendiente { background: #ffc107; }
+    .legend-color.en_investigacion { background: #17a2b8; }
+    .legend-color.resuelto { background: #28a745; }
+    .legend-color.rechazado { background: #dc3545; }
+    
+    /* Lista de incidencias */
+    .incidencias-lista {
+        background: white;
+        border-radius: 1rem;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+    
+    .incidencias-lista h3 {
+        padding: 1rem 1.5rem;
+        margin: 0;
+        background: var(--gray-50);
+        border-bottom: 1px solid var(--border);
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    
+    .incidencias-items {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .incidencia-item {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        transition: background var(--transition-fast);
+        cursor: pointer;
+    }
+    
+    .incidencia-item:hover {
+        background: var(--verde-xlight-home);
+    }
+    
+    .incidencia-header {
+        display: flex;
+    }
+    .incidencia-header h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    }
+    
+    
+    .incidencia-tipo {
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
+        border-radius: 2rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: var(--verde-xlight-home);
+        color: var(--verde-home);
+    }
+    
+    .incidencia-estado {
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
+        border-radius: 2rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+    
+    .estado-pendiente { background: #fff3cd; color: #856404; }
+    .estado-en_investigacion { background: #d1ecf1; color: #0c5460; }
+    .estado-resuelto { background: #d4edda; color: #155724; }
+    .estado-rechazado { background: #f8d7da; color: #721c24; }
+    
+    .incidencia-descripcion {
+        font-size: 0.85rem;
+        color: var(--gray-600);
+        margin: 0.5rem 0;
+        line-height: 1.5;
+    }
+    
+    .incidencia-fecha {
+        font-size: 0.7rem;
+        color: var(--gray-400);
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    
+    .btn-ver-detalle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.75rem;
+        color: var(--verde-home);
+        text-decoration: none;
+        margin-top: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .btn-ver-detalle:hover {
+        text-decoration: underline;
+    }
+    
+    /* Mensaje sin datos */
+    .no-data-message {
+        text-align: center;
+        padding: 3rem;
+        color: var(--gray-500);
+    }
+    
+    .no-data-message i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    
+    /* Botón reportar incidencia */
+    .btn-reportar-fijo {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: var(--verde-home);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 3rem;
+        font-weight: 600;
+        box-shadow: var(--shadow-lg);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        z-index: 98;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-reportar-fijo:hover {
+        background: var(--verde-med-home);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    @media (max-width: 768px) {
+        #incidenciasMap {
+            height: 350px;
+        }
+        
+        .stats-mapa {
+            gap: 1rem;
+        }
+        
+        .stat-mapa-card {
+            padding: 0.8rem 1rem;
+            min-width: 100px;
+        }
+        
+        .stat-mapa-number {
+            font-size: 1.5rem;
+        }
+        
+        .mapa-legend {
+            gap: 1rem;
+        }
+        
+        .btn-reportar-fijo {
+            bottom: 1rem;
+            right: 1rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="mapa-hero">
+    <div class="container">
+        <h1>
+            <i class="fas fa-map-marker-alt"></i>
+            Mapa de Incidencias
+        </h1>
+        <p>Visualiza en tiempo real las denuncias ciudadanas reportadas en nuestro municipio</p>
+    </div>
+</section>
+
+<!-- Estadísticas -->
+<section class="stats-mapa">
+    <div class="stat-mapa-card">
+        <div class="stat-mapa-number">{{ stats.total }}</div>
+        <div class="stat-mapa-label">Total Denuncias</div>
+    </div>
+    <div class="stat-mapa-card">
+        <div class="stat-mapa-number">{{ stats.geolocalizadas }}</div>
+        <div class="stat-mapa-label">En el Mapa</div>
+    </div>
+</section>
+
+<!-- Mapa -->
+<section class="mapa-container">
+    <div class="container">
+        <div class="mapa-wrapper">
+            <div id="incidenciasMap"></div>
+        </div>
+        
+        <!-- Leyenda -->
+        <div class="mapa-legend">
+            <div class="legend-item">
+                <div class="legend-color pendiente"></div>
+                <span>Pendiente</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color en_investigacion"></div>
+                <span>En Investigación</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color resuelto"></div>
+                <span>Resuelto</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color rechazado"></div>
+                <span>Rechazado</span>
+            </div>
+        </div>
+        
+        <!-- Lista de incidencias cercanas -->
+        <div class="incidencias-lista">
+            <h3><i class="fas fa-list"></i> Incidencias Reportadas</h3>
+            <div class="incidencias-items" id="incidenciasLista">
+                {% if denuncias %}
+                    {% for d in denuncias %}
+                    <div class="incidencia-item" data-lat="{{ d.lat }}" data-lng="{{ d.lng }}">
+                        <div class="incidencia-header">
+                            <span class="incidencia-tipo">{{ d.tipo_nombre }}</span>
+                            <span class="incidencia-estado estado-{{ d.estado }}">
+                                {% if d.estado == 'pendiente' %}Pendiente
+                                {% elif d.estado == 'en_investigacion' %}En Investigación
+                                {% elif d.estado == 'resuelto' %}Resuelto
+                                {% else %}Rechazado{% endif %}
+                            </span>
+                        </div>
+                        <p class="incidencia-descripcion">{{ d.descripcion[:120] }}{% if d.descripcion|length > 120 %}...{% endif %}</p>
+                        <div class="incidencia-fecha">
+                            <i class="far fa-calendar-alt"></i>
+                            {{ d.fecha[:10] if d.fecha else 'Fecha no disponible' }}
+                        </div>
+                        <a href="{{ url_for('detalle_denuncia_publica', denuncia_id=d.id) }}" class="btn-ver-detalle">
+                            Ver detalles <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-data-message">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>No hay incidencias geolocalizadas para mostrar en el mapa.</p>
+                        <p>¡Sé el primero en reportar una incidencia!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Botón flotante para reportar -->
+<a href="{{ url_for('servicios') }}#denuncias" class="btn-reportar-fijo">
+    <i class="fas fa-exclamation-triangle"></i>
+    Reportar Incidencia
+</a>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Datos de las denuncias
+        const denuncias = {{ denuncias|tojson|safe }};
+        
+        // Inicializar mapa
+        let map;
+        let markers = [];
+        
+        // Centro por defecto (República Dominicana)
+        let defaultCenter = [18.7357, -70.1627];
+        
+        // Verificar si hay denuncias con coordenadas
+        const denunciasConCoords = denuncias.filter(d => d.lat && d.lng);
+        
+        if (denunciasConCoords.length > 0) {
+            // Calcular centro promedio
+            let sumLat = 0, sumLng = 0;
+            denunciasConCoords.forEach(d => {
+                sumLat += parseFloat(d.lat);
+                sumLng += parseFloat(d.lng);
+            });
+            defaultCenter = [sumLat / denunciasConCoords.length, sumLng / denunciasConCoords.length];
+        }
+        
+        // Crear mapa
+        map = L.map('incidenciasMap').setView(defaultCenter, 13);
+        
+        // Capa de tiles (OpenStreetMap)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19,
+            minZoom: 8
+        }).addTo(map);
+        
+        // Función para obtener color según estado
+        function getMarkerColor(estado) {
+            switch(estado) {
+                case 'pendiente': return '#ffc107';
+                case 'en_investigacion': return '#17a2b8';
+                case 'resuelto': return '#28a745';
+                case 'rechazado': return '#dc3545';
+                default: return '#ffc107';
+            }
+        }
+        
+        // Función para obtener ícono personalizado
+        function getCustomIcon(estado) {
+            const color = getMarkerColor(estado);
+            return L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center;"><i class="fas fa-exclamation" style="color: white; font-size: 10px;"></i></div>`,
+                iconSize: [24, 24],
+                popupAnchor: [0, -12]
+            });
+        }
+        
+        // Agregar marcadores
+        denunciasConCoords.forEach(denuncia => {
+            const lat = parseFloat(denuncia.lat);
+            const lng = parseFloat(denuncia.lng);
+            
+            if (!isNaN(lat) && !isNaN(lng)) {
+                const estadoLabel = denuncia.estado === 'pendiente' ? 'Pendiente' :
+                                   denuncia.estado === 'en_investigacion' ? 'En Investigación' :
+                                   denuncia.estado === 'resuelto' ? 'Resuelto' : 'Rechazado';
+                
+                const popupContent = `
+                    <div style="min-width: 200px;">
+                        <strong style="color: var(--verde-home);">${denuncia.tipo_nombre}</strong><br>
+                        <span style="display: inline-block; padding: 0.2rem 0.5rem; border-radius: 0.5rem; font-size: 0.7rem; background: ${getMarkerColor(denuncia.estado)}20; color: ${getMarkerColor(denuncia.estado)}; margin: 0.3rem 0;">
+                            ${estadoLabel}
+                        </span>
+                        <p style="margin: 0.5rem 0; font-size: 0.8rem; color: #666;">${denuncia.descripcion.substring(0, 100)}${denuncia.descripcion.length > 100 ? '...' : ''}</p>
+                        <small><i class="fas fa-calendar"></i> ${denuncia.fecha || 'Fecha no disponible'}</small><br>
+                        <a href="/denuncia/${denuncia.id}" style="display: inline-block; margin-top: 0.5rem; color: var(--verde-home); text-decoration: none; font-weight: 500;">Ver detalles →</a>
+                    </div>
+                `;
+                
+                const marker = L.marker([lat, lng], { icon: getCustomIcon(denuncia.estado) })
+                    .bindPopup(popupContent)
+                    .addTo(map);
+                
+                markers.push(marker);
+            }
+        });
+        
+        // Si no hay marcadores, mostrar un mensaje
+        if (denunciasConCoords.length === 0) {
+            map.setView(defaultCenter, 10);
+            L.popup()
+                .setLatLng(defaultCenter)
+                .setContent('<div style="text-align: center;"><i class="fas fa-info-circle"></i><br>No hay incidencias geolocalizadas para mostrar.<br>¡Sé el primero en reportar una!</div>')
+                .openOn(map);
+        }
+        
+        // Click en item de lista para centrar mapa
+        document.querySelectorAll('.incidencia-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Evitar que el click en el enlace también active esto
+                if (e.target.tagName === 'A') return;
+                
+                const lat = parseFloat(this.dataset.lat);
+                const lng = parseFloat(this.dataset.lng);
+                
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    map.setView([lat, lng], 16);
+                    // Buscar marcador correspondiente y abrir popup
+                    markers.forEach(marker => {
+                        const markerLatLng = marker.getLatLng();
+                        if (Math.abs(markerLatLng.lat - lat) < 0.0001 && Math.abs(markerLatLng.lng - lng) < 0.0001) {
+                            marker.openPopup();
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

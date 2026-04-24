@@ -3,6 +3,8 @@ Modelo para gestionar solicitudes de servicios municipales
 """
 import json
 import uuid
+import random
+import string
 from datetime import datetime
 from pathlib import Path
 
@@ -22,7 +24,7 @@ class Solicitud:
                  documentos=None, asignado_a=None):
         
         self.id = id or str(uuid.uuid4())
-        self.folio = folio or self._generar_folio()
+        self.folio = folio or self.generar_folio()
         self.usuario_email = usuario_email
         self.usuario_nombre = usuario_nombre
         self.usuario_cedula = usuario_cedula
@@ -37,11 +39,23 @@ class Solicitud:
         self.documentos = documentos or []
         self.asignado_a = asignado_a
     
-    def _generar_folio(self):
-        """Genera folio único para la solicitud"""
+    @staticmethod
+    def generar_folio():
+        """
+        Genera un folio único para la solicitud
+        Formato: SOL-YYMMDD-XXXXX
+        """
         fecha = datetime.now().strftime("%y%m%d")
-        random = uuid.uuid4().hex[:6].upper()
-        return f"SOL-{fecha}-{random}"
+        random_part = ''.join(random.choices(string.digits, k=5))
+        folio = f"SOL-{fecha}-{random_part}"
+        
+        # Verificar que el folio no exista ya
+        solicitudes = Solicitud.cargar_todos()
+        while any(s.folio == folio for s in solicitudes):
+            random_part = ''.join(random.choices(string.digits, k=5))
+            folio = f"SOL-{fecha}-{random_part}"
+        
+        return folio
     
     def to_dict(self):
         """Convierte a diccionario para JSON"""
@@ -88,12 +102,15 @@ class Solicitud:
     def cargar_todos(cls):
         """Carga todas las solicitudes del archivo JSON"""
         if not SOLICITUDES_FILE.exists():
+            print(f"[DEBUG] El archivo {SOLICITUDES_FILE} no existe, creando uno nuevo")
             return []
         try:
             with open(SOLICITUDES_FILE, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+                print(f"[DEBUG] Cargadas {len(data)} solicitudes desde {SOLICITUDES_FILE}")
                 return [cls.from_dict(item) for item in data]
-        except:
+        except (json.JSONDecodeError, FileNotFoundError) as e:
+            print(f"[ERROR] Error cargando solicitudes: {e}")
             return []
     
     @classmethod
@@ -103,8 +120,10 @@ class Solicitud:
             with open(SOLICITUDES_FILE, 'w', encoding='utf-8') as f:
                 json.dump([s.to_dict() for s in solicitudes], f,
                          ensure_ascii=False, indent=2)
+            print(f"[DEBUG] Guardadas {len(solicitudes)} solicitudes en {SOLICITUDES_FILE}")
             return True
-        except:
+        except Exception as e:
+            print(f"[ERROR] Error guardando solicitudes: {e}")
             return False
     
     @classmethod
@@ -158,6 +177,9 @@ class Solicitud:
     
     def actualizar_estado(self, nuevo_estado, comentario=None, admin_email=None):
         """Actualiza el estado de la solicitud"""
+        if nuevo_estado not in self.ESTADOS:
+            raise ValueError(f"Estado inválido. Debe ser uno de: {self.ESTADOS}")
+        
         self.estado = nuevo_estado
         self.fecha_actualizacion = datetime.now().isoformat()
         
@@ -169,6 +191,14 @@ class Solicitud:
             'usuario': admin_email or 'sistema',
             'comentario': comentario
         })
+        
+        # Guardar cambios
+        solicitudes = self.cargar_todos()
+        for i, s in enumerate(solicitudes):
+            if s.id == self.id:
+                solicitudes[i] = self
+                break
+        self.guardar_todos(solicitudes)
     
     def agregar_comentario(self, comentario, admin_email, admin_nombre=None):
         """Agrega un comentario administrativo"""
@@ -188,6 +218,14 @@ class Solicitud:
             'usuario': admin_email,
             'nombre': admin_nombre or admin_email
         })
+        
+        # Guardar cambios
+        solicitudes = self.cargar_todos()
+        for i, s in enumerate(solicitudes):
+            if s.id == self.id:
+                solicitudes[i] = self
+                break
+        self.guardar_todos(solicitudes)
     
     def asignar(self, admin_email):
         """Asigna la solicitud a un administrador"""
@@ -200,3 +238,28 @@ class Solicitud:
             'descripcion': f'Asignada a: {admin_email}',
             'usuario': admin_email
         })
+        
+        # Guardar cambios
+        solicitudes = self.cargar_todos()
+        for i, s in enumerate(solicitudes):
+            if s.id == self.id:
+                solicitudes[i] = self
+                break
+        self.guardar_todos(solicitudes)
+    
+    def agregar_documento(self, nombre_documento, url_documento):
+        """Agrega un documento a la solicitud"""
+        self.documentos.append({
+            'nombre': nombre_documento,
+            'url': url_documento,
+            'fecha': datetime.now().isoformat()
+        })
+        self.fecha_actualizacion = datetime.now().isoformat()
+        
+        # Guardar cambios
+        solicitudes = self.cargar_todos()
+        for i, s in enumerate(solicitudes):
+            if s.id == self.id:
+                solicitudes[i] = self
+                break
+        self.guardar_todos(solicitudes)

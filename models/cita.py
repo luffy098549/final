@@ -87,23 +87,30 @@ class Cita:
     
     @classmethod
     def cargar_todos(cls):
+        """Carga todas las citas del archivo JSON"""
         if not CITAS_FILE.exists():
+            print(f"[DEBUG] El archivo {CITAS_FILE} no existe, creando uno nuevo")
             return []
         try:
             with open(CITAS_FILE, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+                print(f"[DEBUG] Cargadas {len(data)} citas desde {CITAS_FILE}")
                 return [cls.from_dict(item) for item in data]
-        except:
+        except (json.JSONDecodeError, FileNotFoundError) as e:
+            print(f"[ERROR] Error cargando citas: {e}")
             return []
     
     @classmethod
     def guardar_todos(cls, citas):
+        """Guarda todas las citas en el archivo JSON"""
         try:
             with open(CITAS_FILE, 'w', encoding='utf-8') as f:
                 json.dump([c.to_dict() for c in citas], f,
                          ensure_ascii=False, indent=2)
+            print(f"[DEBUG] Guardadas {len(citas)} citas en {CITAS_FILE}")
             return True
-        except:
+        except Exception as e:
+            print(f"[ERROR] Error guardando citas: {e}")
             return False
     
     @classmethod
@@ -116,6 +123,15 @@ class Cita:
         todas = cls.cargar_todos()
         for c in todas:
             if c.id == cita_id:
+                return c
+        return None
+    
+    @classmethod
+    def buscar_por_folio(cls, folio):
+        """Busca una cita por su folio"""
+        todas = cls.cargar_todos()
+        for c in todas:
+            if c.folio == folio:
                 return c
         return None
     

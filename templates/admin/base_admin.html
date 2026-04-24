@@ -103,7 +103,6 @@
                             <span>Usuarios</span>
                         </a>
                     </li>
-                    <!-- NUEVA OPCIÓN: CITAS (CORREGIDA) -->
                     <li>
                         <a href="{{ url_for('admin.admin_citas') }}" class="{{ 'active' if request.endpoint == 'admin.admin_citas' else '' }}">
                             <i class="fas fa-calendar-check"></i>
@@ -127,7 +126,6 @@
                             <span>Bitácora</span>
                         </a>
                     </li>
-                    <!-- NUEVA OPCIÓN: PLANTILLAS (CORREGIDA) -->
                     <li>
                         <a href="{{ url_for('admin.admin_plantillas') }}" class="{{ 'active' if request.endpoint == 'admin.admin_plantillas' else '' }}">
                             <i class="fas fa-file-alt"></i>
@@ -140,14 +138,12 @@
                             <span>Configuración</span>
                         </a>
                     </li>
-                    <!-- NUEVA OPCIÓN: MAPA ADMIN -->
                     <li>
                         <a href="{{ url_for('admin.admin_mapa_incidencias') }}" class="{{ 'active' if request.endpoint == 'admin.admin_mapa_incidencias' else '' }}">
                             <i class="fas fa-map-marked-alt"></i>
                             <span>Mapa Incidencias</span>
                         </a>
                     </li>
-                    <!-- NUEVA OPCIÓN: ENCUESTAS -->
                     <li>
                         <a href="{{ url_for('admin.admin_encuestas') }}" class="{{ 'active' if request.endpoint == 'admin.admin_encuestas' else '' }}">
                             <i class="fas fa-star"></i>
@@ -203,38 +199,18 @@
                     <div class="header-notifications">
                         <button class="notifications-btn" id="notificationsBtn">
                             <i class="far fa-bell"></i>
-                            <span class="notification-badge">3</span>
+                            <span class="notification-badge" id="notifBadge" style="display:none;">0</span>
                         </button>
                         <div class="notifications-dropdown" id="notificationsDropdown">
                             <div class="notifications-header">
                                 <h3>Notificaciones</h3>
-                                <span>3 nuevas</span>
+                                <button id="marcarTodasBtn" class="btn-marcar-todas" style="display:none;">Marcar todo como leído</button>
                             </div>
-                            <div class="notifications-list">
-                                <div class="notification-item unread">
-                                    <i class="fas fa-file-alt"></i>
-                                    <div class="notification-content">
-                                        <p>Nueva solicitud de uso de suelo</p>
-                                        <span>Hace 5 minutos</span>
-                                    </div>
-                                </div>
-                                <div class="notification-item unread">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    <div class="notification-content">
-                                        <p>Denuncia en zona céntrica</p>
-                                        <span>Hace 15 minutos</span>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <i class="fas fa-user-plus"></i>
-                                    <div class="notification-content">
-                                        <p>Nuevo usuario registrado</p>
-                                        <span>Hace 1 hora</span>
-                                    </div>
-                                </div>
+                            <div class="notifications-list" id="notificationsList">
+                                <div class="empty-notifications">No hay notificaciones</div>
                             </div>
                             <div class="notifications-footer">
-                                <a href="#">Ver todas</a>
+                                <a href="{{ url_for('mis_tramites') }}">Ver todos mis trámites</a>
                             </div>
                         </div>
                     </div>
@@ -311,7 +287,6 @@
                     <p>&copy; 2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
                 </div>
                 <div class="footer-right">
-                    {# now viene del context_processor en app.py — nunca falla #}
                     <span>Última actualización: <span id="lastUpdate">{{ now.strftime('%d/%m/%Y %H:%M') }}</span></span>
                 </div>
             </footer>
@@ -337,7 +312,7 @@
         </div>
     </div>
     
-    <!-- Scripts base — NO incluye Chart.js (se carga solo donde se necesita) -->
+    <!-- Scripts base -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin-dashboard.js') }}"></script>
@@ -345,31 +320,195 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            console.log("🔵 DOM cargado - Inicializando panel admin");
+            
             initAdminInterface();
-            loadNotifications();
             setupGlobalSearch();
             
-            // Cargar contador de citas pendientes
+            // Cargar contadores
             loadCitasPendientes();
+            loadSolicitudesPendientes();
+            loadDenunciasPendientes();
+            cargarNotificaciones();
+
+            // Recargar cada 30 segundos
+            setInterval(loadSolicitudesPendientes, 30000);
+            setInterval(loadDenunciasPendientes, 30000);
+            setInterval(loadCitasPendientes, 30000);
+            setInterval(cargarNotificaciones, 30000);
+
+            // Marcar todas al hacer clic
+            const marcarTodasBtn = document.getElementById('marcarTodasBtn');
+            if (marcarTodasBtn) {
+                marcarTodasBtn.addEventListener('click', marcarTodas);
+            }
         });
-        
-        // Función para cargar citas pendientes
-        function loadCitasPendientes() {
-            fetch('/api/admin/citas-pendientes')
-                .then(response => response.json())
+
+        // ─── Solicitudes pendientes ────────────────────────────────────────────────────
+        function loadSolicitudesPendientes() {
+            console.log("🔄 Cargando solicitudes pendientes...");
+            fetch('/admin/api/solicitudes-pendientes')
+                .then(r => {
+                    console.log("📡 Respuesta solicitudes - Status:", r.status);
+                    return r.json();
+                })
                 .then(data => {
-                    const badge = document.getElementById('citasPendientes');
-                    if (data.count > 0) {
-                        badge.textContent = data.count > 9 ? '9+' : data.count;
-                        badge.style.display = 'inline';
-                    } else {
-                        badge.style.display = 'none';
+                    console.log("📊 Datos solicitudes:", data);
+                    const badge = document.getElementById('solicitudesPendientes');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.style.display = 'inline-flex';
+                            console.log(`✅ Solicitudes pendientes: ${data.count}`);
+                        } else {
+                            badge.style.display = 'none';
+                            console.log(`⚠️ No hay solicitudes pendientes`);
+                        }
                     }
                 })
-                .catch(error => console.error('Error loading citas:', error));
+                .catch(e => console.error('❌ Error loading solicitudes:', e));
         }
-        
-        // Función para cerrar el modal de búsqueda
+
+        // ─── Denuncias pendientes ────────────────────────────────────────────────────
+        function loadDenunciasPendientes() {
+            console.log("🔄 Cargando denuncias pendientes...");
+            fetch('/admin/api/denuncias-pendientes')
+                .then(r => {
+                    console.log("📡 Respuesta denuncias - Status:", r.status);
+                    return r.json();
+                })
+                .then(data => {
+                    console.log("📊 Datos denuncias:", data);
+                    const badge = document.getElementById('denunciasPendientes');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.style.display = 'inline-flex';
+                            console.log(`✅ Denuncias pendientes: ${data.count}`);
+                        } else {
+                            badge.style.display = 'none';
+                            console.log(`⚠️ No hay denuncias pendientes`);
+                        }
+                    }
+                })
+                .catch(e => console.error('❌ Error loading denuncias:', e));
+        }
+
+        // ─── Citas pendientes ───────────────────────────────────────────────────────
+        function loadCitasPendientes() {
+            console.log("🔄 Cargando citas pendientes...");
+            fetch('/admin/api/citas-pendientes')
+                .then(r => {
+                    console.log("📡 Respuesta citas - Status:", r.status);
+                    return r.json();
+                })
+                .then(data => {
+                    console.log("📊 Datos citas:", data);
+                    const badge = document.getElementById('citasPendientes');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.style.display = 'inline-flex';
+                            console.log(`✅ Citas pendientes: ${data.count}`);
+                        } else {
+                            badge.style.display = 'none';
+                            console.log(`⚠️ No hay citas pendientes`);
+                        }
+                    }
+                })
+                .catch(error => console.error('❌ Error loading citas:', error));
+        }
+
+        // ─── Notificaciones ─────────────────────────────────────────────────────────
+        function cargarNotificaciones() {
+            console.log("🔄 Cargando notificaciones...");
+            fetch('/api/notificaciones')
+                .then(res => res.json())
+                .then(data => {
+                    console.log("📊 Datos notificaciones:", data);
+                    const badge = document.getElementById('notifBadge');
+                    const list = document.getElementById('notificationsList');
+                    const marcarBtn = document.getElementById('marcarTodasBtn');
+
+                    if (badge) {
+                        if (data.total_no_leidas > 0) {
+                            badge.textContent = data.total_no_leidas;
+                            badge.style.display = 'inline-flex';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+
+                    if (marcarBtn) {
+                        marcarBtn.style.display = data.total_no_leidas > 0 ? 'inline-block' : 'none';
+                    }
+
+                    if (list) {
+                        if (data.todas && data.todas.length > 0) {
+                            list.innerHTML = data.todas.map(notif => {
+                                const iconClass = notif.tipo === 'solicitud'
+                                    ? 'fa-file-alt'
+                                    : notif.tipo === 'denuncia'
+                                        ? 'fa-exclamation-triangle'
+                                        : 'fa-calendar-check';
+
+                                const fechaStr = new Date(notif.fecha_creacion).toLocaleString('es-DO', {
+                                    day: '2-digit', month: '2-digit', year: 'numeric',
+                                    hour: '2-digit', minute: '2-digit'
+                                });
+
+                                return `
+                                    <div class="notification-item ${notif.leido ? '' : 'unread'}" data-id="${notif.id}">
+                                        <i class="fas ${iconClass}"></i>
+                                        <div class="notification-content">
+                                            <p>${notif.titulo}</p>
+                                            <small>${notif.mensaje.substring(0, 80)}${notif.mensaje.length > 80 ? '...' : ''}</small>
+                                            <span class="notification-time">${fechaStr}</span>
+                                        </div>
+                                        ${!notif.leido
+                                            ? `<button class="marcar-leida" title="Marcar como leída" onclick="marcarLeida(${notif.id})">
+                                                <i class="fas fa-check"></i>
+                                               </button>`
+                                            : ''}
+                                    </div>
+                                `;
+                            }).join('');
+                        } else {
+                            list.innerHTML = '<div class="empty-notifications">No hay notificaciones</div>';
+                        }
+                    }
+                })
+                .catch(err => console.error('❌ Error cargando notificaciones:', err));
+        }
+
+        function marcarLeida(id) {
+            console.log(`📌 Marcando notificación ${id} como leída`);
+            fetch(`/api/notificaciones/marcar-leida/${id}`, { method: 'POST' })
+                .then(() => cargarNotificaciones())
+                .catch(err => console.error('Error marcando notificación:', err));
+        }
+
+        function marcarTodas() {
+            console.log(`📌 Marcando todas las notificaciones como leídas`);
+            fetch('/api/notificaciones/marcar-todas', { method: 'POST' })
+                .then(() => cargarNotificaciones())
+                .catch(err => console.error('Error marcando todas:', err));
+        }
+
+        // ─── Búsqueda global ────────────────────────────────────────────────────────
+        function setupGlobalSearch() {
+            const searchInput = document.getElementById('globalSearch');
+            if (searchInput) {
+                searchInput.addEventListener('keydown', function(e) {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        document.getElementById('searchModal').classList.add('active');
+                        document.getElementById('searchInput').focus();
+                    }
+                });
+            }
+        }
+
         function closeSearchModal() {
             document.getElementById('searchModal').classList.remove('active');
         }

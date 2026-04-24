@@ -28,10 +28,12 @@
                     <div class="form-group">
                         <label for="nombre"><i class="fas fa-user"></i> Nombre *</label>
                         <input type="text" id="nombre" name="nombre" value="{{ request.form.get('nombre', '') }}" required placeholder="Ej: Juan">
+                        <small class="form-hint">Nombre completo del administrador</small>
                     </div>
                     <div class="form-group">
                         <label for="email"><i class="fas fa-envelope"></i> Email *</label>
                         <input type="email" id="email" name="email" value="{{ request.form.get('email', '') }}" required placeholder="admin@cutupu.gob.do">
+                        <small class="form-hint">Correo electrónico institucional</small>
                     </div>
                 </div>
 
@@ -39,10 +41,12 @@
                     <div class="form-group">
                         <label for="password"><i class="fas fa-lock"></i> Contraseña *</label>
                         <input type="password" id="password" name="password" required minlength="6" placeholder="Mínimo 6 caracteres">
+                        <small class="form-hint">La contraseña debe tener al menos 6 caracteres</small>
                     </div>
                     <div class="form-group">
                         <label for="confirmar_password"><i class="fas fa-check-circle"></i> Confirmar Contraseña *</label>
                         <input type="password" id="confirmar_password" name="confirmar_password" required>
+                        <small class="form-hint">Repite la contraseña para confirmar</small>
                     </div>
                 </div>
 
@@ -50,20 +54,27 @@
                     <div class="form-group">
                         <label for="telefono"><i class="fas fa-phone"></i> Teléfono</label>
                         <input type="tel" id="telefono" name="telefono" value="{{ request.form.get('telefono', '') }}" placeholder="809-555-1234">
+                        <small class="form-hint">Opcional: número de contacto</small>
                     </div>
                     <div class="form-group">
-                        <label for="tipo"><i class="fas fa-tag"></i> Rol *</label>
-                        <select id="tipo" name="tipo" required>
-                            <option value="admin" selected>Administrador</option>
-                            <option value="super_admin">Super Administrador</option>
+                        <label for="rol"><i class="fas fa-tag"></i> Rol *</label>
+                        <select id="rol" name="rol" required>
                             <option value="moderador">Moderador</option>
+                            <option value="admin">Administrador</option>
+                            <option value="super_admin">Super Administrador</option>
                         </select>
+                        <small class="form-hint">
+                            <strong>Moderador:</strong> Solo gestiona solicitudes y denuncias<br>
+                            <strong>Administrador:</strong> Gestiona usuarios, solicitudes y denuncias<br>
+                            <strong>Super Administrador:</strong> Control total del sistema
+                        </small>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="notas_admin"><i class="fas fa-sticky-note"></i> Notas internas</label>
                     <textarea id="notas_admin" name="notas_admin" rows="3" placeholder="Información adicional...">{{ request.form.get('notas_admin', '') }}</textarea>
+                    <small class="form-hint">Notas internas (solo visibles para administradores)</small>
                 </div>
 
                 <div class="form-actions">
@@ -77,66 +88,156 @@
             </form>
         </div>
     </div>
-
-    <!-- Tabla de administradores existentes (se muestra gracias a que admin.py pasa usuarios) -->
-    {% if usuarios %}
-    <div class="admins-table-container">
-        <div class="table-header">
-            <h3><i class="fas fa-users-cog"></i> Administradores Actuales</h3>
-        </div>
-        <div class="table-responsive">
-            <table class="admins-table">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Rol</th>
-                        <th>Estado</th>
-                        <th>Teléfono</th>
-                        <th>Registro</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for email, user_data in usuarios.items() %}
-                        {% if user_data.tipo in ['super_admin', 'admin', 'moderador'] %}
-                        <tr>
-                            <td>
-                                <div class="admin-avatar">
-                                    {{ user_data.nombre[0] }}{{ user_data.apellidos[0] if user_data.apellidos else '' }}
-                                </div>
-                                <div class="admin-name">{{ user_data.nombre }} {{ user_data.apellidos }}</div>
-                            </td>
-                            <td>{{ email }}</td>
-                            <td>
-                                <span class="role-badge {{ user_data.tipo }}">
-                                    {% if user_data.tipo == 'super_admin' %}
-                                        <i class="fas fa-crown"></i> Super Admin
-                                    {% elif user_data.tipo == 'admin' %}
-                                        <i class="fas fa-user-tie"></i> Admin
-                                    {% elif user_data.tipo == 'moderador' %}
-                                        <i class="fas fa-user-cog"></i> Moderador
-                                    {% endif %}
-                                </span>
-                            </td>
-                            <td>
-                                {% if user_data.activo %}
-                                    <span class="status-badge active">Activo</span>
-                                {% else %}
-                                    <span class="status-badge inactive">Inactivo</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ user_data.telefono or '—' }}</td>
-                            <td>{{ user_data.fecha_registro or '—' }}</td>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% endif %}
 </div>
 
-<!-- CSS específico -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-create.css') }}">
+<style>
+.admin-create-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.create-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #1a3b2e 0%, #2e7d5e 100%);
+    padding: 1.5rem 2rem;
+    color: white;
+}
+
+.card-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #2e7d5e;
+    box-shadow: 0 0 0 3px rgba(46,125,94,0.1);
+}
+
+.form-hint {
+    font-size: 0.75rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn-submit {
+    background: #1a3b2e;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+    background: #2e7d5e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(46,125,94,0.3);
+}
+
+.btn-cancel {
+    background: #f5f5f5;
+    color: #666;
+    border: 2px solid #e0e0e0;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-submit, .btn-cancel {
+        justify-content: center;
+    }
+}
+</style>
 {% endblock %}

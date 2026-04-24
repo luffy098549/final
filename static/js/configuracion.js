@@ -1,633 +1,504 @@
-/* ================================================================
-   configuracion.js — Lógica completa y funcional
-   Todos los fetch() apuntan a rutas reales de Flask
-================================================================ */
-'use strict';
+// configuracion.js - Manejo completo de la configuración
 
-// ================================================================
-// INICIALIZACIÓN
-// ================================================================
+let configActual = CONFIG_INICIAL || {};
 
-document.addEventListener('DOMContentLoaded', function () {
-    initNavigation();
-    precargarFormularios();
-    initUploadZones();
-    initColorInputs();
-    initDBListeners();
-    cargarInfoSistema();
-});
-
-// ================================================================
-// NAVEGACIÓN ENTRE SECCIONES
-// ================================================================
-
-function initNavigation() {
-    document.querySelectorAll('.config-nav-item').forEach(item => {
-        item.addEventListener('click', function (e) {
-            e.preventDefault();
-            cambiarSeccion(this.dataset.section);
-        });
-    });
-}
-
-function cambiarSeccion(seccion) {
-    document.querySelectorAll('.config-nav-item').forEach(i => i.classList.remove('active'));
-    document.querySelectorAll('.config-section').forEach(s => s.classList.remove('active'));
-
-    document.querySelector(`[data-section="${seccion}"]`)?.classList.add('active');
-    document.getElementById(`seccion-${seccion}`)?.classList.add('active');
-}
-
-// ================================================================
-// PRECARGAR FORMULARIOS CON CONFIG_INICIAL (desde Flask)
-// ================================================================
-
-function precargarFormularios() {
-    if (typeof CONFIG_INICIAL === 'undefined') return;
-
-    // ── General ──
-    const g = CONFIG_INICIAL.general || {};
-    setVal('cfg_nombre_municipio', g.nombre_municipio);
-    setVal('cfg_siglas',           g.siglas);
-    setVal('cfg_direccion',        g.direccion);
-    setVal('cfg_telefono',         g.telefono);
-    setVal('cfg_email',            g.email);
-    setVal('cfg_web',              g.web);
-    setVal('cfg_timezone',         g.timezone);
-    setVal('cfg_date_format',      g.date_format);
-    setVal('cfg_idioma',           g.idioma);
-
-    // ── Seguridad ──
-    const s = CONFIG_INICIAL.seguridad || {};
-    setVal('cfg_pass_min',       s.pass_min);
-    setVal('cfg_max_intentos',   s.max_intentos);
-    setVal('cfg_pass_expiry',    s.pass_expiry);
-    setVal('cfg_lockout_time',   s.lockout_time);
-    setVal('cfg_session_hours',  s.session_hours);
-    setVal('cfg_inactivity',     s.inactivity);
-    setCheck('cfg_require_upper',   s.require_upper);
-    setCheck('cfg_require_num',     s.require_num);
-    setCheck('cfg_require_special', s.require_special);
-    setCheck('cfg_single_session',  s.single_session);
-    setCheck('cfg_log_access',      s.log_access);
-
-    // ── Notificaciones ──
-    const n = CONFIG_INICIAL.notificaciones || {};
-    setVal('cfg_smtp_host',  n.smtp_host);
-    setVal('cfg_smtp_port',  n.smtp_port);
-    setVal('cfg_smtp_user',  n.smtp_user);
-    setVal('cfg_smtp_pass',  n.smtp_pass);
-    setVal('cfg_smtp_name',  n.smtp_name);
-    setCheck('cfg_notif_solicitud', n.notif_solicitud);
-    setCheck('cfg_notif_denuncia',  n.notif_denuncia);
-    setCheck('cfg_notif_usuario',   n.notif_usuario);
-    setCheck('cfg_notif_estado',    n.notif_estado);
-
-    // ── Servicios ──
-    const svc = CONFIG_INICIAL.servicios || {};
-    const tiempos = svc.tiempos || {};
-    const activos = svc.activos || {};
-
-    document.querySelectorAll('.svc-tiempo').forEach(input => {
-        const key = input.dataset.key;
-        if (tiempos[key] !== undefined) input.value = tiempos[key];
-    });
-    document.querySelectorAll('.svc-activo').forEach(cb => {
-        const key = cb.dataset.key;
-        if (activos[key] !== undefined) cb.checked = activos[key];
-    });
-
-    setVal('cfg_max_solicitudes', svc.max_solicitudes);
-    setVal('cfg_max_denuncias',   svc.max_denuncias);
-    setVal('cfg_max_file_size',   svc.max_file_size);
-    setVal('cfg_file_types',      svc.file_types);
-
-    // ── Apariencia ──
-    const a = CONFIG_INICIAL.apariencia || {};
-    selectTheme(a.tema || 'default', false); // false = no guardar, solo visual
-    setVal('cfg_color_primary',     a.color_primary);
-    setVal('cfg_color_primary_hex', a.color_primary);
-    setVal('cfg_color_accent',      a.color_accent);
-    setVal('cfg_color_accent_hex',  a.color_accent);
-    setVal('cfg_color_sidebar',     a.color_sidebar);
-    setVal('cfg_color_sidebar_hex', a.color_sidebar);
-    setCheck('cfg_sidebar_collapsed', a.sidebar_collapsed);
-    setCheck('cfg_breadcrumbs',       a.breadcrumbs);
-    setCheck('cfg_animations',        a.animations);
-
-    // ── Sistema ──
-    const sis = CONFIG_INICIAL.sistema || {};
-    setCheck('cfg_debug',       sis.debug);
-    setCheck('cfg_maintenance', sis.maintenance);
-    setCheck('cfg_audit_log',   sis.audit_log);
-    setCheck('cfg_file_log',    sis.file_log);
-    setVal('cfg_cache_sessions', sis.cache_sessions);
-    setVal('cfg_cache_static',   sis.cache_static);
-}
-
-// Helpers de precarga
-function setVal(id, val) {
-    const el = document.getElementById(id);
-    if (el && val !== undefined && val !== null) el.value = val;
-}
-function setCheck(id, val) {
-    const el = document.getElementById(id);
-    if (el && val !== undefined && val !== null) el.checked = Boolean(val);
-}
-
-// ================================================================
-// GUARDAR SECCIÓN — fetch real a Flask
-// ================================================================
-
+// Función para guardar una sección completa
 async function guardarSeccion(seccion) {
-    const datos = recopilarDatos(seccion);
-    const btn   = document.querySelector(`#seccion-${seccion} .btn-save`);
-
-    if (btn) {
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-        btn.disabled  = true;
-    }
-
-    try {
-        const res = await fetch('/admin/api/config/guardar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ seccion, datos })
-        });
-        const json = await res.json();
-
-        if (json.ok) {
-            mostrarToast(json.msg, 'success');
-            // Si es mantenimiento, notificar en tiempo real
-            if (seccion === 'sistema' && datos.maintenance !== undefined) {
-                await fetch('/admin/api/config/mantenimiento', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ activo: datos.maintenance })
-                });
-            }
-        } else {
-            mostrarToast(json.msg || 'Error al guardar', 'error');
-        }
-    } catch (err) {
-        mostrarToast('Error de conexión: ' + err.message, 'error');
-    } finally {
-        if (btn) {
-            btn.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
-            btn.disabled  = false;
-        }
-    }
-}
-
-// ── Recopilar datos de una sección ──────────────────────────
-function recopilarDatos(seccion) {
     const datos = {};
-
-    if (seccion === 'general') {
-        datos.nombre_municipio = getVal('cfg_nombre_municipio');
-        datos.siglas           = getVal('cfg_siglas');
-        datos.direccion        = getVal('cfg_direccion');
-        datos.telefono         = getVal('cfg_telefono');
-        datos.email            = getVal('cfg_email');
-        datos.web              = getVal('cfg_web');
-        datos.timezone         = getVal('cfg_timezone');
-        datos.date_format      = getVal('cfg_date_format');
-        datos.idioma           = getVal('cfg_idioma');
-    }
-    else if (seccion === 'seguridad') {
-        datos.pass_min       = getNum('cfg_pass_min');
-        datos.max_intentos   = getNum('cfg_max_intentos');
-        datos.pass_expiry    = getNum('cfg_pass_expiry');
-        datos.lockout_time   = getNum('cfg_lockout_time');
-        datos.session_hours  = getNum('cfg_session_hours');
-        datos.inactivity     = getNum('cfg_inactivity');
-        datos.require_upper   = getCheck('cfg_require_upper');
-        datos.require_num     = getCheck('cfg_require_num');
-        datos.require_special = getCheck('cfg_require_special');
-        datos.single_session  = getCheck('cfg_single_session');
-        datos.log_access      = getCheck('cfg_log_access');
-    }
-    else if (seccion === 'notificaciones') {
-        datos.smtp_host      = getVal('cfg_smtp_host');
-        datos.smtp_port      = getNum('cfg_smtp_port');
-        datos.smtp_user      = getVal('cfg_smtp_user');
-        datos.smtp_pass      = getVal('cfg_smtp_pass');
-        datos.smtp_name      = getVal('cfg_smtp_name');
-        datos.notif_solicitud = getCheck('cfg_notif_solicitud');
-        datos.notif_denuncia  = getCheck('cfg_notif_denuncia');
-        datos.notif_usuario   = getCheck('cfg_notif_usuario');
-        datos.notif_estado    = getCheck('cfg_notif_estado');
-    }
-    else if (seccion === 'servicios') {
-        datos.tiempos = {};
-        datos.activos = {};
-        document.querySelectorAll('.svc-tiempo').forEach(el => {
-            datos.tiempos[el.dataset.key] = parseInt(el.value) || 1;
-        });
-        document.querySelectorAll('.svc-activo').forEach(el => {
-            datos.activos[el.dataset.key] = el.checked;
-        });
-        datos.max_solicitudes = getNum('cfg_max_solicitudes');
-        datos.max_denuncias   = getNum('cfg_max_denuncias');
-        datos.max_file_size   = getNum('cfg_max_file_size');
-        datos.file_types      = getVal('cfg_file_types');
-    }
-    else if (seccion === 'apariencia') {
-        datos.tema             = document.querySelector('.theme-card.active')?.dataset.theme || 'default';
-        datos.color_primary    = getVal('cfg_color_primary');
-        datos.color_accent     = getVal('cfg_color_accent');
-        datos.color_sidebar    = getVal('cfg_color_sidebar');
-        datos.sidebar_collapsed = getCheck('cfg_sidebar_collapsed');
-        datos.breadcrumbs      = getCheck('cfg_breadcrumbs');
-        datos.animations       = getCheck('cfg_animations');
-    }
-    else if (seccion === 'sistema') {
-        datos.debug         = getCheck('cfg_debug');
-        datos.maintenance   = getCheck('cfg_maintenance');
-        datos.audit_log     = getCheck('cfg_audit_log');
-        datos.file_log      = getCheck('cfg_file_log');
-        datos.cache_sessions = getNum('cfg_cache_sessions');
-        datos.cache_static   = getNum('cfg_cache_static');
-    }
-
-    return datos;
-}
-
-function getVal(id)   { return document.getElementById(id)?.value?.trim() || ''; }
-function getNum(id)   { return parseInt(document.getElementById(id)?.value) || 0; }
-function getCheck(id) { return document.getElementById(id)?.checked || false; }
-
-// ── Restablecer sección ──────────────────────────────────────
-function resetSeccion(seccion) {
-    mostrarConfirm(
-        'Restablecer sección',
-        `¿Restablecer "${seccion}" a los valores por defecto?`,
-        () => location.reload()
-    );
-}
-
-// ================================================================
-// UPLOAD DE IMÁGENES — fetch real a Flask
-// ================================================================
-
-function initUploadZones() {
-    [
-        { zona: 'uploadLogo',    input: 'inputLogo',    tipo: 'logo' },
-        { zona: 'uploadFavicon', input: 'inputFavicon', tipo: 'favicon' },
-        { zona: 'uploadBanner',  input: 'inputBanner',  tipo: 'banner' },
-    ].forEach(({ zona, input, tipo }) => {
-        const zEl = document.getElementById(zona);
-        const iEl = document.getElementById(input);
-        if (!zEl || !iEl) return;
-
-        zEl.addEventListener('click', () => iEl.click());
-
-        zEl.addEventListener('dragover', e => {
-            e.preventDefault();
-            zEl.style.borderColor = '#7E8F76';
-            zEl.style.background  = '#f0f7f0';
-        });
-        zEl.addEventListener('dragleave', () => {
-            zEl.style.borderColor = '';
-            zEl.style.background  = '';
-        });
-        zEl.addEventListener('drop', e => {
-            e.preventDefault();
-            zEl.style.borderColor = '';
-            zEl.style.background  = '';
-            if (e.dataTransfer.files[0]) subirImagen(zEl, e.dataTransfer.files[0], tipo);
-        });
-
-        iEl.addEventListener('change', () => {
-            if (iEl.files[0]) subirImagen(zEl, iEl.files[0], tipo);
-        });
-    });
-}
-
-async function subirImagen(zona, archivo, tipo) {
-    // Preview inmediato
-    const reader = new FileReader();
-    reader.onload = e => {
-        zona.innerHTML = `
-            <img src="${e.target.result}" style="max-height:60px;border-radius:6px;object-fit:contain;">
-            <p style="margin:6px 0 0;font-size:0.75rem;color:#D97706;font-weight:600;">
-                <i class="fas fa-spinner fa-spin"></i> Subiendo...
-            </p>`;
-    };
-    reader.readAsDataURL(archivo);
-
-    // Subir al servidor
-    const formData = new FormData();
-    formData.append('tipo', tipo);
-    formData.append('archivo', archivo);
-
-    try {
-        const res  = await fetch('/admin/api/config/subir-imagen', { method: 'POST', body: formData });
-        const json = await res.json();
-
-        if (json.ok) {
-            zona.querySelector('p').innerHTML = `<i class="fas fa-check"></i> ${archivo.name}`;
-            zona.querySelector('p').style.color = '#38a169';
-            mostrarToast(json.msg, 'success');
-        } else {
-            zona.querySelector('p').innerHTML = `<i class="fas fa-times"></i> Error: ${json.msg}`;
-            zona.querySelector('p').style.color = '#E53E3E';
+    const toast = document.getElementById('toast');
+    
+    // Mapeo de IDs de inputs a claves de configuración
+    const mapeoCampos = {
+        general: {
+            'cfg_nombre_municipio': 'nombre_municipio',
+            'cfg_siglas': 'siglas',
+            'cfg_direccion': 'direccion',
+            'cfg_telefono': 'telefono',
+            'cfg_email': 'email_institucional',
+            'cfg_web': 'sitio_web',
+            'cfg_timezone': 'zona_horaria',
+            'cfg_date_format': 'formato_fecha',
+            'cfg_idioma': 'idioma'
+        },
+        seguridad: {
+            'cfg_pass_min': 'pass_min_length',
+            'cfg_max_intentos': 'max_intentos_fallidos',
+            'cfg_pass_expiry': 'pass_expiry_dias',
+            'cfg_lockout_time': 'lockout_minutos',
+            'cfg_session_hours': 'session_duracion_horas',
+            'cfg_inactivity': 'inactividad_minutos',
+            'cfg_require_upper': 'require_mayusculas',
+            'cfg_require_num': 'require_numeros',
+            'cfg_require_special': 'require_especiales',
+            'cfg_single_session': 'single_session',
+            'cfg_log_access': 'log_intentos_acceso',
+            'cfg_2fa': 'two_factor_auth'
+        },
+        notificaciones: {
+            'cfg_smtp_host': 'smtp_host',
+            'cfg_smtp_port': 'smtp_port',
+            'cfg_smtp_user': 'smtp_user',
+            'cfg_smtp_pass': 'smtp_password',
+            'cfg_smtp_name': 'smtp_name',
+            'cfg_notif_solicitud': 'notif_nueva_solicitud',
+            'cfg_notif_denuncia': 'notif_nueva_denuncia',
+            'cfg_notif_usuario': 'notif_nuevo_usuario',
+            'cfg_notif_estado': 'notif_cambio_estado',
+            'cfg_notif_resumen': 'notif_resumen_diario'
+        },
+        servicios: {
+            'cfg_max_solicitudes': 'max_solicitudes_mes',
+            'cfg_max_denuncias': 'max_denuncias_mes',
+            'cfg_max_file_size': 'max_file_size_mb',
+            'cfg_file_types': 'tipos_archivo_permitidos'
+        },
+        apariencia: {
+            'cfg_color_primary': 'color_primario',
+            'cfg_color_primary_hex': 'color_primario_hex',
+            'cfg_color_accent': 'color_acento',
+            'cfg_color_accent_hex': 'color_acento_hex',
+            'cfg_color_sidebar': 'color_sidebar',
+            'cfg_color_sidebar_hex': 'color_sidebar_hex',
+            'cfg_sidebar_collapsed': 'sidebar_colapsado',
+            'cfg_breadcrumbs': 'mostrar_breadcrumbs',
+            'cfg_animations': 'animaciones'
+        },
+        sistema: {
+            'cfg_debug': 'debug_mode',
+            'cfg_maintenance': 'maintenance_mode',
+            'cfg_audit_log': 'audit_log',
+            'cfg_file_log': 'file_logging',
+            'cfg_cache_sessions': 'cache_sessions_segundos',
+            'cfg_cache_static': 'cache_static_dias'
         }
-    } catch (err) {
-        mostrarToast('Error subiendo imagen: ' + err.message, 'error');
-    }
-}
-
-// ================================================================
-// TEST SMTP REAL — fetch a Flask
-// ================================================================
-
-async function testSmtp() {
-    const btn    = document.getElementById('btnTestSmtp');
-    const result = document.getElementById('smtpTestResult');
-
-    const payload = {
-        smtp_host:     getVal('cfg_smtp_host'),
-        smtp_port:     getNum('cfg_smtp_port'),
-        smtp_user:     getVal('cfg_smtp_user'),
-        smtp_pass:     getVal('cfg_smtp_pass'),
-        smtp_name:     getVal('cfg_smtp_name'),
-        email_destino: getVal('cfg_test_email')
     };
-
-    if (!payload.smtp_host || !payload.smtp_user || !payload.smtp_pass) {
-        mostrarToast('Completa el servidor, usuario y contraseña SMTP primero', 'error');
+    
+    // Recoger valores según la sección
+    const campos = mapeoCampos[seccion];
+    if (campos) {
+        for (const [inputId, configKey] of Object.entries(campos)) {
+            const elemento = document.getElementById(inputId);
+            if (elemento) {
+                if (elemento.type === 'checkbox') {
+                    datos[configKey] = elemento.checked;
+                } else if (elemento.type === 'number') {
+                    datos[configKey] = parseInt(elemento.value) || 0;
+                } else {
+                    datos[configKey] = elemento.value;
+                }
+            }
+        }
+    }
+    
+    // Servicios específicos (tiempos de respuesta)
+    if (seccion === 'servicios') {
+        const tiempos = {};
+        document.querySelectorAll('.svc-tiempo').forEach(input => {
+            const key = input.dataset.key;
+            tiempos[key] = parseInt(input.value) || 0;
+        });
+        datos['tiempos_respuesta'] = tiempos;
+        
+        const activos = {};
+        document.querySelectorAll('.svc-activo').forEach(checkbox => {
+            const key = checkbox.dataset.key;
+            activos[key] = checkbox.checked;
+        });
+        datos['servicios_activos'] = activos;
+    }
+    
+    if (Object.keys(datos).length === 0) {
+        mostrarToast('No hay datos para guardar', 'warning');
         return;
     }
-    if (!payload.email_destino) {
-        mostrarToast('Ingresa un email de destino para la prueba', 'error');
-        return;
-    }
-
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-    btn.disabled  = true;
-    result.className = 'test-result hidden';
-
+    
+    mostrarToast('Guardando configuración...', 'info');
+    
     try {
-        const res  = await fetch('/admin/api/config/test-smtp', {
+        const response = await fetch('/admin/api/config/guardar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ seccion: seccion, datos: datos })
         });
-        const json = await res.json();
-
-        result.classList.remove('hidden');
-        if (json.ok) {
-            result.className = 'test-result success';
-            result.innerHTML = `<i class="fas fa-check-circle"></i> ${json.msg}`;
+        
+        const result = await response.json();
+        
+        if (result.ok) {
+            mostrarToast(result.mensaje || '✅ Configuración guardada correctamente', 'success');
+            // Aplicar cambios visuales inmediatos
+            aplicarCambiosVisuales(seccion, datos);
         } else {
-            result.className = 'test-result error';
-            result.innerHTML = `<i class="fas fa-times-circle"></i> ${json.msg}`;
+            mostrarToast('❌ Error: ' + (result.error || 'No se pudo guardar'), 'error');
         }
-    } catch (err) {
-        result.className = 'test-result error';
-        result.innerHTML = `<i class="fas fa-times-circle"></i> Error de conexión: ${err.message}`;
-        result.classList.remove('hidden');
-    } finally {
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar prueba';
-        btn.disabled  = false;
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarToast('❌ Error de conexión al guardar', 'error');
     }
 }
 
-// ================================================================
-// INFO DEL SISTEMA — fetch a Flask
-// ================================================================
-
-async function cargarInfoSistema() {
-    try {
-        const res  = await fetch('/admin/api/config/sistema-info');
-        const json = await res.json();
-        if (json.ok) {
-            const d = json.datos;
-            setEl('sys-python',  d.python  || '—');
-            setEl('sys-flask',   d.flask   || '—');
-            setEl('sys-storage', d.storage || 'JSON Local');
+// Función para aplicar cambios visuales inmediatos
+function aplicarCambiosVisuales(seccion, datos) {
+    if (seccion === 'apariencia') {
+        if (datos.color_primario) {
+            document.documentElement.style.setProperty('--primary-color', datos.color_primario);
         }
-    } catch {
-        setEl('sys-python', 'N/A');
-        setEl('sys-flask',  'N/A');
+        if (datos.color_acento) {
+            document.documentElement.style.setProperty('--accent-color', datos.color_acento);
+        }
+        if (datos.color_sidebar) {
+            document.documentElement.style.setProperty('--sidebar-bg', datos.color_sidebar);
+        }
+    }
+    
+    if (seccion === 'sistema') {
+        if (datos.maintenance_mode) {
+            mostrarToast('⚠️ Modo mantenimiento activado', 'warning');
+        }
     }
 }
 
-function setEl(id, text) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = text;
-}
-
-// ================================================================
-// LIMPIAR CACHÉ — fetch a Flask
-// ================================================================
-
-async function limpiarCache() {
-    const btn = document.getElementById('btnLimpiarCache');
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Limpiando...';
-    btn.disabled  = true;
-
-    try {
-        const res  = await fetch('/admin/api/config/limpiar-cache', { method: 'POST' });
-        const json = await res.json();
-        mostrarToast(json.msg, json.ok ? 'success' : 'error');
-    } catch (err) {
-        mostrarToast('Error: ' + err.message, 'error');
-    } finally {
-        btn.innerHTML = '<i class="fas fa-trash-alt"></i> Limpiar Caché Ahora';
-        btn.disabled  = false;
+// Función para reiniciar una sección a valores por defecto
+function resetSeccion(seccion) {
+    if (confirm('¿Restablecer esta sección a valores por defecto?')) {
+        // Recargar valores desde la configuración inicial
+        cargarConfiguracionInicial();
+        mostrarToast('Configuración restablecida', 'info');
     }
 }
 
-// ================================================================
-// EXPORTAR ZIP — descarga directa desde Flask
-// ================================================================
-
-function exportarDatos() {
-    const btn = document.getElementById('btnExportar');
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
-    btn.disabled  = true;
-
-    // Crear enlace de descarga apuntando al endpoint Flask
-    const a = document.createElement('a');
-    a.href  = '/admin/api/config/exportar';
-    a.click();
-
-    setTimeout(() => {
-        btn.innerHTML = '<i class="fas fa-download"></i> Exportar ZIP';
-        btn.disabled  = false;
-        mostrarToast('Descarga iniciada', 'success');
-    }, 2000);
-}
-
-// ================================================================
-// RESET DE DATOS
-// ================================================================
-
-function confirmarReset() {
-    mostrarConfirm(
-        '⚠️ ACCIÓN IRREVERSIBLE',
-        'Esto borrará TODOS los datos del sistema. ¿Estás completamente seguro?',
-        async () => {
-            mostrarToast('Función de reset no implementada en producción', 'error');
-            // Descomenta cuando tengas el endpoint:
-            // await fetch('/admin/api/config/reset-datos', { method: 'POST' });
-            // location.reload();
+// Función para cargar configuración inicial
+function cargarConfiguracionInicial() {
+    if (CONFIG_INICIAL) {
+        for (const [key, value] of Object.entries(CONFIG_INICIAL)) {
+            const elemento = document.getElementById(`cfg_${key}`);
+            if (elemento) {
+                if (elemento.type === 'checkbox') {
+                    elemento.checked = value === true || value === 'true';
+                } else if (elemento.type === 'number') {
+                    elemento.value = value || 0;
+                } else {
+                    elemento.value = value || '';
+                }
+            }
         }
-    );
+    }
 }
 
-// ================================================================
-// SELECTOR DE MOTOR DE BD + GENERADORES DE URL
-// ================================================================
-
-function selectEngine(engine) {
-    document.querySelectorAll('.db-engine-card').forEach(c => c.classList.remove('active'));
-    document.querySelector(`[data-engine="${engine}"]`)?.classList.add('active');
-    document.querySelectorAll('.db-config-panel').forEach(p => p.classList.add('hidden'));
-    document.getElementById(`db-${engine}-config`)?.classList.remove('hidden');
-}
-
-function initDBListeners() {
-    // SQLite
-    document.getElementById('cfg_sqlite_path')?.addEventListener('input', function () {
-        const url = document.getElementById('sqlite-url');
-        if (url) url.textContent = `sqlite:///${this.value}`;
-    });
-
-    // PostgreSQL
-    ['cfg_pg_host','cfg_pg_port','cfg_pg_db','cfg_pg_user','cfg_pg_pass'].forEach(id => {
-        document.getElementById(id)?.addEventListener('input', function () {
-            const h = getVal('cfg_pg_host') || 'localhost';
-            const p = getVal('cfg_pg_port') || '5432';
-            const d = getVal('cfg_pg_db')   || 'villacutupu_db';
-            const u = getVal('cfg_pg_user') || 'usuario';
-            const w = getVal('cfg_pg_pass') || 'contraseña';
-            const el = document.getElementById('pg-url');
-            if (el) el.textContent = `postgresql://${u}:${w}@${h}:${p}/${d}`;
-        });
-    });
-
-    // MySQL
-    ['cfg_my_host','cfg_my_port','cfg_my_db','cfg_my_user','cfg_my_pass'].forEach(id => {
-        document.getElementById(id)?.addEventListener('input', function () {
-            const h = getVal('cfg_my_host') || 'localhost';
-            const p = getVal('cfg_my_port') || '3306';
-            const d = getVal('cfg_my_db')   || 'villacutupu_db';
-            const u = getVal('cfg_my_user') || 'usuario';
-            const w = getVal('cfg_my_pass') || 'contraseña';
-            const el = document.getElementById('my-url');
-            if (el) el.textContent = `mysql+pymysql://${u}:${w}@${h}:${p}/${d}`;
-        });
-    });
-}
-
-// ================================================================
-// TEMAS
-// ================================================================
-
-function selectTheme(theme, save = true) {
-    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
-    document.querySelector(`[data-theme="${theme}"]`)?.classList.add('active');
-}
-
-// ================================================================
-// COLORES SINCRONIZADOS
-// ================================================================
-
-function initColorInputs() {
-    [
-        ['cfg_color_primary', 'cfg_color_primary_hex'],
-        ['cfg_color_accent',  'cfg_color_accent_hex'],
-        ['cfg_color_sidebar', 'cfg_color_sidebar_hex'],
-    ].forEach(([colorId, hexId]) => {
-        const colorEl = document.getElementById(colorId);
-        const hexEl   = document.getElementById(hexId);
-        if (!colorEl || !hexEl) return;
-
-        colorEl.addEventListener('input', () => hexEl.value = colorEl.value);
-        hexEl.addEventListener('input', () => {
-            if (/^#[0-9A-Fa-f]{6}$/.test(hexEl.value)) colorEl.value = hexEl.value;
-        });
-    });
-}
-
-// ================================================================
-// TOGGLE PASSWORD
-// ================================================================
-
-function togglePassword(inputId) {
-    const el  = document.getElementById(inputId);
-    const ico = el?.parentElement.querySelector('.toggle-pass i');
-    if (!el || !ico) return;
-    el.type     = el.type === 'password' ? 'text' : 'password';
-    ico.className = el.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
-}
-
-// ================================================================
-// COPIAR AL PORTAPAPELES
-// ================================================================
-
-function copyText(elementId) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    navigator.clipboard.writeText(el.textContent).then(() => {
-        mostrarToast('Copiado al portapapeles', 'success');
-    });
-}
-
-// ================================================================
-// TOAST
-// ================================================================
-
-let toastTimer;
-
-function mostrarToast(msg, tipo = 'success') {
-    const toast = document.getElementById('toast');
-    const msgEl = document.getElementById('toastMsg');
-    const ico   = document.getElementById('toastIcon');
-    if (!toast || !msgEl) return;
-
-    msgEl.textContent = msg;
-    if (ico) ico.className = tipo === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-    toast.style.background = tipo === 'success' ? '#2d4a2d' : '#C53030';
-
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
-}
-
-// ================================================================
-// MODAL DE CONFIRMACIÓN
-// ================================================================
-
-let confirmCb = null;
-
-function mostrarConfirm(titulo, msg, cb) {
-    const modal = document.getElementById('confirmModal');
-    if (!modal) { if (confirm(msg)) cb(); return; }
-
-    document.getElementById('confirmTitle').textContent = titulo;
-    document.getElementById('confirmMsg').textContent   = msg;
-    confirmCb = cb;
-
-    document.getElementById('confirmBtn').onclick = () => {
-        closeModal();
-        if (typeof confirmCb === 'function') confirmCb();
+// Función para probar SMTP
+async function testSmtp() {
+    const testEmail = document.getElementById('cfg_test_email').value;
+    if (!testEmail) {
+        mostrarToast('Ingresa un email para enviar la prueba', 'warning');
+        return;
+    }
+    
+    const smtpConfig = {
+        smtp_host: document.getElementById('cfg_smtp_host').value,
+        smtp_port: parseInt(document.getElementById('cfg_smtp_port').value) || 587,
+        smtp_user: document.getElementById('cfg_smtp_user').value,
+        smtp_pass: document.getElementById('cfg_smtp_pass').value,
+        smtp_name: document.getElementById('cfg_smtp_name').value,
+        email_destino: testEmail
     };
+    
+    const resultDiv = document.getElementById('smtpTestResult');
+    resultDiv.className = 'test-result';
+    resultDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando prueba...';
+    resultDiv.classList.remove('hidden');
+    
+    try {
+        const response = await fetch('/admin/api/config/test-smtp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(smtpConfig)
+        });
+        
+        const result = await response.json();
+        
+        if (result.ok) {
+            resultDiv.className = 'test-result success';
+            resultDiv.innerHTML = '<i class="fas fa-check-circle"></i> ' + (result.msg || 'Email de prueba enviado correctamente');
+        } else {
+            resultDiv.className = 'test-result error';
+            resultDiv.innerHTML = '<i class="fas fa-times-circle"></i> ' + (result.msg || 'Error al enviar email');
+        }
+    } catch (error) {
+        resultDiv.className = 'test-result error';
+        resultDiv.innerHTML = '<i class="fas fa-times-circle"></i> Error de conexión';
+    }
+}
 
+// Función para limpiar caché
+async function limpiarCache() {
+    mostrarToast('Limpiando caché...', 'info');
+    
+    try {
+        const response = await fetch('/admin/api/config/limpiar-cache', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const result = await response.json();
+        
+        if (result.ok) {
+            mostrarToast(result.msg || '✅ Caché limpiada correctamente', 'success');
+        } else {
+            mostrarToast('❌ Error: ' + (result.msg || 'No se pudo limpiar la caché'), 'error');
+        }
+    } catch (error) {
+        mostrarToast('❌ Error de conexión', 'error');
+    }
+}
+
+// Función para exportar datos
+async function exportarDatos() {
+    mostrarToast('Generando exportación...', 'info');
+    
+    try {
+        window.location.href = '/admin/api/config/exportar';
+        mostrarToast('✅ Exportación iniciada', 'success');
+    } catch (error) {
+        mostrarToast('❌ Error al exportar', 'error');
+    }
+}
+
+// Función para mostrar notificaciones toast
+function mostrarToast(mensaje, tipo = 'success') {
+    const toast = document.getElementById('toast');
+    const toastIcon = document.getElementById('toastIcon');
+    const toastMsg = document.getElementById('toastMsg');
+    
+    toastIcon.className = tipo === 'success' ? 'fas fa-check-circle' : 
+                          tipo === 'error' ? 'fas fa-times-circle' : 
+                          tipo === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+    
+    toastMsg.textContent = mensaje;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// Función para confirmar reinicio
+function confirmarReset() {
+    const modal = document.getElementById('confirmModal');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const confirmMsg = document.getElementById('confirmMsg');
+    
+    confirmMsg.innerHTML = '⚠️ Esta acción eliminará TODOS los datos del sistema. <strong>No se puede deshacer.</strong><br><br>¿Estás completamente seguro?';
     modal.classList.add('show');
+    
+    const handler = async () => {
+        confirmBtn.removeEventListener('click', handler);
+        modal.classList.remove('show');
+        
+        mostrarToast('Reiniciando datos...', 'info');
+        
+        try {
+            const response = await fetch('/admin/api/config/reset-datos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            const result = await response.json();
+            
+            if (result.ok) {
+                mostrarToast('✅ Datos reiniciados correctamente', 'success');
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                mostrarToast('❌ Error: ' + (result.error || 'No se pudo reiniciar'), 'error');
+            }
+        } catch (error) {
+            mostrarToast('❌ Error de conexión', 'error');
+        }
+    };
+    
+    confirmBtn.onclick = handler;
 }
 
 function closeModal() {
-    document.getElementById('confirmModal')?.classList.remove('show');
-    confirmCb = null;
+    document.getElementById('confirmModal').classList.remove('show');
 }
 
-document.addEventListener('click', e => {
-    if (e.target.id === 'confirmModal') closeModal();
-});
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
+// Función para alternar visibilidad de contraseña
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const button = input.nextElementSibling;
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        button.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    } else {
+        input.type = 'password';
+        button.innerHTML = '<i class="fas fa-eye"></i>';
+    }
+}
+
+// Función para copiar texto
+function copyText(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.textContent;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        mostrarToast('✅ Copiado al portapapeles', 'success');
+    }).catch(() => {
+        mostrarToast('❌ No se pudo copiar', 'error');
+    });
+}
+
+// Función para seleccionar motor de BD
+function selectEngine(engine) {
+    document.querySelectorAll('.db-engine-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    document.querySelector(`.db-engine-card[data-engine="${engine}"]`).classList.add('active');
+    
+    document.querySelectorAll('.db-config-panel').forEach(panel => {
+        panel.classList.add('hidden');
+    });
+    
+    if (engine === 'sqlite') {
+        document.getElementById('db-sqlite-config').classList.remove('hidden');
+        updateSqliteUrl();
+    } else if (engine === 'postgresql') {
+        document.getElementById('db-postgresql-config').classList.remove('hidden');
+        updatePostgresUrl();
+    } else if (engine === 'mysql') {
+        document.getElementById('db-mysql-config').classList.remove('hidden');
+        updateMysqlUrl();
+    }
+}
+
+// Actualizar URLs de base de datos
+function updateSqliteUrl() {
+    const path = document.getElementById('cfg_sqlite_path').value;
+    const url = `sqlite:///${path}`;
+    document.getElementById('sqlite-url').textContent = url;
+}
+
+function updatePostgresUrl() {
+    const host = document.getElementById('cfg_pg_host').value;
+    const port = document.getElementById('cfg_pg_port').value;
+    const db = document.getElementById('cfg_pg_db').value;
+    const user = document.getElementById('cfg_pg_user').value;
+    const pass = document.getElementById('cfg_pg_pass').value;
+    const url = `postgresql://${user}:${pass}@${host}:${port}/${db}`;
+    document.getElementById('pg-url').textContent = url;
+}
+
+function updateMysqlUrl() {
+    const host = document.getElementById('cfg_my_host').value;
+    const port = document.getElementById('cfg_my_port').value;
+    const db = document.getElementById('cfg_my_db').value;
+    const user = document.getElementById('cfg_my_user').value;
+    const pass = document.getElementById('cfg_my_pass').value;
+    const url = `mysql+pymysql://${user}:${pass}@${host}:${port}/${db}`;
+    document.getElementById('my-url').textContent = url;
+}
+
+// Función para seleccionar tema
+function selectTheme(theme) {
+    document.querySelectorAll('.theme-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    document.querySelector(`.theme-card[data-theme="${theme}"]`).classList.add('active');
+    
+    const themes = {
+        default: { primary: '#2d6a4f', accent: '#e9c46a', sidebar: '#1b4332' },
+        dark: { primary: '#1a1a2e', accent: '#e94560', sidebar: '#0f3460' },
+        blue: { primary: '#1e3a5f', accent: '#89c2d9', sidebar: '#0b2545' }
+    };
+    
+    const colors = themes[theme];
+    if (colors) {
+        document.getElementById('cfg_color_primary').value = colors.primary;
+        document.getElementById('cfg_color_primary_hex').value = colors.primary;
+        document.getElementById('cfg_color_accent').value = colors.accent;
+        document.getElementById('cfg_color_accent_hex').value = colors.accent;
+        document.getElementById('cfg_color_sidebar').value = colors.sidebar;
+        document.getElementById('cfg_color_sidebar_hex').value = colors.sidebar;
+        
+        // Aplicar visualmente
+        document.documentElement.style.setProperty('--primary-color', colors.primary);
+        document.documentElement.style.setProperty('--accent-color', colors.accent);
+        document.documentElement.style.setProperty('--sidebar-bg', colors.sidebar);
+    }
+}
+
+// Cargar información del sistema
+async function cargarInfoSistema() {
+    try {
+        const response = await fetch('/admin/api/config/sistema-info');
+        const result = await response.json();
+        
+        if (result.ok) {
+            document.getElementById('sys-python').textContent = result.datos.python_version || 'N/A';
+            document.getElementById('sys-flask').textContent = result.datos.flask_version || 'N/A';
+        }
+    } catch (error) {
+        console.error('Error cargando info sistema:', error);
+    }
+}
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔧 Inicializando configuración...');
+    
+    // Cargar info del sistema
+    cargarInfoSistema();
+    
+    // Configurar listeners para URLs de BD
+    const sqlitePath = document.getElementById('cfg_sqlite_path');
+    if (sqlitePath) sqlitePath.addEventListener('input', updateSqliteUrl);
+    
+    const pgInputs = ['cfg_pg_host', 'cfg_pg_port', 'cfg_pg_db', 'cfg_pg_user', 'cfg_pg_pass'];
+    pgInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) input.addEventListener('input', updatePostgresUrl);
+    });
+    
+    const myInputs = ['cfg_my_host', 'cfg_my_port', 'cfg_my_db', 'cfg_my_user', 'cfg_my_pass'];
+    myInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) input.addEventListener('input', updateMysqlUrl);
+    });
+    
+    // Sincronizar color picker con input text
+    const colorPrimary = document.getElementById('cfg_color_primary');
+    const colorPrimaryHex = document.getElementById('cfg_color_primary_hex');
+    if (colorPrimary && colorPrimaryHex) {
+        colorPrimary.addEventListener('input', () => colorPrimaryHex.value = colorPrimary.value);
+        colorPrimaryHex.addEventListener('input', () => colorPrimary.value = colorPrimaryHex.value);
+    }
+    
+    const colorAccent = document.getElementById('cfg_color_accent');
+    const colorAccentHex = document.getElementById('cfg_color_accent_hex');
+    if (colorAccent && colorAccentHex) {
+        colorAccent.addEventListener('input', () => colorAccentHex.value = colorAccent.value);
+        colorAccentHex.addEventListener('input', () => colorAccent.value = colorAccentHex.value);
+    }
+    
+    const colorSidebar = document.getElementById('cfg_color_sidebar');
+    const colorSidebarHex = document.getElementById('cfg_color_sidebar_hex');
+    if (colorSidebar && colorSidebarHex) {
+        colorSidebar.addEventListener('input', () => colorSidebarHex.value = colorSidebar.value);
+        colorSidebarHex.addEventListener('input', () => colorSidebar.value = colorSidebarHex.value);
+    }
+    
+    // Navegación entre secciones
+    document.querySelectorAll('.config-nav-item').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = link.dataset.section;
+            
+            document.querySelectorAll('.config-nav-item').forEach(item => item.classList.remove('active'));
+            link.classList.add('active');
+            
+            document.querySelectorAll('.config-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`seccion-${section}`).classList.add('active');
+        });
+    });
+    
+    console.log('✅ Configuración inicializada correctamente');
 });

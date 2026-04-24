@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% block title %}Consulta — {{ nombre_consulta }} — Villa Cutupú{% endblock %}
+
+{% block content %}
+<section style="min-height: 85vh; padding: var(--space-7) 0; background: var(--gray-50);">
+  <div class="container" style="max-width: 780px;">
+
+    <!-- Breadcrumb -->
+    <nav style="margin-bottom: var(--space-4);">
+      <span style="font-size: 0.85rem; color: var(--text-light);">
+        <a href="{{ url_for('index') }}" style="color: var(--green-dark); text-decoration: none; font-weight: 600;">Inicio</a>
+        <span style="margin: 0 0.5rem; color: var(--gray-400);">›</span>
+        <a href="{{ url_for('servicios') }}" style="color: var(--green-dark); text-decoration: none; font-weight: 600;">Servicios</a>
+        <span style="margin: 0 0.5rem; color: var(--gray-400);">›</span>
+        <span style="color: var(--text-light);">{{ nombre_consulta }}</span>
+      </span>
+    </nav>
+
+    <!-- Encabezado -->
+    <div style="margin-bottom: var(--space-5);">
+      <p style="font-size: 0.82rem; font-weight: 700; color: var(--blue-sky); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem;">
+        Consultas ciudadanas
+      </p>
+      <h1 style="font-size: clamp(1.7rem, 3vw, 2.2rem); font-weight: 800; color: var(--text); letter-spacing: -0.025em; margin-bottom: 0.5rem; line-height: 1.2;">
+        Realizar consulta
+      </h1>
+      <p style="color: var(--text-light); font-size: 1rem;">
+        Le responderemos en un plazo máximo de 3 días hábiles.
+      </p>
+    </div>
+
+    <!-- Tarjeta principal -->
+    <div class="form-card">
+
+      <!-- Header -->
+      <div class="form-card-header form-card-header--blue">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div class="form-card-icon form-card-icon--blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div>
+            <p style="font-size: 0.75rem; font-weight: 600; opacity: 0.8; margin: 0; text-transform: uppercase; letter-spacing: 0.08em;">Tipo de consulta</p>
+            <h2 style="font-size: 1.15rem; font-weight: 800; margin: 0; line-height: 1.3;">{{ nombre_consulta }}</h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerta tiempo de respuesta -->
+      <div class="form-alert form-alert--info">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span>Las consultas se responden en un plazo máximo de <strong>3 días hábiles</strong>. Recibirá la respuesta en su correo registrado.</span>
+      </div>
+
+      <!-- Alerta específica POT -->
+      {% if tipo == 'pot' %}
+      <div class="form-alert form-alert--secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+          <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+        </svg>
+        <div>
+          <strong style="display: block; margin-bottom: 0.4rem;">Plan de Ordenamiento Territorial (POT) — puede consultar sobre:</strong>
+          <ul class="form-list">
+            <li>Usos de suelo permitidos por zona</li>
+            <li>Normas urbanísticas aplicables</li>
+            <li>Proyectos de desarrollo urbano</li>
+            <li>Zonificación del municipio</li>
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Formulario -->
+      <form method="POST" action="{{ url_for('procesar_consulta') }}" class="form-body">
+        <input type="hidden" name="tipo" value="{{ tipo }}">
+
+        <!-- Tipo de consulta (solo lectura) -->
+        <div class="form-group">
+          <label class="form-label">Tipo de consulta</label>
+          <input type="text" class="form-input form-input--disabled" value="{{ nombre_consulta }}" disabled>
+        </div>
+
+        <!-- Consulta -->
+        <div class="form-group">
+          <label class="form-label">
+            Su consulta
+            <span class="form-required">*</span>
+          </label>
+          <textarea class="form-input form-textarea" name="pregunta" rows="7" required
+                    placeholder="Escriba su consulta de manera clara y específica. Cuanto más detallada, más precisa será la respuesta..."></textarea>
+          <span class="form-hint">Sea lo más específico posible. Puede incluir números de referencia, direcciones o cualquier dato que facilite la respuesta.</span>
+        </div>
+
+        <!-- Botones -->
+        <div class="form-actions">
+          <a href="{{ url_for('servicios') }}" class="btn-form btn-form--secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Cancelar
+          </a>
+          <button type="submit" class="btn-form btn-form--blue">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            Enviar consulta
+          </button>
+        </div>
+      </form>
+
+    </div>
+
+    <p style="text-align: center; font-size: 0.82rem; color: var(--text-light); margin-top: var(--space-4);">
+      Al enviar este formulario, acepta que sus datos serán procesados por la Junta Distrital de Villa Cutupú con fines administrativos.
+    </p>
+
+  </div>
+</section>
+
+<style>
+.form-card {
+  background: var(--white);
+  border-radius: var(--radius-block);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: var(--space-3);
+}
+
+.form-card-header {
+  padding: var(--space-4) var(--space-5);
+  color: white;
+}
+
+.form-card-header--blue {
+  background: linear-gradient(135deg, #185FA5 0%, #2B6A9E 100%);
+}
+
+.form-card-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.form-card-icon--blue {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.form-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: var(--space-3) var(--space-5);
+  font-size: 0.93rem;
+  line-height: 1.6;
+  border-bottom: 1px solid transparent;
+}
+
+.form-alert--info {
+  background: var(--blue-sky-light);
+  color: #1a4f75;
+  border-color: rgba(43,106,158,0.15);
+}
+
+.form-alert--secondary {
+  background: var(--gray-50);
+  color: var(--text-soft);
+  border-color: var(--border);
+}
+
+.form-list {
+  margin: 0.3rem 0 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.form-list li { font-size: 0.9rem; }
+
+.form-body {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.form-required { color: #C0392B; font-weight: 700; }
+
+.form-optional {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background: var(--gray-100);
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.97rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text);
+  background: var(--white);
+  border: 1.5px solid var(--gray-300);
+  border-radius: var(--radius-card);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+  appearance: none;
+}
+
+.form-input:focus {
+  border-color: var(--blue-sky);
+  box-shadow: 0 0 0 3px rgba(43,106,158,0.12);
+}
+
+.form-input--disabled {
+  background: var(--gray-50);
+  color: var(--text-light);
+  cursor: not-allowed;
+  border-color: var(--gray-200);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.6;
+}
+
+.form-hint {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+  margin-top: var(--space-2);
+}
+
+.btn-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border-radius: var(--radius-card);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-form--blue {
+  background: var(--blue-sky);
+  color: white;
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-form--blue:hover {
+  background: #185FA5;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-form--secondary {
+  background: transparent;
+  color: var(--text-soft);
+  border: 1.5px solid var(--gray-300);
+}
+
+.btn-form--secondary:hover {
+  border-color: var(--gray-500);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 540px) {
+  .form-body { padding: var(--space-4); }
+  .form-card-header { padding: var(--space-3) var(--space-4); }
+  .form-alert { padding: var(--space-3) var(--space-4); }
+  .form-actions { flex-direction: column-reverse; }
+  .btn-form { width: 100%; justify-content: center; }
+}
+</style>
+{% endblock %}

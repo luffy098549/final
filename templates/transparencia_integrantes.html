@@ -1,14 +1,281 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Integrantes y Autoridades - Transparencia | Villa Cutupú</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoridades - Transparencia | Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/integrantes.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para esta página */
+        .page-header {
+            background: linear-gradient(135deg, #1a3c2c 0%, #2d6a4f 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .breadcrumb a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+        }
+        
+        .breadcrumb span {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .intro-block {
+            background: #f0f7f2;
+            border-left: 4px solid #2d6a4f;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+        
+        .bloque-titulo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin: 2rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #2d6a4f;
+            display: inline-block;
+        }
+        
+        .alcalde-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .alcalde-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+        
+        .alcalde-header {
+            background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+            padding: 0.5rem 2rem;
+            color: white;
+        }
+        
+        .alcalde-header .cargo-tag {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+        
+        .alcalde-header h2 {
+            font-size: 2rem;
+            margin: 0.5rem 0;
+        }
+        
+        .alcalde-body {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 2rem;
+            gap: 2rem;
+        }
+        
+        .alcalde-foto {
+            flex: 0 0 200px;
+            text-align: center;
+        }
+        
+        .alcalde-foto img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #2d6a4f;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .alcalde-foto .foto-placeholder {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            border: 4px solid #2d6a4f;
+        }
+        
+        .alcalde-info {
+            flex: 1;
+        }
+        
+        .alcalde-info p {
+            margin: 0.5rem 0;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+        
+        .alcalde-info strong {
+            color: #1a3c2c;
+        }
+        
+        .vocales-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .vocal-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .vocal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #2d6a4f;
+        }
+        
+        .vocal-icono {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+            font-size: 2.5rem;
+            color: #2d6a4f;
+        }
+        
+        .vocal-card .cargo {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #2d6a4f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .vocal-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a3c2c;
+            margin-bottom: 0.25rem;
+        }
+        
+        .nota-legal {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+        
+        .docs-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .doc-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .doc-item:hover {
+            background: #e8f5e9;
+            transform: translateX(5px);
+        }
+        
+        .doc-icono {
+            font-size: 2rem;
+        }
+        
+        .doc-info {
+            flex: 1;
+        }
+        
+        .doc-info strong {
+            display: block;
+            color: #1a3c2c;
+        }
+        
+        .doc-info span {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .doc-btn {
+            background: #2d6a4f;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        
+        .doc-btn:hover {
+            background: #1b4332;
+        }
+        
+        @media (max-width: 768px) {
+            .alcalde-body {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .bloque-titulo {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
 </head>
 <body>
+
 <header class="main-header">
     <div class="container">
         <div class="logo">
@@ -36,126 +303,140 @@
 
 <main>
     <section class="page-header">
-        <div class="breadcrumb">
-            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Integrantes y Autoridades</span>
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/transparencia">Transparencia</a> <span>/</span> <span>Autoridades</span>
+            </div>
+            <h1>Autoridades Municipales</h1>
+            <p>Nómina oficial de las autoridades electas de la Junta Distrital de Villa Cutupú — Período 2024–2028</p>
         </div>
-        <h1>Integrantes y Autoridades</h1>
-        <p>Nómina oficial de autoridades electas y funcionarios designados — Período 2024–2028</p>
     </section>
 
-    <section class="page">
+    <div class="container">
         <div class="intro-block">
-            <p>Conforme al <strong>Artículo 3 de la Ley 200-04</strong>, el Estado está obligado a publicar información actualizada sobre sus funcionarios. Se presenta la nómina oficial de la Junta Distrital de Villa Cutupú, período constitucional 2024–2028.</p>
+            <p>Conforme al <strong>Artículo 3 de la Ley 200-04</strong> sobre Libre Acceso a la Información Pública, presentamos la nómina oficial de las autoridades de la Junta Distrital de Villa Cutupú para el período constitucional 2024–2028.</p>
         </div>
 
-        <h2 class="bloque-titulo">Autoridades electas — Período 2024–2028</h2>
-        <div class="cards-grid">
-            <!-- Tarjeta de Robert con imagen -->
-            <div class="info-card with-image">
-                <div class="card-image">
-                    <img src="{{ url_for('static', filename='img/robert22.jpg') }}" alt="Robert Donald Tolentino Grullón" onerror="this.style.display='none'; this.parentElement.classList.add('image-fallback');">
-                    <div class="image-fallback-content" style="display: none;">👨‍💼</div>
+        <!-- ALCALDE -->
+        <h2 class="bloque-titulo">Alcalde / Director Municipal</h2>
+        <div class="alcalde-card">
+            <div class="alcalde-header">
+                <span class="cargo-tag">Alcalde / Director Municipal</span>
+                <h2>Rober Donald Tolentino</h2>
+            </div>
+            <div class="alcalde-body">
+                <div class="alcalde-foto">
+                    <div class="foto-placeholder">
+                        👨‍💼
+                    </div>
                 </div>
-                <div class="card-content">
-                    <span class="cargo">Alcalde / Director Municipal</span>
-                    <h3>Robert Donald Tolentino Grullón</h3>
-                    <p>Partido: <strong>PRM</strong> · Toma de posesión: 24 de abril 2024</p>
+                <div class="alcalde-info">
+                    <p><strong>Nombre completo:</strong> Rober Donald Tolentino</p>
+                    <p><strong>Cargo:</strong> Alcalde / Director Municipal</p>
+                    <p><strong>Período:</strong> 2024 - 2028</p>
+                    <p><strong>Toma de posesión:</strong> 24 de abril 2024</p>
+                    <p><strong>Funciones principales:</strong> Dirigir el ayuntamiento, administrar los recursos municipales, representar al distrito, velar por el cumplimiento de las leyes y ordenanzas municipales.</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- VOCALES -->
+        <h2 class="bloque-titulo">Vocales Municipales</h2>
+        <div class="vocales-grid">
+            <!-- Vocal 1 -->
+            <div class="vocal-card">
+                <div class="vocal-icono">👨‍⚖️</div>
+                <div class="cargo">Vocal Municipal</div>
+                <h3>William Mata</h3>
+                <p>Período: 2024 - 2028</p>
             </div>
             
-            <!-- Tarjeta de Kelly con imagen -->
-            <div class="info-card with-image">
-                <div class="card-image">
-                    <img src="{{ url_for('static', filename='img/kelly2.png') }}" alt="Kelly Bueno" onerror="this.style.display='none'; this.parentElement.classList.add('image-fallback');">
-                    <div class="image-fallback-content" style="display: none;">👩‍💼</div>
-                </div>
-                <div class="card-content">
-                    <span class="cargo">Vicealcaldesa / Subdirectora</span>
-                    <h3>Kelly Bueno</h3>
-                    <p>Partido: <strong>PRM</strong> · Toma de posesión: 24 de abril 2024</p>
-                </div>
+            <!-- Vocal 2 -->
+            <div class="vocal-card">
+                <div class="vocal-icono">👩‍⚖️</div>
+                <div class="cargo">Vocal Municipal</div>
+                <h3>Yumiri Bueno</h3>
+                <p>Período: 2024 - 2028</p>
+            </div>
+            
+            <!-- Vocal 3 -->
+            <div class="vocal-card">
+                <div class="vocal-icono">👩‍⚖️</div>
+                <div class="cargo">Vocal Municipal</div>
+                <h3>Xiomara Romano</h3>
+                <p>Período: 2024 - 2028</p>
+            </div>
+            
+            <!-- Vocal 4 -->
+            <div class="vocal-card">
+                <div class="vocal-icono">👨‍⚖️</div>
+                <div class="cargo">Vocal Municipal</div>
+                <h3>Francisco Peña</h3>
+                <p>Período: 2024 - 2028</p>
+            </div>
+            
+            <!-- Vocal 5 -->
+            <div class="vocal-card">
+                <div class="vocal-icono">👨‍⚖️</div>
+                <div class="cargo">Vocal Municipal</div>
+                <h3>Colinson Sevalle</h3>
+                <p>Período: 2024 - 2028</p>
             </div>
         </div>
 
-        <h2 class="bloque-titulo">Concejo de Regidores</h2>
-        <div class="tabla-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Partido</th>
-                        <th>Comisión que Preside</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Pedro Antonio Martínez</td><td><span class="badge badge-azul">PRM</span></td><td>Obras Públicas</td></tr>
-                    <tr><td>Ana Cecilia Gómez</td><td><span class="badge badge-gris">PLD</span></td><td>Educación y Cultura</td></tr>
-                    <tr><td>Ramón Emilio Jiménez</td><td><span class="badge badge-azul">PRM</span></td><td>Hacienda y Presupuesto</td></tr>
-                    <tr><td>Luisa Fernanda Reyes</td><td><span class="badge badge-verde">FP</span></td><td>Salud y Medio Ambiente</td></tr>
-                    <tr><td>Carlos Manuel Sánchez</td><td><span class="badge badge-azul">PRM</span></td><td>Deportes y Juventud</td></tr>
-                    <tr><td>Sandra Patricia Peña</td><td><span class="badge badge-gris">PLD</span></td><td>Mujer y Familia</td></tr>
-                    <tr><td>José Miguel Hernández</td><td><span class="badge badge-gris">PRSC</span></td><td>Ética y Reglamentos</td></tr>
-                </tbody>
-            </table>
+        <!-- FUNCIONES DEL AYUNTAMIENTO -->
+        <h2 class="bloque-titulo">Responsabilidades del Ayuntamiento</h2>
+        <div class="intro-block">
+            <p>El Ayuntamiento de Cutupú tiene como responsabilidad principal <strong>mantener el distrito limpio, organizado y en condiciones saludables</strong> para todos los habitantes.</p>
+            <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                <li>Limpieza y recogida de basura</li>
+                <li>Mantenimiento de calles y canaletas</li>
+                <li>Cuidado de cementerios</li>
+                <li>Construcción y mantenimiento de obras públicas (parques, canchas, clubes, iglesias)</li>
+            </ul>
         </div>
 
-        <h2 class="bloque-titulo">Funcionarios designados</h2>
-        <div class="tabla-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Cargo</th>
-                        <th>Nombre</th>
-                        <th>Desde</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Secretario Municipal</td><td>Carlos Sánchez Rodríguez</td><td>2024</td></tr>
-                    <tr><td>Tesorero Municipal</td><td>Rosa Elena Fernández</td><td>2024</td></tr>
-                    <tr><td>Director de Planeamiento Urbano</td><td>Luis Manuel Jiménez</td><td>2023</td></tr>
-                    <tr><td>Encargada de Compras</td><td>Elena María Vargas</td><td>2024</td></tr>
-                    <tr><td>Oficial de Acceso a la Información (OAI)</td><td>Fernando Antonio Reyes</td><td>2024</td></tr>
-                    <tr><td>Encargada de Recursos Humanos</td><td>Laura Patricia Martínez</td><td>2024</td></tr>
-                    <tr><td>Encargado de Obras Públicas</td><td>Rafael Antonio Pérez</td><td>2023</td></tr>
-                </tbody>
-            </table>
-        </div>
-
+        <!-- DECLARACIONES JURADAS -->
         <h2 class="bloque-titulo">Declaraciones Juradas de Bienes (Ley 311-14)</h2>
-        <div class="nota-legal">Según la <strong>Ley 311-14</strong>, todo funcionario electo o designado debe presentar declaración jurada de bienes ante la Cámara de Cuentas dentro de los 30 días de tomar posesión.</div>
+        <div class="nota-legal">
+            <strong>📋 Ley 311-14</strong> — Todo funcionario electo o designado debe presentar declaración jurada de bienes ante la Cámara de Cuentas dentro de los 30 días de tomar posesión.
+        </div>
         <div class="docs-lista">
             <div class="doc-item">
                 <span class="doc-icono">📄</span>
                 <div class="doc-info">
-                    <strong>Robert Donald Tolentino Grullón — Alcalde</strong>
+                    <strong>Rober Donald Tolentino — Alcalde</strong>
                     <span>Presentada: 30/04/2024</span>
                 </div>
-                <a href="#" class="doc-btn">Ver PDF</a>
+                <a href="#" class="doc-btn">Ver Declaración</a>
             </div>
             <div class="doc-item">
                 <span class="doc-icono">📄</span>
                 <div class="doc-info">
-                    <strong>Kelly Bueno — Vicealcaldesa</strong>
-                    <span>Presentada: 30/04/2024</span>
-                </div>
-                <a href="#" class="doc-btn">Ver PDF</a>
-            </div>
-            <div class="doc-item">
-                <span class="doc-icono">📄</span>
-                <div class="doc-info">
-                    <strong>Pedro Antonio Martínez — Regidor</strong>
+                    <strong>William Mata — Vocal</strong>
                     <span>Presentada: 28/04/2024</span>
                 </div>
-                <a href="#" class="doc-btn">Ver PDF</a>
+                <a href="#" class="doc-btn">Ver Declaración</a>
+            </div>
+            <div class="doc-item">
+                <span class="doc-icono">📄</span>
+                <div class="doc-info">
+                    <strong>Yumiri Bueno — Vocal</strong>
+                    <span>Presentada: 28/04/2024</span>
+                </div>
+                <a href="#" class="doc-btn">Ver Declaración</a>
             </div>
         </div>
-    </section>
+        
+        <div style="margin: 3rem 0; text-align: center; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
+            <p style="color: #6c757d;">Actualizado: Abril 2024</p>
+        </div>
+    </div>
 </main>
 
 <footer>
     <div class="container">
         <div class="footer-grid">
-            <!-- Columna 1: Información institucional -->
             <div class="footer-info">
                 <h3>Junta Distrital de Villa Cutupú</h3>
                 <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
@@ -166,8 +447,6 @@
                     <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
                 </div>
             </div>
-            
-            <!-- Columna 2: ENLACES RÁPIDOS -->
             <div class="footer-links">
                 <h3>Enlaces rápidos</h3>
                 <ul>
@@ -179,107 +458,17 @@
                     <li><a href="/contacto">Contacto</a></li>
                 </ul>
             </div>
-            
-            <!-- Columna 3: Contacto -->
             <div class="footer-contact">
-                <h3>Contacto</h3>
-                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
+                <h3>Horario de Atención</h3>
+                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
+                <p>📍 Oficina Central: Calle Principal #123, Cutupú</p>
             </div>
         </div>
-        
         <div class="footer-bottom">
-            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            <p>© 2025-2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
-
-<style>
-    /* Estilos para las tarjetas con imagen */
-    .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-bottom: 2rem;
-    }
-    
-    .info-card.with-image {
-        display: flex;
-        flex-direction: column;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        overflow: hidden;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        border: 1px solid var(--border, #E8E8E8);
-    }
-    
-    .info-card.with-image:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-    }
-    
-    .card-image {
-        width: 100%;
-        height: 250px;
-        background: var(--gray-100, #F5F5F5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-bottom: 3px solid var(--green, #7E8F76);
-    }
-    
-    .card-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center top;
-    }
-    
-    .card-image.image-fallback {
-        background: var(--green-xlight, #EFF3EE);
-        font-size: 4rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .card-image.image-fallback .image-fallback-content {
-        display: block !important;
-        font-size: 4rem;
-    }
-    
-    .card-content {
-        padding: 1.5rem;
-    }
-    
-    .info-card .cargo {
-        display: inline-block;
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: var(--green-dark, #5A684F);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        background: var(--green-xlight, #EFF3EE);
-        padding: 0.25rem 1rem;
-        border-radius: 999px;
-        margin-bottom: 0.75rem;
-    }
-    
-    .info-card h3 {
-        font-size: 1.3rem;
-        font-weight: 800;
-        color: var(--text, #1C1C1C);
-        margin-bottom: 0.5rem;
-    }
-    
-    .info-card p {
-        font-size: 0.95rem;
-        color: var(--text-light, #6B6B6B);
-        line-height: 1.5;
-    }
-</style>
 
 <script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
 </body>

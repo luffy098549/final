@@ -1,0 +1,32 @@
+[
+  {
+    "id": "bfa31be6-75c7-428b-9c3c-350c4e7df1f1",
+    "nombre": "Acuse de recibo - Solicitud",
+    "categoria": "solicitud",
+    "contenido": "Estimado/a {{nombre}},\n\nHemos recibido su solicitud con folio **{{folio}}** con fecha {{fecha}}.\n\nSu caso ha sido asignado al área correspondiente y estará siendo procesado en los próximos días hábiles. Le mantendremos informado sobre cualquier avance.\n\nAtentamente,\n**Equipo Municipal de Villa Cutupú**",
+    "variables": [
+      "nombre",
+      "folio",
+      "fecha"
+    ],
+    "creada_por": null,
+    "fecha_creacion": "2026-04-13T18:38:45.199907",
+    "usos": 0,
+    "activa": true
+  },
+  {
+    "id": "448b8237-de18-49e9-adf4-508729e55ffa",
+    "nombre": "Acuse de recibo - Denuncia",
+    "categoria": "denuncia",
+    "contenido": "Estimado/a {{nombre}},\n\nHemos recibido su denuncia con folio **{{folio}}** registrada el {{fecha}}.\n\nSu caso ha sido asignado al departamento de investigación y comenzaremos su análisis en un plazo de 48 horas. Agradecemos su colaboración para mantener nuestro municipio seguro.\n\nAtentamente,\n**Equipo Municipal de Villa Cutupú**",
+    "variables": [
+      "nombre",
+      "folio",
+      "fecha"
+    ],
+    "creada_por": null,
+    "fecha_creacion": "2026-04-13T18:38:45.199925",
+    "usos": 0,
+    "activa": true
+  }
+]
