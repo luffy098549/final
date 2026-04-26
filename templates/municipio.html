@@ -8,452 +8,234 @@
 
 {% block content %}
 
-<!-- HERO INTERNO -->
-<section class="municipio-hero anim">
-    <div class="hero-left-line"></div>
-    <div class="container hero-inner-container">
-        <div class="hero-inner-content">
-            <div class="hero-eyebrow">Conoce Nuestro Distrito</div>
-            <h1 class="hero-inner-title">
-                Villa <span class="hero-accent">Cutupú</span>
+<!-- HERO MUNICIPIO -->
+<section class="muni-hero">
+    <div class="muni-hero-left-line"></div>
+    <div class="container muni-hero-container">
+        <div class="muni-hero-content">
+            <div class="muni-hero-eyebrow">CONOCE NUESTRO DISTRITO</div>
+            <h1 class="muni-hero-title">
+                Villa <span class="muni-hero-accent">Cutupú</span>
             </h1>
-            <p class="hero-inner-description">
+            <div class="muni-hero-line"></div>
+            <p class="muni-hero-subtitle">Un distrito con historia, tradición y futuro en la provincia de La Vega</p>
+            <div class="muni-hero-stats">
+                <div class="muni-hero-stat">12 Sectores</div>
+                <div class="muni-hero-stat">8,547 Habitantes</div>
+                <div class="muni-hero-stat">17 Departamentos</div>
+            </div>
         </div>
     </div>
+    <div class="muni-particle muni-particle-1"></div>
+    <div class="muni-particle muni-particle-2"></div>
+    <div class="muni-particle muni-particle-3"></div>
 </section>
 
-<!-- NAV INTERNA STICKY -->
-<nav class="sticky-nav" id="stickyNav">
+<!-- STICKY NAV -->
+<nav class="muni-sticky-nav" id="stickyNav">
     <div class="container">
-        <ul class="sticky-nav-list">
-            <li><a href="#distrito" class="sticky-nav-link" data-section="distrito">El Distrito</a></li>
-            <li><a href="#sectores" class="sticky-nav-link" data-section="sectores">Sectores</a></li>
-            <li><a href="#autoridades" class="sticky-nav-link" data-section="autoridades">Autoridades</a></li>
-            <li><a href="#departamentos" class="sticky-nav-link" data-section="departamentos">Departamentos</a></li>
-            <li><a href="#servicios" class="sticky-nav-link" data-section="servicios">Servicios</a></li>
+        <ul class="muni-sticky-nav-list">
+            <li><a href="#distrito" class="muni-sticky-nav-link" data-section="distrito">El Distrito</a></li>
+            <li><a href="#sectores" class="muni-sticky-nav-link" data-section="sectores">Sectores</a></li>
+            <li><a href="#autoridades" class="muni-sticky-nav-link" data-section="autoridades">Autoridades</a></li>
+            <li><a href="#departamentos" class="muni-sticky-nav-link" data-section="departamentos">Departamentos</a></li>
+            <li><a href="#servicios" class="muni-sticky-nav-link" data-section="servicios">Servicios</a></li>
         </ul>
     </div>
 </nav>
 
-<!-- SECCIÓN EL DISTRITO -->
-<section id="distrito" class="section-distrito anim">
+<!-- SECCION DISTRITO -->
+<section id="distrito" class="muni-distrito-section">
     <div class="container">
-        <div class="section-eyebrow">Nuestro Distrito</div>
-        <h2 class="section-title-serif">Conoce Cutupú</h2>
-
-        <div class="distrito-grid">
-            <div class="distrito-texto">
-                <p class="distrito-intro">
-                    El distrito de Cutupú está conformado por <strong>12 sectores</strong> que forman nuestra comunidad. Un distrito municipal con una rica historia en la provincia de La Vega, hogar de cientos de familias trabajadoras que día a día contribuyen al desarrollo de nuestra comunidad.
-                </p>
-                <p>
-                    El ayuntamiento de Cutupú es una institución de gobierno local encargada de administrar y atender las necesidades de nuestro distrito. Su función principal es resolver problemáticas como la limpieza y recogida de basura, mantenimiento de calles y canaletas, cuidado de cementerios, y la construcción y mantenimiento de obras públicas.
-                </p>
-                <div class="distrito-stats-inline">
-                    <div class="stat-inline">
-                        <span class="stat-number">12</span>
-                        <span class="stat-label">Sectores</span>
+        <div class="muni-section-eyebrow">Nuestro Distrito</div>
+        <h2 class="muni-section-title">Conoce <span class="muni-title-accent">Cutupú</span></h2>
+        <div class="muni-distrito-grid">
+            <div class="muni-distrito-texto">
+                <p class="muni-distrito-intro">El distrito de Cutupú está conformado por <strong>12 sectores</strong> que forman nuestra comunidad. Un distrito municipal con una rica historia en la provincia de La Vega, hogar de cientos de familias trabajadoras que día a día contribuyen al desarrollo de nuestra comunidad.</p>
+                <p>El ayuntamiento de Cutupú es una institución de gobierno local encargada de administrar y atender las necesidades de nuestro distrito. Su función principal es resolver problemáticas como la limpieza y recogida de basura, mantenimiento de calles y canaletas, cuidado de cementerios, y la construcción y mantenimiento de obras públicas.</p>
+                <div class="muni-distrito-stats">
+                    <div class="muni-stat">
+                        <span class="muni-stat-number">12</span>
+                        <span class="muni-stat-label">Sectores</span>
                     </div>
-                    <div class="stat-inline">
-                        <span class="stat-number">8,547</span>
-                        <span class="stat-label">Habitantes</span>
+                    <div class="muni-stat">
+                        <span class="muni-stat-number">8,547</span>
+                        <span class="muni-stat-label">Habitantes</span>
                     </div>
-                    <div class="stat-inline">
-                        <span class="stat-number">17</span>
-                        <span class="stat-label">Departamentos</span>
+                    <div class="muni-stat">
+                        <span class="muni-stat-number">17</span>
+                        <span class="muni-stat-label">Departamentos</span>
                     </div>
                 </div>
             </div>
-            <div class="distrito-imagen">
-                <img src="{{ url_for('static', filename='img/distrito.jpg') }}"
-                     alt="Villa Cutupú"
-                     loading="lazy"
-                     onerror="this.src='https://via.placeholder.com/500x350?text=Villa+Cutup%C3%BA'">
+            <div class="muni-distrito-imagen">
+                <img src="{{ url_for('static', filename='img/distrito.jpeg') }}" alt="Villa Cutupú" loading="lazy">
+                <div class="muni-img-overlay"></div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- SECCIÓN SECTORES -->
-<section id="sectores" class="section-sectores anim">
+<!-- SECCION SECTORES -->
+<section id="sectores" class="muni-sectores-section">
     <div class="container">
-        <div class="section-eyebrow">Nuestra Comunidad</div>
-        <h2 class="section-title-serif">Los 12 Sectores de Cutupú</h2>
-        <p class="sectores-subtitle">El distrito de Cutupú está conformado por los siguientes 12 sectores</p>
-
-        <div class="sectores-grid">
-            <div class="sector-card">
-                <span class="sector-numero">01</span>
-                <h3>Casco urbano de Cutupú</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">02</span>
-                <h3>Mirador</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">03</span>
-                <h3>La Susei</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">04</span>
-                <h3>Arroyo Hondo</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">05</span>
-                <h3>Bonagua El Llano</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">06</span>
-                <h3>Manga Larga</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">07</span>
-                <h3>La Vereda</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">08</span>
-                <h3>Pueblo Viejo</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">09</span>
-                <h3>Río Verde</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">10</span>
-                <h3>Naranjal</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">11</span>
-                <h3>Romero</h3>
-            </div>
-            <div class="sector-card">
-                <span class="sector-numero">12</span>
-                <h3>El Distrito</h3>
-            </div>
+        <div class="muni-section-eyebrow">Nuestra Comunidad</div>
+        <h2 class="muni-section-title">Los <span class="muni-title-accent">12 Sectores</span> de Cutupú</h2>
+        <p class="muni-sectores-subtitle">El distrito de Cutupú está conformado por los siguientes 12 sectores</p>
+        <div class="muni-sectores-grid">
+            <div class="muni-sector-card"><span class="muni-sector-numero">01</span><h3>Casco urbano de Cutupú</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">02</span><h3>Mirador</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">03</span><h3>La Susei</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">04</span><h3>Arroyo Hondo</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">05</span><h3>Bonagua El Llano</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">06</span><h3>Manga Larga</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">07</span><h3>La Vereda</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">08</span><h3>Pueblo Viejo</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">09</span><h3>Río Verde</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">10</span><h3>Naranjal</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">11</span><h3>Romero</h3></div>
+            <div class="muni-sector-card"><span class="muni-sector-numero">12</span><h3>El Distrito</h3></div>
         </div>
     </div>
 </section>
 
-<!-- SECCIÓN AUTORIDADES -->
-<section id="autoridades" class="section-autoridades anim">
+<!-- SECCION AUTORIDADES -->
+<section id="autoridades" class="muni-autoridades-section">
     <div class="container">
-        <div class="section-eyebrow">Nuestro Gobierno Local</div>
-        <h2 class="section-title-serif">Autoridades Municipales</h2>
-        <p class="autoridades-subtitle">Período constitucional 2024 - 2028</p>
-
-        <!-- Alcalde -->
-        <div class="alcalde-card">
-            <div class="alcalde-avatar">RT</div>
-            <div class="alcalde-info">
-                <span class="autoridad-badge">Alcalde / Director Municipal</span>
+        <div class="muni-section-eyebrow">Nuestro Gobierno Local</div>
+        <h2 class="muni-section-title">Autoridades <span class="muni-title-accent">Municipales</span></h2>
+        <p class="muni-autoridades-subtitle">Período constitucional 2024 - 2028</p>
+        <div class="muni-alcalde-card">
+            <div class="muni-alcalde-avatar">
+                <span>RT</span>
+                <div class="muni-avatar-pulse"></div>
+            </div>
+            <div class="muni-alcalde-info">
+                <div class="muni-autoridad-badge">Alcalde / Director Municipal</div>
                 <h3>Rober Donald Tolentino</h3>
                 <p>Responsable de mantener el distrito limpio, organizado y en condiciones saludables para todos los habitantes.</p>
             </div>
         </div>
-
-        <!-- Vocales -->
-        <h3 class="vocales-titulo">Vocales Municipales</h3>
-        <div class="vocales-grid">
-            <div class="vocal-card">
-                <div class="vocal-avatar">WM</div>
-                <div class="vocal-info">
-                    <h4>William Mata</h4>
-                    <span>Vocal Municipal</span>
-                </div>
-            </div>
-            <div class="vocal-card">
-                <div class="vocal-avatar">YB</div>
-                <div class="vocal-info">
-                    <h4>Yumiri Bueno</h4>
-                    <span>Vocal Municipal</span>
-                </div>
-            </div>
-            <div class="vocal-card">
-                <div class="vocal-avatar">XR</div>
-                <div class="vocal-info">
-                    <h4>Xiomara Romano</h4>
-                    <span>Vocal Municipal</span>
-                </div>
-            </div>
-            <div class="vocal-card">
-                <div class="vocal-avatar">FP</div>
-                <div class="vocal-info">
-                    <h4>Francisco Peña</h4>
-                    <span>Vocal Municipal</span>
-                </div>
-            </div>
-            <div class="vocal-card">
-                <div class="vocal-avatar">CS</div>
-                <div class="vocal-info">
-                    <h4>Colinson Sevalle</h4>
-                    <span>Vocal Municipal</span>
-                </div>
-            </div>
+        <h3 class="muni-vocales-titulo">Vocales Municipales</h3>
+        <div class="muni-vocales-grid">
+            <div class="muni-vocal-card"><div class="muni-vocal-avatar">WM</div><div class="muni-vocal-info"><h4>William Mata</h4><span>Vocal Municipal</span></div></div>
+            <div class="muni-vocal-card"><div class="muni-vocal-avatar">YB</div><div class="muni-vocal-info"><h4>Yumiri Bueno</h4><span>Vocal Municipal</span></div></div>
+            <div class="muni-vocal-card"><div class="muni-vocal-avatar">XR</div><div class="muni-vocal-info"><h4>Xiomara Romano</h4><span>Vocal Municipal</span></div></div>
+            <div class="muni-vocal-card"><div class="muni-vocal-avatar">FP</div><div class="muni-vocal-info"><h4>Francisco Peña</h4><span>Vocal Municipal</span></div></div>
+            <div class="muni-vocal-card"><div class="muni-vocal-avatar">CS</div><div class="muni-vocal-info"><h4>Colinson Sevalle</h4><span>Vocal Municipal</span></div></div>
         </div>
     </div>
 </section>
 
-<!-- SECCIÓN DEPARTAMENTOS -->
-<section id="departamentos" class="section-departamentos anim">
+<!-- SECCION DEPARTAMENTOS -->
+<section id="departamentos" class="muni-deptos-section">
     <div class="container">
-        <div class="section-eyebrow">Estructura Municipal</div>
-        <h2 class="section-title-serif">Departamentos del Ayuntamiento</h2>
-        <p class="departamentos-subtitle">El Ayuntamiento de Cutupú cuenta con 17 departamentos para brindar servicios a la comunidad</p>
-
-        <div class="departamentos-grid">
-            <div class="depto-card"><i class="fas fa-building"></i><h4>Oficina Administrativa</h4></div>
-            <div class="depto-card"><i class="fas fa-money-bill"></i><h4>Caja Municipal</h4></div>
-            <div class="depto-card"><i class="fas fa-info-circle"></i><h4>Libre Acceso a la Información</h4></div>
-            <div class="depto-card"><i class="fas fa-users"></i><h4>Salón de Reuniones</h4></div>
-            <div class="depto-card"><i class="fas fa-laptop"></i><h4>Departamento de Tecnología</h4></div>
-            <div class="depto-card"><i class="fas fa-utensils"></i><h4>Cocina</h4></div>
-            <div class="depto-card"><i class="fas fa-users"></i><h4>Gestión / Recursos Humanos</h4></div>
-            <div class="depto-card"><i class="fas fa-gavel"></i><h4>Sindicatura</h4></div>
-            <div class="depto-card"><i class="fas fa-shield-alt"></i><h4>Policía Municipal / Seguridad</h4></div>
-            <div class="depto-card"><i class="fas fa-truck"></i><h4>Departamento de Transportación</h4></div>
-            <div class="depto-card"><i class="fas fa-hard-hat"></i><h4>Departamento de Ingeniería</h4></div>
-            <div class="depto-card"><i class="fas fa-chart-line"></i><h4>Arbitrio</h4></div>
-            <div class="depto-card"><i class="fas fa-church"></i><h4>Cementerio</h4></div>
-            <div class="depto-card"><i class="fas fa-coins"></i><h4>Tesorería</h4></div>
-            <div class="depto-card"><i class="fas fa-chart-pie"></i><h4>Finanzas</h4></div>
-            <div class="depto-card"><i class="fas fa-shopping-cart"></i><h4>Compras</h4></div>
-            <div class="depto-card"><i class="fas fa-calculator"></i><h4>Contabilidad</h4></div>
+        <div class="muni-section-eyebrow">Estructura Municipal</div>
+        <h2 class="muni-section-title">17 <span class="muni-title-accent">Departamentos</span></h2>
+        <p class="muni-deptos-subtitle">El Ayuntamiento de Cutupú cuenta con 17 departamentos para brindar servicios a la comunidad</p>
+        <div class="muni-deptos-grid">
+            <div class="muni-depto-card"><i class="fas fa-building"></i><h4>Oficina Administrativa</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-money-bill"></i><h4>Caja Municipal</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-info-circle"></i><h4>Libre Acceso a la Información</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-users"></i><h4>Salón de Reuniones</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-laptop"></i><h4>Departamento de Tecnología</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-utensils"></i><h4>Cocina</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-users"></i><h4>Gestión / Recursos Humanos</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-gavel"></i><h4>Sindicatura</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-shield-alt"></i><h4>Policía Municipal / Seguridad</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-truck"></i><h4>Departamento de Transportación</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-hard-hat"></i><h4>Departamento de Ingeniería</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-chart-line"></i><h4>Arbitrio</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-church"></i><h4>Cementerio</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-coins"></i><h4>Tesorería</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-chart-pie"></i><h4>Finanzas</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-shopping-cart"></i><h4>Compras</h4></div>
+            <div class="muni-depto-card"><i class="fas fa-calculator"></i><h4>Contabilidad</h4></div>
         </div>
     </div>
 </section>
 
-<!-- SECCIÓN SERVICIOS -->
-<section id="servicios" class="section-servicios-muni anim">
+<!-- SECCION SERVICIOS -->
+<section id="servicios" class="muni-servicios-section">
     <div class="container">
-        <div class="section-eyebrow">Lo que ofrecemos</div>
-        <h2 class="section-title-serif">Servicios Municipales</h2>
-
-        <div class="servicios-muni-grid">
-            <div class="servicio-muni-card">
-                <i class="fas fa-trash-alt"></i>
-                <h3>Recolección de Basura</h3>
-                <p>Sistema mediante camiones que transportan los desechos al vertedero Soto en La Vega.</p>
-            </div>
-            <div class="servicio-muni-card">
-                <i class="fas fa-road"></i>
-                <h3>Mantenimiento de Calles</h3>
-                <p>Mantenimiento constante de calles y canaletas del distrito.</p>
-            </div>
-            <div class="servicio-muni-card">
-                <i class="fas fa-church"></i>
-                <h3>Cuidado de Cementerios</h3>
-                <p>Administración, mantenimiento y organización del cementerio municipal.</p>
-            </div>
-            <div class="servicio-muni-card">
-                <i class="fas fa-tree"></i>
-                <h3>Obras Públicas</h3>
-                <p>Construcción y mantenimiento de parques, canchas, clubes e iglesias.</p>
-            </div>
+        <div class="muni-section-eyebrow">Lo que ofrecemos</div>
+        <h2 class="muni-section-title">Servicios <span class="muni-title-accent">Municipales</span></h2>
+        <div class="muni-servicios-grid">
+            <div class="muni-servicio-card"><i class="fas fa-trash-alt"></i><h3>Recolección de Basura</h3><p>Sistema mediante camiones al vertedero Soto en La Vega</p></div>
+            <div class="muni-servicio-card"><i class="fas fa-road"></i><h3>Mantenimiento de Calles</h3><p>Mantenimiento constante de calles y canaletas</p></div>
+            <div class="muni-servicio-card"><i class="fas fa-church"></i><h3>Cuidado de Cementerios</h3><p>Administración del cementerio municipal</p></div>
+            <div class="muni-servicio-card"><i class="fas fa-tree"></i><h3>Obras Públicas</h3><p>Parques, canchas, clubes e iglesias</p></div>
         </div>
-
-        <div class="servicios-cta-muni">
-            <a href="/servicios" class="btn-servicios">Ver todos los servicios <i class="fas fa-arrow-right"></i></a>
+        <div class="muni-servicios-cta">
+            <a href="/servicios" class="muni-btn-servicios">Ver todos los servicios <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
 </section>
 
 <!-- CTA FINAL -->
-<section class="cta-final anim">
-    <div class="container cta-container">
-        <h3 class="cta-title">¿Tienes alguna pregunta sobre nuestro municipio?</h3>
-        <a href="/contacto" class="cta-button">Contáctanos <i class="fas fa-arrow-right"></i></a>
+<section class="muni-cta-section">
+    <div class="container">
+        <h2 class="muni-cta-title">¿Tienes alguna pregunta sobre nuestro municipio?</h2>
+        <div class="muni-cta-buttons">
+            <a href="/contacto" class="muni-cta-btn-primary">Contáctanos <i class="fas fa-arrow-right"></i></a>
+            <a href="/transparencia" class="muni-cta-btn-secondary">Ver transparencia <i class="fas fa-chart-line"></i></a>
+        </div>
     </div>
 </section>
 
-<style>
-    /* Estilos adicionales para mantener consistencia */
-    .sectores-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-top: 2rem;
-    }
-    .sector-card {
-        background: var(--crema);
-        border-radius: 0.75rem;
-        padding: 1rem;
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-    .sector-card:hover {
-        transform: translateY(-3px);
-        background: var(--verde-xlight);
-    }
-    .sector-numero {
-        display: inline-block;
-        font-size: 0.7rem;
-        color: var(--verde);
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-    }
-    .sector-card h3 {
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-    .departamentos-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 0.8rem;
-        margin-top: 2rem;
-    }
-    .depto-card {
-        background: var(--crema);
-        border-radius: 0.75rem;
-        padding: 0.8rem;
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-    .depto-card i {
-        font-size: 1.2rem;
-        color: var(--verde);
-        margin-bottom: 0.3rem;
-    }
-    .depto-card h4 {
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-    .depto-card:hover {
-        transform: translateY(-2px);
-        background: var(--verde-xlight);
-    }
-    .alcalde-card {
-        display: flex;
-        gap: 1.5rem;
-        background: var(--crema);
-        border-radius: 1rem;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        align-items: center;
-    }
-    .alcalde-avatar {
-        width: 80px;
-        height: 80px;
-        background: var(--verde);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        font-weight: 800;
-        color: white;
-    }
-    .vocales-titulo {
-        font-size: 1.3rem;
-        margin: 2rem 0 1rem;
-        color: var(--verde);
-    }
-    .vocales-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-    }
-    .vocal-card {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        background: var(--crema);
-        border-radius: 0.75rem;
-        padding: 0.8rem;
-    }
-    .vocal-avatar {
-        width: 45px;
-        height: 45px;
-        background: var(--verde-xlight);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        color: var(--verde);
-    }
-    .distrito-stats-inline {
-        display: flex;
-        gap: 2rem;
-        margin-top: 1.5rem;
-    }
-    .stat-inline {
-        text-align: center;
-    }
-    .stat-inline .stat-number {
-        font-size: 2rem;
-        font-weight: 800;
-        color: var(--verde);
-        display: block;
-    }
-    @media (max-width: 768px) {
-        .alcalde-card { flex-direction: column; text-align: center; }
-        .distrito-stats-inline { justify-content: center; }
-    }
-</style>
-
 <script>
-    (function() {
-        const stickyNav = document.getElementById('stickyNav');
-        const header = document.querySelector('.main-header');
-        let headerHeight = header ? header.offsetHeight : 80;
-        let stickyOffset = headerHeight;
+(function() {
+    const stickyNav = document.getElementById('stickyNav');
+    const header = document.querySelector('.main-header');
+    let headerHeight = header ? header.offsetHeight : 80;
+    let stickyOffset = headerHeight;
 
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > stickyOffset) {
-                stickyNav.classList.add('sticky-active');
-            } else {
-                stickyNav.classList.remove('sticky-active');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > stickyOffset) {
+            stickyNav.classList.add('sticky-active');
+        } else {
+            stickyNav.classList.remove('sticky-active');
+        }
+    });
+
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.muni-sticky-nav-link');
+
+    const observerOptions = { rootMargin: `-${headerHeight + 80}px 0px -40% 0px`, threshold: 0 };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('data-section') === id) link.classList.add('active');
+                });
             }
         });
+    }, observerOptions);
+    sections.forEach(section => observer.observe(section));
 
-        const sections = document.querySelectorAll('section[id]');
-        const navLinks = document.querySelectorAll('.sticky-nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                const offset = headerHeight + 60;
+                const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
+                window.scrollTo({ top: elementPosition - offset, behavior: 'smooth' });
+            }
+        });
+    });
 
-        const observerOptions = {
-            rootMargin: `-${headerHeight + 80}px 0px -40% 0px`,
-            threshold: 0
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const id = entry.target.getAttribute('id');
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('data-section') === id) {
-                            link.classList.add('active');
-                        }
-                    });
-                }
-            });
-        }, observerOptions);
-
+    window.addEventListener('resize', () => {
+        headerHeight = header ? header.offsetHeight : 80;
+        stickyOffset = headerHeight;
+        observerOptions.rootMargin = `-${headerHeight + 80}px 0px -40% 0px`;
+        observer.disconnect();
         sections.forEach(section => observer.observe(section));
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-                const target = document.getElementById(targetId);
-                if (target) {
-                    const offset = headerHeight + 60;
-                    const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
-                    window.scrollTo({
-                        top: elementPosition - offset,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        window.addEventListener('resize', () => {
-            headerHeight = header ? header.offsetHeight : 80;
-            stickyOffset = headerHeight;
-            observerOptions.rootMargin = `-${headerHeight + 80}px 0px -40% 0px`;
-            observer.disconnect();
-            sections.forEach(section => observer.observe(section));
-        });
-    })();
+    });
+})();
 </script>
 
 {% endblock %}

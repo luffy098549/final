@@ -1,267 +1,525 @@
-<section class="acciones anim">
-    <div class="container">
-        <div class="section-eyebrow text-center">Servicios Municipales</div>
-        <h2 class="section-title-serif text-center">Lo que <span style="color: #F5DFA0;">ofrecemos</span> para ti</h2>
-        <p class="acciones-subtitle">Trámites, solicitudes y denuncias disponibles para los ciudadanos de Villa Cutupú. Rápido, transparente y a tu alcance.</p>
-        <div class="acciones-grid">
-            <!-- Solicitudes -->
-            <div class="accion-card">
-                <div class="accion-icono">
-                    <i class="fas fa-file-alt"></i>
-                </div>
-                <h3>Solicitudes Municipales</h3>
-                <p>Realiza solicitudes de servicios como funerarias, certificado de uso de suelo, catastro, planeamiento urbano y más.</p>
-                <a href="/servicios" class="accion-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
-            </div>
-
-            <!-- Denuncias -->
-            <div class="accion-card">
-                <div class="accion-icono">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <h3>Denuncias Ciudadanas</h3>
-                <p>Reporta problemas de limpieza, acumulación de basura, policía municipal, alumbrado público y otras irregularidades.</p>
-                <a href="/servicios" class="accion-btn">Denunciar <i class="fas fa-arrow-right"></i></a>
-            </div>
-
-            <!-- Recolección de Basura -->
-            <div class="accion-card">
-                <div class="accion-icono">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-                <h3>Recolección de Basura</h3>
-                <p>Sistema de recolección mediante camiones que transportan los desechos hacia el vertedero Soto, ubicado en La Vega.</p>
-                <a href="/servicios" class="accion-btn">Más info <i class="fas fa-arrow-right"></i></a>
-            </div>
-
-            <!-- Transparencia -->
-            <div class="accion-card">
-                <div class="accion-icono">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h3>Transparencia</h3>
-                <p>Accede a información pública sobre finanzas municipales, actas, compras y contrataciones del ayuntamiento.</p>
-                <a href="/transparencia" class="accion-btn">Ver más <i class="fas fa-arrow-right"></i></a>
-            </div>
-        </div>
-        <div class="acciones-cta">
-            <p>¿No encuentras lo que buscas?</p>
-            <a href="/contacto" class="btn-outline">Contáctanos <i class="fas fa-headset"></i></a>
-        </div>
-    </div>
-</section>
-
-<style>
-    .acciones {
-        background: linear-gradient(135deg, #1A2410 0%, #2D5016 100%);
-        padding: 6rem 0;
-        position: relative;
-        overflow: hidden;
-    }
-    .acciones::before {
-        content: '';
-        position: absolute;
-        top: -100px;
-        right: -100px;
-        width: 300px;
-        height: 300px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-    }
-    .acciones::after {
-        content: '';
-        position: absolute;
-        bottom: -100px;
-        left: -100px;
-        width: 250px;
-        height: 250px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-    }
-    .container {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-    .section-eyebrow {
-        display: inline-block;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: #F5DFA0;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        background: rgba(255,255,255,0.15);
-        padding: 0.3rem 1.2rem;
-        border-radius: 2rem;
-    }
-    .section-eyebrow.text-center,
-    .section-title-serif.text-center {
-        text-align: center;
-        display: block;
-        width: fit-content;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .section-title-serif {
-        font-family: 'Playfair Display', serif;
-        font-size: clamp(2rem, 4vw, 2.8rem);
-        font-weight: 800;
-        margin-bottom: 1rem;
-        color: white;
-    }
-    .acciones-subtitle {
-        text-align: center;
-        color: rgba(255,255,255,0.85);
-        max-width: 700px;
-        margin: 0 auto 3rem auto;
-        line-height: 1.6;
-        font-size: 1rem;
-    }
-    .acciones-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 2rem;
-        margin-bottom: 3rem;
-        position: relative;
-        z-index: 2;
-    }
-    .accion-card {
-        background: rgba(255,255,255,0.1);
-        backdrop-filter: blur(4px);
-        border-radius: 1.5rem;
-        padding: 2rem;
-        transition: all 0.3s ease;
-        text-align: center;
-        border: 1px solid rgba(255,255,255,0.15);
-    }
-    .accion-card:hover {
-        transform: translateY(-8px);
-        background: rgba(255,255,255,0.2);
-        border-color: rgba(255,255,255,0.3);
-    }
-    .accion-icono {
-        width: 70px;
-        height: 70px;
-        background: rgba(255,255,255,0.15);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem auto;
-        transition: all 0.3s ease;
-    }
-    .accion-card:hover .accion-icono {
-        background: #F5DFA0;
-    }
-    .accion-icono i {
-        font-size: 2rem;
-        color: #F5DFA0;
-        transition: all 0.3s ease;
-    }
-    .accion-card:hover .accion-icono i {
-        color: #2D5016;
-    }
-    .accion-card h3 {
-        font-size: 1.2rem;
-        font-weight: 700;
-        margin-bottom: 0.75rem;
-        color: white;
-    }
-    .accion-card p {
-        color: rgba(255,255,255,0.85);
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-        font-size: 0.85rem;
-    }
-    .accion-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(255,255,255,0.15);
-        color: white;
-        padding: 0.6rem 1.5rem;
-        border-radius: 2rem;
-        text-decoration: none;
-        font-size: 0.8rem;
-        font-weight: 600;
-        transition: all 0.2s ease;
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-    .accion-btn:hover {
-        background: #F5DFA0;
-        color: #2D5016;
-        gap: 0.75rem;
-        border-color: #F5DFA0;
-    }
-    .acciones-cta {
-        text-align: center;
-        padding: 2rem;
-        background: rgba(255,255,255,0.08);
-        border-radius: 1.5rem;
-        margin-top: 1rem;
-        position: relative;
-        z-index: 2;
-        backdrop-filter: blur(4px);
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-    .acciones-cta p {
-        font-size: 1rem;
-        color: white;
-        margin-bottom: 1rem;
-    }
-    .btn-outline {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: transparent;
-        border: 2px solid #F5DFA0;
-        color: #F5DFA0;
-        padding: 0.7rem 1.8rem;
-        border-radius: 2rem;
-        text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 600;
-        transition: all 0.2s ease;
-    }
-    .btn-outline:hover {
-        background: #F5DFA0;
-        color: #2D5016;
-        transform: translateY(-2px);
-    }
-
-    @media (max-width: 1100px) {
-        .acciones-grid {
-            grid-template-columns: repeat(2, 1fr);
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios Municipales - Ayuntamiento de Cutupú</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    }
-    @media (max-width: 768px) {
+
+        :root {
+            --verde: #2E6B2F;
+            --verde-oscuro: #1A4A1A;
+            --verde-intenso: #0F2E0F;
+            --verde-xlight: #EAF5E6;
+            --dorado: #C9A03D;
+            --dorado-claro: #F5DFA0;
+            --dorado-intenso: #C8960C;
+            --texto: #1A2A1A;
+            --texto-claro: rgba(255,255,255,0.9);
+            --texto-suave: rgba(255,255,255,0.7);
+            --gris-500: #7A8E7A;
+            --gris-600: #5A6E5A;
+            --sh-sm: 0 4px 12px rgba(0,0,0,0.06);
+            --sh-md: 0 12px 28px rgba(0,0,0,0.08);
+            --sh-lg: 0 25px 45px rgba(0,0,0,0.15);
+            --spring: cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: white;
+        }
+
+        /* ── Sección Acciones ── */
         .acciones {
-            padding: 3rem 0;
+            background: linear-gradient(135deg, var(--verde-intenso) 0%, var(--verde-oscuro) 50%, var(--verde) 100%);
+            padding: 6rem 0;
+            position: relative;
+            overflow: hidden;
         }
-        .acciones-grid {
-            gap: 1rem;
+
+        /* Fondo decorativo */
+        .acciones-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
         }
-        .accion-card {
-            padding: 1.5rem;
+
+        .acciones-bg-circle {
+            position: absolute;
+            border-radius: 50%;
         }
-        .accion-icono {
-            width: 55px;
-            height: 55px;
+
+        .acciones-bg-circle.c1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(245, 223, 160, 0.06) 0%, transparent 70%);
+            top: -200px;
+            right: -150px;
+            animation: accionesFloat1 20s ease-in-out infinite;
         }
-        .accion-icono i {
-            font-size: 1.5rem;
+
+        .acciones-bg-circle.c2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(245, 223, 160, 0.04) 0%, transparent 70%);
+            bottom: -150px;
+            left: -100px;
+            animation: accionesFloat2 18s ease-in-out infinite;
         }
-    }
-    @media (max-width: 640px) {
-        .acciones-grid {
-            grid-template-columns: 1fr;
+
+        .acciones-bg-circle.c3 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(245, 223, 160, 0.05) 0%, transparent 70%);
+            top: 40%;
+            left: 20%;
+            animation: accionesFloat3 22s ease-in-out infinite;
         }
+
+        @keyframes accionesFloat1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-30px, 20px); }
+        }
+
+        @keyframes accionesFloat2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(25px, -25px); }
+        }
+
+        @keyframes accionesFloat3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-15px, 15px) scale(1.1); }
+        }
+
+        .acciones .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Eyebrow */
+        .acciones-eyebrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpAcciones 0.5s ease forwards;
+            animation-delay: 0s;
+        }
+
+        .acciones-eyebrow-line {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--dorado-claro), var(--dorado), transparent);
+        }
+
+        .acciones-eyebrow-text {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--dorado-claro);
+            font-weight: 700;
+        }
+
+        /* Título */
+        .acciones-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4.5vw, 3rem);
+            font-weight: 700;
+            line-height: 1.15;
+            text-align: center;
+            color: white;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpAcciones 0.5s ease forwards;
+            animation-delay: 0.08s;
+        }
+
+        .title-highlight {
+            color: var(--dorado-claro);
+            position: relative;
+            display: inline-block;
+        }
+
+        .title-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--dorado), transparent);
+            border-radius: 3px;
+        }
+
+        /* Subtítulo */
         .acciones-subtitle {
-            font-size: 0.9rem;
+            text-align: center;
+            color: var(--texto-claro);
+            max-width: 700px;
+            margin: 0 auto 3rem auto;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpAcciones 0.5s ease forwards;
+            animation-delay: 0.16s;
         }
+
+        /* Grid de cards */
+        .acciones-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.8rem;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Card individual */
+        .accion-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 2rem 1.5rem;
+            transition: all 0.4s var(--spring);
+            text-align: center;
+            border: 1px solid rgba(245, 223, 160, 0.15);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpAcciones 0.5s ease forwards;
+        }
+
+        .accion-card:nth-child(1) { animation-delay: 0.24s; }
+        .accion-card:nth-child(2) { animation-delay: 0.32s; }
+        .accion-card:nth-child(3) { animation-delay: 0.40s; }
+        .accion-card:nth-child(4) { animation-delay: 0.48s; }
+
+        .accion-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--dorado), var(--dorado-claro), var(--dorado));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s var(--spring);
+        }
+
+        .accion-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(245, 223, 160, 0.3);
+        }
+
+        .accion-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        /* Icono */
+        .accion-icono {
+            width: 70px;
+            height: 70px;
+            background: rgba(245, 223, 160, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+            transition: all 0.4s var(--spring);
+            border: 1px solid rgba(245, 223, 160, 0.2);
+        }
+
+        .accion-card:hover .accion-icono {
+            background: var(--dorado-claro);
+            transform: scale(1.05) rotate(-5deg);
+        }
+
+        .accion-icono i {
+            font-size: 2rem;
+            color: var(--dorado-claro);
+            transition: all 0.4s var(--spring);
+        }
+
+        .accion-card:hover .accion-icono i {
+            color: var(--verde-oscuro);
+            transform: scale(1.1);
+        }
+
+        /* Texto */
+        .accion-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: white;
+        }
+
+        .accion-card p {
+            color: var(--texto-suave);
+            line-height: 1.65;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        /* Botón */
+        .accion-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s var(--spring);
+            border: 1px solid rgba(245, 223, 160, 0.25);
+        }
+
+        .accion-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .accion-btn:hover {
+            background: var(--dorado-claro);
+            color: var(--verde-oscuro);
+            gap: 0.75rem;
+            border-color: var(--dorado-claro);
+        }
+
+        .accion-btn:hover i {
+            transform: translateX(3px);
+        }
+
+        /* CTA inferior */
         .acciones-cta {
-            padding: 1.5rem;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 28px;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(245, 223, 160, 0.15);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpAcciones 0.5s ease forwards;
+            animation-delay: 0.56s;
         }
-    }
-</style>
+
+        .acciones-cta p {
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: transparent;
+            border: 2px solid var(--dorado-claro);
+            color: var(--dorado-claro);
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s var(--spring);
+            cursor: pointer;
+        }
+
+        .btn-outline i {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: var(--dorado-claro);
+            color: var(--verde-oscuro);
+            transform: translateY(-3px);
+            gap: 0.8rem;
+        }
+
+        .btn-outline:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Animación */
+        @keyframes fadeUpAcciones {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1100px) {
+            .acciones-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .acciones {
+                padding: 4rem 0;
+            }
+            .acciones-grid {
+                gap: 1.2rem;
+            }
+            .accion-card {
+                padding: 1.5rem;
+            }
+            .accion-icono {
+                width: 55px;
+                height: 55px;
+            }
+            .accion-icono i {
+                font-size: 1.5rem;
+            }
+            .accion-card h3 {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .acciones .container {
+                padding: 0 1.5rem;
+            }
+            .acciones-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .acciones-subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 2rem;
+            }
+            .acciones-cta {
+                padding: 1.5rem;
+            }
+            .accion-btn {
+                padding: 0.5rem 1.2rem;
+                font-size: 0.75rem;
+            }
+            .btn-outline {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .acciones {
+                padding: 3rem 0;
+            }
+            .accion-card {
+                padding: 1.2rem;
+            }
+            .accion-icono {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 1rem;
+            }
+            .accion-icono i {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="acciones">
+        <!-- Fondo decorativo -->
+        <div class="acciones-bg">
+            <div class="acciones-bg-circle c1"></div>
+            <div class="acciones-bg-circle c2"></div>
+            <div class="acciones-bg-circle c3"></div>
+        </div>
+
+        <div class="container">
+            <div class="acciones-eyebrow">
+                <span class="acciones-eyebrow-line"></span>
+                <span class="acciones-eyebrow-text">Servicios Municipales</span>
+            </div>
+
+            <h2 class="acciones-title">
+                Lo que <span class="title-highlight">ofrecemos</span> para ti
+            </h2>
+
+            <p class="acciones-subtitle">
+                Trámites, solicitudes y denuncias disponibles para los ciudadanos de Villa Cutupú. 
+                Rápido, transparente y a tu alcance.
+            </p>
+
+            <div class="acciones-grid">
+                <!-- Solicitudes -->
+                <div class="accion-card">
+                    <div class="accion-icono">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Solicitudes Municipales</h3>
+                    <p>Realiza solicitudes de servicios como funerarias, certificado de uso de suelo, catastro, planeamiento urbano y más.</p>
+                    <a href="#" class="accion-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <!-- Denuncias -->
+                <div class="accion-card">
+                    <div class="accion-icono">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Denuncias Ciudadanas</h3>
+                    <p>Reporta problemas de limpieza, acumulación de basura, policía municipal, alumbrado público y otras irregularidades.</p>
+                    <a href="#" class="accion-btn">Denunciar <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <!-- Recolección de Basura -->
+                <div class="accion-card">
+                    <div class="accion-icono">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <h3>Recolección de Basura</h3>
+                    <p>Sistema de recolección mediante camiones que transportan los desechos hacia el vertedero Soto, ubicado en La Vega.</p>
+                    <a href="#" class="accion-btn">Más info <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <!-- Transparencia -->
+                <div class="accion-card">
+                    <div class="accion-icono">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Transparencia</h3>
+                    <p>Accede a información pública sobre finanzas municipales, actas, compras y contrataciones del ayuntamiento.</p>
+                    <a href="#" class="accion-btn">Ver más <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <div class="acciones-cta">
+                <p>¿No encuentras lo que buscas?</p>
+                <a href="#" class="btn-outline">Contáctanos <i class="fas fa-headset"></i></a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

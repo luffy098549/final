@@ -1,5 +1,5 @@
 # ================================================================
-# APP.PY - VILLA CUTUPÚ MUNICIPAL SYSTEM (VERSIÓN COMPLETA CON CONFIGURACIÓN GLOBAL)
+# APP.PY - VILLA CUTUPÚ MUNICIPAL SYSTEM (VERSIÓN COMPLETA)
 # ================================================================
 
 # ================================================================
@@ -447,8 +447,6 @@ def inject_global_variables():
         'animaciones': Configuracion.get('animaciones', True),
     }
     
-    print(f"🔵 Config cargada desde BD: {config}")  # ← LOG PARA VERIFICAR
-    
     return dict(
         now=datetime.now(),
         NOMBRES_SERVICIOS=NOMBRES_SERVICIOS,
@@ -464,7 +462,6 @@ def inject_global_variables():
         redis_available=REDIS_AVAILABLE,
         cache_enabled=True,
         debug_mode=app.debug,
-        # 👇 CONFIGURACIÓN GLOBAL - Disponible en todas las plantillas
         config=config
     )
 
@@ -509,7 +506,6 @@ def mapa_incidencias():
             lat = None
             lng = None
             
-            # Verificar si tiene coordenadas
             if hasattr(d, 'lat') and d.lat and hasattr(d, 'lng') and d.lng:
                 try:
                     lat = float(d.lat)
@@ -576,7 +572,9 @@ def detalle_denuncia_publica(denuncia_id):
         flash(f"Error: {str(e)}", "error")
         return redirect(url_for('mapa_incidencias'))
 
-# ── Transparencia ────────────────────────────────────────────────
+# ================================================================
+# 🌐 TRANSPARENCIA - RUTAS CORREGIDAS
+# ================================================================
 _TRANSPARENCIA = {
     "transparencia": ("/transparencia", "transparencia.html"),
     "transparencia_estructura": ("/transparencia/estructura", "transparencia_estructura.html"),
@@ -589,14 +587,20 @@ _TRANSPARENCIA = {
     "transparencia_actas": ("/transparencia/actas", "transparencia_actas.html"),
     "transparencia_compras": ("/transparencia/compras", "transparencia_compras.html"),
 }
-for _name, (_url, _tmpl) in _TRANSPARENCIA.items():
-    def _make_view(tmpl):
-        @cache_response(timeout=300)
-        def _view():
-            return render_template(tmpl)
-        return _view
-    app.add_url_rule(_url, _name, _make_view(_tmpl))
 
+def create_transparency_view(template_name):
+    """Crea una vista para una plantilla de transparencia con caché"""
+    @cache_response(timeout=300)
+    def view():
+        return render_template(template_name)
+    return view
+
+for route_name, (url_path, template_name) in _TRANSPARENCIA.items():
+    app.add_url_rule(url_path, route_name, create_transparency_view(template_name))
+
+# ================================================================
+# NOTICIAS Y CONTACTO
+# ================================================================
 @app.route("/noticias")
 @cache_response(timeout=180)
 def noticias():
@@ -629,6 +633,12 @@ def uploaded_file(filename):
 # ================================================================
 # MI CUENTA
 # ================================================================
+@app.route("/perfil")
+@login_required
+def perfil():
+    """Página de perfil de usuario (alias de mi_cuenta)"""
+    return redirect(url_for('mi_cuenta'))
+
 @app.route("/mi-cuenta")
 @login_required
 def mi_cuenta():
@@ -786,11 +796,30 @@ def editar_perfil():
     return redirect(url_for("mi_cuenta"))
 
 # ================================================================
-# MIS TRÁMITES
+# MIS SERVICIOS SOLICITADOS
+# ================================================================
+@app.route("/mis-servicios")
+@login_required
+def mis_servicios():
+    """Muestra SOLO los servicios solicitados por el usuario (solicitudes)"""
+    try:
+        from models import Solicitud
+        email = session.get("user")
+        solicitudes = Solicitud.buscar_por_usuario(email)
+        solicitudes.sort(key=lambda x: x.fecha_creacion, reverse=True)
+        return render_template("usuarios/mis_solicitudes.html", solicitudes=solicitudes)
+    except Exception as e:
+        print(f"Error cargando servicios: {e}")
+        flash(f"Error al cargar servicios: {str(e)}", "error")
+        return render_template("usuarios/mis_solicitudes.html", solicitudes=[])
+
+# ================================================================
+# MIS TRÁMITES (solicitudes + denuncias + citas unificadas)
 # ================================================================
 @app.route("/mis-tramites")
 @login_required
 def mis_tramites():
+    """Página unificada: muestra solicitudes, denuncias y citas del usuario"""
     from models.usuario import Usuario
     from models import Solicitud, Denuncia
     from models.cita import Cita
@@ -869,7 +898,7 @@ def mis_tramites():
     return render_template("usuarios/mis_tramites.html", tramites=tramites, stats=stats)
 
 # ================================================================
-# MIS SOLICITUDES
+# MIS SOLICITUDES (solo solicitudes)
 # ================================================================
 @app.route("/mis-solicitudes")
 @login_required
@@ -958,7 +987,7 @@ def mis_citas():
     
     citas = Cita.buscar_por_usuario(email)
     citas.sort(key=lambda x: x.fecha + ' ' + x.hora, reverse=True)
-    return render_template("usuarios/mis_citas.html", citas=citas, servicios=SERVICIOS_CITAS)
+    return render_template("citas/mis_citas.html", citas=citas, servicios=SERVICIOS_CITAS)
 
 # ================================================================
 # 🧩 RUTAS DINÁMICAS
@@ -970,7 +999,6 @@ def solicitar(tipo):
         flash(f"❌ Servicio '{tipo}' no encontrado.", "error")
         return redirect(url_for('servicios'))
     
-    # Pasar el diccionario completo de servicios al template
     return render_template('solicitudes/formulario.html', 
                          tipo=tipo,
                          nombre_servicio=NOMBRES_SERVICIOS[tipo],
@@ -1007,24 +1035,20 @@ def procesar_solicitud():
     try:
         email = session.get('user')
 
-        # Tomar servicio_id desde 'servicio_id', 'servicio', o 'tipo'
         servicio_id = (
             request.form.get('servicio_id', '').strip() or
             request.form.get('servicio', '').strip() or
             request.form.get('tipo', '').strip()
         )
 
-        # Descripción: acepta 'descripcion' o 'detalles_adicionales'
         descripcion = (
             request.form.get('descripcion', '').strip() or
             request.form.get('detalles_adicionales', '').strip()
         )
 
-        # Nombre y cédula: del form o de la sesión/BD
         nombre = request.form.get('nombre', '').strip()
         cedula = request.form.get('cedula', '').strip()
 
-        # Si no vienen en el form, tomarlos del usuario logueado
         if not nombre or not cedula:
             from models.usuario import Usuario
             usuario = Usuario.query.filter_by(email=email).first()
@@ -1032,7 +1056,6 @@ def procesar_solicitud():
                 nombre = nombre or usuario.nombre_completo or f"{usuario.nombre or ''} {usuario.apellidos or ''}".strip()
                 cedula = cedula or usuario.cedula or ''
 
-        # Validaciones mínimas
         if not servicio_id:
             flash("❌ No se pudo identificar el servicio.", "error")
             return redirect(request.referrer or url_for('servicios'))
@@ -1045,10 +1068,8 @@ def procesar_solicitud():
             flash("❌ No se encontró el nombre del usuario. Actualiza tu perfil.", "error")
             return redirect(url_for('mi_cuenta'))
 
-        # Obtener nombre del servicio desde el catálogo
         servicio_nombre = NOMBRES_SERVICIOS.get(servicio_id, "Servicio Municipal")
 
-        # Crear la solicitud
         from models.solicitud import Solicitud
         solicitud = Solicitud.crear(
             usuario_email=email,
@@ -1060,7 +1081,7 @@ def procesar_solicitud():
         )
 
         flash(f"✅ ¡Solicitud creada! Tu folio es: {solicitud.folio}", "success")
-        return redirect(url_for('mis_solicitudes'))
+        return redirect(url_for('mis_servicios'))
 
     except Exception as e:
         print(f"Error al procesar solicitud: {e}")
@@ -1070,7 +1091,7 @@ def procesar_solicitud():
         return redirect(url_for('servicios'))
 
 # ================================================================
-# 🔥 PROCESAMIENTO DE DENUNCIAS - VERSIÓN CON GEOLOCALIZACIÓN MEJORADA
+# 🔥 PROCESAMIENTO DE DENUNCIAS
 # ================================================================
 @app.route('/procesar-denuncia', methods=['POST'])
 @login_required
@@ -1091,7 +1112,6 @@ def procesar_denuncia():
     descripcion = request.form.get('descripcion')
     evidencia = request.form.get('evidencia', '')
     
-    # NUEVOS CAMPOS DE GEOLOCALIZACIÓN
     lat_str = request.form.get('lat', '')
     lng_str = request.form.get('lng', '')
     lat = float(lat_str) if lat_str and lat_str.strip() else None
@@ -1328,15 +1348,12 @@ def horarios_disponibles():
 # ================================================================
 # 🎨 API DE CONFIGURACIÓN DEL SISTEMA
 # ================================================================
-
 @app.route("/api/configuracion")
 def api_configuracion():
-    """API para obtener configuración actual (para actualizaciones en vivo)"""
     from models.configuracion import Configuracion
     
     try:
         config = Configuracion.get_all()
-        print(f"✅ API config: {list(config.keys())}")  # Log para depurar
         return jsonify({
             'success': True,
             'config': config,
@@ -1344,42 +1361,32 @@ def api_configuracion():
         })
     except Exception as e:
         print(f"❌ Error en API config: {e}")
-        import traceback
-        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route("/api/configuracion/recargar", methods=["POST"])
 @admin_required
 def api_recargar_configuracion():
-    """Forzar recarga de configuración (útil después de cambios)"""
     from models.configuracion import Configuracion
     try:
         Configuracion.clear_cache()
-        print("✅ Configuración recargada desde API")
         return jsonify({'success': True, 'message': 'Configuración recargada'})
     except Exception as e:
-        print(f"❌ Error recargando configuración: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route("/api/configuracion/actualizar", methods=["POST"])
 @admin_required
 def api_actualizar_configuracion():
-    """Actualizar configuración vía API"""
     from models.configuracion import Configuracion
     
     try:
         data = request.get_json()
         
         if not data:
-            return jsonify({
-                'success': False,
-                'error': 'No se enviaron datos'
-            }), 400
+            return jsonify({'success': False, 'error': 'No se enviaron datos'}), 400
         
         actualizadas = []
         
         for clave, valor in data.items():
-            # Determinar tipo automáticamente
             if isinstance(valor, bool):
                 tipo = 'bool'
             elif isinstance(valor, int):
@@ -1393,7 +1400,6 @@ def api_actualizar_configuracion():
             Configuracion.set(clave, valor, tipo)
             actualizadas.append(clave)
         
-        # Limpiar caché
         Configuracion.clear_cache()
         try:
             cache.clear()
@@ -1407,10 +1413,7 @@ def api_actualizar_configuracion():
         })
         
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 # ================================================================
 # 🔥 API DE NOTIFICACIONES
@@ -1616,11 +1619,12 @@ def api_usuario_responder_mensaje(folio):
 # ================================================================
 # ENCUESTA DE TRÁMITE
 # ================================================================
-@app.route("/encuesta/<folio>")
+@app.route("/tramite/<folio>/encuesta", methods=["GET", "POST"])
 @login_required
 def encuesta_tramite(folio):
     from models import Solicitud, Denuncia
     from models.cita import Cita
+    from models.encuesta import Encuesta
     
     email = session.get("user")
     
@@ -1658,10 +1662,66 @@ def encuesta_tramite(folio):
         flash("Trámite no encontrado.", "error")
         return redirect(url_for("mis_tramites"))
     
-    return render_template("usuarios/encuesta_tramite.html", 
-                         tramite=tramite, 
-                         folio=folio, 
-                         tipo=tipo_tramite)
+    estados_completados = ['completado', 'resuelto', 'completada']
+    if tramite.estado not in estados_completados:
+        flash("❌ Solo puedes evaluar trámites completados.", "error")
+        return redirect(url_for("mis_tramites"))
+    
+    if Encuesta.buscar_por_tramite(folio):
+        flash("✅ Ya has evaluado este trámite. ¡Gracias!", "info")
+        return redirect(url_for("mis_tramites"))
+    
+    if request.method == "POST":
+        calificacion = request.form.get("calificacion")
+        comentario = request.form.get("comentario", "").strip()
+        
+        if not calificacion:
+            flash("❌ Por favor selecciona una calificación.", "error")
+            return redirect(url_for("encuesta_tramite", folio=folio))
+        
+        try:
+            calif_int = int(calificacion)
+            if calif_int < 1 or calif_int > 5:
+                raise ValueError
+        except:
+            flash("❌ Calificación no válida.", "error")
+            return redirect(url_for("encuesta_tramite", folio=folio))
+        
+        Encuesta.crear(
+            folio_tramite=folio,
+            tipo_tramite=tipo_tramite,
+            usuario_email=email,
+            usuario_nombre=session.get("user_name", "Ciudadano"),
+            calificacion=calif_int,
+            comentario=comentario
+        )
+        
+        flash("✅ ¡Gracias por tu evaluación! Tu opinión nos ayuda a mejorar.", "success")
+        return redirect(url_for("mis_tramites"))
+    
+    nombre_servicio = ""
+    if hasattr(tramite, 'servicio_nombre'):
+        nombre_servicio = tramite.servicio_nombre
+    elif hasattr(tramite, 'tipo_nombre'):
+        nombre_servicio = tramite.tipo_nombre
+    elif hasattr(tramite, 'servicio'):
+        nombre_servicio = SERVICIOS_CITAS.get(tramite.servicio, tramite.servicio)
+    
+    return render_template("encuestas/encuesta.html", 
+                          tramite=tramite, 
+                          tipo=tipo_tramite,
+                          nombre_servicio=nombre_servicio,
+                          folio=folio)
+
+# ================================================================
+# ADMIN: ESTADÍSTICAS DE ENCUESTAS
+# ================================================================
+@app.route("/admin/encuestas")
+@admin_required
+def admin_encuestas():
+    from models.encuesta import Encuesta
+    stats = Encuesta.obtener_estadisticas()
+    return render_template("admin/encuestas.html", stats=stats)
 
 # ================================================================
 # CONFIGURACIÓN DE CUENTA
@@ -1695,7 +1755,34 @@ def configuracion_cuenta():
     return render_template("usuarios/configuracion.html", usuario=usuario)
 
 # ================================================================
-# MANEJADORES DE ERRORES
+# ADMIN ROUTES (resumen)
+# ================================================================
+@app.route("/admin/dashboard")
+@admin_required
+def admin_dashboard_redirect():
+    return redirect(url_for("admin.dashboard"))
+
+@app.route("/admin/mapa")
+@admin_required
+def admin_mapa_incidencias():
+    from models import Denuncia
+    denuncias = Denuncia.cargar_todos()
+    denuncias_geo = [d for d in denuncias if hasattr(d, 'geolocalizada') and d.geolocalizada]
+    return render_template("admin/mapa_admin.html", denuncias=denuncias_geo, tipos=NOMBRES_DENUNCIAS)
+
+@app.route("/admin/api/notificaciones")
+@admin_required
+def api_notificaciones_admin():
+    try:
+        from models import Solicitud, Denuncia
+        sp = len([s for s in Solicitud.cargar_todos() if s.estado == 'pendiente'])
+        dp = len([d for d in Denuncia.cargar_todos() if d.estado == 'pendiente'])
+        return jsonify({'count': sp + dp, 'notifications': []})
+    except:
+        return jsonify({'count': 0, 'notifications': []})
+
+# ================================================================
+# ERROR HANDLERS
 # ================================================================
 @app.errorhandler(404)
 def page_not_found(e):
@@ -1709,9 +1796,7 @@ def internal_server_error(e):
 def ratelimit_handler(e):
     flash("❌ Demasiadas solicitudes. Por favor espera un momento.", "error")
     if request.path.startswith('/api/'):
-        return jsonify({"error": "Rate limit exceeded",
-                        "message": "Has realizado demasiadas solicitudes.",
-                        "retry_after": e.description}), 429
+        return jsonify({"error": "Rate limit exceeded"}), 429
     return redirect(request.referrer or url_for('index'))
 
 # ================================================================
@@ -1727,24 +1812,34 @@ if __name__ == "__main__":
     print("=" * 60)
     print("✅ Cloudinary configurado para fotos de perfil")
     print("✅ Base de datos SQLAlchemy inicializada")
-    print("✅ Usuarios por defecto creados")
+    print("✅ Usuarios por defecto creados/verificados")
     print("✅ Configuración global disponible en templates")
     print("✅ API de Configuración disponible")
     print("✅ API de Notificaciones disponible")
     print("✅ API de Mensajería disponible")
-    print("✅ PROCESAR SOLICITUD VERSIÓN MEJORADA:")
-    print("   - Acepta 'servicio_id', 'servicio' o 'tipo'")
-    print("   - Acepta 'descripcion' o 'detalles_adicionales'")
-    print("   - Toma nombre/cédula del perfil si no vienen en el form")
-    print("   - Validaciones mejoradas")
-    print("✅ CANCELAR SOLICITUD:")
-    print("   - Ruta: /cancelar-solicitud/<solicitud_id>")
-    print("   - Solo permite cancelar si está 'pendiente' o 'en_proceso'")
-    print("   - Verifica permisos del usuario")
+    print("✅ RUTAS DE TRANSPARENCIA CORREGIDAS:")
+    print("   - /transparencia → transparencia.html")
+    print("   - /transparencia/estructura → transparencia_estructura.html")
+    print("   - /transparencia/integrantes → transparencia_integrantes.html")
+    print("   - Y todas las demás rutas de transparencia")
+    print("✅ PROCESAR SOLICITUD VERSIÓN MEJORADA")
+    print("=" * 60)
+    print("📌 RUTAS PRINCIPALES:")
+    print("   /                 → Inicio")
+    print("   /transparencia    → TRANSPARENCIA (CORREGIDO)")
+    print("   /mis-servicios    → MIS SERVICIOS SOLICITADOS")
+    print("   /mis-tramites     → MIS TRÁMITES")
+    print("   /mis-solicitudes  → Solo solicitudes")
+    print("   /mis-denuncias    → Solo denuncias")
+    print("   /mis-citas        → Solo citas")
+    print("   /solicitar-cita   → Solicitar cita")
+    print("   /mi-cuenta        → Mi perfil")
+    print("   /mapa             → Mapa de incidencias")
     print("=" * 60)
     print("🌐 Servidor en: http://localhost:5000")
     print("📡 API Configuración: http://localhost:5000/api/configuracion")
     print("🗺️ Mapa de Incidencias: http://localhost:5000/mapa")
+    print("🏛️ Transparencia: http://localhost:5000/transparencia")
     print("=" * 60)
     
     app.run(
