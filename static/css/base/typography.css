@@ -1,0 +1,76 @@
+/* ===== TYPOGRAPHY & FONTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+/* ===== SECTION TITLES ===== */
+.section-title {
+    font-size: clamp(2rem, 3.5vw, 2.5rem);
+    font-weight: 800;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: var(--space-5);
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    position: relative;
+}
+.section-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: var(--green);
+    margin: 1.2rem auto 0;
+    border-radius: var(--radius-full);
+}
+
+/* Cita institucional */
+.cita-institucional {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: clamp(1.6rem, 3.8vw, 2.2rem);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.45;
+    padding: var(--space-4);
+    letter-spacing: -0.02em;
+    position: relative;
+}
+
+/* Mensaje alcalde */
+.mensaje-principal {
+    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+    font-weight: 800;
+    color: var(--text);
+    padding-top: var(--space-5);
+    margin-bottom: var(--space-3);
+    line-height: 1.4;
+    font-style: italic;
+}
+
+.mensaje-texto {
+    font-size: 1.1rem;
+    color: var(--text-soft);
+    line-height: 1.9;
+    margin-bottom: var(--space-4);
+}
+
+.firma-nombre {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text);
+}
+.firma-cargo {
+    font-size: 0.85rem;
+    color: var(--green-dark);
+    font-weight: 700;
+    margin-top: 0.3rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* ===== ACTIVE LINK ===== */
+.main-nav a.active {
+    color: var(--green-dark);
+    font-weight: 700;
+}
+.main-nav a.active::after { width: 70%; }

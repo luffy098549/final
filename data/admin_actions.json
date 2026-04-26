@@ -172,5 +172,11 @@
     "tipo": "guardar_configuracion",
     "descripcion": "Configuración actualizada - Sección: general - 9 valores guardados",
     "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-04-25T20:05:20.108049",
+    "tipo": "actualizar_solicitud",
+    "descripcion": "Solicitud SOL-260425-51937 actualizada a en_proceso",
+    "admin": "superadmin@cutupu.gob.do"
   }
 ]

@@ -1,0 +1,106 @@
+/* ===== BOTONES ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: transform var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-primary {
+    background: var(--green-dark);
+    color: white;
+    box-shadow: var(--shadow-xs);
+}
+
+.btn-primary:hover {
+    background: var(--green);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-soft);
+    border: 2px solid var(--border);
+}
+
+.btn-outline:hover {
+    border-color: var(--green-dark);
+    color: var(--green-dark);
+    transform: translateY(-2px);
+}
+
+/* Botones para header rediseñado */
+.btn-outline-nav {
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    background: transparent;
+    border: 2px solid var(--verde-home);
+    color: var(--verde-home);
+    margin-left: 0.5rem;
+    white-space: nowrap;
+}
+
+.btn-outline-nav:hover {
+    background: var(--verde-home);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-primary-nav {
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    background: var(--verde-home);
+    color: white;
+    border: none;
+    margin-left: 0.5rem;
+    white-space: nowrap;
+}
+
+.btn-primary-nav:hover {
+    background: var(--verde-med-home);
+    transform: translateY(-2px);
+}
+
+/* Hero buttons */
+.btn-hero-primary {
+    background: var(--verde-home);
+    color: white;
+    box-shadow: var(--shadow-xs);
+}
+
+.btn-hero-primary:hover {
+    background: var(--verde-med-home);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-outline-hero {
+    background: transparent;
+    border: 2px solid var(--verde-home);
+    color: var(--verde-home);
+}
+
+.btn-outline-hero:hover {
+    background: var(--verde-home);
+    color: white;
+    transform: translateY(-2px);
+}

@@ -1,181 +1,756 @@
-<section class="galeria anim">
+<section class="galeria">
+
+    <!-- Fondo decorativo -->
+    <div class="galeria-bg">
+        <div class="galeria-bg-orb orb-a"></div>
+        <div class="galeria-bg-orb orb-b"></div>
+        <div class="galeria-bg-grid"></div>
+    </div>
+
     <div class="container">
-        <div class="section-eyebrow text-center">Cutupú en Imágenes</div>
-        <h2 class="section-title-serif text-center">Nuestro <span style="color: #2D5016;">entorno</span></h2>
-        <p class="galeria-subtitle">Conoce los espacios, obras y momentos que hacen grande a nuestra comunidad</p>
-        <div class="galeria-grid">
-            <div class="galeria-item large">
-                <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 10.09.13 PM.jpeg') }}" alt="Nuestro Entorno">
-                <div class="galeria-caption">
-                    <h4>Vista Panorámica</h4>
-                    <p>Nuestro hermoso distrito rodeado de naturaleza</p>
-                </div>
+
+        <!-- ── HEADER ── -->
+        <div class="galeria-header">
+            <div class="galeria-eyebrow anim" style="--d:0s">
+                <span class="eyebrow-icon"><i class="fas fa-images"></i></span>
+                <span>Cutupú en Imágenes</span>
             </div>
-            <div class="galeria-item">
-                <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 10.09.06 PM.jpeg') }}" alt="Parque Central">
-                <div class="galeria-caption">
-                    <h4>Parque Central</h4>
-                    <p>Espacio de recreación y encuentro familiar</p>
-                </div>
-            </div>
-            <div class="galeria-item">
-                <img src="{{ url_for('static', filename='img/Captura de pantalla 2026-02-19 212623.png') }}" alt="Sede de la Junta">
-                <div class="galeria-caption">
-                    <h4>Sede de la Junta Distrital</h4>
-                    <p>Oficina central del Ayuntamiento de Cutupú</p>
-                </div>
-            </div>
+
+            <h2 class="galeria-title anim" style="--d:.08s">
+                Nuestro <em class="galeria-accent">entorno</em>
+            </h2>
+
+            <p class="galeria-subtitle anim" style="--d:.15s">
+                Conoce los espacios, obras y momentos que hacen grande a nuestra comunidad
+            </p>
         </div>
-        <div class="galeria-footer">
-            <p>📍 Villa Cutupú, Río Verde Arriba - La Vega, República Dominicana</p>
-            <p class="galeria-small">Espacios públicos mantenidos por el Ayuntamiento para el disfrute de todos los ciudadanos</p>
+
+        <!-- ── GRID ── -->
+        <div class="galeria-grid">
+
+            <!-- Item grande -->
+            <div class="galeria-item large anim anim-left" style="--d:.10s"
+                 data-index="0">
+                <div class="galeria-img-wrap">
+                    <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 10.09.13 PM.jpeg') }}"
+                         alt="Vista Panorámica" loading="lazy">
+                    <div class="galeria-shimmer"></div>
+                </div>
+                <div class="galeria-overlay">
+                    <div class="galeria-caption">
+                        <span class="caption-tag"><i class="fas fa-mountain"></i> Paisaje</span>
+                        <h4>Vista Panorámica</h4>
+                        <p>Nuestro hermoso distrito rodeado de naturaleza</p>
+                    </div>
+                    <div class="galeria-zoom-btn">
+                        <i class="fas fa-expand-alt"></i>
+                    </div>
+                </div>
+                <div class="galeria-item-num">01</div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="galeria-item anim" style="--d:.18s"
+                 data-index="1">
+                <div class="galeria-img-wrap">
+                    <img src="{{ url_for('static', filename='img/WhatsApp Image 2026-02-16 at 10.09.06 PM.jpeg') }}"
+                         alt="Parque Central" loading="lazy">
+                    <div class="galeria-shimmer"></div>
+                </div>
+                <div class="galeria-overlay">
+                    <div class="galeria-caption">
+                        <span class="caption-tag"><i class="fas fa-tree"></i> Parque</span>
+                        <h4>Parque Central</h4>
+                        <p>Espacio de recreación y encuentro familiar</p>
+                    </div>
+                    <div class="galeria-zoom-btn">
+                        <i class="fas fa-expand-alt"></i>
+                    </div>
+                </div>
+                <div class="galeria-item-num">02</div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="galeria-item anim anim-right" style="--d:.26s"
+                 data-index="2">
+                <div class="galeria-img-wrap">
+                    <img src="{{ url_for('static', filename='img/Captura de pantalla 2026-02-19 212623.png') }}"
+                         alt="Sede de la Junta" loading="lazy">
+                    <div class="galeria-shimmer"></div>
+                </div>
+                <div class="galeria-overlay">
+                    <div class="galeria-caption">
+                        <span class="caption-tag"><i class="fas fa-building"></i> Sede</span>
+                        <h4>Sede de la Junta Distrital</h4>
+                        <p>Oficina central del Ayuntamiento de Cutupú</p>
+                    </div>
+                    <div class="galeria-zoom-btn">
+                        <i class="fas fa-expand-alt"></i>
+                    </div>
+                </div>
+                <div class="galeria-item-num">03</div>
+            </div>
+
+        </div>
+
+        <!-- ── FOOTER ── -->
+        <div class="galeria-footer anim" style="--d:.35s">
+            <div class="footer-left">
+                <div class="footer-pin">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div>
+                    <div class="footer-place">Villa Cutupú, Río Verde Arriba — La Vega, República Dominicana</div>
+                    <div class="footer-note">Espacios públicos mantenidos por el Ayuntamiento para el disfrute de todos los ciudadanos</div>
+                </div>
+            </div>
+            <a href="/galeria" class="galeria-ver-mas">
+                Ver galería completa <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ── LIGHTBOX ── -->
+    <div class="galeria-lightbox" id="galeriaLightbox" aria-hidden="true">
+        <div class="lb-backdrop"></div>
+        <button class="lb-close" aria-label="Cerrar">
+            <i class="fas fa-times"></i>
+        </button>
+        <button class="lb-prev" aria-label="Anterior">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="lb-next" aria-label="Siguiente">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="lb-content">
+            <img src="" alt="" class="lb-img">
+            <div class="lb-info">
+                <div class="lb-title"></div>
+                <div class="lb-desc"></div>
+                <div class="lb-counter"></div>
+            </div>
         </div>
     </div>
+
 </section>
 
 <style>
-    .galeria {
-        padding: 5rem 0;
-        background: #FBF7F0;
-    }
-    .container {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-    .section-eyebrow {
-        display: inline-block;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: #2D5016;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        background: #EAF2DC;
-        padding: 0.3rem 1.2rem;
-        border-radius: 2rem;
-    }
-    .section-eyebrow.text-center,
-    .section-title-serif.text-center {
-        text-align: center;
-        display: block;
-        width: fit-content;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .section-title-serif {
-        font-family: 'Playfair Display', serif;
-        font-size: clamp(2rem, 4vw, 2.8rem);
-        font-weight: 800;
-        margin-bottom: 1rem;
-        color: #1A2410;
-    }
-    .galeria-subtitle {
-        text-align: center;
-        color: #6B7280;
-        max-width: 600px;
-        margin: 0 auto 2rem auto;
-        line-height: 1.6;
-        font-size: 0.95rem;
-    }
+/* ── Sección ── */
+.galeria {
+    padding: 7rem 0;
+    background: var(--crema);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* ── Fondo ── */
+.galeria-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.galeria-bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: .06;
+}
+
+.orb-a {
+    width: 500px; height: 500px;
+    background: var(--verde);
+    top: -180px; left: -180px;
+    animation: galeriaOrb1 16s ease-in-out infinite;
+}
+
+.orb-b {
+    width: 400px; height: 400px;
+    background: var(--dorado);
+    bottom: -120px; right: -120px;
+    animation: galeriaOrb2 20s ease-in-out infinite;
+}
+
+.galeria-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(30,58,15,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30,58,15,.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
+
+@keyframes galeriaOrb1 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50%      { transform: translate(30px,20px) scale(1.08); }
+}
+@keyframes galeriaOrb2 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50%      { transform: translate(-20px,-25px) scale(1.06); }
+}
+
+/* ── Delays ── */
+.galeria .anim { transition-delay: var(--d, 0s); }
+
+/* ── Header ── */
+.galeria-header { text-align: center; margin-bottom: 3.5rem; }
+
+.galeria-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    background: var(--verde-xlight);
+    border: 1px solid rgba(74,122,40,.2);
+    padding: .4rem 1.1rem;
+    border-radius: var(--r-pill);
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--verde);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 1.2rem;
+}
+
+.eyebrow-icon {
+    width: 22px; height: 22px;
+    background: var(--verde);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: .6rem;
+}
+
+.galeria-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-weight: 700;
+    color: var(--texto);
+    margin-bottom: 1rem;
+    line-height: 1.1;
+}
+
+.galeria-accent {
+    font-style: italic;
+    color: var(--verde);
+    position: relative;
+    display: inline-block;
+}
+
+.galeria-accent::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--dorado), transparent);
+    border-radius: 3px;
+}
+
+.galeria-subtitle {
+    color: var(--gris-500);
+    font-size: .95rem;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.65;
+}
+
+/* ── Grid ── */
+.galeria-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1.25rem;
+    height: 560px;
+}
+
+/* ── Item base ── */
+.galeria-item {
+    position: relative;
+    border-radius: var(--r-block);
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: var(--sh-sm);
+    transition: transform .4s var(--spring), box-shadow .4s;
+}
+
+.galeria-item.large {
+    grid-row: 1 / 3;
+}
+
+.galeria-img-wrap {
+    position: absolute;
+    inset: 0;
+}
+
+.galeria-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .65s var(--smooth);
+}
+
+.galeria-shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(255,255,255,.06) 0%,
+        transparent 60%
+    );
+    pointer-events: none;
+}
+
+/* Hover */
+.galeria-item:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: var(--sh-lg);
+    z-index: 2;
+}
+
+.galeria-item:hover .galeria-img-wrap img {
+    transform: scale(1.07);
+}
+
+/* ── Overlay ── */
+.galeria-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(10,20,6,.88) 0%,
+        rgba(10,20,6,.35) 45%,
+        transparent 75%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 1.2rem;
+    opacity: 0;
+    transition: opacity .35s var(--smooth);
+}
+
+.galeria-item:hover .galeria-overlay { opacity: 1; }
+
+.galeria-caption {
+    align-self: flex-start;
+    margin-top: auto;
+    transform: translateY(12px);
+    transition: transform .35s var(--spring);
+}
+
+.galeria-item:hover .galeria-caption { transform: translateY(0); }
+
+.caption-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.15);
+    color: rgba(255,255,255,.9);
+    font-size: .68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: .25rem .7rem;
+    border-radius: var(--r-pill);
+    margin-bottom: .55rem;
+}
+
+.galeria-caption h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: .25rem;
+    line-height: 1.2;
+}
+
+.galeria-caption p {
+    font-size: .76rem;
+    color: rgba(255,255,255,.78);
+    line-height: 1.4;
+}
+
+/* Botón zoom */
+.galeria-zoom-btn {
+    width: 38px; height: 38px;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.2);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: .85rem;
+    align-self: flex-start;
+    transform: scale(0) rotate(-45deg);
+    transition: transform .35s var(--spring) .05s, background .2s;
+}
+
+.galeria-item:hover .galeria-zoom-btn {
+    transform: scale(1) rotate(0deg);
+}
+
+.galeria-zoom-btn:hover {
+    background: var(--dorado);
+}
+
+/* Número decorativo */
+.galeria-item-num {
+    position: absolute;
+    top: 1rem; left: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem;
+    font-weight: 700;
+    color: rgba(255,255,255,.08);
+    line-height: 1;
+    pointer-events: none;
+    transition: color .3s;
+}
+
+.galeria-item:hover .galeria-item-num {
+    color: rgba(255,255,255,.14);
+}
+
+/* ── Footer ── */
+.galeria-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 1.4rem 2rem;
+    background: white;
+    border-radius: var(--r-block);
+    border: 1px solid var(--gris-200);
+    box-shadow: var(--sh-xs);
+    flex-wrap: wrap;
+    transition: box-shadow .3s, transform .3s var(--spring);
+}
+
+.galeria-footer:hover {
+    box-shadow: var(--sh-sm);
+    transform: translateY(-2px);
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.footer-pin {
+    width: 42px; height: 42px;
+    background: var(--verde-xlight);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--verde);
+    font-size: 1rem;
+    flex-shrink: 0;
+    animation: pinBounce 2.5s ease-in-out infinite;
+}
+
+@keyframes pinBounce {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-5px); }
+}
+
+.footer-place {
+    font-weight: 600;
+    font-size: .88rem;
+    color: var(--texto);
+    margin-bottom: .2rem;
+}
+
+.footer-note {
+    font-size: .74rem;
+    color: var(--gris-400);
+    line-height: 1.4;
+}
+
+.galeria-ver-mas {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .65rem 1.4rem;
+    background: var(--verde);
+    color: white;
+    border-radius: var(--r-pill);
+    font-weight: 600;
+    font-size: .83rem;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 3px 14px rgba(30,58,15,.28);
+    transition: all .28s var(--spring);
+}
+
+.galeria-ver-mas i {
+    transition: transform .28s var(--spring);
+}
+
+.galeria-ver-mas:hover {
+    background: var(--verde-med);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 22px rgba(30,58,15,.4);
+}
+
+.galeria-ver-mas:hover i { transform: translateX(5px); }
+
+/* ══════════════════════════════════════
+   LIGHTBOX
+══════════════════════════════════════ */
+.galeria-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .35s var(--smooth), visibility .35s;
+}
+
+.galeria-lightbox.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.lb-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5,10,3,.95);
+    backdrop-filter: blur(10px);
+    cursor: zoom-out;
+}
+
+.lb-content {
+    position: relative;
+    z-index: 1;
+    max-width: min(90vw, 1100px);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    transform: scale(.9);
+    transition: transform .4s var(--spring);
+}
+
+.galeria-lightbox.active .lb-content { transform: scale(1); }
+
+.lb-img {
+    max-height: 75vh;
+    max-width: 100%;
+    border-radius: var(--r-card);
+    box-shadow: 0 30px 80px rgba(0,0,0,.6);
+    object-fit: contain;
+    display: block;
+}
+
+.lb-info {
+    text-align: center;
+    color: white;
+}
+
+.lb-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: .3rem;
+}
+
+.lb-desc {
+    font-size: .85rem;
+    color: rgba(255,255,255,.6);
+    margin-bottom: .5rem;
+}
+
+.lb-counter {
+    font-size: .72rem;
+    color: var(--dorado);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Botones lightbox */
+.lb-close,
+.lb-prev,
+.lb-next {
+    position: fixed;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.15);
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, transform .3s var(--spring);
+    z-index: 2;
+    backdrop-filter: blur(6px);
+}
+
+.lb-close {
+    top: 1.5rem; right: 1.5rem;
+    width: 46px; height: 46px;
+    font-size: .95rem;
+}
+
+.lb-close:hover {
+    background: #dc2626;
+    transform: rotate(90deg) scale(1.1);
+}
+
+.lb-prev, .lb-next {
+    top: 50%; transform: translateY(-50%);
+    width: 52px; height: 52px;
+    font-size: 1.1rem;
+}
+
+.lb-prev { left: 1.5rem; }
+.lb-next { right: 1.5rem; }
+
+.lb-prev:hover { background: var(--verde); transform: translateY(-50%) translateX(-4px) scale(1.1); }
+.lb-next:hover { background: var(--verde); transform: translateY(-50%) translateX(4px) scale(1.1); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .galeria { padding: 5rem 0; }
+
     .galeria-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-auto-rows: minmax(250px, auto);
-        gap: 1.5rem;
-        margin-top: 2rem;
-    }
-    .galeria-item {
-        position: relative;
-        border-radius: 1rem;
-        overflow: hidden;
-        aspect-ratio: 16/9;
-        cursor: pointer;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-    }
-    .galeria-item.large {
-        grid-row: span 2;
-        aspect-ratio: auto;
-        height: 100%;
-        min-height: 350px;
-    }
-    .galeria-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-    .galeria-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
-    .galeria-item:hover img {
-        transform: scale(1.05);
-    }
-    .galeria-caption {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-        color: white;
-        padding: 1.5rem 1rem 1rem 1rem;
-        transform: translateY(100%);
-        transition: transform 0.3s ease;
-    }
-    .galeria-item:hover .galeria-caption {
-        transform: translateY(0);
-    }
-    .galeria-caption h4 {
-        font-size: 1rem;
-        font-weight: 700;
-        margin-bottom: 0.25rem;
-    }
-    .galeria-caption p {
-        font-size: 0.75rem;
-        opacity: 0.9;
-    }
-    .galeria-footer {
-        margin-top: 2.5rem;
-        text-align: center;
-        padding: 1.5rem;
-        background: white;
-        border-radius: 1rem;
-        border: 1px solid #E5E7EB;
-    }
-    .galeria-footer p {
-        color: #4B5563;
-        font-size: 0.9rem;
-        margin-bottom: 0.25rem;
-    }
-    .galeria-small {
-        font-size: 0.75rem !important;
-        color: #9CA3AF !important;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        height: auto;
     }
 
-    @media (max-width: 900px) {
-        .galeria-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        .galeria-item.large {
-            grid-row: auto;
-            min-height: auto;
-            aspect-ratio: 16/9;
-        }
+    .galeria-item.large {
+        grid-column: 1 / 3;
+        grid-row: auto;
+        aspect-ratio: 16/9;
     }
-    @media (max-width: 640px) {
-        .galeria {
-            padding: 3rem 0;
-        }
-        .galeria-grid {
-            grid-template-columns: 1fr;
-        }
-        .galeria-subtitle {
-            font-size: 0.85rem;
-        }
-        .galeria-footer p {
-            font-size: 0.8rem;
-        }
+
+    .galeria-item { aspect-ratio: 4/3; }
+
+    /* Overlay siempre visible en móvil */
+    .galeria-overlay { opacity: 1; }
+    .galeria-caption { transform: translateY(0); }
+    .galeria-zoom-btn { transform: scale(1) rotate(0); }
+}
+
+@media (max-width: 640px) {
+    .galeria-grid {
+        grid-template-columns: 1fr;
     }
+
+    .galeria-item.large { grid-column: auto; }
+
+    .galeria-footer {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.2rem;
+    }
+
+    .footer-left { flex-direction: column; }
+
+    .lb-prev { left: .75rem; }
+    .lb-next { right: .75rem; }
+}
 </style>
+
+<script>
+(function(){
+    'use strict';
+
+    /* ── Datos de las imágenes ── */
+    const fotos = [
+        {
+            src:   document.querySelectorAll('.galeria-item')[0]?.querySelector('img')?.src || '',
+            title: 'Vista Panorámica',
+            desc:  'Nuestro hermoso distrito rodeado de naturaleza'
+        },
+        {
+            src:   document.querySelectorAll('.galeria-item')[1]?.querySelector('img')?.src || '',
+            title: 'Parque Central',
+            desc:  'Espacio de recreación y encuentro familiar'
+        },
+        {
+            src:   document.querySelectorAll('.galeria-item')[2]?.querySelector('img')?.src || '',
+            title: 'Sede de la Junta Distrital',
+            desc:  'Oficina central del Ayuntamiento de Cutupú'
+        }
+    ];
+
+    let current = 0;
+
+    const lb      = document.getElementById('galeriaLightbox');
+    const lbImg   = lb?.querySelector('.lb-img');
+    const lbTitle = lb?.querySelector('.lb-title');
+    const lbDesc  = lb?.querySelector('.lb-desc');
+    const lbCount = lb?.querySelector('.lb-counter');
+
+    function openLb(index) {
+        current = index;
+        showFoto();
+        lb.classList.add('active');
+        lb.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLb() {
+        lb.classList.remove('active');
+        lb.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    function showFoto() {
+        const f = fotos[current];
+        if (!f || !lbImg) return;
+        lbImg.style.opacity = '0';
+        lbImg.style.transform = 'scale(.94)';
+        setTimeout(() => {
+            lbImg.src = f.src;
+            lbImg.alt = f.title;
+            if (lbTitle) lbTitle.textContent = f.title;
+            if (lbDesc)  lbDesc.textContent  = f.desc;
+            if (lbCount) lbCount.textContent = `${current + 1} / ${fotos.length}`;
+            lbImg.style.opacity = '1';
+            lbImg.style.transform = 'scale(1)';
+            lbImg.style.transition = 'opacity .3s, transform .35s var(--spring, cubic-bezier(.34,1.56,.64,1))';
+        }, 100);
+    }
+
+    function prevFoto() {
+        current = (current - 1 + fotos.length) % fotos.length;
+        showFoto();
+    }
+
+    function nextFoto() {
+        current = (current + 1) % fotos.length;
+        showFoto();
+    }
+
+    /* Clicks en items */
+    document.querySelectorAll('.galeria-item').forEach((item, i) => {
+        item.addEventListener('click', () => openLb(i));
+    });
+
+    /* Controles lightbox */
+    lb?.querySelector('.lb-close')?.addEventListener('click', closeLb);
+    lb?.querySelector('.lb-backdrop')?.addEventListener('click', closeLb);
+    lb?.querySelector('.lb-prev')?.addEventListener('click', prevFoto);
+    lb?.querySelector('.lb-next')?.addEventListener('click', nextFoto);
+
+    /* Teclado */
+    document.addEventListener('keydown', e => {
+        if (!lb?.classList.contains('active')) return;
+        if (e.key === 'Escape')     closeLb();
+        if (e.key === 'ArrowLeft')  prevFoto();
+        if (e.key === 'ArrowRight') nextFoto();
+    });
+
+})();
+</script>

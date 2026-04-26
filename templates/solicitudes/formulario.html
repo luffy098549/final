@@ -1,32 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Solicitud de {{ nombre_servicio }} — Villa Cutupú{% endblock %}
+{% block title %}Solicitud de {{ nombre_servicio }} – Villa Cutupú{% endblock %}
 
 {% block content %}
-<section style="min-height: 85vh; padding: var(--space-7) 0; background: var(--gray-50);">
-  <div class="container" style="max-width: 780px;">
+<section class="sol-page">
+  <div class="container sol-container">
 
     <!-- Breadcrumb -->
-    <nav style="margin-bottom: var(--space-4);">
-      <span style="font-size: 0.85rem; color: var(--text-light);">
-        <a href="{{ url_for('index') }}" style="color: var(--green-dark); text-decoration: none; font-weight: 600;">Inicio</a>
-        <span style="margin: 0 0.5rem; color: var(--gray-400);">›</span>
-        <a href="{{ url_for('servicios') }}" style="color: var(--green-dark); text-decoration: none; font-weight: 600;">Servicios</a>
-        <span style="margin: 0 0.5rem; color: var(--gray-400);">›</span>
-        <span style="color: var(--text-light);">{{ nombre_servicio }}</span>
-      </span>
+    <nav class="sol-breadcrumb">
+      <a href="{{ url_for('index') }}">Inicio</a>
+      <span>›</span>
+      <a href="{{ url_for('servicios') }}">Servicios</a>
+      <span>›</span>
+      <span>{{ nombre_servicio }}</span>
     </nav>
 
     <!-- Encabezado -->
-    <div style="margin-bottom: var(--space-5);">
-      <p style="font-size: 0.82rem; font-weight: 700; color: var(--green-dark); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem;">
-        Trámites municipales
-      </p>
-      <h1 style="font-size: clamp(1.7rem, 3vw, 2.2rem); font-weight: 800; color: var(--text); letter-spacing: -0.025em; margin-bottom: 0.5rem; line-height: 1.2;">
-        Solicitud de servicio
-      </h1>
-      <p style="color: var(--text-light); font-size: 1rem;">
-        Complete el formulario con la información requerida para procesar su solicitud.
-      </p>
+    <div class="sol-encabezado">
+      <p class="sol-eyebrow">Trámites municipales</p>
+      <h1 class="sol-titulo">Solicitud de servicio</h1>
+      <p class="sol-subtitulo">Complete el formulario con la información requerida para procesar su solicitud.</p>
     </div>
 
     <!-- Tarjeta principal -->
@@ -34,7 +26,7 @@
 
       <!-- Header verde -->
       <div class="sol-header">
-        <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="sol-header-inner">
           <div class="sol-header-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -45,19 +37,15 @@
             </svg>
           </div>
           <div>
-            <p style="font-size: 0.75rem; font-weight: 600; opacity: 0.8; margin: 0; text-transform: uppercase; letter-spacing: 0.08em;">
-              Servicio seleccionado
-            </p>
-            <h2 style="font-size: 1.15rem; font-weight: 800; margin: 0; line-height: 1.3; color: white;">
-              {{ nombre_servicio }}
-            </h2>
+            <p class="sol-header-label">Servicio seleccionado</p>
+            <h2 class="sol-header-titulo">{{ nombre_servicio }}</h2>
           </div>
         </div>
       </div>
 
       <!-- Alerta de plazo -->
       <div class="sol-alert sol-alert--info">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px">
           <circle cx="12" cy="12" r="10"/>
           <line x1="12" y1="8" x2="12" y2="12"/>
           <line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -68,16 +56,16 @@
         </span>
       </div>
 
-      <!-- Alertas específicas por tipo de servicio -->
+      <!-- Alertas específicas -->
       {% if tipo == 'funeraria' %}
       <div class="sol-alert sol-alert--warning">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
           <line x1="12" y1="9" x2="12" y2="13"/>
           <line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
         <div>
-          <strong style="display: block; margin-bottom: 0.4rem;">Para servicios funerarios, indique en la descripción:</strong>
+          <strong style="display:block;margin-bottom:0.4rem">Para servicios funerarios, indique en la descripción:</strong>
           <ul class="sol-list">
             <li>Nombre completo del fallecido</li>
             <li>Fecha y lugar del deceso</li>
@@ -89,13 +77,13 @@
 
       {% elif tipo == 'uso-suelo' %}
       <div class="sol-alert sol-alert--warning">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
           <line x1="12" y1="9" x2="12" y2="13"/>
           <line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
         <div>
-          <strong style="display: block; margin-bottom: 0.4rem;">Para certificados de uso de suelo, indique:</strong>
+          <strong style="display:block;margin-bottom:0.4rem">Para certificados de uso de suelo, indique:</strong>
           <ul class="sol-list">
             <li>Dirección completa del predio</li>
             <li>Número de catastro (si lo conoce)</li>
@@ -106,13 +94,13 @@
 
       {% elif tipo == 'catastro' %}
       <div class="sol-alert sol-alert--warning">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
           <line x1="12" y1="9" x2="12" y2="13"/>
           <line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
         <div>
-          <strong style="display: block; margin-bottom: 0.4rem;">Para trámites de catastro, tenga a mano:</strong>
+          <strong style="display:block;margin-bottom:0.4rem">Para trámites de catastro, tenga a mano:</strong>
           <ul class="sol-list">
             <li>Número de cédula del propietario</li>
             <li>Referencia catastral del inmueble</li>
@@ -123,17 +111,51 @@
 
       {% elif tipo == 'planeamiento' %}
       <div class="sol-alert sol-alert--warning">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
           <line x1="12" y1="9" x2="12" y2="13"/>
           <line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
         <div>
-          <strong style="display: block; margin-bottom: 0.4rem;">Para trámites de planeamiento urbano, incluya:</strong>
+          <strong style="display:block;margin-bottom:0.4rem">Para trámites de planeamiento urbano, incluya:</strong>
           <ul class="sol-list">
             <li>Dirección y referencia del predio</li>
             <li>Tipo de construcción o proyecto</li>
             <li>Planos o croquis si los tiene disponibles</li>
+          </ul>
+        </div>
+      </div>
+
+      {% elif tipo == 'ornato' %}
+      <div class="sol-alert sol-alert--warning">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <div>
+          <strong style="display:block;margin-bottom:0.4rem">Para préstamo de áreas, incluya:</strong>
+          <ul class="sol-list">
+            <li>Nombre del espacio solicitado</li>
+            <li>Fecha y hora del evento</li>
+            <li>Número estimado de asistentes</li>
+          </ul>
+        </div>
+      </div>
+
+      {% elif tipo == 'oaim' %}
+      <div class="sol-alert sol-alert--warning">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <div>
+          <strong style="display:block;margin-bottom:0.4rem">Para solicitudes OAI/M, especifique:</strong>
+          <ul class="sol-list">
+            <li>Tipo de información solicitada</li>
+            <li>Período de tiempo de interés</li>
+            <li>Propósito de la solicitud</li>
           </ul>
         </div>
       </div>
@@ -146,10 +168,7 @@
         <!-- Servicio (solo lectura) -->
         <div class="sol-group">
           <label class="sol-label">Servicio solicitado</label>
-          <input type="text"
-                 class="sol-input sol-input--disabled"
-                 value="{{ nombre_servicio }}"
-                 disabled>
+          <input type="text" class="sol-input sol-input--disabled" value="{{ nombre_servicio }}" disabled>
           <span class="sol-hint">Tipo de trámite seleccionado</span>
         </div>
 
@@ -163,6 +182,7 @@
                     name="descripcion"
                     rows="6"
                     required
+                    maxlength="1000"
                     placeholder="Describa detalladamente lo que necesita..."></textarea>
           <span class="sol-hint">Máximo 1000 caracteres. Cuanto más específico, más rápido podremos atenderle.</span>
         </div>
@@ -181,17 +201,17 @@
 
         <!-- Botones -->
         <div class="sol-actions">
-          <a href="{{ url_for('servicios') }}" class="sol-btn sol-btn--secondary">
+          <a href="{{ url_for('servicios') }}" class="sol-btn-secondary">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"/>
               <polyline points="12 19 5 12 12 5"/>
             </svg>
             Cancelar
           </a>
-          <button type="submit" class="sol-btn sol-btn--primary">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <button type="submit" class="sol-btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="22" y1="2" x2="11" y2="13"/>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2" fill="white" stroke="white"/>
             </svg>
             Enviar solicitud
           </button>
@@ -201,7 +221,7 @@
     </div>
 
     <!-- Nota legal -->
-    <p style="text-align: center; font-size: 0.82rem; color: var(--text-light); margin-top: var(--space-4); line-height: 1.6;">
+    <p class="sol-nota-legal">
       Al enviar este formulario, acepta que sus datos serán procesados por la Junta Distrital de Villa Cutupú con fines administrativos.
     </p>
 
@@ -209,32 +229,122 @@
 </section>
 
 <style>
-/* ── Tarjeta contenedora ── */
-.sol-card {
-  background: var(--white);
-  border-radius: var(--radius-block);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  margin-bottom: var(--space-3);
+/* ══════════════════════════════════════════
+   PÁGINA
+══════════════════════════════════════════ */
+.sol-page {
+  min-height: 85vh;
+  padding: 6rem 0 4rem;
+  background: #f8f9fa;
 }
 
-/* ── Header ── */
+.sol-container {
+  max-width: 780px !important;
+}
+
+/* ── Breadcrumb ── */
+.sol-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.sol-breadcrumb a {
+  color: #2d6a4f !important;
+  text-decoration: none !important;
+  font-weight: 600;
+}
+
+.sol-breadcrumb a:hover {
+  text-decoration: underline !important;
+}
+
+.sol-breadcrumb span:not(.sol-breadcrumb a + span) {
+  color: #aaa;
+}
+
+/* ── Encabezado ── */
+.sol-encabezado {
+  margin-bottom: 2rem;
+}
+
+.sol-eyebrow {
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  color: #2d6a4f !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 0.4rem !important;
+}
+
+.sol-titulo {
+  font-size: clamp(1.7rem, 3vw, 2.2rem) !important;
+  font-weight: 800 !important;
+  color: #1a1a1a !important;
+  letter-spacing: -0.025em !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.2 !important;
+}
+
+.sol-subtitulo {
+  color: #666 !important;
+  font-size: 1rem !important;
+  margin: 0 !important;
+}
+
+/* ══════════════════════════════════════════
+   TARJETA
+══════════════════════════════════════════ */
+.sol-card {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Header verde ── */
 .sol-header {
-  padding: var(--space-4) var(--space-5);
-  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
-  color: white;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+}
+
+.sol-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .sol-header-icon {
   width: 46px;
   height: 46px;
-  border-radius: var(--radius-card);
-  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.22);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: white;
+  color: white !important;
+}
+
+.sol-header-label {
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  color: rgba(255,255,255,0.82) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  margin: 0 0 0.2rem 0 !important;
+}
+
+.sol-header-titulo {
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+  line-height: 1.3 !important;
 }
 
 /* ── Alertas ── */
@@ -242,22 +352,30 @@
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-  padding: var(--space-3) var(--space-5);
+  padding: 1rem 2rem;
   font-size: 0.93rem;
   line-height: 1.65;
   border-bottom: 1px solid transparent;
 }
 
 .sol-alert--info {
-  background: var(--blue-sky-light);
-  color: #1a4f75;
-  border-color: rgba(43, 106, 158, 0.15);
+  background: #ebf4fb;
+  color: #1a4f75 !important;
+  border-color: rgba(43,106,158,0.15);
 }
 
+.sol-alert--info svg { stroke: #2b6a9e; }
+
 .sol-alert--warning {
-  background: #FFFBEB;
-  color: #78490a;
-  border-color: rgba(180, 120, 20, 0.15);
+  background: #fffbeb;
+  color: #78490a !important;
+  border-color: rgba(180,120,20,0.15);
+}
+
+.sol-alert--warning svg { stroke: #b45309; }
+
+.sol-alert strong {
+  color: inherit !important;
 }
 
 .sol-list {
@@ -270,17 +388,18 @@
 
 .sol-list li {
   font-size: 0.9rem;
+  color: inherit !important;
 }
 
 /* ── Cuerpo del formulario ── */
 .sol-form-body {
-  padding: var(--space-5);
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 1.5rem;
 }
 
-/* ── Grupos de campo ── */
+/* ── Grupos ── */
 .sol-group {
   display: flex;
   flex-direction: column;
@@ -288,127 +407,167 @@
 }
 
 .sol-label {
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  color: #1a1a1a !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  font-family: inherit !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
 }
 
 .sol-required {
-  color: #C0392B;
-  font-weight: 700;
-  font-size: 0.95rem;
+  color: #c0392b !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
 }
 
 .sol-optional {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-light);
-  background: var(--gray-100);
-  padding: 0.15rem 0.65rem;
-  border-radius: var(--radius-full);
-  margin-left: 0.2rem;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  color: #666 !important;
+  background: #f0f0f0 !important;
+  padding: 0.15rem 0.65rem !important;
+  border-radius: 999px !important;
+  margin-left: 0.2rem !important;
 }
 
 /* ── Inputs ── */
 .sol-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 0.97rem;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  color: var(--text);
-  background: var(--white);
-  border: 1.5px solid var(--gray-300);
-  border-radius: var(--radius-card);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
+  width: 100% !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.97rem !important;
+  font-family: inherit !important;
+  color: #1a1a1a !important;
+  background: #ffffff !important;
+  border: 1.5px solid #d1d5db !important;
+  border-radius: 12px !important;
+  outline: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+  box-sizing: border-box !important;
 }
 
 .sol-input:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(126, 143, 118, 0.15);
+  border-color: #2d6a4f !important;
+  box-shadow: 0 0 0 3px rgba(45,106,79,0.15) !important;
 }
 
 .sol-input--disabled {
-  background: var(--gray-50);
-  color: var(--text-light);
-  cursor: not-allowed;
-  border-color: var(--gray-200);
+  background: #f9fafb !important;
+  color: #6b7280 !important;
+  cursor: not-allowed !important;
+  border-color: #e5e7eb !important;
 }
 
 .sol-textarea {
-  resize: vertical;
-  min-height: 120px;
-  line-height: 1.65;
+  resize: vertical !important;
+  min-height: 130px !important;
+  line-height: 1.65 !important;
 }
 
 .sol-hint {
-  font-size: 0.8rem;
-  color: var(--text-light);
-  line-height: 1.4;
+  font-size: 0.8rem !important;
+  color: #6b7280 !important;
+  line-height: 1.4 !important;
 }
 
-/* ── Botones ── */
+/* ══════════════════════════════════════════
+   BOTONES — sin variables CSS, colores fijos
+══════════════════════════════════════════ */
 .sol-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--border);
-  margin-top: var(--space-2);
+  display: flex !important;
+  gap: 1rem !important;
+  justify-content: flex-end !important;
+  padding-top: 1.5rem !important;
+  border-top: 1px solid #e5e7eb !important;
+  margin-top: 0.5rem !important;
 }
 
-.sol-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.6rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  border-radius: var(--radius-card);
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  transition: transform var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
-  white-space: nowrap;
+.sol-btn-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: 0.8rem 1.8rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  font-family: inherit !important;
+  background-color: #2d6a4f !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  box-shadow: 0 4px 14px rgba(45,106,79,0.35) !important;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
 }
 
-.sol-btn--primary {
-  background: var(--green-dark);
-  color: white;
-  box-shadow: var(--shadow-xs);
+.sol-btn-primary:hover {
+  background-color: #40916c !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 22px rgba(45,106,79,0.45) !important;
+  text-decoration: none !important;
 }
 
-.sol-btn--primary:hover {
-  background: var(--green);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+.sol-btn-primary:active {
+  transform: translateY(0) !important;
 }
 
-.sol-btn--secondary {
-  background: transparent;
-  color: var(--text-soft);
-  border: 1.5px solid var(--gray-300);
+.sol-btn-secondary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: 0.8rem 1.6rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  font-family: inherit !important;
+  background-color: transparent !important;
+  color: #374151 !important;
+  border: 1.5px solid #d1d5db !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s, transform 0.2s !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
 }
 
-.sol-btn--secondary:hover {
-  border-color: var(--gray-500);
-  color: var(--text);
-  transform: translateY(-2px);
+.sol-btn-secondary:hover {
+  border-color: #6b7280 !important;
+  color: #111827 !important;
+  background-color: #f3f4f6 !important;
+  transform: translateY(-2px) !important;
+  text-decoration: none !important;
 }
 
-/* ── Responsive ── */
-@media (max-width: 540px) {
-  .sol-header       { padding: var(--space-3) var(--space-4); }
-  .sol-alert        { padding: var(--space-3) var(--space-4); }
-  .sol-form-body    { padding: var(--space-4); }
-  .sol-actions      { flex-direction: column-reverse; }
-  .sol-btn          { width: 100%; justify-content: center; }
+/* ── Nota legal ── */
+.sol-nota-legal {
+  text-align: center !important;
+  font-size: 0.82rem !important;
+  color: #6b7280 !important;
+  margin-top: 1.5rem !important;
+  line-height: 1.6 !important;
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .sol-page        { padding: 5rem 0 3rem; }
+  .sol-header      { padding: 1.2rem 1.25rem; }
+  .sol-alert       { padding: 1rem 1.25rem; }
+  .sol-form-body   { padding: 1.25rem; }
+  .sol-actions     { flex-direction: column-reverse !important; }
+  .sol-btn-primary,
+  .sol-btn-secondary { width: 100% !important; }
 }
 </style>
 {% endblock %}

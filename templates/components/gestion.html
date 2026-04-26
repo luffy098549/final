@@ -1,208 +1,729 @@
-<section class="gestion anim">
-    <div class="container gestion-container">
-        <div class="gestion-texto">
-            <div class="section-eyebrow">Ayuntamiento de Cutupú</div>
-            <h2 class="section-title-serif">Nuestra <span style="color:#2D5016;">Gestión Municipal</span></h2>
-            <blockquote class="gestion-cita">
-                “Mantener el distrito limpio, organizado y en condiciones saludables para todos los habitantes”
-            </blockquote>
-            <p class="gestion-descripcion">
-                El Ayuntamiento de Cutupú es una institución de gobierno local encargada de administrar y atender las necesidades de nuestro distrito. Bajo la dirección del Alcalde <strong>Rober Donald Tolentino</strong>, trabajamos para resolver las problemáticas de nuestra comunidad.
-            </p>
-            <div class="gestion-funciones">
-                <h4>📋 Nuestras funciones principales</h4>
-                <ul>
-                    <li><i class="fas fa-trash-alt"></i> Limpieza y recogida de basura</li>
-                    <li><i class="fas fa-road"></i> Mantenimiento de calles y canaletas</li>
-                    <li><i class="fas fa-church"></i> Cuidado de cementerios</li>
-                    <li><i class="fas fa-tree"></i> Construcción y mantenimiento de obras públicas (parques, canchas, clubes, iglesias)</li>
-                </ul>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Municipal - Ayuntamiento de Cutupú</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colores principales */
+            --verde: #2E6B2F;
+            --verde-soft: #4A8C3F;
+            --verde-med: #1E4F1E;
+            --verde-xlight: #EAF5E6;
+            --dorado: #C9A03D;
+            --dorado-soft: #D4AF5A;
+            
+            /* Colores neutros */
+            --texto: #1A2A1A;
+            --gris-900: #1A2A1A;
+            --gris-700: #3D4F3D;
+            --gris-600: #5A6E5A;
+            --gris-500: #7A8E7A;
+            --gris-400: #9AAB9A;
+            --gris-200: #D4DCD4;
+            --gris-100: #E8EEE8;
+            --crema: #FDF8F0;
+            
+            /* Sombras */
+            --sh-xs: 0 1px 2px rgba(0,0,0,0.04);
+            --sh-sm: 0 4px 12px rgba(0,0,0,0.06);
+            --sh-md: 0 12px 28px rgba(0,0,0,0.08);
+            
+            /* Bordes */
+            --r-sm: 8px;
+            --r-card: 16px;
+            --r-block: 24px;
+            
+            /* Animaciones */
+            --spring: cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            --smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: white;
+            overflow-x: hidden;
+        }
+
+        /* ── Sección ── */
+        .gestion {
+            padding: 6rem 0;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ── Fondo decorativo ── */
+        .gestion-bg-deco {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .gestion-bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: .045;
+        }
+
+        .gestion-bg-circle.c1 {
+            width: 600px;
+            height: 600px;
+            background: var(--verde);
+            top: -200px;
+            right: -200px;
+            animation: gBgFloat1 14s ease-in-out infinite;
+        }
+
+        .gestion-bg-circle.c2 {
+            width: 400px;
+            height: 400px;
+            background: var(--dorado);
+            bottom: -150px;
+            left: -150px;
+            animation: gBgFloat2 18s ease-in-out infinite;
+        }
+
+        .gestion-bg-stripe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--verde), var(--dorado), transparent);
+            opacity: .4;
+        }
+
+        @keyframes gBgFloat1 {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(-30px,20px) scale(1.05); }
+        }
+        @keyframes gBgFloat2 {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(20px,-20px) scale(1.08); }
+        }
+
+        /* ── Layout ── */
+        .gestion-container {
+            display: flex;
+            gap: 4rem;
+            align-items: flex-start;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── LADO IZQUIERDO ── */
+        .gestion-texto {
+            flex: 1.1;
+        }
+
+        /* Eyebrow */
+        .gestion-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--verde);
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.5s ease forwards;
+            animation-delay: var(--d, 0s);
+        }
+
+        .eyebrow-line {
+            display: block;
+            width: 35px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--verde), var(--dorado));
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Título */
+        .gestion-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4.5vw, 3.2rem);
+            font-weight: 700;
+            line-height: 1.15;
+            color: var(--texto);
+            margin-bottom: 1.8rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.5s ease forwards;
+            animation-delay: var(--d, 0s);
+        }
+
+        .gestion-title em {
+            font-style: italic;
+            font-weight: 600;
+            color: var(--gris-600);
+        }
+
+        .title-highlight {
+            color: var(--verde);
+            position: relative;
+            display: inline-block;
+        }
+
+        .title-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--dorado), transparent);
+            border-radius: 3px;
+        }
+
+        /* Cita */
+        .gestion-cita {
+            position: relative;
+            background: linear-gradient(135deg, var(--verde-xlight), #FFF9EE);
+            border-left: 4px solid var(--verde);
+            border-radius: 0 var(--r-card) var(--r-card) 0;
+            padding: 1.4rem 1.8rem;
+            margin: 0 0 1.8rem 0;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--verde-med);
+            line-height: 1.55;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.5s ease forwards;
+            animation-delay: var(--d, 0s);
+        }
+
+        .cita-comilla {
+            font-size: 2rem;
+            line-height: 1;
+            color: var(--dorado);
+            font-weight: 800;
+            vertical-align: middle;
+            margin: 0 .2rem;
+        }
+
+        /* Descripción */
+        .gestion-descripcion {
+            color: var(--gris-600);
+            line-height: 1.75;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.5s ease forwards;
+            animation-delay: var(--d, 0s);
+        }
+
+        .gestion-descripcion strong {
+            color: var(--verde);
+            font-weight: 700;
+        }
+
+        /* Funciones */
+        .gestion-funciones {
+            background: var(--crema);
+            border-radius: var(--r-block);
+            padding: 1.6rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gris-100);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.5s ease forwards;
+            animation-delay: var(--d, 0s);
+        }
+
+        .funciones-header {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--texto);
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--gris-200);
+        }
+
+        .funciones-header i {
+            color: var(--verde);
+            font-size: 1.1rem;
+        }
+
+        .funciones-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .funciones-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            font-size: 0.88rem;
+            color: var(--gris-600);
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--r-sm);
+            transition: all 0.25s ease;
+        }
+
+        .funciones-list li:hover {
+            background: var(--verde-xlight);
+            transform: translateX(6px);
+        }
+
+        .func-icon {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--verde);
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            box-shadow: var(--sh-xs);
+            transition: all 0.25s ease;
+        }
+
+        .funciones-list li:hover .func-icon {
+            background: var(--verde);
+            color: white;
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        /* Firma */
+        .gestion-firma {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.4rem;
+            background: var(--verde-xlight);
+            border-radius: var(--r-card);
+            border: 1px solid rgba(46,107,47,0.15);
+            transition: all 0.3s var(--spring);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.5s ease forwards;
+            animation-delay: var(--d, 0s);
+        }
+
+        .gestion-firma:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--sh-sm);
+        }
+
+        .firma-avatar {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+        }
+
+        .firma-avatar span {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: var(--verde);
+            border-radius: 50%;
+            font-weight: 800;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .firma-ring {
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 2px solid var(--dorado);
+            opacity: 0.6;
+            animation: firmaSpin 8s linear infinite;
+        }
+
+        @keyframes firmaSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .firma-nombre {
+            font-weight: 700;
+            color: var(--texto);
+            font-size: 0.95rem;
+        }
+
+        .firma-cargo {
+            font-size: 0.7rem;
+            color: var(--verde);
+            font-weight: 600;
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .firma-cargo i {
+            color: var(--dorado);
+            font-size: 0.65rem;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── LADO DERECHO: CARDS ── */
+        .gestion-logros {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            align-self: center;
+        }
+
+        .logro-card {
+            background: var(--crema);
+            border-radius: var(--r-block);
+            padding: 1.6rem;
+            border: 1px solid var(--gris-100);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s var(--spring);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.5s ease forwards;
+            animation-delay: var(--d, 0s);
+        }
+
+        .logro-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--verde), var(--dorado));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s var(--spring);
+        }
+
+        .logro-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--sh-md);
+            border-color: var(--verde-xlight);
+        }
+
+        .logro-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .logro-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .logro-icono {
+            width: 48px;
+            height: 48px;
+            background: var(--verde-xlight);
+            border-radius: var(--r-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--verde);
+            font-size: 1.2rem;
+            transition: all 0.3s var(--spring);
+        }
+
+        .logro-icono-gold {
+            background: #FEF9EC;
+            color: var(--dorado);
+        }
+
+        .logro-card:hover .logro-icono {
+            background: var(--verde);
+            color: white;
+            transform: rotate(-6deg) scale(1.1);
+        }
+
+        .logro-card:hover .logro-icono-gold {
+            background: var(--dorado);
+            color: white;
+        }
+
+        .logro-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gris-200);
+            line-height: 1;
+            transition: color 0.3s;
+        }
+
+        .logro-card:hover .logro-num {
+            color: var(--verde-xlight);
+        }
+
+        .logro-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--texto);
+            margin-bottom: 0.45rem;
+        }
+
+        .logro-card p {
+            font-size: 0.82rem;
+            color: var(--gris-500);
+            line-height: 1.55;
+            margin-bottom: 1rem;
+        }
+
+        .logro-bar {
+            height: 4px;
+            background: var(--gris-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .logro-bar-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--verde), var(--dorado));
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+        }
+
+        .logro-card.visible .logro-bar-fill {
+            width: var(--w);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1100px) {
+            .gestion-container {
+                gap: 3rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .gestion {
+                padding: 4rem 0;
+            }
+            .gestion-container {
+                flex-direction: column;
+                gap: 3rem;
+            }
+            .gestion-logros {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+            .gestion-logros {
+                grid-template-columns: 1fr;
+            }
+            .gestion-cita {
+                font-size: 1rem;
+                padding: 1.2rem;
+            }
+            .gestion-title {
+                font-size: 1.8rem;
+            }
+            .funciones-list li {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="gestion">
+        <!-- Fondo decorativo -->
+        <div class="gestion-bg-deco">
+            <div class="gestion-bg-circle c1"></div>
+            <div class="gestion-bg-circle c2"></div>
+            <div class="gestion-bg-stripe"></div>
+        </div>
+
+        <div class="container gestion-container">
+            <!-- LADO IZQUIERDO -->
+            <div class="gestion-texto">
+                <div class="gestion-eyebrow anim" style="--d:0s">
+                    <span class="eyebrow-line"></span>
+                    <span>Ayuntamiento de Cutupú</span>
+                </div>
+
+                <h2 class="gestion-title anim" style="--d:0.08s">
+                    Nuestra <em>Gestión</em><br>
+                    <span class="title-highlight">Municipal</span>
+                </h2>
+
+                <blockquote class="gestion-cita anim" style="--d:0.16s">
+                    <span class="cita-comilla">"</span>
+                    Mantener el distrito limpio, organizado y en condiciones saludables para todos los habitantes
+                    <span class="cita-comilla cita-close">"</span>
+                </blockquote>
+
+                <p class="gestion-descripcion anim" style="--d:0.22s">
+                    El Ayuntamiento de Cutupú es una institución de gobierno local encargada de administrar
+                    y atender las necesidades de nuestro distrito. Bajo la dirección del Alcalde
+                    <strong>Robert Donald Tolentino</strong>, trabajamos para resolver las problemáticas
+                    de nuestra comunidad.
+                </p>
+
+                <div class="gestion-funciones anim" style="--d:0.30s">
+                    <div class="funciones-header">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Nuestras funciones principales</span>
+                    </div>
+                    <ul class="funciones-list">
+                        <li>
+                            <div class="func-icon"><i class="fas fa-trash-alt"></i></div>
+                            <span>Limpieza y recogida de basura</span>
+                        </li>
+                        <li>
+                            <div class="func-icon"><i class="fas fa-road"></i></div>
+                            <span>Mantenimiento de calles y canaletas</span>
+                        </li>
+                        <li>
+                            <div class="func-icon"><i class="fas fa-church"></i></div>
+                            <span>Cuidado de cementerios</span>
+                        </li>
+                        <li>
+                            <div class="func-icon"><i class="fas fa-tree"></i></div>
+                            <span>Construcción de obras públicas: parques, canchas, clubes e iglesias</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="gestion-firma anim" style="--d:0.38s">
+                    <div class="firma-avatar">
+                        <span>RT</span>
+                        <div class="firma-ring"></div>
+                    </div>
+                    <div class="firma-info">
+                        <div class="firma-nombre">Robert Donald Tolentino</div>
+                        <div class="firma-cargo">
+                            <i class="fas fa-star"></i> Alcalde · Director Municipal
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="gestion-firma">
-                <div class="firma-avatar">RT</div>
-                <div>
-                    <div class="firma-nombre">Robert Donald Tolentino</div>
-                    <div class="firma-cargo">Alcalde / Director Municipal</div>
+
+            <!-- LADO DERECHO: CARDS -->
+            <div class="gestion-logros">
+                <div class="logro-card anim" style="--d:0.10s">
+                    <div class="logro-top">
+                        <div class="logro-icono">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                        <div class="logro-num">01</div>
+                    </div>
+                    <h3>Limpieza</h3>
+                    <p>Recolección de basura mediante camiones hacia el vertedero Soto en La Vega.</p>
+                    <div class="logro-bar">
+                        <div class="logro-bar-fill" style="--w:85%"></div>
+                    </div>
+                </div>
+
+                <div class="logro-card anim" style="--d:0.18s">
+                    <div class="logro-top">
+                        <div class="logro-icono logro-icono-gold">
+                            <i class="fas fa-hard-hat"></i>
+                        </div>
+                        <div class="logro-num">02</div>
+                    </div>
+                    <h3>Obras Públicas</h3>
+                    <p>Construcción y mantenimiento de parques, canchas, clubes e iglesias.</p>
+                    <div class="logro-bar">
+                        <div class="logro-bar-fill" style="--w:72%"></div>
+                    </div>
+                </div>
+
+                <div class="logro-card anim" style="--d:0.26s">
+                    <div class="logro-top">
+                        <div class="logro-icono">
+                            <i class="fas fa-water"></i>
+                        </div>
+                        <div class="logro-num">03</div>
+                    </div>
+                    <h3>Canaletas y Calles</h3>
+                    <p>Mantenimiento constante de calles y canaletas del distrito.</p>
+                    <div class="logro-bar">
+                        <div class="logro-bar-fill" style="--w:90%"></div>
+                    </div>
+                </div>
+
+                <div class="logro-card anim" style="--d:0.34s">
+                    <div class="logro-top">
+                        <div class="logro-icono logro-icono-gold">
+                            <i class="fas fa-church"></i>
+                        </div>
+                        <div class="logro-num">04</div>
+                    </div>
+                    <h3>Cementerio</h3>
+                    <p>Administración, mantenimiento y organización del cementerio municipal.</p>
+                    <div class="logro-bar">
+                        <div class="logro-bar-fill" style="--w:78%"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="gestion-logros">
-            <div class="logro-card">
-                <div class="logro-icono"><i class="fas fa-trash-alt"></i></div>
-                <h3>Limpieza</h3>
-                <p>Recolección de basura mediante camiones hacia el vertedero Soto en La Vega.</p>
-            </div>
-            <div class="logro-card">
-                <div class="logro-icono"><i class="fas fa-hard-hat"></i></div>
-                <h3>Obras Públicas</h3>
-                <p>Construcción y mantenimiento de parques, canchas, clubes e iglesias.</p>
-            </div>
-            <div class="logro-card">
-                <div class="logro-icono"><i class="fas fa-water"></i></div>
-                <h3>Canaletas y Calles</h3>
-                <p>Mantenimiento constante de calles y canaletas del distrito.</p>
-            </div>
-            <div class="logro-card">
-                <div class="logro-icono"><i class="fas fa-church"></i></div>
-                <h3>Cementerio</h3>
-                <p>Administración, mantenimiento y organización del cementerio municipal.</p>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
-<style>
-    .gestion {
-        padding: 6rem 0;
-        background: white;
-    }
-    .gestion-container {
-        display: flex;
-        gap: 4rem;
-        align-items: flex-start;
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-    .gestion-texto {
-        flex: 1;
-    }
-    .section-eyebrow {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: #2D5016;
-        font-weight: 600;
-        margin-bottom: 1rem;
-    }
-    .section-title-serif {
-        font-family: 'Playfair Display', serif;
-        font-size: clamp(2rem, 4vw, 2.8rem);
-        font-weight: 800;
-        margin-bottom: 1.5rem;
-        color: #1A2410;
-    }
-    .gestion-cita {
-        font-size: 1.2rem;
-        font-weight: 600;
-        font-family: 'Playfair Display', serif;
-        border-left: 4px solid #2D5016;
-        padding-left: 1.5rem;
-        margin: 1.5rem 0;
-        color: #2D5016;
-        background: #EAF2DC;
-        padding: 1rem 1.5rem;
-        border-radius: 12px;
-        font-style: normal;
-    }
-    .gestion-descripcion {
-        color: #4B5563;
-        line-height: 1.7;
-        margin-bottom: 1.5rem;
-    }
-    .gestion-funciones {
-        background: #FBF7F0;
-        border-radius: 1.5rem;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    .gestion-funciones h4 {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #1A2410;
-        margin-bottom: 1rem;
-    }
-    .gestion-funciones ul {
-        list-style: none;
-        padding: 0;
-    }
-    .gestion-funciones li {
-        padding: 0.5rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        color: #4B5563;
-        font-size: 0.9rem;
-    }
-    .gestion-funciones li i {
-        color: #2D5016;
-        width: 20px;
-        font-size: 0.9rem;
-    }
-    .gestion-firma {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-    .firma-avatar {
-        width: 50px;
-        height: 50px;
-        background: #EAF2DC;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        color: #2D5016;
-        font-size: 1.2rem;
-    }
-    .firma-nombre {
-        font-weight: 700;
-        color: #1A2410;
-    }
-    .firma-cargo {
-        font-size: 0.8rem;
-        color: #2D5016;
-        font-weight: 500;
-    }
-    .gestion-logros {
-        flex: 1;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-    .logro-card {
-        background: #FBF7F0;
-        border-radius: 1.5rem;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
-    }
-    .logro-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-    }
-    .logro-icono {
-        font-size: 1.8rem;
-        color: #2D5016;
-        margin-bottom: 0.75rem;
-    }
-    .logro-card h3 {
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        color: #1A2410;
-    }
-    .logro-card p {
-        font-size: 0.85rem;
-        color: #6B7280;
-        line-height: 1.5;
-    }
+    <script>
+        /* Barras de progreso animadas al hacer visible la card */
+        (function() {
+            'use strict';
+            const cards = document.querySelectorAll('.logro-card');
+            if (!cards.length || !('IntersectionObserver' in window)) return;
 
-    @media (max-width: 900px) {
-        .gestion-container {
-            flex-direction: column;
-            gap: 2rem;
-        }
-        .gestion-logros {
-            width: 100%;
-        }
-    }
-    @media (max-width: 640px) {
-        .gestion-logros {
-            grid-template-columns: 1fr;
-        }
-        .gestion-cita {
-            font-size: 1rem;
-        }
-    }
-</style>
+            const io = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) {
+                        e.target.classList.add('visible');
+                        io.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            cards.forEach(c => io.observe(c));
+        })();
+    </script>
+</body>
+</html>

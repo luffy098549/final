@@ -1,191 +1,400 @@
-<section class="autoridades anim">
-    <div class="container">
-        <div class="section-eyebrow text-center">Nuestras Autoridades</div>
-        <h2 class="section-title-serif text-center">Liderazgo con <span style="color: #2D5016;">visión</span></h2>
-        <p class="autoridades-subtitle">Conoce al equipo que dirige el Ayuntamiento de Cutupú para el período 2024-2028</p>
-        <div class="autoridades-grid">
-            <div class="autoridad-card principal">
-                <div class="autoridad-foto">
-                    <img src="{{ url_for('static', filename='img/robert.jpeg') }}" alt="Robert Donald Tolentino">
-                </div>
-                <div class="autoridad-info">
-                    <span class="autoridad-badge">Alcalde / Director Municipal</span>
-                    <h3>Robert Donald Tolentino</h3>
-                    <p>Liderando el desarrollo y bienestar de Villa Cutupú con trabajo cercano, transparente y compromiso social. Período constitucional 2024-2028.</p>
-                    <div class="autoridad-responsabilidad">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Responsable de mantener el distrito limpio, organizado y en condiciones saludables para todos los habitantes</span>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoridades - Ayuntamiento de Cutupú</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --verde: #2E6B2F;
+            --verde-oscuro: #1A4A1A;
+            --verde-intenso: #0F2E0F;
+            --verde-xlight: #EAF5E6;
+            --verde-med: #1E4F1E;
+            --dorado: #C9A03D;
+            --dorado-claro: #F5DFA0;
+            --dorado-intenso: #C8960C;
+            --texto: #1A2A1A;
+            --gris-400: #9AAB9A;
+            --gris-500: #7A8E7A;
+            --gris-600: #5A6E5A;
+            --crema: #FDF8F0;
+            --sh-sm: 0 4px 12px rgba(0,0,0,0.06);
+            --sh-md: 0 12px 28px rgba(0,0,0,0.08);
+            --sh-lg: 0 25px 45px rgba(0,0,0,0.12);
+            --spring: cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: white;
+        }
+
+        .autoridades {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, var(--crema) 0%, #FFF9EF 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .autoridades-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .autoridades-bg-circle {
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .autoridades-bg-circle.c1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(46, 107, 47, 0.03) 0%, transparent 70%);
+            top: -200px;
+            left: -150px;
+            animation: autoridadesFloat1 18s ease-in-out infinite;
+        }
+
+        .autoridades-bg-circle.c2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(201, 160, 61, 0.04) 0%, transparent 70%);
+            bottom: -150px;
+            right: -100px;
+            animation: autoridadesFloat2 15s ease-in-out infinite;
+        }
+
+        .autoridades-bg-circle.c3 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(46, 107, 47, 0.05) 0%, transparent 70%);
+            top: 40%;
+            right: 20%;
+            animation: autoridadesFloat3 22s ease-in-out infinite;
+        }
+
+        @keyframes autoridadesFloat1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 20px); }
+        }
+
+        @keyframes autoridadesFloat2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-25px, -30px); }
+        }
+
+        @keyframes autoridadesFloat3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-15px, 15px) scale(1.1); }
+        }
+
+        .autoridades .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .autoridades-eyebrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpAutoridades 0.5s ease forwards;
+            animation-delay: 0s;
+        }
+
+        .autoridades-eyebrow-line {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--verde), var(--dorado), transparent);
+        }
+
+        .autoridades-eyebrow-text {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--verde);
+            font-weight: 700;
+        }
+
+        .autoridades-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4.5vw, 3rem);
+            font-weight: 700;
+            line-height: 1.15;
+            text-align: center;
+            color: var(--texto);
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpAutoridades 0.5s ease forwards;
+            animation-delay: 0.08s;
+        }
+
+        .title-highlight {
+            color: var(--verde);
+            position: relative;
+            display: inline-block;
+        }
+
+        .title-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--dorado), transparent);
+            border-radius: 3px;
+        }
+
+        .autoridades-subtitle {
+            text-align: center;
+            color: var(--gris-600);
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+            line-height: 1.7;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpAutoridades 0.5s ease forwards;
+            animation-delay: 0.16s;
+        }
+
+        .autoridades-grid {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpAutoridades 0.5s ease forwards;
+            animation-delay: 0.24s;
+        }
+
+        .autoridad-card {
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            display: flex;
+            transition: all 0.4s var(--spring);
+            box-shadow: var(--sh-md);
+            border: 1px solid rgba(201, 160, 61, 0.2);
+            position: relative;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .autoridad-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--verde), var(--dorado), var(--verde));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s var(--spring);
+            z-index: 3;
+        }
+
+        .autoridad-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--sh-lg);
+            border-color: rgba(201, 160, 61, 0.3);
+        }
+
+        .autoridad-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .autoridad-foto {
+            width: 260px;
+            min-width: 260px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--verde-oscuro), var(--verde));
+        }
+
+        .autoridad-foto::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.1));
+            pointer-events: none;
+        }
+
+        .autoridad-foto img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s var(--spring);
+        }
+
+        .autoridad-card:hover .autoridad-foto img {
+            transform: scale(1.08);
+        }
+
+        .autoridad-info {
+            padding: 2rem;
+            flex: 1;
+            background: white;
+        }
+
+        .autoridad-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--verde-xlight), #FEF9EC);
+            padding: 0.35rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--verde);
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(46, 107, 47, 0.15);
+        }
+
+        .autoridad-badge i {
+            font-size: 0.65rem;
+            color: var(--dorado);
+        }
+
+        .autoridad-info h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--texto);
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .autoridad-info p {
+            color: var(--gris-600);
+            font-size: 0.9rem;
+            line-height: 1.65;
+            margin-bottom: 1.2rem;
+        }
+
+        .autoridad-responsabilidad {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            background: linear-gradient(135deg, var(--verde-xlight), #FEF9EC);
+            padding: 1rem 1.2rem;
+            border-radius: 20px;
+            margin-top: 1rem;
+            border: 1px solid rgba(46, 107, 47, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .autoridad-card:hover .autoridad-responsabilidad {
+            background: linear-gradient(135deg, var(--verde-xlight), #FFF5E6);
+            border-color: rgba(201, 160, 61, 0.3);
+        }
+
+        .autoridad-responsabilidad i {
+            color: var(--dorado-intenso);
+            font-size: 1.1rem;
+            margin-top: 0.1rem;
+        }
+
+        .autoridad-responsabilidad span {
+            font-size: 0.8rem;
+            color: var(--gris-600);
+            line-height: 1.5;
+        }
+
+        @keyframes fadeUpAutoridades {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 850px) {
+            .autoridades { padding: 4rem 0; }
+            .autoridad-card { flex-direction: column; max-width: 500px; }
+            .autoridad-foto { width: 100%; min-width: auto; height: 280px; }
+            .autoridad-info { padding: 1.8rem; }
+            .autoridad-info h3 { font-size: 1.4rem; }
+        }
+
+        @media (max-width: 640px) {
+            .autoridades .container { padding: 0 1.5rem; }
+            .autoridad-foto { height: 240px; }
+            .autoridad-info { padding: 1.5rem; }
+            .autoridad-info h3 { font-size: 1.3rem; }
+        }
+
+        @media (max-width: 480px) {
+            .autoridades { padding: 3rem 0; }
+            .autoridad-foto { height: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <section class="autoridades">
+        <div class="autoridades-bg">
+            <div class="autoridades-bg-circle c1"></div>
+            <div class="autoridades-bg-circle c2"></div>
+            <div class="autoridades-bg-circle c3"></div>
+        </div>
+
+        <div class="container">
+            <div class="autoridades-eyebrow">
+                <span class="autoridades-eyebrow-line"></span>
+                <span class="autoridades-eyebrow-text">Nuestras Autoridades</span>
+            </div>
+
+            <h2 class="autoridades-title">
+                Liderazgo con <span class="title-highlight">visión</span>
+            </h2>
+
+            <p class="autoridades-subtitle">
+                Conoce al equipo que dirige el Ayuntamiento de Cutupú para el período 2024-2028
+            </p>
+
+            <div class="autoridades-grid">
+                <div class="autoridad-card">
+                    <div class="autoridad-foto">
+                        <!-- ✅ IMAGEN CORREGIDA - RUTA RELATIVA DIRECTA -->
+                        <img src="static/img/robert.jpeg" alt="Robert Donald Tolentino">
+                    </div>
+                    <div class="autoridad-info">
+                        <div class="autoridad-badge">
+                            <i class="fas fa-gavel"></i>
+                            <span>Alcalde / Director Municipal</span>
+                        </div>
+                        <h3>Robert Donald Tolentino</h3>
+                        <p>Liderando el desarrollo y bienestar de Villa Cutupú con trabajo cercano, transparente y compromiso social. Período constitucional 2024-2028.</p>
+                        <div class="autoridad-responsabilidad">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Responsable de mantener el distrito limpio, organizado y en condiciones saludables para todos los habitantes</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
-<style>
-    .autoridades {
-        padding: 6rem 0;
-        background: #FBF7F0;
-    }
-    .container {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-    .section-eyebrow {
-        display: inline-block;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: #2D5016;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        background: #EAF2DC;
-        padding: 0.3rem 1.2rem;
-        border-radius: 2rem;
-    }
-    .section-eyebrow.text-center,
-    .section-title-serif.text-center {
-        text-align: center;
-        display: block;
-        width: fit-content;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .section-title-serif {
-        font-family: 'Playfair Display', serif;
-        font-size: clamp(2rem, 4vw, 2.8rem);
-        font-weight: 800;
-        margin-bottom: 1rem;
-        color: #1A2410;
-    }
-    .autoridades-subtitle {
-        text-align: center;
-        color: #6B7280;
-        max-width: 600px;
-        margin: 0 auto 3rem auto;
-        line-height: 1.6;
-    }
-    .autoridades-grid {
-        display: flex;
-        justify-content: center;
-        margin-top: 2rem;
-    }
-    .autoridad-card {
-        background: white;
-        border-radius: 1.5rem;
-        overflow: hidden;
-        display: flex;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        border: 1px solid #E5E7EB;
-        position: relative;
-        max-width: 800px;
-        width: 100%;
-    }
-    .autoridad-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #2D5016, #C8960C);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.3s ease;
-    }
-    .autoridad-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 30px rgba(0,0,0,0.1);
-    }
-    .autoridad-card:hover::before {
-        transform: scaleX(1);
-    }
-    .autoridad-foto {
-        width: 200px;
-        min-width: 200px;
-        height: 220px;
-        overflow: hidden;
-    }
-    .autoridad-foto img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s;
-    }
-    .autoridad-card:hover .autoridad-foto img {
-        transform: scale(1.05);
-    }
-    .autoridad-info {
-        padding: 1.8rem;
-        flex: 1;
-    }
-    .autoridad-badge {
-        display: inline-block;
-        background: #EAF2DC;
-        padding: 0.25rem 1rem;
-        border-radius: 2rem;
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: #2D5016;
-        margin-bottom: 0.75rem;
-    }
-    .autoridad-info h3 {
-        font-size: 1.5rem;
-        font-weight: 800;
-        margin-bottom: 0.5rem;
-        color: #1A2410;
-    }
-    .autoridad-info p {
-        color: #6B7280;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-    }
-    .autoridad-responsabilidad {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        background: #EAF2DC;
-        padding: 0.75rem 1rem;
-        border-radius: 0.75rem;
-        margin-top: 1rem;
-    }
-    .autoridad-responsabilidad i {
-        color: #2D5016;
-        font-size: 1rem;
-    }
-    .autoridad-responsabilidad span {
-        font-size: 0.8rem;
-        color: #374151;
-        line-height: 1.4;
-    }
-
-    @media (max-width: 768px) {
-        .autoridades {
-            padding: 3rem 0;
-        }
-        .autoridad-card {
-            flex-direction: column;
-        }
-        .autoridad-foto {
-            width: 100%;
-            height: 250px;
-        }
-        .autoridad-info {
-            padding: 1.5rem;
-        }
-        .autoridad-info h3 {
-            font-size: 1.3rem;
-        }
-    }
-    @media (max-width: 480px) {
-        .autoridad-foto {
-            height: 200px;
-        }
-        .autoridad-responsabilidad span {
-            font-size: 0.7rem;
-        }
-    }
-</style>
+    </section>
+</body>
+</html>

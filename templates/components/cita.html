@@ -1,134 +1,371 @@
-<section class="cita anim">
-    <div class="container">
-        <div class="cita-card">
-            <div class="cita-iconos">
-                <i class="fas fa-quote-left"></i>
-                <i class="fas fa-handshake cita-main-icon"></i>
-                <i class="fas fa-quote-right"></i>
-            </div>
-            <blockquote class="cita-texto">
-                "Juntos construimos el Cutupú que todos merecemos"
-            </blockquote>
-            <div class="cita-autor">
-                <div class="autor-linea"></div>
-                <div class="autor-info">
-                    <strong>Rober Donald Tolentino</strong>
-                    <span>Alcalde / Director Municipal</span>
-                    <span class="autor-periodo">Período 2024-2028</span>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cita - Ayuntamiento de Cutupú</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --verde: #2E6B2F;
+            --verde-oscuro: #1A4A1A;
+            --verde-intenso: #0F2E0F;
+            --verde-xlight: #EAF5E6;
+            --dorado: #C9A03D;
+            --dorado-claro: #F5DFA0;
+            --dorado-intenso: #C8960C;
+            --texto: #1A2A1A;
+            --gris-500: #7A8E7A;
+            --gris-600: #5A6E5A;
+            --crema: #FDF8F0;
+            --sh-sm: 0 4px 12px rgba(0,0,0,0.06);
+            --sh-md: 0 12px 28px rgba(0,0,0,0.08);
+            --sh-lg: 0 25px 45px rgba(0,0,0,0.12);
+            --spring: cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: white;
+        }
+
+        /* ── Sección Cita ── */
+        .cita {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, var(--verde-xlight) 0%, #FFF9EF 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Fondo decorativo */
+        .cita-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .cita-bg-shape {
+            position: absolute;
+            background: radial-gradient(circle, rgba(201, 160, 61, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .cita-bg-shape.s1 {
+            width: 400px;
+            height: 400px;
+            top: -150px;
+            right: -100px;
+            animation: floatShape 20s ease-in-out infinite;
+        }
+
+        .cita-bg-shape.s2 {
+            width: 300px;
+            height: 300px;
+            bottom: -100px;
+            left: -80px;
+            background: radial-gradient(circle, rgba(46, 107, 47, 0.06) 0%, transparent 70%);
+            animation: floatShape2 18s ease-in-out infinite;
+        }
+
+        .cita-bg-shape.s3 {
+            width: 150px;
+            height: 150px;
+            top: 40%;
+            left: 15%;
+            background: radial-gradient(circle, rgba(201, 160, 61, 0.05) 0%, transparent 70%);
+            animation: floatShape3 25s ease-in-out infinite;
+        }
+
+        @keyframes floatShape {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30px, 20px) scale(1.1); }
+        }
+
+        @keyframes floatShape2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(25px, -25px) scale(1.08); }
+        }
+
+        @keyframes floatShape3 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(15px, 15px) rotate(180deg); }
+        }
+
+        .cita .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Card principal */
+        .cita-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            padding: 3.5rem 3rem;
+            box-shadow: var(--sh-md);
+            border: 1px solid rgba(201, 160, 61, 0.2);
+            transition: all 0.4s var(--spring);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUpCita 0.6s ease forwards;
+            animation-delay: 0.1s;
+        }
+
+        .cita-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--verde), var(--dorado), var(--verde));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s var(--spring);
+        }
+
+        .cita-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--verde), var(--dorado), var(--verde));
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.6s var(--spring);
+            transition-delay: 0.1s;
+        }
+
+        .cita-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--sh-lg);
+            border-color: rgba(201, 160, 61, 0.3);
+        }
+
+        .cita-card:hover::before,
+        .cita-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        @keyframes fadeUpCita {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Iconos */
+        .cita-iconos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        .cita-iconos i {
+            font-size: 1.8rem;
+            color: var(--verde);
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .cita-main-icon {
+            font-size: 2.8rem !important;
+            opacity: 1 !important;
+            color: var(--dorado-intenso) !important;
+            animation: pulseIcon 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 0 0 0 rgba(200, 150, 12, 0);
+            }
+            50% {
+                transform: scale(1.1);
+                text-shadow: 0 0 8px rgba(200, 150, 12, 0.3);
+            }
+        }
+
+        .cita-card:hover .cita-iconos i {
+            opacity: 0.7;
+            transform: scale(1.05);
+        }
+
+        .cita-card:hover .cita-main-icon {
+            opacity: 1 !important;
+            transform: scale(1.1);
+        }
+
+        /* Texto de la cita */
+        .cita-texto {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.6rem, 5vw, 2.4rem);
+            font-weight: 700;
+            color: var(--texto);
+            line-height: 1.35;
+            margin: 1rem 0 2rem 0;
+            font-style: normal;
+            text-align: center;
+            letter-spacing: -0.3px;
+            position: relative;
+        }
+
+        /* Autor */
+        .cita-autor {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .autor-linea {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--dorado), var(--verde), transparent);
+            border-radius: 2px;
+        }
+
+        .autor-info {
+            text-align: center;
+        }
+
+        .autor-info strong {
+            display: block;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--verde-oscuro);
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.2px;
+        }
+
+        .autor-info span:not(.autor-periodo) {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--gris-600);
+            letter-spacing: 0.5px;
+        }
+
+        .autor-periodo {
+            font-size: 0.7rem !important;
+            color: var(--dorado-intenso) !important;
+            font-weight: 700;
+            margin-top: 0.35rem;
+            letter-spacing: 1px !important;
+            display: inline-block;
+            background: rgba(201, 160, 61, 0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .cita {
+                padding: 3rem 0;
+            }
+            .cita-card {
+                padding: 2rem 1.5rem;
+            }
+            .cita-autor {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .autor-linea {
+                width: 100px;
+                height: 1px;
+            }
+            .cita-texto {
+                margin: 0.5rem 0 1.5rem 0;
+            }
+            .cita-iconos {
+                gap: 0.8rem;
+                margin-bottom: 1.2rem;
+            }
+            .cita-iconos i {
+                font-size: 1.4rem;
+            }
+            .cita-main-icon {
+                font-size: 2.2rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cita .container {
+                padding: 0 1rem;
+            }
+            .cita-card {
+                padding: 1.8rem 1.2rem;
+                border-radius: 24px;
+            }
+            .cita-texto {
+                font-size: 1.3rem;
+            }
+            .autor-info strong {
+                font-size: 0.95rem;
+            }
+            .autor-periodo {
+                font-size: 0.65rem !important;
+            }
+            .cita-iconos i {
+                font-size: 1.2rem;
+            }
+            .cita-main-icon {
+                font-size: 1.8rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="cita">
+        <!-- Fondo decorativo -->
+        <div class="cita-bg">
+            <div class="cita-bg-shape s1"></div>
+            <div class="cita-bg-shape s2"></div>
+            <div class="cita-bg-shape s3"></div>
+        </div>
+
+        <div class="container">
+            <div class="cita-card">
+                <div class="cita-iconos">
+                    <i class="fas fa-quote-left"></i>
+                    <i class="fas fa-handshake cita-main-icon"></i>
+                    <i class="fas fa-quote-right"></i>
                 </div>
-                <div class="autor-linea"></div>
+                <blockquote class="cita-texto">
+                    "Juntos construimos el Cutupú que todos merecemos"
+                </blockquote>
+                <div class="cita-autor">
+                    <div class="autor-linea"></div>
+                    <div class="autor-info">
+                        <strong>Robert Donald Tolentino</strong>
+                        <span>Alcalde / Director Municipal</span>
+                        <span class="autor-periodo">Período 2024-2028</span>
+                    </div>
+                    <div class="autor-linea"></div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
-
-<style>
-    .cita {
-        padding: 4rem 0;
-        background: linear-gradient(135deg, #EAF2DC 0%, #FBF7F0 100%);
-        text-align: center;
-    }
-    .container {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-    .cita-card {
-        max-width: 900px;
-        margin: 0 auto;
-        background: white;
-        border-radius: 2rem;
-        padding: 3rem 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        border: 1px solid #E5E7EB;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .cita-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    }
-    .cita-iconos {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    .cita-iconos i {
-        font-size: 2rem;
-        color: #2D5016;
-        opacity: 0.6;
-    }
-    .cita-main-icon {
-        font-size: 2.5rem !important;
-        opacity: 1 !important;
-        color: #C8960C !important;
-    }
-    .cita-texto {
-        font-family: 'Playfair Display', serif;
-        font-size: clamp(1.5rem, 4vw, 2.2rem);
-        font-weight: 800;
-        color: #1A2410;
-        line-height: 1.3;
-        margin: 1rem 0 1.5rem 0;
-        font-style: normal;
-    }
-    .cita-autor {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1.5rem;
-        margin-top: 1rem;
-    }
-    .autor-linea {
-        width: 50px;
-        height: 2px;
-        background: linear-gradient(90deg, #2D5016, #C8960C);
-    }
-    .autor-info {
-        text-align: center;
-    }
-    .autor-info strong {
-        display: block;
-        font-size: 1rem;
-        font-weight: 800;
-        color: #1A2410;
-        margin-bottom: 0.25rem;
-    }
-    .autor-info span {
-        display: block;
-        font-size: 0.8rem;
-        color: #6B7280;
-    }
-    .autor-periodo {
-        font-size: 0.7rem !important;
-        color: #2D5016 !important;
-        font-weight: 600;
-        margin-top: 0.25rem;
-    }
-
-    @media (max-width: 640px) {
-        .cita {
-            padding: 2rem 0;
-        }
-        .cita-card {
-            padding: 2rem 1rem;
-        }
-        .cita-autor {
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-        .autor-linea {
-            width: 80px;
-        }
-        .cita-texto {
-            font-size: 1.3rem;
-        }
-        .cita-iconos i {
-            font-size: 1.5rem;
-        }
-        .cita-main-icon {
-            font-size: 2rem !important;
-        }
-    }
-</style>
+    </section>
+</body>
+</html>

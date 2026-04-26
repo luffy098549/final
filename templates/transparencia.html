@@ -1,290 +1,1563 @@
 {% extends "base.html" %}
 
-{% block title %}Portal de Transparencia - Villa Cutupú{% endblock %}
+{% block title %}Transparencia - {{ config.nombre_municipio if config else 'Villa Cutupú' }}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia.css') }}">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   TRANSPARENCIA.CSS — VILLA CUTUPU
+   ★ ULTRA ANIMATION EDITION ★
+   Basado en el estilo premium de servicios
+════════════════════════════════════════════════════════════════ */
+
+/* ================================================================
+   VARIABLES
+================================================================ */
+:root {
+    --trans-verde-dark: #2D5016;
+    --trans-verde-mid: #3D6B20;
+    --trans-verde-light: #5A8C35;
+    --trans-verde-soft: #8BB55F;
+    --trans-verde-xlight: #EAF2DC;
+    --trans-gold: #C8960C;
+    --trans-gold-light: #F5DFA0;
+    --trans-cream: #FBF7F0;
+    --trans-dark: #1A2410;
+    --trans-gray: #6B7280;
+    --trans-white: #FFFFFF;
+    --trans-bg: #FAFAFA;
+    --trans-blue: #2B6A9E;
+    --trans-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --trans-ease-elastic: cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    --trans-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ================================================================
+   KEYFRAMES — 40+ ANIMACIONES
+================================================================ */
+@keyframes trans-float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-22px) rotate(2.5deg); }
+    50% { transform: translateY(-10px) rotate(-1.5deg); }
+    75% { transform: translateY(-26px) rotate(2deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+@keyframes trans-float-b {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    30% { transform: translateY(-30px) translateX(10px) rotate(-3deg); }
+    60% { transform: translateY(-12px) translateX(-8px) rotate(2deg); }
+    100% { transform: translateY(0) translateX(0); }
+}
+@keyframes trans-float-c {
+    0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+    40% { transform: translateY(-18px) translateX(-12px) scale(1.08); }
+    80% { transform: translateY(-8px) translateX(6px) scale(0.95); }
+    100% { transform: translateY(0) translateX(0) scale(1); }
+}
+@keyframes trans-float-slow {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-35px); }
+}
+@keyframes trans-hero-fade-up {
+    from { opacity: 0; transform: translateY(42px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes trans-hero-fade-left {
+    from { opacity: 0; transform: translateX(-60px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes trans-hero-fade-right {
+    from { opacity: 0; transform: translateX(60px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes trans-line-expand {
+    from { width: 0; opacity: 0; }
+    to { width: 100px; opacity: 1; }
+}
+@keyframes trans-underline-grow {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+@keyframes trans-shimmer {
+    0% { background-position: -300% center; }
+    100% { background-position: 300% center; }
+}
+@keyframes trans-glow {
+    0%, 100% { text-shadow: 0 0 20px rgba(200,150,12,0.25), 0 0 40px rgba(200,150,12,0.1); }
+    50% { text-shadow: 0 0 50px rgba(200,150,12,0.8), 0 0 100px rgba(200,150,12,0.35); }
+}
+@keyframes trans-icon-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(45,80,22,0); }
+    50% { box-shadow: 0 0 0 12px rgba(45,80,22,0.12), 0 8px 24px rgba(45,80,22,0.2); }
+}
+@keyframes trans-band-glow {
+    0%, 100% { filter: brightness(1) blur(0px); }
+    50% { filter: brightness(1.8) blur(1.2px); }
+}
+@keyframes trans-gold-sweep {
+    0% { left: -120%; }
+    100% { left: 200%; }
+}
+@keyframes trans-pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(45,80,22,0.55); }
+    50% { box-shadow: 0 0 0 18px rgba(45,80,22,0); }
+}
+@keyframes trans-pulse-gold {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(200,150,12,0.55); }
+    50% { box-shadow: 0 0 0 18px rgba(200,150,12,0); }
+}
+@keyframes trans-bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+@keyframes trans-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes trans-morph {
+    0%, 100% { border-radius: 18px; }
+    25% { border-radius: 32px 12px 26px 14px; }
+    50% { border-radius: 14px 30px 12px 28px; }
+    75% { border-radius: 26px 14px 30px 12px; }
+}
+@keyframes trans-wobble {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(-5deg); }
+    40% { transform: rotate(5deg); }
+    60% { transform: rotate(-3deg); }
+    80% { transform: rotate(3deg); }
+}
+@keyframes trans-wobble-icon {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(-8deg) scale(1.1); }
+    75% { transform: rotate(8deg) scale(1.1); }
+}
+@keyframes trans-dot-drift {
+    0% { background-position: 0 0; }
+    100% { background-position: 70px 70px; }
+}
+@keyframes trans-dot-drift-rev {
+    0% { background-position: 70px 70px; }
+    100% { background-position: 0 0; }
+}
+@keyframes trans-bg-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes trans-scanline {
+    0% { top: -8%; opacity: 0; }
+    5% { opacity: 0.35; }
+    92% { opacity: 0.35; }
+    100% { top: 108%; opacity: 0; }
+}
+@keyframes trans-aurora {
+    0% { transform: translateX(-50%) scaleX(0.7) scaleY(0.8); opacity: 0.4; }
+    33% { transform: translateX(-30%) scaleX(1.2) scaleY(1.1); opacity: 0.6; }
+    66% { transform: translateX(-70%) scaleX(0.9) scaleY(0.9); opacity: 0.3; }
+    100% { transform: translateX(-50%) scaleX(0.7) scaleY(0.8); opacity: 0.4; }
+}
+@keyframes trans-radial-breathe {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.15); }
+}
+@keyframes trans-btn-wave {
+    0% { left: -120%; }
+    100% { left: 220%; }
+}
+@keyframes trans-card-reveal {
+    from { opacity: 0; transform: translateY(50px) scale(0.95) rotateX(5deg); }
+    to { opacity: 1; transform: translateY(0) scale(1) rotateX(0deg); }
+}
+@keyframes trans-card-reveal-sector {
+    from { opacity: 0; transform: translateY(30px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes trans-stat-pop {
+    from { opacity: 0; transform: scale(0.6) rotate(-10deg); }
+    to { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+@keyframes trans-left-line-flow {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 0% 100%; }
+    100% { background-position: 0% 0%; }
+}
+@keyframes trans-avatar-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.3); opacity: 0; }
+}
+@keyframes trans-sector-number {
+    0%, 100% { transform: scale(1); color: #D1D5DB; }
+    50% { transform: scale(1.5); color: var(--trans-gold); }
+}
+@keyframes trans-text-shine {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+/* ================================================================
+   HERO SECTION
+================================================================ */
+section.trans-hero {
+    position: relative !important;
+    padding: 7rem 0 9rem !important;
+    background: radial-gradient(ellipse at 78% 12%, rgba(200,150,12,0.12) 0%, transparent 48%),
+                radial-gradient(ellipse at 12% 88%, rgba(90,140,53,0.16) 0%, transparent 48%),
+                radial-gradient(ellipse at 50% 50%, rgba(45,80,22,0.35) 0%, transparent 78%),
+                radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(135deg, #0E1608 0%, #1A2410 45%, #0E1608 100%) !important;
+    background-size: auto, auto, auto, 35px 35px, 100% !important;
+    overflow: hidden !important;
+    animation: trans-dot-drift 16s linear infinite, trans-bg-shift 12s ease-in-out infinite;
+    margin-top: 0;
+}
+
+section.trans-hero::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(200,150,12,0.6) 50%, transparent 100%);
+    animation: trans-scanline 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 5;
+}
+
+section.trans-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    width: 90%;
+    height: 200px;
+    background: radial-gradient(ellipse at center, rgba(90,140,53,0.15) 0%, transparent 70%);
+    pointer-events: none;
+    animation: trans-aurora 10s ease-in-out infinite;
+    z-index: 1;
+}
+
+.trans-hero-left-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--trans-gold) 0%, var(--trans-verde-mid) 60%, transparent 100%);
+    background-size: 100% 300%;
+    z-index: 3;
+    animation: trans-left-line-flow 4s ease-in-out infinite;
+}
+
+.trans-hero-container {
+    position: relative;
+    z-index: 3;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.trans-hero-content {
+    text-align: center;
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.trans-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(200,150,12,0.16);
+    border: 1px solid rgba(200,150,12,0.5);
+    color: var(--trans-gold-light);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.71rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    padding: 0.45rem 1.3rem;
+    border-radius: 3rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    animation: trans-hero-fade-up 0.55s var(--trans-ease-smooth) 0.2s forwards, trans-pulse-gold 3s ease-in-out 2s infinite;
+}
+
+.trans-hero-eyebrow i {
+    font-size: 0.8rem;
+    color: var(--trans-gold);
+}
+
+.trans-hero-title {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-weight: 900 !important;
+    font-size: clamp(2.8rem, 6vw, 5.2rem) !important;
+    line-height: 1.06 !important;
+    color: var(--trans-white) !important;
+    margin: 0 0 1.4rem 0 !important;
+    opacity: 0;
+    animation: trans-hero-fade-up 0.65s var(--trans-ease-smooth) 0.4s forwards;
+}
+
+.trans-hero-accent {
+    color: var(--trans-gold) !important;
+    font-style: italic;
+    position: relative;
+    display: inline-block;
+    background: linear-gradient(135deg, var(--trans-gold), var(--trans-gold-light), var(--trans-gold));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    animation: trans-text-shine 4s linear infinite, trans-glow 3.5s ease-in-out 2s infinite;
+}
+
+.trans-hero-accent::after {
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--trans-gold), var(--trans-gold-light), var(--trans-gold));
+    background-size: 300% auto;
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: trans-underline-grow 0.9s var(--trans-ease-bounce) 1.1s forwards, trans-shimmer 4s linear 2.5s infinite;
+}
+
+.trans-hero-line {
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--trans-gold), var(--trans-gold-light), var(--trans-gold), transparent);
+    background-size: 200% auto;
+    border-radius: 2px;
+    margin: 0 auto 1.6rem;
+    opacity: 0;
+    animation: trans-line-expand 0.9s var(--trans-ease-smooth) 0.65s forwards, trans-shimmer 3s linear 2s infinite;
+}
+
+.trans-hero-subtitle {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 1.1rem !important;
+    color: rgba(255,255,255,0.78) !important;
+    margin-bottom: 2.5rem !important;
+    opacity: 0;
+    animation: trans-hero-fade-up 0.65s var(--trans-ease-smooth) 0.8s forwards;
+}
+
+.trans-hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: trans-stat-pop 0.8s var(--trans-ease-bounce) 1.1s forwards;
+}
+
+.trans-hero-stat {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    padding: 0.65rem 1.4rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 3rem;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s var(--trans-ease-bounce);
+    position: relative;
+    overflow: hidden;
+}
+
+.trans-hero-stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(200,150,12,0.2), transparent);
+    transform: skewX(-12deg);
+}
+
+.trans-hero-stat i {
+    margin-right: 0.5rem;
+    color: var(--trans-gold);
+}
+
+.trans-hero-stat:hover {
+    background: rgba(200,150,12,0.25);
+    border-color: var(--trans-gold);
+    color: var(--trans-gold-light);
+    transform: translateY(-5px) scale(1.04);
+    box-shadow: 0 15px 35px rgba(200,150,12,0.3);
+}
+
+.trans-hero-stat:hover::before {
+    animation: trans-gold-sweep 0.5s ease forwards;
+}
+
+.trans-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    animation: trans-float 6s ease-in-out infinite, trans-radial-breathe 8s ease-in-out infinite;
+}
+
+.trans-particle-1 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(90,140,53,0.12) 0%, transparent 70%);
+    top: -100px;
+    right: 5%;
+    animation-duration: 10s;
+}
+
+.trans-particle-2 {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(200,150,12,0.1) 0%, transparent 70%);
+    bottom: 5%;
+    left: 3%;
+    animation-duration: 13s;
+    animation-direction: reverse;
+}
+
+.trans-particle-3 {
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    top: 30%;
+    right: 2%;
+    animation-duration: 8s;
+    animation-delay: 1s;
+}
+
+/* ================================================================
+   SECCIÓN BIENVENIDA
+================================================================ */
+.trans-welcome {
+    padding: 5rem 0;
+    background: var(--trans-cream);
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.trans-welcome-card {
+    background: var(--trans-white);
+    border-radius: 2rem;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: all 0.4s var(--trans-ease-elastic);
+    position: relative;
+    overflow: hidden;
+}
+
+.trans-welcome-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--trans-verde-dark), var(--trans-gold), var(--trans-verde-light));
+}
+
+.trans-welcome-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.trans-welcome-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--trans-verde-xlight);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.2rem;
+    color: var(--trans-verde-dark);
+    transition: all 0.3s var(--trans-ease-bounce);
+}
+
+.trans-welcome-card:hover .trans-welcome-icon {
+    transform: scale(1.1) rotate(5deg);
+    background: var(--trans-gold);
+    color: white;
+}
+
+.trans-welcome-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--trans-dark);
+    margin-bottom: 0.5rem;
+}
+
+.trans-welcome-subtitle {
+    color: var(--trans-gray);
+    margin-bottom: 1.5rem;
+}
+
+.trans-legal-quote {
+    background: var(--trans-cream);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border-left: 4px solid var(--trans-gold);
+    margin: 1.5rem 0;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+.trans-legal-quote:hover {
+    border-left-width: 6px;
+    background: #f5efe5;
+}
+
+.trans-legal-quote p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--trans-dark);
+}
+
+.ley-ref {
+    font-weight: 800;
+    color: var(--trans-gold);
+    margin-right: 0.3rem;
+}
+
+.trans-compliance-badges {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+.trans-compliance-badges .badge {
+    background: var(--trans-verde-xlight);
+    padding: 0.5rem 1.2rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--trans-verde-dark);
+    transition: all 0.3s var(--trans-ease-bounce);
+}
+
+.trans-compliance-badges .badge i {
+    margin-right: 0.5rem;
+    color: var(--trans-gold);
+}
+
+.trans-compliance-badges .badge:hover {
+    background: var(--trans-verde-dark);
+    color: white;
+    transform: translateY(-3px);
+}
+
+.trans-compliance-badges .badge:hover i {
+    color: var(--trans-gold-light);
+}
+
+/* ================================================================
+   SECCIÓN CATEGORÍAS
+================================================================ */
+.trans-categorias {
+    padding: 5rem 0;
+    background: var(--trans-white);
+}
+
+.trans-section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: trans-hero-fade-up 0.6s ease both;
+}
+
+.trans-section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--trans-dark);
+    margin-bottom: 0.5rem;
+}
+
+.trans-section-header p {
+    color: var(--trans-gray);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.trans-header-line {
+    width: 70px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--trans-gold), var(--trans-verde-light));
+    margin: 0 auto;
+    border-radius: 2px;
+    position: relative;
+}
+
+.trans-header-line::before,
+.trans-header-line::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    background: var(--trans-gold);
+    border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+.trans-header-line::before { left: -20px; }
+.trans-header-line::after { right: -20px; }
+
+.trans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.trans-card {
+    background: var(--trans-white);
+    border-radius: 1.5rem;
+    border: 1px solid #E5E7EB;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s var(--trans-ease-elastic);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    animation: trans-card-reveal 0.6s var(--trans-ease-elastic) both;
+}
+
+.trans-card:nth-child(1) { animation-delay: 0.05s; }
+.trans-card:nth-child(2) { animation-delay: 0.1s; }
+.trans-card:nth-child(3) { animation-delay: 0.15s; }
+.trans-card:nth-child(4) { animation-delay: 0.2s; }
+.trans-card:nth-child(5) { animation-delay: 0.25s; }
+.trans-card:nth-child(6) { animation-delay: 0.3s; }
+.trans-card:nth-child(7) { animation-delay: 0.35s; }
+.trans-card:nth-child(8) { animation-delay: 0.4s; }
+.trans-card:nth-child(9) { animation-delay: 0.45s; }
+.trans-card:nth-child(10) { animation-delay: 0.5s; }
+
+.trans-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(45,80,22,0.12);
+    border-color: transparent;
+}
+
+.trans-card-band {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--trans-verde-dark), var(--trans-gold), var(--trans-verde-light));
+    background-size: 200% auto;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--trans-ease-bounce);
+}
+
+.trans-card:hover .trans-card-band {
+    transform: scaleX(1);
+    animation: trans-shimmer 2s linear infinite;
+}
+
+.trans-card-icon {
+    width: 75px;
+    height: 75px;
+    margin: 0 auto 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    font-size: 2rem;
+    transition: all 0.4s var(--trans-ease-bounce);
+    position: relative;
+    z-index: 1;
+}
+
+.estructura-icon { background: var(--trans-verde-xlight); color: var(--trans-verde-dark); }
+.integrantes-icon { background: rgba(43,106,158,0.1); color: #2B6A9E; }
+.normativas-icon { background: var(--trans-cream); color: var(--trans-gold); }
+.proyectos-icon { background: rgba(220,38,38,0.1); color: #dc2626; }
+.informes-icon { background: #E0F2FE; color: #0284C7; }
+.datos-icon { background: #F3E8FF; color: #7E22CE; }
+.atencion-icon { background: #FEF3C7; color: #D97706; }
+.tramites-icon { background: var(--trans-verde-xlight); color: var(--trans-verde-dark); }
+.actas-icon { background: #E0E7FF; color: #4338CA; }
+.compras-icon { background: #FCE7F3; color: #BE185D; }
+
+.trans-card:hover .trans-card-icon {
+    transform: scale(1.1) rotate(-6deg);
+    border-radius: 28px;
+}
+
+.trans-card:hover .estructura-icon { background: var(--trans-verde-dark); color: white; }
+.trans-card:hover .integrantes-icon { background: #2B6A9E; color: white; }
+.trans-card:hover .normativas-icon { background: var(--trans-gold); color: white; }
+.trans-card:hover .proyectos-icon { background: #dc2626; color: white; }
+.trans-card:hover .informes-icon { background: #0284C7; color: white; }
+.trans-card:hover .datos-icon { background: #7E22CE; color: white; }
+.trans-card:hover .atencion-icon { background: #D97706; color: white; }
+.trans-card:hover .tramites-icon { background: var(--trans-verde-dark); color: white; }
+.trans-card:hover .actas-icon { background: #4338CA; color: white; }
+.trans-card:hover .compras-icon { background: #BE185D; color: white; }
+
+.trans-card h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 0.8rem;
+    color: var(--trans-dark);
+}
+
+.trans-card p {
+    font-size: 0.85rem;
+    color: var(--trans-gray);
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+}
+
+.trans-card-divider {
+    width: 40px;
+    height: 2px;
+    background: var(--trans-gold);
+    margin: 0 auto 1rem;
+    transition: width 0.4s var(--trans-ease-bounce);
+    border-radius: 2px;
+}
+
+.trans-card:hover .trans-card-divider {
+    width: 80px;
+    background: var(--trans-verde-dark);
+}
+
+.trans-card-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.4rem;
+    background: var(--trans-verde-dark);
+    color: var(--trans-white);
+    border-radius: 3rem;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s var(--trans-ease-bounce);
+    position: relative;
+    overflow: hidden;
+}
+
+.trans-card-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: skewX(-15deg);
+    transition: left 0.5s ease;
+}
+
+.trans-card-btn:hover {
+    background: var(--trans-gold);
+    transform: translateY(-3px);
+    gap: 0.9rem;
+}
+
+.trans-card-btn:hover::before {
+    left: 100%;
+}
+
+.trans-card-btn i {
+    transition: transform 0.2s ease;
+}
+
+.trans-card-btn:hover i {
+    transform: translateX(4px);
+}
+
+.trans-nota-actualizacion {
+    margin-top: 3rem;
+    padding: 1rem 1.5rem;
+    background: var(--trans-cream);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.trans-nota-actualizacion:hover {
+    background: var(--trans-verde-xlight);
+    transform: translateY(-2px);
+}
+
+.trans-nota-actualizacion i {
+    font-size: 1.2rem;
+    color: var(--trans-gold);
+    animation: trans-spin 3s linear infinite;
+}
+
+.trans-nota-actualizacion p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--trans-gray);
+}
+
+.trans-nota-actualizacion a {
+    color: var(--trans-verde-dark);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.trans-nota-actualizacion a:hover {
+    color: var(--trans-gold);
+    text-decoration: underline;
+}
+
+/* ================================================================
+   SECCIÓN DERECHOS CIUDADANOS
+================================================================ */
+.trans-derechos {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, var(--trans-verde-xlight), var(--trans-cream));
+    position: relative;
+    overflow: hidden;
+}
+
+.trans-derechos::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background-image: radial-gradient(rgba(200,150,12,0.03) 2px, transparent 2px);
+    background-size: 25px 25px;
+    pointer-events: none;
+}
+
+.trans-derechos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.8rem;
+    position: relative;
+    z-index: 1;
+}
+
+.trans-derecho-card {
+    background: var(--trans-white);
+    padding: 2rem 1.5rem;
+    border-radius: 1.5rem;
+    text-align: center;
+    transition: all 0.4s var(--trans-ease-elastic);
+    border: 1px solid rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.trans-derecho-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--trans-verde-dark), var(--trans-gold));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.trans-derecho-card:hover::before {
+    transform: scaleX(1);
+}
+
+.trans-derecho-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.trans-derecho-icon {
+    width: 65px;
+    height: 65px;
+    background: var(--trans-verde-xlight);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.2rem;
+    font-size: 1.8rem;
+    color: var(--trans-verde-dark);
+    transition: all 0.3s var(--trans-ease-bounce);
+}
+
+.trans-derecho-card:hover .trans-derecho-icon {
+    background: var(--trans-gold);
+    color: white;
+    transform: scale(1.1) rotate(360deg);
+}
+
+.trans-derecho-card h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    color: var(--trans-dark);
+}
+
+.trans-derecho-card p {
+    font-size: 0.85rem;
+    color: var(--trans-gray);
+    line-height: 1.6;
+}
+
+/* ================================================================
+   SECCIÓN OAIM
+================================================================ */
+.trans-oaim {
+    padding: 5rem 0;
+    background: var(--trans-white);
+}
+
+.trans-oaim-card {
+    background: linear-gradient(135deg, var(--trans-verde-dark), var(--trans-verde-mid));
+    border-radius: 2rem;
+    padding: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s var(--trans-ease-elastic);
+}
+
+.trans-oaim-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: trans-float-slow 15s ease-in-out infinite;
+}
+
+.trans-oaim-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(45,80,22,0.3);
+}
+
+.trans-oaim-content {
+    flex: 2;
+    position: relative;
+    z-index: 2;
+}
+
+.trans-oaim-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--trans-white);
+    margin-bottom: 1rem;
+}
+
+.trans-oaim-content p {
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+}
+
+.trans-oaim-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: rgba(255,255,255,0.85);
+    font-size: 0.85rem;
+    background: rgba(255,255,255,0.08);
+    padding: 0.6rem 1rem;
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    background: rgba(255,255,255,0.15);
+    transform: translateX(5px);
+}
+
+.info-item i {
+    width: 28px;
+    color: var(--trans-gold);
+    font-size: 1rem;
+}
+
+.trans-oaim-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: var(--trans-gold);
+    color: var(--trans-dark);
+    padding: 0.9rem 2rem;
+    border-radius: 3rem;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s var(--trans-ease-bounce);
+    position: relative;
+    overflow: hidden;
+}
+
+.trans-oaim-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: skewX(-15deg);
+    transition: left 0.5s ease;
+}
+
+.trans-oaim-btn:hover {
+    background: var(--trans-white);
+    transform: translateY(-3px);
+    gap: 1rem;
+}
+
+.trans-oaim-btn:hover::before {
+    left: 100%;
+}
+
+.trans-oaim-icon {
+    flex: 1;
+    text-align: center;
+    font-size: 7rem;
+    color: rgba(255,255,255,0.15);
+    position: relative;
+    z-index: 1;
+    animation: trans-float-slow 6s ease-in-out infinite;
+}
+
+/* ================================================================
+   CTA FINAL
+================================================================ */
+.trans-cta {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, #0E1608, var(--trans-verde-dark));
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.trans-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+    pointer-events: none;
+    animation: trans-dot-drift 25s linear infinite reverse;
+}
+
+.trans-cta::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    right: -80px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(200,150,12,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: trans-float-slow 12s ease-in-out infinite;
+}
+
+.trans-cta h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--trans-white);
+    margin-bottom: 0.8rem;
+    position: relative;
+    z-index: 2;
+}
+
+.trans-cta p {
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.trans-cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+}
+
+.trans-cta-btn-primary,
+.trans-cta-btn-secondary {
+    padding: 0.9rem 2.2rem;
+    border-radius: 3rem;
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    transition: all 0.3s var(--trans-ease-bounce);
+    font-size: 0.9rem;
+}
+
+.trans-cta-btn-primary {
+    background: var(--trans-white);
+    color: var(--trans-verde-dark);
+    animation: trans-pulse-green 2.5s ease-in-out infinite;
+}
+
+.trans-cta-btn-primary:hover {
+    background: var(--trans-gold);
+    transform: translateY(-4px);
+    gap: 1rem;
+    animation: none;
+}
+
+.trans-cta-btn-secondary {
+    background: transparent;
+    border: 2px solid var(--trans-white);
+    color: var(--trans-white);
+}
+
+.trans-cta-btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-4px);
+    border-color: var(--trans-gold);
+    color: var(--trans-gold-light);
+    gap: 1rem;
+}
+
+/* ================================================================
+   RESPONSIVE
+================================================================ */
+@media (max-width: 1100px) {
+    .trans-grid { gap: 1.5rem; }
+}
+
+@media (max-width: 900px) {
+    .trans-welcome-card { padding: 2rem; }
+    .trans-oaim-card { flex-direction: column; text-align: center; }
+    .trans-oaim-icon { display: none; }
+    .trans-oaim-info { grid-template-columns: 1fr; }
+    .info-item { justify-content: center; }
+    .trans-derechos-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    section.trans-hero { padding: 5rem 0 6rem !important; }
+    .trans-hero-stats { flex-direction: column; align-items: center; }
+    .trans-hero-stat { width: fit-content; }
+    .trans-grid { grid-template-columns: 1fr; }
+    .trans-section-header h2 { font-size: 1.8rem; }
+    .trans-derechos-grid { grid-template-columns: 1fr; }
+    .trans-cta h2 { font-size: 1.6rem; }
+    .trans-cta-buttons { flex-direction: column; align-items: center; }
+    .trans-cta-btn-primary, .trans-cta-btn-secondary { width: 100%; max-width: 280px; justify-content: center; }
+    .trans-oaim-card { padding: 2rem; }
+    .container { padding: 0 1rem; }
+}
+
+@media (max-width: 480px) {
+    .trans-hero-title { font-size: 2rem; }
+    .trans-hero-subtitle { font-size: 0.9rem; }
+    .trans-welcome-card h2 { font-size: 1.4rem; }
+    .trans-welcome-card { padding: 1.5rem; }
+    .trans-compliance-badges .badge { font-size: 0.7rem; padding: 0.4rem 0.8rem; }
+    .trans-card { padding: 1.5rem 1rem; }
+    .trans-card-icon { width: 60px; height: 60px; font-size: 1.6rem; }
+    .trans-card h3 { font-size: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .trans-card, .trans-welcome-card, .trans-derecho-card, .trans-oaim-card {
+        transform: none !important;
+    }
+    .trans-hero-title, .trans-hero-eyebrow, .trans-hero-subtitle, .trans-hero-stats {
+        opacity: 1 !important;
+    }
+    .trans-hero-accent::after {
+        transform: scaleX(1);
+    }
+    .trans-hero-line {
+        width: 100px;
+        opacity: 1;
+    }
+    .trans-header-line::before,
+    .trans-header-line::after {
+        animation: none;
+    }
+}
+</style>
 {% endblock %}
 
 {% block content %}
-
-<!-- SECCION 1 - HERO DRAMATICO -->
-<section class="transp-hero">
-    <div class="transp-hero-left-line"></div>
-    <div class="container transp-hero-container">
-        <div class="transp-hero-content">
-            <div class="transp-hero-eyebrow">PORTAL OFICIAL · VILLA CUTUPU</div>
-            <h1 class="transp-hero-title">
-                Portal de <span class="transp-hero-accent">Transparencia</span>
-            </h1>
-            <div class="transp-hero-line"></div>
-            <p class="transp-hero-subtitle">Acceso libre a la informacion publica · Ley 200-04</p>
-            <div class="transp-hero-stats">
-                <div class="transp-hero-stat">Ley 200-04 / Libre Acceso</div>
-                <div class="transp-hero-stat">Decreto 130-05 / Reglamento</div>
-                <div class="transp-hero-stat">Permanente / Actualizacion</div>
+<main>
+    <!-- HERO SECTION -->
+    <section class="trans-hero">
+        <div class="trans-hero-left-line"></div>
+        <div class="trans-particle trans-particle-1"></div>
+        <div class="trans-particle trans-particle-2"></div>
+        <div class="trans-particle trans-particle-3"></div>
+        
+        <div class="trans-hero-container">
+            <div class="trans-hero-content">
+                <div class="trans-hero-eyebrow">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>LEY 200-04 · DECRETO 130-05</span>
+                </div>
+                <h1 class="trans-hero-title">
+                    Portal de <span class="trans-hero-accent">Transparencia</span>
+                </h1>
+                <div class="trans-hero-line"></div>
+                <p class="trans-hero-subtitle">
+                    Acceso libre a la información pública · Rendición de cuentas · Gobierno abierto
+                </p>
+                <div class="trans-hero-stats">
+                    <div class="trans-hero-stat">
+                        <i class="fas fa-file-alt"></i> 10+ Categorías
+                    </div>
+                    <div class="trans-hero-stat">
+                        <i class="fas fa-chart-line"></i> Actualización permanente
+                    </div>
+                    <div class="trans-hero-stat">
+                        <i class="fas fa-gavel"></i> Ley 200-04
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Particulas flotantes -->
-    <div class="transp-particle transp-particle-1"></div>
-    <div class="transp-particle transp-particle-2"></div>
-    <div class="transp-particle transp-particle-3"></div>
-</section>
+    </section>
 
-<!-- SECCION 2 - BLOQUE LEGAL PREMIUM -->
-<section class="transp-legal">
-    <div class="container">
-        <div class="transp-legal-card transp-observe">
-            <div class="transp-legal-card-top"></div>
-            <div class="transp-legal-badge">Ley 200-04 · Decreto 130-05</div>
-            <h2 class="transp-legal-title">Bienvenidos al Portal de Transparencia</h2>
-            <p class="transp-legal-text">
-                La <strong>Ley 200-04 sobre Libre Acceso a la Informacion Publica</strong> garantiza el derecho 
-                de toda persona a solicitar y recibir informacion veraz, completa y actualizada de las instituciones 
-                del Estado dominicano.
-            </p>
-            <div class="transp-legal-quote">
-                <div class="transp-quote-badge">Articulo 5</div>
-                <p>"Toda persona tiene derecho a solicitar y recibir informacion completa, veraz, adecuada y oportuna, por cualquier medio de comunicacion, de los poderes publicos."</p>
-            </div>
-            <div class="transp-legal-grid">
-                <div class="transp-legal-item transp-observe">
-                    <div class="transp-legal-icon">
-                        <i class="fas fa-universal-access"></i>
-                    </div>
-                    <h4>Acceso Universal</h4>
-                    <p>Sin necesidad de justificar motivos</p>
+    <!-- SECCIÓN BIENVENIDA -->
+    <section class="trans-welcome">
+        <div class="container">
+            <div class="trans-welcome-card">
+                <div class="trans-welcome-icon">
+                    <i class="fas fa-hand-peace"></i>
                 </div>
-                <div class="transp-legal-item transp-observe">
-                    <div class="transp-legal-icon">
+                <h2>Bienvenidos al Portal de Transparencia</h2>
+                <p class="trans-welcome-subtitle">Junta Municipal Villa Cutupú · Río Verde Arriba, La Vega</p>
+                <div class="trans-legal-quote">
+                    <p><span class="ley-ref">Artículo 5.-</span> «Se dispone la informatización y la incorporación al sistema de comunicación por Internet, o a cualquier otro sistema similar que en el futuro se establezca, de todos los organismos públicos centralizados y descentralizados del Estado, incluyendo el Distrito Nacional y los Municipios, con la finalidad de garantizar a través de éste un acceso directo del público a la información del Estado.»</p>
+                </div>
+                <div class="trans-compliance-badges">
+                    <span class="badge"><i class="fas fa-balance-scale"></i> Ley 200-04</span>
+                    <span class="badge"><i class="fas fa-file-contract"></i> Decreto 130-05</span>
+                    <span class="badge"><i class="fas fa-sync-alt"></i> Actualización permanente</span>
+                    <span class="badge"><i class="fas fa-unlock-alt"></i> Libre acceso</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN CATEGORÍAS -->
+    <section class="trans-categorias">
+        <div class="container">
+            <div class="trans-section-header">
+                <h2>Categorías de información disponible</h2>
+                <p>Sin necesidad de petición previa · Acceso directo 24/7</p>
+                <div class="trans-header-line"></div>
+            </div>
+
+            <div class="trans-grid">
+                <!-- Estructura orgánica -->
+                <div class="trans-card">
+                    <div class="trans-card-band"></div>
+                    <div class="trans-card-icon estructura-icon">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <h3>Estructura orgánica</h3>
+                    <p>Organigrama, funciones de cada área, base legal y responsables. Información actualizada de la Junta Municipal.</p>
+                    <div class="trans-card-divider"></div>
+                    <a href="{{ url_for('transparencia_estructura') }}" class="trans-card-btn">
+                        Ver estructura <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Integrantes y autoridades -->
+                <div class="trans-card">
+                    <div class="trans-card-band"></div>
+                    <div class="trans-card-icon integrantes-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Integrantes y autoridades</h3>
+                    <p>Nómina de funcionarios, regidores, directores, y sus declaraciones juradas (si aplica).</p>
+                    <div class="trans-card-divider"></div>
+                    <a href="{{ url_for('transparencia_integrantes') }}" class="trans-card-btn">
+                        Conocer equipo <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Normativas -->
+                <div class="trans-card">
+                    <div class="trans-card-band"></div>
+                    <div class="trans-card-icon normativas-icon">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <h3>Normativas de funcionamiento</h3>
+                    <p>Reglamentos internos, ordenanzas municipales, resoluciones y bandos.</p>
+                    <div class="trans-card-divider"></div>
+                    <a href="{{ url_for('transparencia_normativas') }}" class="trans-card-btn">
+                        Consultar <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Proyectos y obras -->
+                <div class="trans-card">
+                    <div class="trans-card-band"></div>
+                    <div class="trans-card-icon proyectos-icon">
+                        <i class="fas fa-hard-hat"></i>
+                    </div>
+                    <h3>Proyectos y obras</h3>
+                    <p>Planes, proyectos en ejecución, licitaciones, contratos y avances de obra.</p>
+                    <div class="trans-card-divider"></div>
+                    <a href="{{ url_for('transparencia_proyectos') }}" class="trans-card-btn">
+                        Ver proyectos <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Informes de gestión -->
+                <div class="trans-card">
+                    <div class="trans-card-band"></div>
+                    <div class="trans-card-icon informes-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Informes de gestión</h3>
+                    <p>Rendición de cuentas, informes trimestrales y anuales, ejecución presupuestaria.</p>
+                    <div class="trans-card-divider"></div>
+                    <a href="{{ url_for('transparencia_informes') }}" class="trans-card-btn">
+                        Acceder <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Base de datos -->
+                <div class="trans-card">
+                    <div class="trans-card-band"></div>
+                    <div class="trans-card-icon datos-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Base de datos municipal</h3>
+                    <p>Estadísticas, censos, indicadores socioeconómicos y conjuntos de datos abiertos.</p>
+                    <div class="trans-card-divider"></div>
+                    <a href="{{ url_for('transparencia_datos') }}" class="trans-card-btn">
+                        Explorar datos <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Atención al usuario -->
+                <div class="trans-card">
+                    <div class="trans-card-band"></div>
+                    <div class="trans-card-icon atencion-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Atención al usuario (SAC)</h3>
+                    <p>Realice consultas, quejas o sugerencias sobre la gestión municipal. Sistema de seguimiento.</p>
+                    <div class="trans-card-divider"></div>
+                    <a href="{{ url_for('transparencia_atencion') }}" class="trans-card-btn">
+                        Ingresar <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Trámites y servicios -->
+                <div class="trans-card">
+                    <div class="trans-card-band"></div>
+                    <div class="trans-card-icon tramites-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3>Trámites y servicios</h3>
+                    <p>Solicitudes de certificados, permisos, constancias. Ventanilla única virtual.</p>
+                    <div class="trans-card-divider"></div>
+                    <a href="{{ url_for('servicios') }}" class="trans-card-btn">
+                        Ir a trámites <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Actas y acuerdos -->
+                <div class="trans-card">
+                    <div class="trans-card-band"></div>
+                    <div class="trans-card-icon actas-icon">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    <h3>Actas y acuerdos</h3>
+                    <p>Actas de sesiones del concejo, acuerdos municipales y resoluciones administrativas.</p>
+                    <div class="trans-card-divider"></div>
+                    <a href="{{ url_for('transparencia_actas') }}" class="trans-card-btn">
+                        Consultar <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Compras y contrataciones -->
+                <div class="trans-card">
+                    <div class="trans-card-band"></div>
+                    <div class="trans-card-icon compras-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3>Compras y contrataciones</h3>
+                    <p>Licitaciones, órdenes de compra, proveedores y contratos vigentes.</p>
+                    <div class="trans-card-divider"></div>
+                    <a href="{{ url_for('transparencia_compras') }}" class="trans-card-btn">
+                        Ver detalles <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="trans-nota-actualizacion">
+                <i class="fas fa-sync-alt"></i>
+                <p>Esta sección se actualiza permanentemente conforme al Artículo 5 de la Ley 200-04. Para solicitar información específica, puede usar el formulario de <a href="{{ url_for('transparencia_atencion') }}">Atención al Usuario</a>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DERECHOS CIUDADANOS -->
+    <section class="trans-derechos">
+        <div class="container">
+            <div class="trans-derechos-grid">
+                <div class="trans-derecho-card">
+                    <div class="trans-derecho-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Derecho a la información</h3>
+                    <p>Toda persona tiene derecho a solicitar y recibir información completa, veraz, adecuada y oportuna de cualquier órgano del Estado.</p>
+                </div>
+                <div class="trans-derecho-card">
+                    <div class="trans-derecho-icon">
                         <i class="fas fa-clock"></i>
                     </div>
-                    <h4>Plazo Maximo</h4>
-                    <p>Respuesta en 15 dias habiles</p>
+                    <h3>Plazo de respuesta</h3>
+                    <p>Las solicitudes de información deben ser respondidas en un plazo no mayor de 15 días hábiles.</p>
+                    <div class="trans-card-divider"></div>
                 </div>
-                <div class="transp-legal-item transp-observe">
-                    <div class="transp-legal-icon">
-                        <i class="fas fa-ticket-alt"></i>
+                <div class="trans-derecho-card">
+                    <div class="trans-derecho-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
                     </div>
-                    <h4>Gratuito</h4>
-                    <p>Solo costo de reproduccion</p>
+                    <h3>Gratuidad</h3>
+                    <p>El acceso a la información pública es gratuito. Solo se podrá cobrar el costo de reproducción.</p>
+                </div>
+                <div class="trans-derecho-card">
+                    <div class="trans-derecho-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Protección de datos</h3>
+                    <p>Se garantiza la protección de datos personales y la información clasificada como reservada.</p>
                 </div>
             </div>
-            <div class="transp-legal-footer">
-                <i class="fas fa-star-of-life"></i>
-                <span>Actualizacion permanente · Datos abiertos · Gobierno transparente</span>
-            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- SECCION 3 - BADGES DE CUMPLIMIENTO -->
-<section class="transp-badges">
-    <div class="container">
-        <div class="transp-badges-grid">
-            <div class="transp-badge">Ley 200-04</div>
-            <div class="transp-badge">Decreto 130-05</div>
-            <div class="transp-badge">Actualizacion permanente</div>
-        </div>
-    </div>
-</section>
-
-<!-- SECCION 4 - GRID DE CATEGORIAS (10 CARDS) -->
-<section class="transp-categories">
-    <div class="container">
-        <div class="transp-categories-header">
-            <div class="transp-categories-badge">Sin solicitud previa</div>
-            <h3 class="transp-categories-title">Categorias de informacion disponible</h3>
-            <div class="transp-categories-line"></div>
-        </div>
-        
-        <div class="transp-categories-grid">
-            <!-- Card 01 - Estructura Organica -->
-            <div class="transp-card transp-observe" style="animation-delay: 0.05s">
-                <div class="transp-card-band"></div>
-                <div class="transp-card-number">01</div>
-                <div class="transp-card-icon">
-                    <i class="fas fa-building"></i>
+    <!-- SECCIÓN OAIM -->
+    <section class="trans-oaim">
+        <div class="container">
+            <div class="trans-oaim-card">
+                <div class="trans-oaim-content">
+                    <h2>Oficina de Acceso a la Información (OAI/M)</h2>
+                    <p>¿Necesitas información específica que no encuentras en nuestro portal? Puedes solicitar información a través de nuestra Oficina de Acceso a la Información Municipal.</p>
+                    <div class="trans-oaim-info">
+                        <div class="info-item">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Encargado: Lic. María Rodríguez</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>oaim@villacutupu.gob.do</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <span>(809) 691-7111 ext. 104</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Lun-Vie: 8:00 AM - 2:00 PM</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('transparencia_atencion') }}" class="trans-oaim-btn">
+                        Solicitar información <i class="fas fa-paper-plane"></i>
+                    </a>
                 </div>
-                <h3 class="transp-card-title">Estructura organica</h3>
-                <p class="transp-card-desc">Organigrama, funciones y base legal de la Junta Distrital</p>
-                <div class="transp-card-divider"></div>
-                <a href="/transparencia/estructura" class="transp-card-btn">Ver estructura <i class="fas fa-arrow-right"></i></a>
-                <div class="transp-card-meta">Tiempo estimado: 3 min</div>
-            </div>
-            
-            <!-- Card 02 - Integrantes y autoridades -->
-            <div class="transp-card transp-observe" style="animation-delay: 0.10s">
-                <div class="transp-card-band"></div>
-                <div class="transp-card-number">02</div>
-                <div class="transp-card-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3 class="transp-card-title">Integrantes y autoridades</h3>
-                <p class="transp-card-desc">Nomina oficial de autoridades electas y funcionarios designados</p>
-                <div class="transp-card-divider"></div>
-                <a href="/transparencia/integrantes" class="transp-card-btn">Conocer equipo <i class="fas fa-arrow-right"></i></a>
-                <div class="transp-card-meta">Periodo 2024-2028</div>
-            </div>
-            
-            <!-- Card 03 - Normativas de funcionamiento -->
-            <div class="transp-card transp-observe" style="animation-delay: 0.15s">
-                <div class="transp-card-band"></div>
-                <div class="transp-card-number">03</div>
-                <div class="transp-card-icon">
+                <div class="trans-oaim-icon">
                     <i class="fas fa-balance-scale"></i>
                 </div>
-                <h3 class="transp-card-title">Normativas de funcionamiento</h3>
-                <p class="transp-card-desc">Leyes, ordenanzas y reglamentos que rigen el municipio</p>
-                <div class="transp-card-divider"></div>
-                <a href="/transparencia/normativas" class="transp-card-btn">Consultar <i class="fas fa-arrow-right"></i></a>
-                <div class="transp-card-meta">Actualizado 2025</div>
-            </div>
-            
-            <!-- Card 04 - Proyectos y obras -->
-            <div class="transp-card transp-observe" style="animation-delay: 0.20s">
-                <div class="transp-card-band"></div>
-                <div class="transp-card-number">04</div>
-                <div class="transp-card-icon">
-                    <i class="fas fa-hard-hat"></i>
-                </div>
-                <h3 class="transp-card-title">Proyectos y obras</h3>
-                <p class="transp-card-desc">Planes, proyectos y obras en ejecucion y finalizadas</p>
-                <div class="transp-card-divider"></div>
-                <a href="/transparencia/proyectos" class="transp-card-btn">Ver proyectos <i class="fas fa-arrow-right"></i></a>
-                <div class="transp-card-meta">10+ proyectos</div>
-            </div>
-            
-            <!-- Card 05 - Informes de gestion -->
-            <div class="transp-card transp-observe" style="animation-delay: 0.25s">
-                <div class="transp-card-band"></div>
-                <div class="transp-card-number">05</div>
-                <div class="transp-card-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h3 class="transp-card-title">Informes de gestion</h3>
-                <p class="transp-card-desc">Rendicion de cuentas, informes trimestrales y ejecucion presupuestaria</p>
-                <div class="transp-card-divider"></div>
-                <a href="/transparencia/informes" class="transp-card-btn">Acceder <i class="fas fa-arrow-right"></i></a>
-                <div class="transp-card-meta">PDF descargables</div>
-            </div>
-            
-            <!-- Card 06 - Base de datos municipal -->
-            <div class="transp-card transp-observe" style="animation-delay: 0.30s">
-                <div class="transp-card-band"></div>
-                <div class="transp-card-number">06</div>
-                <div class="transp-card-icon">
-                    <i class="fas fa-database"></i>
-                </div>
-                <h3 class="transp-card-title">Base de datos municipal</h3>
-                <p class="transp-card-desc">Estadisticas demograficas, indicadores socioeconomicos y datos abiertos</p>
-                <div class="transp-card-divider"></div>
-                <a href="/transparencia/datos" class="transp-card-btn">Explorar datos <i class="fas fa-arrow-right"></i></a>
-                <div class="transp-card-meta">Fuente: ONE</div>
-            </div>
-            
-            <!-- Card 07 - Atencion al usuario SAC -->
-            <div class="transp-card transp-observe" style="animation-delay: 0.35s">
-                <div class="transp-card-band"></div>
-                <div class="transp-card-number">07</div>
-                <div class="transp-card-icon">
-                    <i class="fas fa-comment-dots"></i>
-                </div>
-                <h3 class="transp-card-title">Atencion al usuario SAC</h3>
-                <p class="transp-card-desc">Oficina de Acceso a la Informacion (OAI) - Consultas, quejas y sugerencias</p>
-                <div class="transp-card-divider"></div>
-                <a href="/transparencia/atencion" class="transp-card-btn">Ingresar <i class="fas fa-arrow-right"></i></a>
-                <div class="transp-card-meta">Respuesta 15 dias</div>
-            </div>
-            
-            <!-- Card 08 - Tramites y servicios -->
-            <div class="transp-card transp-observe" style="animation-delay: 0.40s">
-                <div class="transp-card-band"></div>
-                <div class="transp-card-number">08</div>
-                <div class="transp-card-icon">
-                    <i class="fas fa-handshake"></i>
-                </div>
-                <h3 class="transp-card-title">Tramites y servicios</h3>
-                <p class="transp-card-desc">Solicitudes, denuncias y consultas disponibles para los ciudadanos</p>
-                <div class="transp-card-divider"></div>
-                <a href="/servicios" class="transp-card-btn">Ir a tramites <i class="fas fa-arrow-right"></i></a>
-                <div class="transp-card-meta">100% en linea</div>
-            </div>
-            
-            <!-- Card 09 - Actas y acuerdos -->
-            <div class="transp-card transp-observe" style="animation-delay: 0.45s">
-                <div class="transp-card-band"></div>
-                <div class="transp-card-number">09</div>
-                <div class="transp-card-icon">
-                    <i class="fas fa-file-signature"></i>
-                </div>
-                <h3 class="transp-card-title">Actas y acuerdos</h3>
-                <p class="transp-card-desc">Actas del Concejo de Regidores y acuerdos municipales vigentes</p>
-                <div class="transp-card-divider"></div>
-                <a href="/transparencia/actas" class="transp-card-btn">Consultar <i class="fas fa-arrow-right"></i></a>
-                <div class="transp-card-meta">Documentos oficiales</div>
-            </div>
-            
-            <!-- Card 10 - Compras y contrataciones -->
-            <div class="transp-card transp-observe" style="animation-delay: 0.50s">
-                <div class="transp-card-band"></div>
-                <div class="transp-card-number">10</div>
-                <div class="transp-card-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
-                <h3 class="transp-card-title">Compras y contrataciones</h3>
-                <p class="transp-card-desc">Licitaciones, contratos vigentes, proveedores y compras menores</p>
-                <div class="transp-card-divider"></div>
-                <a href="/transparencia/compras" class="transp-card-btn">Ver detalles <i class="fas fa-arrow-right"></i></a>
-                <div class="transp-card-meta">Ley 340-06</div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- SECCION 5 - NOTA DE ACTUALIZACION -->
-<section class="transp-update">
-    <div class="container">
-        <div class="transp-update-pill">
-            <i class="fas fa-sync-alt"></i>
-            <span>Ultima actualizacion: <strong>15 de abril 2026</strong></span>
-            <a href="#">Ver historial</a>
-        </div>
-    </div>
-</section>
-
-<!-- SECCION 6 - CTA FINAL IMPACTANTE -->
-<section class="transp-cta">
-    <div class="container">
-        <div class="transp-cta-content">
-            <div class="transp-cta-eyebrow">CONTACTO DIRECTO</div>
-            <h2 class="transp-cta-title">Necesitas informacion especifica?</h2>
-            <p class="transp-cta-subtitle">Estamos aqui para servirte con transparencia y compromiso.</p>
-            <div class="transp-cta-buttons">
-                <a href="/transparencia/atencion" class="transp-cta-btn-primary">Solicitar informacion <i class="fas fa-arrow-right"></i></a>
-                <a href="/servicios" class="transp-cta-btn-secondary">Ver servicios <i class="fas fa-clipboard-list"></i></a>
+    <!-- CTA FINAL -->
+    <section class="trans-cta">
+        <div class="container">
+            <h2>Participa activamente en la fiscalización</h2>
+            <p>Tu opinión es fundamental para mejorar nuestra gestión. Conoce, participa y fiscaliza.</p>
+            <div class="trans-cta-buttons">
+                <a href="{{ url_for('contacto') }}" class="trans-cta-btn-primary">
+                    <i class="fas fa-comment-dots"></i> Enviar sugerencia
+                </a>
+                <a href="{{ url_for('mapa_incidencias') }}" class="trans-cta-btn-secondary">
+                    <i class="fas fa-map-marker-alt"></i> Reportar incidencia
+                </a>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</main>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-(function() {
-    const observer = new IntersectionObserver((entries) => {
+    // Scroll reveal animation for transparencia
+    const transObserverOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+    const transObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('transp-visible');
-                observer.unobserve(entry.target);
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                transObserver.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-    
-    document.querySelectorAll('.transp-observe').forEach(el => {
-        observer.observe(el);
-    });
-})();
-</script>
+    }, transObserverOptions);
 
+    document.querySelectorAll('.trans-card, .trans-derecho-card, .trans-welcome-card, .trans-oaim-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        transObserver.observe(el);
+    });
+</script>
 {% endblock %}

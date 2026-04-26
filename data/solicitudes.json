@@ -180,5 +180,62 @@
     ],
     "documentos": [],
     "asignado_a": null
+  },
+  {
+    "id": "541f2c54-d330-4398-8f07-da60c72f4d8b",
+    "folio": "SOL-260425-51937",
+    "usuario_email": "daritza@gmail.com",
+    "usuario_nombre": "daritza peña",
+    "usuario_cedula": "0470192312",
+    "servicio_id": "funeraria",
+    "servicio_nombre": "Funerarias Municipales",
+    "descripcion": "quiero solicitar un servicio de funeraria",
+    "estado": "en_proceso",
+    "fecha_creacion": "2026-04-25T19:03:02.485162",
+    "fecha_actualizacion": "2026-04-25T20:05:20.104334",
+    "comentarios_admin": [],
+    "historial": [
+      {
+        "fecha": "2026-04-25T19:03:02.485162",
+        "tipo": "creada",
+        "descripcion": "Solicitud creada",
+        "usuario": "daritza@gmail.com",
+        "nombre": "daritza peña"
+      },
+      {
+        "fecha": "2026-04-25T20:05:20.104334",
+        "tipo": "estado_cambiado",
+        "descripcion": "Estado cambiado a: en_proceso",
+        "usuario": "superadmin@cutupu.gob.do",
+        "comentario": "estamos trabajndo en ello"
+      }
+    ],
+    "documentos": [],
+    "asignado_a": null
+  },
+  {
+    "id": "e061c3db-bdef-4a2d-8905-f661bde1a2fe",
+    "folio": "SOL-260425-85199",
+    "usuario_email": "moderador@cutupu.gob.do",
+    "usuario_nombre": "Ana Martínez",
+    "usuario_cedula": "N/A",
+    "servicio_id": "funeraria",
+    "servicio_nombre": "Funerarias Municipales",
+    "descripcion": "quiero solicitar un servicion de funeraria municipal vivo en el once",
+    "estado": "pendiente",
+    "fecha_creacion": "2026-04-25T20:02:14.974661",
+    "fecha_actualizacion": "2026-04-25T20:02:14.974661",
+    "comentarios_admin": [],
+    "historial": [
+      {
+        "fecha": "2026-04-25T20:02:14.974661",
+        "tipo": "creada",
+        "descripcion": "Solicitud creada",
+        "usuario": "moderador@cutupu.gob.do",
+        "nombre": "Ana Martínez"
+      }
+    ],
+    "documentos": [],
+    "asignado_a": null
   }
 ]
