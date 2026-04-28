@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle del Contacto - Villa Cutupú{% endblock %}
+
+{% block content %}
+<style>
+  .detalle-page { padding: 2rem; }
+  .info-card { background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 12px; overflow: hidden; }
+  .info-card-header { background: #E6F1FB; border-bottom: 1px solid #B5D4F4; padding: 14px 18px; }
+  .info-card-header h5 { color: #0C447C; font-weight: 600; margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: .05em; }
+  .info-row { padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,.05); display: flex; flex-direction: column; gap: 2px; }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #6c757d; font-weight: 500; }
+  .info-value { font-size: 14px; font-weight: 500; color: #1a1a1a; }
+  .avatar-lg { width: 48px; height: 48px; border-radius: 50%; background: #E6F1FB; color: #185FA5; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .msg-box { background: #f8f9fa; border-left: 3px solid #378ADD; border-radius: 0 8px 8px 0; padding: 14px 16px; font-size: 14px; line-height: 1.7; color: #333; }
+  .reply-box { background: #EAF3DE; border-left: 3px solid #639922; border-radius: 0 8px 8px 0; padding: 14px 16px; font-size: 14px; line-height: 1.7; }
+  .admin-reply { background: #E6F1FB; border: 1px solid #B5D4F4; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+  .badge-respondido { background: #EAF3DE; color: #3B6D11; border: 1px solid #C0DD97; border-radius: 20px; font-size: 11px; font-weight: 500; padding: 3px 9px; }
+  .badge-pendiente { background: #FAEEDA; color: #854F0B; border: 1px solid #FAC775; border-radius: 20px; font-size: 11px; font-weight: 500; padding: 3px 9px; }
+  .badge-admin { background: #E6F1FB; color: #0C447C; border: 1px solid #B5D4F4; border-radius: 20px; font-size: 11px; font-weight: 500; padding: 2px 8px; }
+  .btn-send { background: #EAF3DE; border: 1px solid #639922; color: #27500A; border-radius: 8px; padding: 9px 20px; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .btn-send:hover { background: #C0DD97; }
+  .btn-cancel { background: #fff; border: 1px solid rgba(0,0,0,.12); color: #555; border-radius: 8px; padding: 9px 16px; font-size: 14px; cursor: pointer; text-decoration: none; display: inline-block; }
+</style>
+
+<div class="detalle-page">
+  <!-- Encabezado -->
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
+    <div>
+      <h1 class="h2 mb-1 fw-semibold">
+        <i class="fas fa-envelope-open-text me-2 text-primary"></i>Detalle del Contacto
+      </h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('admin_contactos') }}">Contactos</a></li>
+          <li class="breadcrumb-item active">{{ conversacion.original.tramite_folio }}</li>
+        </ol>
+      </nav>
+    </div>
+    <a href="{{ url_for('admin_contactos') }}" class="btn btn-outline-secondary">
+      <i class="fas fa-arrow-left me-1"></i> Volver
+    </a>
+  </div>
+
+  <div class="row g-4">
+    <!-- Columna izquierda: info del remitente -->
+    <div class="col-md-4">
+      <div class="info-card">
+        <div class="info-card-header">
+          <h5><i class="fas fa-user me-2"></i>Información</h5>
+        </div>
+        <div class="p-3">
+          <div class="d-flex align-items-center gap-3 mb-3 pb-3" style="border-bottom:1px solid rgba(0,0,0,.06)">
+            <div class="avatar-lg">
+              {{ conversacion.original.autor_nombre.split()[:2]|map('first')|join('')|upper }}
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:15px">{{ conversacion.original.autor_nombre }}</div>
+              <div style="font-size:12px;color:#6c757d">{{ conversacion.original.usuario_email }}</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Folio</span>
+            <code style="font-size:13px;background:#f1f1f1;padding:2px 7px;border-radius:4px;align-self:start">{{ conversacion.original.tramite_folio }}</code>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Fecha de envío</span>
+            <span class="info-value">{{ conversacion.original.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Estado</span>
+            <div class="mt-1">
+              {% if conversacion.respuestas %}
+                <span class="badge-respondido">✓ Respondido</span>
+              {% else %}
+                <span class="badge-pendiente">⏳ Pendiente</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna derecha: conversación -->
+    <div class="col-md-8">
+      <!-- Mensaje original -->
+      <div class="info-card mb-4">
+        <div class="info-card-header">
+          <h5><i class="fas fa-comment-alt me-2"></i>Mensaje original</h5>
+        </div>
+        <div class="p-3">
+          <div class="msg-box">
+            {{ conversacion.original.mensaje|replace('\n','<br>')|safe }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Respuestas existentes -->
+      {% if conversacion.respuestas %}
+      <div class="info-card mb-4">
+        <div class="info-card-header">
+          <h5><i class="fas fa-reply me-2"></i>Respuestas</h5>
+        </div>
+        <div class="p-3">
+          {% for respuesta in conversacion.respuestas %}
+          <div class="admin-reply">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex align-items-center gap-2">
+                <strong style="font-size:14px">{{ respuesta.autor_nombre }}</strong>
+                {% if respuesta.es_admin %}<span class="badge-admin"><i class="fas fa-shield-alt me-1"></i>Admin</span>{% endif %}
+              </div>
+              <small style="color:#6c757d;font-size:12px">{{ respuesta.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</small>
+            </div>
+            <div class="reply-box">
+              {{ respuesta.mensaje|replace('\n','<br>')|safe }}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Formulario de respuesta -->
+      {% if not conversacion.respuestas %}
+      <div class="info-card">
+        <div class="info-card-header">
+          <h5><i class="fas fa-paper-plane me-2"></i>Responder contacto</h5>
+        </div>
+        <div class="p-3">
+          <form method="POST" action="{{ url_for('admin_responder_contacto') }}">
+            <input type="hidden" name="contacto_id" value="{{ conversacion.original.id }}">
+            <div class="mb-3">
+              <label class="form-label" style="font-size:13px;font-weight:500;color:#444">Respuesta</label>
+              <textarea name="respuesta" class="form-control" rows="5" required placeholder="Escribe tu respuesta aquí..."></textarea>
+            </div>
+            <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded" style="background:#E6F1FB;border:1px solid #B5D4F4;font-size:13px;color:#0C447C">
+              <i class="fas fa-info-circle"></i>
+              El usuario recibirá una notificación por correo electrónico.
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+              <a href="{{ url_for('admin_contactos') }}" class="btn-cancel">Cancelar</a>
+              <button type="submit" class="btn-send"><i class="fas fa-paper-plane me-1"></i>Enviar respuesta</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <div class="d-flex align-items-center gap-2 p-3 rounded" style="background:#EAF3DE;border:1px solid #C0DD97;color:#27500A;font-size:14px">
+        <i class="fas fa-check-circle"></i>
+        Este contacto ya fue respondido correctamente.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

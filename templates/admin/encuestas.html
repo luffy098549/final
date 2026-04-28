@@ -1,140 +1,228 @@
-{% extends "admin/base_admin.html" %}
+{% extends "base.html" %}
 
-{% block title %}Encuestas de Satisfacción - Villa Cutupú{% endblock %}
-
-{% block page_title %}Encuestas de Satisfacción{% endblock %}
-
-{% block breadcrumbs %}
-<a href="{{ url_for('admin.dashboard') }}">Dashboard</a> / <span>Encuestas</span>
-{% endblock %}
+{% block title %}Estadísticas de Encuestas - Administración{% endblock %}
 
 {% block content %}
-<!-- Stats principales -->
-<div class="stats-grid" style="margin-bottom:2rem">
-    <div class="stat-card gradient-primary">
-        <div class="stat-icon">
-            <i class="fas fa-star"></i>
-        </div>
-        <div class="stat-content">
-            <h3>Promedio General</h3>
-            <div class="stat-number">{{ stats.promedio }}</div>
-            <div class="stat-details">
-                <span>/ 5.00 estrellas</span>
-            </div>
-        </div>
-    </div>
-    
-    <div class="stat-card gradient-success">
-        <div class="stat-icon">
-            <i class="fas fa-clipboard-list"></i>
-        </div>
-        <div class="stat-content">
-            <h3>Total Encuestas</h3>
-            <div class="stat-number">{{ stats.total }}</div>
-            <div class="stat-details">
-                <span>{{ stats.por_tipo.solicitud }} solicitudes</span>
-                <span>{{ stats.por_tipo.denuncia }} denuncias</span>
-            </div>
-        </div>
-    </div>
-    
-    <div class="stat-card gradient-warning">
-        <div class="stat-icon">
-            <i class="fas fa-smile"></i>
-        </div>
-        <div class="stat-content">
-            <h3>Satisfacción</h3>
-            <div class="stat-number">{{ (stats.promedio * 20)|round|int }}%</div>
-            <div class="stat-details">
-                <span>de usuarios satisfechos</span>
-            </div>
-        </div>
-    </div>
-</div>
+<style>
+  .encuestas-page { padding: 2rem; margin-top: 80px; }
+  .stat-card { background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 12px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s ease; }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .stat-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #6c757d; margin-bottom: 4px; }
+  .stat-card .value { font-size: 26px; font-weight: 600; }
+  .stat-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .rating-stars { color: #f5b042; font-size: 14px; letter-spacing: 2px; }
+  .progress { height: 8px; border-radius: 10px; }
+  .table-card { background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
+  .table-card-header { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(0,0,0,.06); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem; }
+  th { font-size: 11px !important; text-transform: uppercase; letter-spacing: .04em; color: #6c757d !important; font-weight: 500 !important; }
+  .badge-satisfaccion { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+  .satisfaccion-muy-alta { background: #EAF3DE; color: #3B6D11; }
+  .satisfaccion-alta { background: #D4EDDA; color: #155724; }
+  .satisfaccion-media { background: #FFF3CD; color: #856404; }
+  .satisfaccion-baja { background: #FCEBEB; color: #A32D2D; }
+</style>
 
-<!-- Gráfico de calificaciones -->
-<div class="charts-grid" style="margin-bottom:2rem">
-    <div class="chart-card">
-        <div class="chart-header">
-            <h3><i class="fas fa-chart-bar"></i> Distribución de Calificaciones</h3>
-        </div>
-        <div class="chart-container">
-            <div style="display:flex;flex-direction:column;gap:1rem;padding:1rem">
-                {% for i in range(1,6) %}
-                <div style="display:flex;align-items:center;gap:.5rem">
-                    <div style="width:60px;font-weight:600">{{ i }} estrella{{ 's' if i > 1 else '' }}</div>
-                    <div style="flex:1;height:30px;background:var(--gray-200);border-radius:15px;overflow:hidden">
-                        {% set porcentaje = (stats.por_calificacion[i] / stats.total * 100) if stats.total > 0 else 0 %}
-                        <div style="width:{{ porcentaje }}%;height:100%;background:{% if i == 5 %}#10b981{% elif i == 4 %}#3b82f6{% elif i == 3 %}#f59e0b{% else %}#ef4444{% endif %};display:flex;align-items:center;padding-left:1rem;color:white;font-weight:600;font-size:.8rem">
-                            {{ stats.por_calificacion[i] }}
-                        </div>
-                    </div>
-                    <div style="width:60px">{{ '%.1f'|format(porcentaje) }}%</div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    
-    <div class="chart-card">
-        <div class="chart-header">
-            <h3><i class="fas fa-chart-pie"></i> Por Tipo de Trámite</h3>
-        </div>
-        <div class="chart-container">
-            <div style="display:flex;justify-content:center;gap:2rem;padding:2rem">
-                <div style="text-align:center">
-                    <div style="width:100px;height:100px;border-radius:50%;background:conic-gradient(#3b82f6 0deg {{ stats.por_tipo.solicitud/stats.total * 360 if stats.total > 0 else 0 }}deg, #10b981 {{ stats.por_tipo.solicitud/stats.total * 360 if stats.total > 0 else 0 }}deg 360deg);margin:0 auto 1rem"></div>
-                    <h4 style="margin-bottom:.5rem">Solicitudes</h4>
-                    <p style="font-size:1.5rem;font-weight:700">{{ stats.por_tipo.solicitud }}</p>
-                </div>
-                <div style="text-align:center">
-                    <div style="width:100px;height:100px;border-radius:50%;background:conic-gradient(#ef4444 0deg {{ stats.por_tipo.denuncia/stats.total * 360 if stats.total > 0 else 0 }}deg, #f59e0b {{ stats.por_tipo.denuncia/stats.total * 360 if stats.total > 0 else 0 }}deg 360deg);margin:0 auto 1rem"></div>
-                    <h4 style="margin-bottom:.5rem">Denuncias</h4>
-                    <p style="font-size:1.5rem;font-weight:700">{{ stats.por_tipo.denuncia }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="encuestas-page">
 
-<!-- Últimas encuestas -->
-<div class="activity-card">
-    <div class="activity-header">
-        <h3><i class="fas fa-clock"></i> Últimas Evaluaciones</h3>
+  <!-- Encabezado -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:2rem">
+    <div>
+      <h1 style="font-size:22px;font-weight:600;margin-bottom:4px">
+        <i class="fas fa-chart-bar me-2 text-primary"></i>Estadísticas de Encuestas
+      </h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+          <li class="breadcrumb-item active">Encuestas</li>
+        </ol>
+      </nav>
     </div>
-    
-    <div class="activity-list">
-        {% if stats.ultimas %}
-            {% for encuesta in stats.ultimas %}
-            <div class="activity-item">
-                <div class="activity-icon {% if encuesta.calificacion >= 4 %}bg-soft-success{% elif encuesta.calificacion >= 3 %}bg-soft-warning{% else %}bg-soft-danger{% endif %}">
-                    <i class="fas fa-star"></i>
-                </div>
-                <div class="activity-content">
-                    <div class="activity-title">
-                        <strong>{{ encuesta.usuario_nombre }}</strong>
-                        <span style="margin-left:1rem;color:{% if encuesta.calificacion == 5 %}#10b981{% elif encuesta.calificacion == 4 %}#3b82f6{% elif encuesta.calificacion == 3 %}#f59e0b{% else %}#ef4444{% endif %};font-weight:700">
-                            {{ encuesta.calificacion }}/5
-                        </span>
-                    </div>
-                    <div class="activity-meta">
-                        <span><i class="fas fa-hashtag"></i> {{ encuesta.folio_tramite }}</span>
-                        <span><i class="far fa-calendar"></i> {{ encuesta.fecha[:10] }}</span>
-                    </div>
-                    {% if encuesta.comentario %}
-                    <div style="margin-top:.5rem;padding:.5rem;background:var(--gray-50);border-radius:8px;font-style:italic;color:var(--gray-600)">
-                        "{{ encuesta.comentario }}"
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="empty-state">
-                <i class="fas fa-inbox"></i>
-                <p>No hay encuestas registradas</p>
-            </div>
-        {% endif %}
+    <button onclick="location.reload()" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-sync-alt me-1"></i> Actualizar
+    </button>
+  </div>
+
+  <!-- Tarjetas de estadísticas principales -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem">
+    <div class="stat-card">
+      <div>
+        <div class="label">Total Encuestas</div>
+        <div class="value" style="color:#185FA5">{{ stats.total }}</div>
+      </div>
+      <div class="stat-icon" style="background:#E6F1FB">
+        <i class="fas fa-poll" style="color:#185FA5"></i>
+      </div>
     </div>
+    <div class="stat-card">
+      <div>
+        <div class="label">Promedio</div>
+        <div class="value" style="color:#BA7517">{{ stats.promedio|round(1) if stats.promedio else 0 }}</div>
+      </div>
+      <div class="stat-icon" style="background:#FAEEDA">
+        <i class="fas fa-star" style="color:#BA7517"></i>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="label">Satisfacción</div>
+        <div class="value" style="color:#3B6D11">{{ stats.tasa_satisfaccion }}%</div>
+      </div>
+      <div class="stat-icon" style="background:#EAF3DE">
+        <i class="fas fa-smile" style="color:#3B6D11"></i>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="label">Con Comentarios</div>
+        <div class="value" style="color:#A32D2D">{{ stats.con_comentarios }}</div>
+      </div>
+      <div class="stat-icon" style="background:#FCEBEB">
+        <i class="fas fa-comment" style="color:#A32D2D"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Distribución de calificaciones -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <h5 style="margin:0;font-weight:600;font-size:15px">
+        <i class="fas fa-star me-2 text-warning"></i>Distribución de Calificaciones
+      </h5>
+    </div>
+    <div class="p-3">
+      {% for rating in stats.distribucion %}
+      <div class="mb-3">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
+          <div class="rating-stars">
+            {% for i in range(rating.estrellas) %}★{% endfor %}
+            {% for i in range(5 - rating.estrellas) %}☆{% endfor %}
+          </div>
+          <span style="font-weight:500;min-width:35px">{{ rating.cantidad }}</span>
+          <div class="progress flex-grow-1">
+            <div class="progress-bar bg-warning" role="progressbar" 
+                 style="width: {{ rating.porcentaje }}%" 
+                 aria-valuenow="{{ rating.porcentaje }}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <span style="min-width:45px;color:#6c757d">({{ rating.porcentaje }}%)</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Últimos comentarios -->
+  {% if stats.ultimos_comentarios %}
+  <div class="table-card">
+    <div class="table-card-header">
+      <h5 style="margin:0;font-weight:600;font-size:15px">
+        <i class="fas fa-comments me-2 text-info"></i>Últimos Comentarios
+      </h5>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Fecha</th>
+            <th>Usuario</th>
+            <th>Trámite</th>
+            <th>Calificación</th>
+            <th>Comentario</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for comentario in stats.ultimos_comentarios %}
+          <tr>
+            <td style="white-space:nowrap">{{ comentario.fecha[:10] if comentario.fecha else '' }}</td>
+            <td>{{ comentario.usuario_nombre }}</td>
+            <<td><code>{{ comentario.folio_tramite }}</code></td>
+            <td>
+              <div class="rating-stars">
+                {% for i in range(comentario.calificacion) %}★{% endfor %}
+                {% for i in range(5 - comentario.calificacion) %}☆{% endfor %}
+              </div>
+            </td>
+            <td style="max-width:400px">
+              <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                {{ comentario.comentario[:80] }}{% if comentario.comentario|length > 80 %}...{% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Resumen por tipo de trámite -->
+  {% if stats.por_tipo %}
+  <div class="table-card">
+    <div class="table-card-header">
+      <h5 style="margin:0;font-weight:600;font-size:15px">
+        <i class="fas fa-folder-open me-2 text-success"></i>Resumen por Tipo de Trámite
+      </h5>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Tipo de Trámite</th>
+            <th>Cantidad</th>
+            <th>Promedio</th>
+            <th>Satisfacción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tipo, datos in stats.por_tipo.items() %}
+          <tr>
+            <td>
+              <strong>
+                {% if tipo == 'solicitud' %}
+                  <i class="fas fa-clipboard-list me-1 text-primary"></i>Solicitud
+                {% elif tipo == 'denuncia' %}
+                  <i class="fas fa-exclamation-triangle me-1 text-danger"></i>Denuncia
+                {% elif tipo == 'cita' %}
+                  <i class="fas fa-calendar-check me-1 text-info"></i>Cita
+                {% else %}
+                  {{ tipo }}
+                {% endif %}
+              </strong>
+            </td>
+            <td>{{ datos.total }}</td>
+            <td>
+              <div class="rating-stars">
+                {% for i in range(datos.promedio|round(0)|int) %}★{% endfor %}
+                {% for i in range(5 - (datos.promedio|round(0)|int)) %}☆{% endfor %}
+                <small class="text-muted">({{ datos.promedio|round(1) }})</small>
+              </div>
+            </td>
+            <td>
+              <span class="badge-satisfaccion 
+                {% if datos.tasa_satisfaccion >= 80 %}satisfaccion-muy-alta
+                {% elif datos.tasa_satisfaccion >= 60 %}satisfaccion-alta
+                {% elif datos.tasa_satisfaccion >= 40 %}satisfaccion-media
+                {% else %}satisfaccion-baja{% endif %}">
+                {{ datos.tasa_satisfaccion }}% Satisfacción
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Si no hay datos -->
+  {% if stats.total == 0 %}
+  <div class="text-center py-5">
+    <div style="font-size:3rem;color:#D3D1C7;margin-bottom:1rem">
+      <i class="fas fa-poll"></i>
+    </div>
+    <h5 class="text-muted">No hay encuestas registradas</h5>
+    <p class="text-muted">Las encuestas aparecerán aquí cuando los usuarios evalúen sus trámites completados</p>
+  </div>
+  {% endif %}
+
 </div>
 {% endblock %}

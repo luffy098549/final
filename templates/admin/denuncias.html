@@ -31,22 +31,10 @@
         --shadow-sm: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
         --shadow-md: 0 4px 6px -2px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.1);
         --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
-        --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
         --radius-sm: 8px;
         --radius-md: 12px;
         --radius-lg: 16px;
         --radius-xl: 24px;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        background: var(--gray-50);
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
     .admin-container {
@@ -55,7 +43,6 @@
         padding: 2rem 1.5rem;
     }
 
-    /* Header */
     .admin-header {
         background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
         border-radius: var(--radius-xl);
@@ -68,22 +55,11 @@
     .admin-header h1 {
         font-size: 2rem;
         font-weight: 700;
-        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
         gap: 0.75rem;
     }
 
-    .admin-header h1 i {
-        font-size: 2rem;
-    }
-
-    .admin-header p {
-        font-size: 1rem;
-        opacity: 0.9;
-    }
-
-    /* Stats cards */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -100,13 +76,6 @@
         display: flex;
         align-items: center;
         gap: 1.25rem;
-        transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-md);
-        border-color: var(--primary-light);
     }
 
     .stat-icon {
@@ -136,10 +105,8 @@
         font-size: 2rem;
         font-weight: 700;
         color: var(--gray-900);
-        line-height: 1.2;
     }
 
-    /* Filtros */
     .filters-section {
         background: white;
         border-radius: var(--radius-lg);
@@ -174,14 +141,6 @@
         border-radius: var(--radius-md);
         font-size: 0.95rem;
         background: var(--gray-50);
-        transition: all 0.2s ease;
-    }
-
-    .search-box input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(26, 59, 46, 0.1);
-        background: white;
     }
 
     .filter-group {
@@ -199,14 +158,6 @@
         background: var(--gray-50);
         cursor: pointer;
         min-width: 160px;
-        transition: all 0.2s ease;
-    }
-
-    .filter-select:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(26, 59, 46, 0.1);
-        background: white;
     }
 
     .btn-filter {
@@ -220,16 +171,8 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        transition: all 0.2s ease;
     }
 
-    .btn-filter:hover {
-        background: var(--primary-light);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-sm);
-    }
-
-    /* Tabla */
     .table-container {
         background: white;
         border-radius: var(--radius-lg);
@@ -263,15 +206,6 @@
         vertical-align: middle;
     }
 
-    .table tr:last-child td {
-        border-bottom: none;
-    }
-
-    .table tbody tr:hover {
-        background: var(--gray-50);
-    }
-
-    /* Badges */
     .badge {
         display: inline-flex;
         align-items: center;
@@ -282,39 +216,11 @@
         gap: 0.4rem;
     }
 
-    .badge-pendiente { background: var(--warning-light); color: var(--warning); border: 1px solid #ffd9b0; }
-    .badge-en_investigacion { background: var(--purple-light); color: var(--purple); border: 1px solid #d9c9ff; }
-    .badge-resuelto { background: var(--success-light); color: var(--success); border: 1px solid #b0e5c0; }
-    .badge-rechazado { background: var(--danger-light); color: var(--danger); border: 1px solid #ffcfc9; }
-    .badge-archivado { background: var(--gray-200); color: var(--gray-700); border: 1px solid var(--gray-300); }
-
-    /* Botones de acción */
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .btn-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--gray-600);
-        background: var(--gray-100);
-        border: 1px solid var(--gray-200);
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.2s ease;
-    }
-
-    .btn-icon:hover {
-        background: var(--primary);
-        color: white;
-        border-color: var(--primary);
-        transform: translateY(-2px);
-    }
+    .badge-pendiente { background: var(--warning-light); color: var(--warning); }
+    .badge-en_investigacion { background: var(--purple-light); color: var(--purple); }
+    .badge-resuelto { background: var(--success-light); color: var(--success); }
+    .badge-rechazado { background: var(--danger-light); color: var(--danger); }
+    .badge-cancelado { background: var(--gray-200); color: var(--gray-700); }
 
     .btn-view {
         padding: 0.5rem 1rem;
@@ -330,10 +236,8 @@
 
     .btn-view:hover {
         background: var(--primary-light);
-        transform: translateY(-2px);
     }
 
-    /* Anónimo badge */
     .anonimo-badge {
         display: inline-flex;
         align-items: center;
@@ -347,43 +251,24 @@
         margin-left: 0.5rem;
     }
 
-    /* Responsive */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: var(--radius-lg);
+        border: 2px dashed var(--gray-300);
+    }
+
     @media (max-width: 768px) {
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
         }
-
-        .table th, .table td {
-            padding: 1rem;
-        }
-
         .filter-group {
             flex-direction: column;
             width: 100%;
         }
-
         .filter-select {
             width: 100%;
-        }
-
-        .btn-filter {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .action-buttons {
-            flex-direction: column;
-        }
-
-        .btn-view {
-            width: 100%;
-            justify-content: center;
         }
     }
 </style>
@@ -391,7 +276,6 @@
 
 {% block content %}
 <div class="admin-container">
-    <!-- Header -->
     <div class="admin-header">
         <h1>
             <i class="fas fa-exclamation-triangle"></i>
@@ -400,67 +284,53 @@
         <p>Administra todas las denuncias ciudadanas y dales seguimiento.</p>
     </div>
 
-    <!-- Stats -->
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-icon total">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
+            <div class="stat-icon total"><i class="fas fa-exclamation-triangle"></i></div>
             <div class="stat-content">
                 <h3>Total Denuncias</h3>
                 <div class="stat-number">{{ stats.denuncias|default(0) }}</div>
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon pendientes">
-                <i class="fas fa-clock"></i>
-            </div>
+            <div class="stat-icon pendientes"><i class="fas fa-clock"></i></div>
             <div class="stat-content">
                 <h3>Pendientes</h3>
                 <div class="stat-number">{{ stats.pendientes|default(0) }}</div>
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon investigacion">
-                <i class="fas fa-search"></i>
-            </div>
+            <div class="stat-icon investigacion"><i class="fas fa-search"></i></div>
             <div class="stat-content">
                 <h3>En Investigación</h3>
                 <div class="stat-number">{{ stats.en_investigacion|default(0) }}</div>
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon resueltas">
-                <i class="fas fa-check-circle"></i>
-            </div>
+            <div class="stat-icon resueltas"><i class="fas fa-check-circle"></i></div>
             <div class="stat-content">
                 <h3>Resueltas</h3>
-                <div class="stat-number">{{ stats.completados|default(0) }}</div>
+                <div class="stat-number">{{ stats.resueltas|default(0) }}</div>
             </div>
         </div>
     </div>
 
-    <!-- Filtros y búsqueda -->
     <div class="filters-section">
         <div class="search-box">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Buscar por folio, dirección o descripción..." autocomplete="off">
+            <input type="text" id="searchInput" placeholder="Buscar por folio, dirección o descripción...">
         </div>
         <div class="filter-group">
             <select id="estadoFilter" class="filter-select">
                 <option value="">Todos los estados</option>
                 {% for estado in estados %}
-                <option value="{{ estado }}" {% if filtros.estado == estado %}selected{% endif %}>
-                    {{ estado|replace('_', ' ')|title }}
-                </option>
+                <option value="{{ estado }}">{{ estado|replace('_', ' ')|title }}</option>
                 {% endfor %}
             </select>
             <select id="tipoFilter" class="filter-select">
                 <option value="">Todos los tipos</option>
                 {% for id, nombre in tipos.items() %}
-                <option value="{{ id }}" {% if filtros.tipo == id %}selected{% endif %}>
-                    {{ nombre }}
-                </option>
+                <option value="{{ id }}">{{ nombre }}</option>
                 {% endfor %}
             </select>
             <button class="btn-filter" onclick="aplicarFiltros()">
@@ -470,7 +340,6 @@
     </div>
 
     {% if denuncias %}
-    <!-- Tabla de denuncias -->
     <div class="table-container">
         <table class="table" id="denunciasTable">
             <thead>
@@ -490,7 +359,7 @@
                 <tr>
                     <td>{{ d.id }}</td>
                     <td>
-                        <strong style="font-family: monospace;">{{ d.folio }}</strong>
+                        <strong>{{ d.folio }}</strong>
                         {% if d.anonimo %}
                         <span class="anonimo-badge">
                             <i class="fas fa-user-secret"></i> Anónimo
@@ -501,24 +370,39 @@
                         {% if not d.anonimo %}
                         <div>
                             <strong>{{ d.usuario_nombre }}</strong>
-                            <br>
-                            <small class="text-muted">{{ d.usuario_email }}</small>
+                            <br><small>{{ d.usuario_email }}</small>
                         </div>
                         {% else %}
                         <em class="text-muted">Anónimo</em>
                         {% endif %}
                     </td>
-                    <td>{{ tipos.get(d.tipo|string, 'Desconocido') }}</td>
-                    <td>
-                        <span title="{{ d.direccion }}">
-                            {{ d.direccion[:50] }}{% if d.direccion|length > 50 %}...{% endif %}
-                        </span>
+                    <td>{{ tipos.get(d.tipo|string, d.tipo_nombre|default('Desconocido')) }}</td>
+                    <td title="{{ d.direccion }}">
+                        {% if d.direccion %}
+                            {{ d.direccion[:50] if d.direccion|length > 50 else d.direccion }}
+                            {% if d.direccion|length > 50 %}...{% endif %}
+                        {% else %}
+                            <span class="text-muted">No especificada</span>
+                        {% endif %}
                     </td>
                     <td>
                         <div>
-                            <span>{{ d.fecha_creacion[:10] }}</span>
-                            <br>
-                            <small class="text-muted">{{ d.fecha_creacion[11:16] }}</small>
+                            <span>
+                                {% if d.fecha_creacion %}
+                                    {% if d.fecha_creacion is string %}
+                                        {{ d.fecha_creacion[:10] }}
+                                    {% else %}
+                                        {{ d.fecha_creacion.strftime('%d/%m/%Y') }}
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </span>
+                            <br><small>
+                                {% if d.fecha_creacion and d.fecha_creacion is not string %}
+                                    {{ d.fecha_creacion.strftime('%H:%M') }}
+                                {% endif %}
+                            </small>
                         </div>
                     </td>
                     <td>
@@ -528,29 +412,20 @@
                         </span>
                     </td>
                     <td>
-                        <div class="action-buttons">
-                            <a href="{{ url_for('admin.detalle_denuncia', denuncia_id=d.id) }}" class="btn-view">
-                                <i class="fas fa-eye"></i> Ver
-                            </a>
-                        </div>
+                        <a href="{{ url_for('admin.detalle_denuncia', denuncia_id=d.id) }}" class="btn-view">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-
-    <!-- Paginación -->
-    <div class="pagination" id="pagination">
-        <!-- JS generará esto si es necesario -->
-    </div>
-
     {% else %}
-    <!-- Empty state -->
-    <div class="empty-state" style="text-align: center; padding: 4rem 2rem; background: white; border-radius: var(--radius-lg); border: 2px dashed var(--gray-300);">
-        <i class="fas fa-folder-open" style="font-size: 4rem; color: var(--gray-400); margin-bottom: 1.5rem;"></i>
-        <h3 style="font-size: 1.5rem; color: var(--gray-700); margin-bottom: 0.75rem;">No hay denuncias</h3>
-        <p style="color: var(--gray-500);">No se encontraron denuncias con los filtros actuales.</p>
+    <div class="empty-state">
+        <i class="fas fa-folder-open" style="font-size: 4rem; color: var(--gray-400);"></i>
+        <h3>No hay denuncias</h3>
+        <p>No se encontraron denuncias con los filtros actuales.</p>
     </div>
     {% endif %}
 </div>
@@ -558,38 +433,29 @@
 
 {% block extra_js %}
 <script>
-// Datos de denuncias para JavaScript (formato JSON)
-let denunciasData = {{ denuncias_json|safe }};
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Denuncias cargadas:', denunciasData.length);
-    
-    // Inicializar búsqueda en tiempo real
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keyup', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#denunciasTable tbody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-    }
-});
-
 function aplicarFiltros() {
     const estado = document.getElementById('estadoFilter').value;
     const tipo = document.getElementById('tipoFilter').value;
     
-    // Construir URL con filtros
     let url = new URL(window.location.href);
     url.searchParams.set('estado', estado);
     url.searchParams.set('tipo', tipo);
     
-    // Redireccionar con los filtros
     window.location.href = url.toString();
+}
+
+// Búsqueda en tiempo real
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+    searchInput.addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#denunciasTable tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
 }
 </script>
 {% endblock %}

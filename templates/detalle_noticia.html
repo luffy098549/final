@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ noticia.titulo }} - Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .detalle-noticia {
+            max-width: 900px;
+            margin: 120px auto 3rem;
+            padding: 0 2rem;
+        }
+        .noticia-header {
+            margin-bottom: 2rem;
+        }
+        .noticia-categoria {
+            display: inline-block;
+            background: {{ noticia.categoria.color if noticia.categoria else '#2D5016' }};
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .noticia-titulo {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 800;
+            color: #1A2410;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .noticia-meta {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #E5E7EB;
+            margin-bottom: 2rem;
+            color: #6B7280;
+            font-size: 0.85rem;
+        }
+        .noticia-meta i {
+            margin-right: 0.3rem;
+            color: #C8960C;
+        }
+        .noticia-imagen {
+            margin-bottom: 2rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .noticia-imagen img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .noticia-contenido {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #4B5563;
+            margin-bottom: 2rem;
+        }
+        .noticia-contenido p {
+            margin-bottom: 1.2rem;
+        }
+        .noticia-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E5E7EB;
+            margin-bottom: 2rem;
+        }
+        .like-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: transparent;
+            border: 2px solid #E5E7EB;
+            border-radius: 2rem;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #6B7280;
+        }
+        .like-btn.liked {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: white;
+        }
+        .like-btn.liked i {
+            color: white;
+        }
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #2D5016;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-volver:hover {
+            background: #3D6B20;
+            transform: translateY(-2px);
+        }
+
+        /* ============================================ */
+        /* SECCIÓN DE COMENTARIOS */
+        /* ============================================ */
+        .comentarios-section {
+            background: #F8FAFC;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        .comentarios-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .comentarios-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1A2410;
+            margin-bottom: 0.3rem;
+        }
+        .comentarios-header p {
+            color: #6B7280;
+            font-size: 0.85rem;
+        }
+        .comentario-formulario {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #E5E7EB;
+        }
+        .comentario-formulario h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1A2410;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: #374151;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2D5016;
+            box-shadow: 0 0 0 3px rgba(45,80,22,0.1);
+        }
+        .btn-enviar-comentario {
+            background: linear-gradient(135deg, #2D5016, #3D6B20);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-enviar-comentario:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(45,80,22,0.3);
+        }
+        .comentarios-lista h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1A2410;
+        }
+        .comentarios-count {
+            background: #E5E7EB;
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
+        }
+        .comentario-card {
+            display: flex;
+            gap: 1rem;
+            background: white;
+            border-radius: 1rem;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            border: 1px solid #E5E7EB;
+        }
+        .comentario-avatar {
+            width: 45px;
+            height: 45px;
+            background: #EAF2DC;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #2D5016;
+        }
+        .comentario-content {
+            flex: 1;
+        }
+        .comentario-autor {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .comentario-autor strong {
+            color: #1A2410;
+            font-weight: 700;
+        }
+        .comentario-fecha {
+            font-size: 0.7rem;
+            color: #9CA3AF;
+        }
+        .comentario-texto {
+            color: #4B5563;
+            line-height: 1.5;
+            font-size: 0.85rem;
+        }
+        .no-comentarios {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 1rem;
+            border: 1px dashed #E5E7EB;
+        }
+        .no-comentarios i {
+            font-size: 2rem;
+            color: #CBD5E1;
+            margin-bottom: 0.5rem;
+        }
+        .no-comentarios p {
+            color: #9CA3AF;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .detalle-noticia {
+                margin-top: 100px;
+                padding: 0 1rem;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .comentario-card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .comentario-autor {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.3rem;
+            }
+            .noticia-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .like-btn {
+                justify-content: center;
+            }
+            .btn-volver {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" alt="Logo" style="height: 60px;">
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia">Transparencia</a></li>
+                <li><a href="/noticias" class="active">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                    <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <article class="detalle-noticia">
+        <div class="noticia-header">
+            {% if noticia.categoria %}
+            <span class="noticia-categoria" style="background-color: {{ noticia.categoria.color }}">
+                <i class="fas fa-{{ noticia.categoria.icono }}"></i> {{ noticia.categoria.nombre }}
+            </span>
+            {% endif %}
+            <h1 class="noticia-titulo">{{ noticia.titulo }}</h1>
+            <div class="noticia-meta">
+                <span><i class="far fa-calendar-alt"></i> {{ noticia.fecha_publicacion.strftime('%d/%m/%Y') if noticia.fecha_publicacion else 'Próximamente' }}</span>
+                <span><i class="far fa-eye"></i> {{ noticia.vistas }} vistas</span>
+                <span><i class="far fa-heart"></i> <span class="likes-count">{{ noticia.likes.count() if noticia.likes else 0 }}</span> me gusta</span>
+                <span><i class="far fa-comment"></i> {{ comentarios|length }} comentarios</span>
+            </div>
+        </div>
+
+        {% if noticia.imagen_url %}
+        <div class="noticia-imagen">
+            <img src="{{ noticia.imagen_url }}" alt="{{ noticia.titulo }}">
+        </div>
+        {% endif %}
+
+        <div class="noticia-contenido">
+            {{ noticia.contenido|safe }}
+        </div>
+
+        <div class="noticia-footer">
+            <button class="like-btn" data-slug="{{ noticia.slug }}" data-liked="{{ 'true' if ya_dio_like else 'false' }}" data-likes="{{ noticia.likes.count() if noticia.likes else 0 }}">
+                <i class="fas fa-heart"></i>
+                <span class="like-count">{{ noticia.likes.count() if noticia.likes else 0 }}</span>
+                <span class="like-text">{{ 'Te gusta' if ya_dio_like else 'Me gusta' }}</span>
+            </button>
+            <a href="/noticias" class="btn-volver"><i class="fas fa-arrow-left"></i> Volver a noticias</a>
+        </div>
+
+        <!-- SECCIÓN DE COMENTARIOS -->
+        <section class="comentarios-section">
+            <div class="comentarios-header">
+                <h3><i class="fas fa-comments"></i> Comentarios</h3>
+                <p>Comparte tu opinión sobre esta noticia</p>
+            </div>
+
+            <!-- Formulario -->
+            <div class="comentario-formulario">
+                <h4>Deja un comentario</h4>
+                <form id="formComentario">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="autor_nombre">Nombre *</label>
+                            <input type="text" id="autor_nombre" name="autor_nombre" required placeholder="Tu nombre completo">
+                        </div>
+                        <div class="form-group">
+                            <label for="autor_email">Correo electrónico (opcional)</label>
+                            <input type="email" id="autor_email" name="autor_email" placeholder="correo@ejemplo.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contenido">Comentario *</label>
+                        <textarea id="contenido" name="contenido" rows="4" required placeholder="Escribe tu comentario aquí..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-enviar-comentario">
+                        <i class="fas fa-paper-plane"></i> Enviar comentario
+                    </button>
+                </form>
+            </div>
+
+            <!-- Lista de comentarios -->
+            <div class="comentarios-lista">
+                <h4>Comentarios <span class="comentarios-count">({{ comentarios|length }})</span></h4>
+                
+                {% if comentarios %}
+                    {% for comentario in comentarios %}
+                    <div class="comentario-card">
+                        <div class="comentario-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="comentario-content">
+                            <div class="comentario-autor">
+                                <strong>{{ comentario.autor_nombre }}</strong>
+                                <span class="comentario-fecha">{{ comentario.fecha_creacion.strftime('%d/%m/%Y %H:%M') if comentario.fecha_creacion else '' }}</span>
+                            </div>
+                            <p class="comentario-texto">{{ comentario.contenido }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-comentarios">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </article>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📍 Calle Principal, Villa Cutupú</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕒 Lun-Vie: 8:00 AM - 4:00 PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025-2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Sistema de likes
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const slug = this.dataset.slug;
+            const currentlyLiked = this.dataset.liked === 'true';
+            
+            this.disabled = true;
+            this.style.opacity = '0.7';
+            
+            try {
+                const response = await fetch(`/api/noticias/${slug}/like`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                const data = await response.json();
+                
+                if (data.ok) {
+                    const countSpan = this.querySelector('.like-count');
+                    const textSpan = this.querySelector('.like-text');
+                    
+                    if (data.liked) {
+                        this.classList.add('liked');
+                        textSpan.textContent = 'Te gusta';
+                    } else {
+                        this.classList.remove('liked');
+                        textSpan.textContent = 'Me gusta';
+                    }
+                    countSpan.textContent = data.total;
+                    this.dataset.liked = data.liked;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                this.disabled = false;
+                this.style.opacity = '';
+            }
+        });
+    });
+    
+    // Sistema de comentarios
+    document.getElementById('formComentario')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const slug = '{{ noticia.slug }}';
+        const autor_nombre = document.getElementById('autor_nombre').value.trim();
+        const autor_email = document.getElementById('autor_email').value.trim();
+        const contenido = document.getElementById('contenido').value.trim();
+        
+        if (!autor_nombre || !contenido) {
+            alert('Por favor, complete su nombre y comentario.');
+            return;
+        }
+        
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+        
+        try {
+            const response = await fetch(`/api/noticias/${slug}/comentar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    autor_nombre: autor_nombre,
+                    autor_email: autor_email || null,
+                    contenido: contenido
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.ok) {
+                alert('✅ ' + data.mensaje);
+                document.getElementById('formComentario').reset();
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                alert('❌ Error: ' + (data.mensaje || 'No se pudo enviar el comentario'));
+                btn.disabled = false;
+                btn.textContent = 'Enviar comentario';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('❌ Error de conexión. Intente nuevamente.');
+            btn.disabled = false;
+            btn.textContent = 'Enviar comentario';
+        }
+    });
+</script>
+
+<script src="{{ url_for('static', filename='js/noticia.js') }}"></script>
+</body>
+</html>

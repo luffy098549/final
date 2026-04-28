@@ -3,11 +3,11 @@
 # ================================================================
 
 # ================================================================
-# IMPORTS PRINCIPALES
+# 1. IMPORTS PRINCIPALES
 # ================================================================
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    flash, jsonify, session, send_from_directory
+    flash, jsonify, session, send_from_directory, abort
 )
 from auth import auth, login_required, admin_required
 from admin import admin_bp
@@ -25,7 +25,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ================================================================
-# IMPORTS ADICIONALES PARA CACHÉ Y RATE LIMITING
+# 2. IMPORTS ADICIONALES
 # ================================================================
 from flask_caching import Cache
 from flask_limiter import Limiter
@@ -34,20 +34,20 @@ from functools import wraps
 import hashlib
 
 # ================================================================
-# CONFIGURACIÓN DE EXTENSIONES
+# 3. CONFIGURACIÓN DE EXTENSIONES
 # ================================================================
 from config_manager import Config
 from extensions import db, login_manager, migrate
 
 # ================================================================
-# IMPORTS PARA CLOUDINARY
+# 4. IMPORTS PARA CLOUDINARY
 # ================================================================
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
 # ================================================================
-# CREACIÓN DE LA APLICACIÓN
+# 5. CREACIÓN DE LA APLICACIÓN
 # ================================================================
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 
@@ -55,24 +55,23 @@ app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.config.from_object(Config)
 
 # ================================================================
-# 🔥 CONFIGURAR CLOUDINARY
+# 6. CONFIGURAR CLOUDINARY
 # ================================================================
 cloudinary.config(
     cloud_name='dwst50un4',
     api_key='637837677376111',
-    api_secret='i8zTmAcN3st4OJW8Vmk93Ah6p_k',
+    api_secret='i8zTmAcN3st4OJw8',
     secure=True
 )
 print("✅ Cloudinary configurado correctamente")
 
-# Inicializar base de datos
+# ================================================================
+# 7. INICIALIZAR BASE DE DATOS Y LOGIN
+# ================================================================
 db.init_app(app)
-
-# Inicializar login_manager
 login_manager.init_app(app)
 migrate.init_app(app, db)
 
-# Configurar user_loader para Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
     from models.usuario import Usuario
@@ -85,21 +84,18 @@ def load_user(user_id):
         return None
 
 # ================================================================
-# MODO DESARROLLO ACTIVADO
+# 8. CONFIGURACIÓN DE LA APLICACIÓN
 # ================================================================
 app.debug = True
-
-# ── Corrige IPs reales detrás de proxy/nginx ─────────────────────
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
-# ── Clave secreta ────────────────────────────────────────────────
 app.secret_key = os.environ.get(
     "SECRET_KEY",
     "clave_secreta_muy_segura_cambiar_en_produccion_123"
 )
 app.config['SESSION_TYPE'] = 'filesystem'
 
-# ── Uploads ───────────────────────────────────────────────────────
+# Uploads
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 DOCS_FOLDER = os.path.join('static', 'uploads', 'documentos')
@@ -107,9 +103,6 @@ ALLOWED_DOC_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'}
 DOCS_MAX_POR_TRAMITE = 5
 DOCS_MAX_SIZE_MB = 10
 
-# ================================================================
-# CONFIGURACIÓN PARA MODO DESARROLLO
-# ================================================================
 app.config.update(
     MAX_CONTENT_LENGTH=5 * 1024 * 1024,
     UPLOAD_FOLDER=UPLOAD_FOLDER,
@@ -124,7 +117,7 @@ app.register_blueprint(auth)
 app.register_blueprint(admin_bp)
 
 # ================================================================
-# DETECCIÓN DE REDIS
+# 9. DETECCIÓN DE REDIS
 # ================================================================
 try:
     import redis
@@ -140,7 +133,7 @@ except Exception:
     print("⚠️ Redis no disponible, usando caché en memoria")
 
 # ================================================================
-# CACHÉ
+# 10. CACHÉ
 # ================================================================
 _cache_cfg = {
     'CACHE_KEY_PREFIX': 'municipio_',
@@ -161,9 +154,6 @@ else:
 
 cache = Cache(app, config=_cache_cfg)
 
-# ================================================================
-# LIMPIAR CACHÉ AL INICIAR
-# ================================================================
 try:
     cache.clear()
     print("✅ Caché limpiado al iniciar")
@@ -171,7 +161,7 @@ except Exception as e:
     print(f"⚠️ No se pudo limpiar caché: {e}")
 
 # ================================================================
-# RATE LIMITING
+# 11. RATE LIMITING
 # ================================================================
 limiter = Limiter(
     app=app,
@@ -183,14 +173,12 @@ limiter = Limiter(
 print("✅ Caché y Rate Limiting configurados")
 
 # ================================================================
-# CONFIGURACIÓN POR DEFECTO
+# 12. CONFIGURACIÓN POR DEFECTO
 # ================================================================
 def init_default_config():
-    """Inicializa la configuración por defecto del sistema"""
     from models.configuracion import Configuracion
     
     config_defaults = {
-        # General
         'nombre_municipio': ('Villa Cutupú', 'string', 'general'),
         'siglas': ('JDVC', 'string', 'general'),
         'direccion': ('Calle Principal #123, Villa Cutupú', 'string', 'general'),
@@ -200,8 +188,6 @@ def init_default_config():
         'zona_horaria': ('America/Santo_Domingo', 'string', 'general'),
         'formato_fecha': ('DD/MM/YYYY', 'string', 'general'),
         'idioma': ('es', 'string', 'general'),
-        
-        # Seguridad
         'pass_min_length': (8, 'int', 'seguridad'),
         'max_intentos_fallidos': (5, 'int', 'seguridad'),
         'pass_expiry_dias': (90, 'int', 'seguridad'),
@@ -214,30 +200,22 @@ def init_default_config():
         'single_session': (False, 'bool', 'seguridad'),
         'log_intentos_acceso': (True, 'bool', 'seguridad'),
         'two_factor_auth': (False, 'bool', 'seguridad'),
-        
-        # Sistema
         'debug_mode': (app.debug, 'bool', 'sistema'),
         'maintenance_mode': (False, 'bool', 'sistema'),
         'audit_log': (True, 'bool', 'sistema'),
         'file_logging': (True, 'bool', 'sistema'),
         'cache_sessions_segundos': (3600, 'int', 'sistema'),
         'cache_static_dias': (7, 'int', 'sistema'),
-        
-        # Servicios
         'max_solicitudes_mes': (10, 'int', 'servicios'),
         'max_denuncias_mes': (5, 'int', 'servicios'),
         'max_file_size_mb': (5, 'int', 'servicios'),
         'tipos_archivo_permitidos': ('pdf,jpg,png,doc,docx', 'string', 'servicios'),
-        
-        # Apariencia
         'color_primario': ('#2d6a4f', 'string', 'apariencia'),
         'color_acento': ('#e9c46a', 'string', 'apariencia'),
         'color_sidebar': ('#1b4332', 'string', 'apariencia'),
         'sidebar_colapsado': (False, 'bool', 'apariencia'),
         'mostrar_breadcrumbs': (True, 'bool', 'apariencia'),
         'animaciones': (True, 'bool', 'apariencia'),
-        
-        # Notificaciones
         'notif_nueva_solicitud': (True, 'bool', 'notificaciones'),
         'notif_nueva_denuncia': (True, 'bool', 'notificaciones'),
         'notif_nuevo_usuario': (True, 'bool', 'notificaciones'),
@@ -251,7 +229,7 @@ def init_default_config():
             print(f"✅ Configuración por defecto creada: {clave} = {valor}")
 
 # ================================================================
-# CREAR TABLAS Y USUARIOS POR DEFECTO
+# 13. CREAR TABLAS Y USUARIOS POR DEFECTO
 # ================================================================
 from auth import crear_usuarios_por_defecto
 from models.configuracion import Configuracion
@@ -261,12 +239,10 @@ with app.app_context():
     crear_usuarios_por_defecto()
     print("✅ Tablas de base de datos creadas/verificadas")
     print("✅ Usuarios por defecto creados/verificados")
-    
-    # Inicializar configuración por defecto
     init_default_config()
 
 # ================================================================
-# CABECERAS DE RENDIMIENTO Y SEGURIDAD
+# 14. CABECERAS DE RENDIMIENTO Y SEGURIDAD
 # ================================================================
 @app.after_request
 def set_performance_headers(response):
@@ -286,7 +262,7 @@ def set_performance_headers(response):
     return response
 
 # ================================================================
-# DECORADOR CACHÉ DE API
+# 15. DECORADOR CACHÉ DE API
 # ================================================================
 def cache_response(timeout=300, key_prefix='api'):
     def decorator(f):
@@ -309,7 +285,7 @@ def cache_response(timeout=300, key_prefix='api'):
     return decorator
 
 # ================================================================
-# FUNCIONES AUXILIARES
+# 16. FUNCIONES AUXILIARES
 # ================================================================
 def _allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -340,7 +316,38 @@ def _icono_doc(filename):
     }.get(ext, 'fa-file')
 
 # ================================================================
-# 🔥 FUNCIONES DE CLOUDINARY
+# 17. FUNCIÓN PARA GUARDAR CONTACTOS
+# ================================================================
+def guardar_contacto_en_bd(nombre, email, telefono, asunto, mensaje):
+    try:
+        from models.mensaje import Mensaje
+        
+        folio = f"CTO-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        
+        nuevo_contacto = Mensaje(
+            tramite_folio=folio,
+            tramite_tipo='consulta',
+            usuario_email=email,
+            autor_email=email,
+            autor_nombre=nombre,
+            mensaje=f"Asunto: {asunto}\nTeléfono: {telefono if telefono else 'No especificado'}\n\nMensaje: {mensaje}",
+            es_admin=False
+        )
+        
+        db.session.add(nuevo_contacto)
+        db.session.commit()
+        
+        print(f"✅ Contacto guardado - Folio: {folio}")
+        return True, folio
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Error guardando contacto: {e}")
+        import traceback
+        traceback.print_exc()
+        return False, str(e)
+
+# ================================================================
+# 18. FUNCIONES DE CLOUDINARY
 # ================================================================
 def subir_foto_cloudinary(archivo, email, folder="fotos_perfil"):
     try:
@@ -389,7 +396,7 @@ def eliminar_foto_cloudinary(public_id):
         return False
 
 # ================================================================
-# CATÁLOGOS
+# 19. CATÁLOGOS
 # ================================================================
 NOMBRES_SERVICIOS = {
     "funeraria": "Funerarias Municipales",
@@ -421,14 +428,12 @@ SERVICIOS_CITAS = {
 }
 
 # ================================================================
-# CONTEXTO GLOBAL DE TEMPLATES (VERSIÓN MEJORADA CON CONFIGURACIÓN)
+# 20. CONTEXTO GLOBAL DE TEMPLATES
 # ================================================================
 @app.context_processor
 def inject_global_variables():
-    """Inyecta variables globales a todos los templates"""
     from models.configuracion import Configuracion
     
-    # Obtener configuración del sistema (con caché)
     config = {
         'nombre_municipio': Configuracion.get('nombre_municipio', 'Villa Cutupú'),
         'siglas': Configuracion.get('siglas', 'JDVC'),
@@ -466,7 +471,7 @@ def inject_global_variables():
     )
 
 # ================================================================
-# RUTAS PÚBLICAS
+# 21. RUTAS PÚBLICAS
 # ================================================================
 @app.route("/")
 @cache_response(timeout=60)
@@ -488,19 +493,13 @@ def servicios():
 def bitacora():
     return render_template("bitacora.html")
 
-# ================================================================
-# 🗺️ MAPA PÚBLICO DE INCIDENCIAS
-# ================================================================
 @app.route("/mapa")
 @cache_response(timeout=60)
 def mapa_incidencias():
-    """Mapa público de incidencias"""
     try:
         from models import Denuncia
         
         denuncias = Denuncia.cargar_todos()
-        
-        # Filtrar solo denuncias con coordenadas
         denuncias_geo = []
         for d in denuncias:
             lat = None
@@ -543,10 +542,7 @@ def mapa_incidencias():
             'mapa_publico.html',
             denuncias=denuncias_geo,
             tipos=NOMBRES_DENUNCIAS,
-            stats={
-                'total': len(denuncias),
-                'geolocalizadas': len(denuncias_geo)
-            }
+            stats={'total': len(denuncias), 'geolocalizadas': len(denuncias_geo)}
         )
     except Exception as e:
         print(f"Error en mapa público: {e}")
@@ -554,12 +550,8 @@ def mapa_incidencias():
         traceback.print_exc()
         return render_template('mapa_publico.html', denuncias=[], tipos=NOMBRES_DENUNCIAS, stats={'total': 0, 'geolocalizadas': 0})
 
-# ================================================================
-# 📄 DETALLE DE DENUNCIA PÚBLICA
-# ================================================================
 @app.route("/denuncia/<denuncia_id>")
 def detalle_denuncia_publica(denuncia_id):
-    """Ver detalle público de una denuncia"""
     try:
         from models import Denuncia
         denuncia = Denuncia.buscar_por_id(denuncia_id)
@@ -573,7 +565,7 @@ def detalle_denuncia_publica(denuncia_id):
         return redirect(url_for('mapa_incidencias'))
 
 # ================================================================
-# 🌐 TRANSPARENCIA - RUTAS CORREGIDAS
+# 22. TRANSPARENCIA - RUTAS
 # ================================================================
 _TRANSPARENCIA = {
     "transparencia": ("/transparencia", "transparencia.html"),
@@ -589,7 +581,6 @@ _TRANSPARENCIA = {
 }
 
 def create_transparency_view(template_name):
-    """Crea una vista para una plantilla de transparencia con caché"""
     @cache_response(timeout=300)
     def view():
         return render_template(template_name)
@@ -598,14 +589,218 @@ def create_transparency_view(template_name):
 for route_name, (url_path, template_name) in _TRANSPARENCIA.items():
     app.add_url_rule(url_path, route_name, create_transparency_view(template_name))
 
+
 # ================================================================
-# NOTICIAS Y CONTACTO
+# 23. NOTICIAS Y CONTACTO PÚBLICO (RUTAS COMPLETAS CORREGIDAS)
+# ================================================================
+
+# ================================================================
+# 23.1 NOTICIAS - LISTADO PAGINADO
 # ================================================================
 @app.route("/noticias")
 @cache_response(timeout=180)
 def noticias():
-    return render_template("noticias.html")
+    """Lista paginada de noticias"""
+    from models.noticia import Noticia, CategoriaNoticia
+    
+    pagina = request.args.get('pagina', 1, type=int)
+    categoria_slug = request.args.get('categoria', None)
+    
+    # Obtener todas las categorías activas para el sidebar
+    categorias = CategoriaNoticia.todas_activas()
+    
+    # Obtener noticias publicadas con paginación
+    resultado = Noticia.listar_publicadas(
+        pagina=pagina,
+        por_pagina=9,
+        categoria_slug=categoria_slug
+    )
+    
+    categoria_actual = None
+    if categoria_slug:
+        categoria_actual = CategoriaNoticia.query.filter_by(slug=categoria_slug).first()
+    
+    # CORREGIDO: Cambiado de 'noticias_lista.html' a 'noticias.html'
+    return render_template(
+        'noticias.html',
+        noticias=resultado['items'],
+        paginacion={
+            'total': resultado['total'],
+            'pagina': resultado['pagina'],
+            'por_pagina': resultado['por_pagina'],
+            'total_paginas': resultado['total_paginas'],
+            'tiene_siguiente': resultado['tiene_siguiente'],
+            'tiene_anterior': resultado['tiene_anterior']
+        },
+        categorias=categorias,
+        categoria_actual=categoria_actual
+    )
 
+
+# ================================================================
+# 23.2 NOTICIAS - DETALLE
+# ================================================================
+@app.route("/noticias/<slug>")
+def detalle_noticia(slug):
+    """Detalle de una noticia"""
+    from models.noticia import Noticia
+    from models.comentario_noticia import ComentarioNoticia
+    from models.like_noticia import LikeNoticia
+    
+    noticia = Noticia.buscar_por_slug(slug)
+    
+    # Verificar si existe y está publicada
+    if not noticia or noticia.estado != 'publicado':
+        abort(404)
+    
+    # Incrementar vistas
+    noticia.incrementar_vistas()
+    
+    # Obtener comentarios aprobados
+    comentarios = ComentarioNoticia.listar_por_noticia(noticia.id, solo_aprobados=True)
+    
+    # Verificar si el visitante ya dio like (por IP)
+    cliente_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    if cliente_ip and ',' in cliente_ip:
+        cliente_ip = cliente_ip.split(',')[0].strip()
+    
+    ya_dio_like = LikeNoticia.ya_dio_like(noticia.id, cliente_ip) if cliente_ip else False
+    
+    return render_template(
+        'detalle_noticia.html',
+        noticia=noticia,
+        comentarios=comentarios,
+        ya_dio_like=ya_dio_like
+    )
+
+
+# ================================================================
+# 23.3 API - LIKE/NOTICIA (TOGGLE)
+# ================================================================
+@app.route("/api/noticias/<slug>/like", methods=["POST"])
+@limiter.limit("30 per minute")
+def api_noticia_like(slug):
+    """Toggle like en una noticia"""
+    from models.noticia import Noticia
+    from models.like_noticia import LikeNoticia
+    from models.log_actividad import registrar_log
+    
+    try:
+        noticia = Noticia.buscar_por_slug(slug)
+        if not noticia or noticia.estado != 'publicado':
+            return jsonify({'ok': False, 'mensaje': 'Noticia no encontrada'}), 404
+        
+        # Obtener IP del cliente
+        cliente_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        if cliente_ip and ',' in cliente_ip:
+            cliente_ip = cliente_ip.split(',')[0].strip()
+        
+        if not cliente_ip:
+            return jsonify({'ok': False, 'mensaje': 'No se pudo identificar la IP'}), 400
+        
+        # Obtener usuario email si está logueado
+        usuario_email = session.get('user') if session.get('user') else None
+        
+        # Dar/quitar like
+        liked, total_likes = LikeNoticia.dar_like(
+            noticia_id=noticia.id,
+            usuario_ip=cliente_ip,
+            usuario_email=usuario_email
+        )
+        
+        # Registrar log
+        registrar_log(
+            accion='like_noticia' if liked else 'unlike_noticia',
+            modulo='noticias',
+            descripcion=f"{'Like' if liked else 'Unlike'} en noticia {noticia.slug}",
+            datos_extra={'noticia_id': noticia.id, 'noticia_slug': noticia.slug}
+        )
+        
+        return jsonify({
+            'ok': True,
+            'liked': liked,
+            'total': total_likes
+        })
+        
+    except Exception as e:
+        print(f"Error en like_noticia: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'ok': False, 'mensaje': str(e)}), 500
+
+
+# ================================================================
+# 23.4 API - COMENTAR/NOTICIA
+# ================================================================
+@app.route("/api/noticias/<slug>/comentar", methods=["POST"])
+@limiter.limit("10 per minute")
+def api_noticia_comentar(slug):
+    """Agregar un comentario a una noticia"""
+    from models.noticia import Noticia
+    from models.comentario_noticia import ComentarioNoticia
+    from models.log_actividad import registrar_log
+    
+    try:
+        noticia = Noticia.buscar_por_slug(slug)
+        if not noticia or noticia.estado != 'publicado':
+            return jsonify({'ok': False, 'mensaje': 'Noticia no encontrada'}), 404
+        
+        data = request.get_json()
+        if not data:
+            return jsonify({'ok': False, 'mensaje': 'Datos inválidos'}), 400
+        
+        autor_nombre = data.get('autor_nombre', '').strip()
+        contenido = data.get('contenido', '').strip()
+        autor_email = data.get('autor_email', '').strip()
+        
+        # Validaciones
+        if not autor_nombre:
+            return jsonify({'ok': False, 'mensaje': 'El nombre es obligatorio'}), 400
+        
+        if not contenido:
+            return jsonify({'ok': False, 'mensaje': 'El comentario no puede estar vacío'}), 400
+        
+        if len(contenido) > 5000:
+            return jsonify({'ok': False, 'mensaje': 'El comentario es demasiado largo (máx 5000 caracteres)'}), 400
+        
+        # Obtener IP
+        cliente_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        if cliente_ip and ',' in cliente_ip:
+            cliente_ip = cliente_ip.split(',')[0].strip()
+        
+        # Crear comentario
+        comentario = ComentarioNoticia.crear(
+            noticia_id=noticia.id,
+            autor_nombre=autor_nombre,
+            contenido=contenido,
+            autor_email=autor_email if autor_email else None,
+            ip_autor=cliente_ip
+        )
+        
+        # Registrar log
+        registrar_log(
+            accion='comentar_noticia',
+            modulo='noticias',
+            descripcion=f"Nuevo comentario en noticia {noticia.slug} por {autor_nombre}",
+            datos_extra={'noticia_id': noticia.id, 'comentario_id': comentario.id}
+        )
+        
+        return jsonify({
+            'ok': True,
+            'mensaje': 'Comentario enviado correctamente. Será revisado por un administrador.',
+            'comentario_id': comentario.id
+        })
+        
+    except Exception as e:
+        print(f"Error en comentar_noticia: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'ok': False, 'mensaje': str(e)}), 500
+
+
+# ================================================================
+# 23.5 CONTACTO PÚBLICO
+# ================================================================
 @app.route("/contacto", methods=["GET"])
 def contacto():
     return render_template("contacto.html")
@@ -615,28 +810,38 @@ def contacto():
 def enviar_contacto():
     nombre = request.form.get("nombre", "").strip()
     email = request.form.get("email", "").strip()
+    telefono = request.form.get("telefono", "").strip()
     asunto = request.form.get("asunto", "").strip()
     mensaje = request.form.get("mensaje", "").strip()
+    
     if not all([nombre, email, asunto, mensaje]):
         flash("❌ Todos los campos obligatorios deben completarse.", "error")
         return redirect(url_for("contacto"))
-    flash(f"✅ Gracias {nombre}, tu mensaje fue enviado. Te responderemos a la brevedad.", "success")
+    
+    exito, resultado = guardar_contacto_en_bd(nombre, email, telefono, asunto, mensaje)
+    
+    if exito:
+        flash(f"✅ Gracias {nombre}, tu mensaje fue enviado. Folio: {resultado}", "success")
+    else:
+        flash(f"❌ Error al guardar tu mensaje. Por favor intenta más tarde.", "error")
+    
     return redirect(url_for("contacto"))
 
+
 # ================================================================
-# ARCHIVOS SUBIDOS LOCALES
+# 23.6 ARCHIVOS SUBIDOS
 # ================================================================
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
     return send_from_directory(os.path.join(app.root_path, 'static', 'uploads'), filename)
 
+
 # ================================================================
-# MI CUENTA
+# 24. MI CUENTA - RUTAS DE USUARIO
 # ================================================================
 @app.route("/perfil")
 @login_required
 def perfil():
-    """Página de perfil de usuario (alias de mi_cuenta)"""
     return redirect(url_for('mi_cuenta'))
 
 @app.route("/mi-cuenta")
@@ -795,13 +1000,40 @@ def editar_perfil():
     flash("✅ Perfil actualizado correctamente.", "success")
     return redirect(url_for("mi_cuenta"))
 
+@app.route("/mi-cuenta/configuracion", methods=["GET", "POST"])
+@login_required
+def configuracion_cuenta():
+    from models.usuario import Usuario
+    email = session.get("user")
+    
+    if not email:
+        flash("No hay sesión activa.", "error")
+        return redirect(url_for("auth.login"))
+    
+    usuario = Usuario.query.filter_by(email=email).first()
+    
+    if not usuario:
+        flash("Usuario no encontrado.", "error")
+        return redirect(url_for("index"))
+    
+    if request.method == "POST":
+        if hasattr(usuario, 'notificaciones_email'):
+            usuario.notificaciones_email = request.form.get("notificaciones_email") == "on"
+        if hasattr(usuario, 'notificaciones_whatsapp'):
+            usuario.notificaciones_whatsapp = request.form.get("notificaciones_whatsapp") == "on"
+        
+        db.session.commit()
+        flash("✅ Configuración actualizada correctamente.", "success")
+        return redirect(url_for("mi_cuenta"))
+    
+    return render_template("usuarios/configuracion.html", usuario=usuario)
+
 # ================================================================
-# MIS SERVICIOS SOLICITADOS
+# 25. MIS TRÁMITES - RUTAS DEL USUARIO (CORREGIDA)
 # ================================================================
 @app.route("/mis-servicios")
 @login_required
 def mis_servicios():
-    """Muestra SOLO los servicios solicitados por el usuario (solicitudes)"""
     try:
         from models import Solicitud
         email = session.get("user")
@@ -813,16 +1045,13 @@ def mis_servicios():
         flash(f"Error al cargar servicios: {str(e)}", "error")
         return render_template("usuarios/mis_solicitudes.html", solicitudes=[])
 
-# ================================================================
-# MIS TRÁMITES (solicitudes + denuncias + citas unificadas)
-# ================================================================
 @app.route("/mis-tramites")
 @login_required
 def mis_tramites():
-    """Página unificada: muestra solicitudes, denuncias y citas del usuario"""
     from models.usuario import Usuario
     from models import Solicitud, Denuncia
     from models.cita import Cita
+    from datetime import datetime as dt
     
     email = session.get("user")
     
@@ -838,6 +1067,7 @@ def mis_tramites():
     
     tramites = []
     
+    # Solicitudes
     try:
         solicitudes = Solicitud.buscar_por_usuario(email)
         for s in solicitudes:
@@ -853,6 +1083,7 @@ def mis_tramites():
     except Exception as e:
         print(f"Error cargando solicitudes: {e}")
     
+    # Denuncias
     try:
         denuncias = Denuncia.cargar_todos()
         for d in denuncias:
@@ -869,37 +1100,136 @@ def mis_tramites():
     except Exception as e:
         print(f"Error cargando denuncias: {e}")
     
+    # Citas
     try:
         citas = Cita.buscar_por_usuario(email)
         for c in citas:
+            # Convertir fecha de string a datetime si es necesario
+            fecha_cita = c.fecha_creacion
+            if isinstance(fecha_cita, str):
+                try:
+                    fecha_cita = dt.strptime(fecha_cita, '%Y-%m-%d %H:%M:%S')
+                except:
+                    fecha_cita = dt.now()
+            
             tramites.append({
                 'tipo': 'cita',
                 'folio': c.folio,
                 'nombre': SERVICIOS_CITAS.get(c.servicio, c.servicio),
                 'descripcion': f"Cita para {c.fecha} a las {c.hora}",
                 'estado': c.estado,
-                'fecha': c.fecha_creacion,
+                'fecha': fecha_cita,
                 'url': '#'
             })
     except Exception as e:
         print(f"Error cargando citas: {e}")
     
-    tramites.sort(key=lambda x: x.get('fecha', ''), reverse=True)
+    # Contactos/Mensajes del usuario
+    try:
+        from models.mensaje import Mensaje
+        contactos_usuario = Mensaje.query.filter_by(
+            usuario_email=email,
+            tramite_tipo='consulta',
+            es_admin=False
+        ).order_by(Mensaje.fecha_creacion.desc()).all()
+        
+        for c in contactos_usuario:
+            # Buscar si tiene respuesta
+            respuesta = Mensaje.query.filter_by(
+                tramite_folio=c.tramite_folio,
+                es_admin=True
+            ).first()
+            
+            # Asegurar que fecha_creacion es datetime
+            fecha_contacto = c.fecha_creacion
+            if isinstance(fecha_contacto, str):
+                try:
+                    fecha_contacto = dt.strptime(fecha_contacto, '%Y-%m-%d %H:%M:%S')
+                except:
+                    fecha_contacto = dt.now()
+            
+            tramites.append({
+                'tipo': 'contacto',
+                'folio': c.tramite_folio,
+                'nombre': 'Mensaje de contacto',
+                'descripcion': c.mensaje[:100] + '...' if len(c.mensaje) > 100 else c.mensaje,
+                'estado': 'respondido' if respuesta else 'pendiente',
+                'fecha': fecha_contacto,
+                'respuesta': respuesta.mensaje if respuesta else None,
+                'fecha_creacion': fecha_contacto,
+                'url': '#'
+            })
+    except Exception as e:
+        print(f"Error cargando contactos: {e}")
+        import traceback
+        traceback.print_exc()
     
+    # Función robusta para obtener la fecha como datetime
+    def get_fecha_comparable(item):
+        fecha = item.get('fecha')
+        if fecha is None:
+            return dt.min
+        if isinstance(fecha, dt):
+            return fecha
+        if isinstance(fecha, str):
+            try:
+                # Intentar diferentes formatos de fecha
+                for fmt in ['%Y-%m-%d %H:%M:%S', '%Y-%m-%d', '%d/%m/%Y %H:%M:%S', '%d/%m/%Y']:
+                    try:
+                        return dt.strptime(fecha, fmt)
+                    except:
+                        continue
+                return dt.min
+            except:
+                return dt.min
+        return dt.min
+    
+    # Normalizar fecha_creacion como string en todos los trámites
+    for t in tramites:
+        fecha = t.get('fecha')
+        if fecha is None:
+            t['fecha_creacion'] = ''
+        elif isinstance(fecha, dt):
+            t['fecha_creacion'] = fecha.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(fecha, str):
+            t['fecha_creacion'] = fecha
+        else:
+            t['fecha_creacion'] = str(fecha)
+
+    # Ordenar usando la función robusta
+    tramites.sort(key=get_fecha_comparable, reverse=True)
+
+    # Estadísticas
     stats = {
         'total': len(tramites),
         'solicitudes': len([t for t in tramites if t['tipo'] == 'solicitud']),
         'denuncias': len([t for t in tramites if t['tipo'] == 'denuncia']),
         'citas': len([t for t in tramites if t['tipo'] == 'cita']),
+        'contactos': len([t for t in tramites if t['tipo'] == 'contacto']),
         'pendientes': len([t for t in tramites if t['estado'] in ['pendiente', 'en_proceso', 'en_investigacion']]),
-        'completados': len([t for t in tramites if t['estado'] in ['completado', 'resuelto', 'completada']])
+        'completados': len([t for t in tramites if t['estado'] in ['completado', 'resuelto', 'completada', 'respondido']])
     }
-    
-    return render_template("usuarios/mis_tramites.html", tramites=tramites, stats=stats)
 
-# ================================================================
-# MIS SOLICITUDES (solo solicitudes)
-# ================================================================
+    import json as _json
+
+    def tramite_serializable(t):
+        result = {}
+        for k, v in t.items():
+            if isinstance(v, dt):
+                result[k] = v.strftime('%Y-%m-%d %H:%M:%S')
+            else:
+                result[k] = v
+        return result
+
+    tramites_json = _json.dumps([tramite_serializable(t) for t in tramites], ensure_ascii=False)
+
+    return render_template(
+        "usuarios/mis_tramites.html",
+        tramites=tramites,
+        stats=stats,
+        tramites_json=tramites_json
+    )
+
 @app.route("/mis-solicitudes")
 @login_required
 def mis_solicitudes():
@@ -909,9 +1239,6 @@ def mis_solicitudes():
     solicitudes.sort(key=lambda x: x.fecha_creacion, reverse=True)
     return render_template("usuarios/mis_solicitudes.html", solicitudes=solicitudes)
 
-# ================================================================
-# CANCELAR SOLICITUD
-# ================================================================
 @app.route("/cancelar-solicitud/<solicitud_id>", methods=["POST"])
 @login_required
 def cancelar_solicitud(solicitud_id):
@@ -936,9 +1263,6 @@ def cancelar_solicitud(solicitud_id):
     flash("✅ Solicitud cancelada correctamente.", "success")
     return redirect(url_for("mis_solicitudes"))
 
-# ================================================================
-# MIS DENUNCIAS
-# ================================================================
 @app.route("/mis-denuncias")
 @login_required
 def mis_denuncias():
@@ -954,27 +1278,13 @@ def mis_denuncias():
     denuncias_usuario.sort(key=lambda x: x.fecha_creacion, reverse=True)
     return render_template("usuarios/mis_denuncias.html", denuncias=denuncias_usuario)
 
-# ================================================================
-# MIS CONSULTAS
-# ================================================================
 @app.route("/mis-consultas")
 @login_required
 def mis_consultas():
-    from models import Consulta
-    email = session.get("user")
-    
-    if not email:
-        flash("No hay sesión activa.", "error")
-        return redirect(url_for("auth.login"))
-    
-    todas_consultas = Consulta.cargar_todos()
-    consultas_usuario = [c for c in todas_consultas if c.usuario_email == email]
-    consultas_usuario.sort(key=lambda x: x.fecha_creacion, reverse=True)
-    return render_template("usuarios/mis_consultas.html", consultas=consultas_usuario)
+    # Nota: Este endpoint requiere el modelo Consulta. Si no existe, coméntalo o elimínalo
+    flash("⚠️ Funcionalidad en desarrollo. Próximamente disponible.", "warning")
+    return redirect(url_for("mis_tramites"))
 
-# ================================================================
-# MIS CITAS
-# ================================================================
 @app.route("/mis-citas")
 @login_required
 def mis_citas():
@@ -990,7 +1300,7 @@ def mis_citas():
     return render_template("citas/mis_citas.html", citas=citas, servicios=SERVICIOS_CITAS)
 
 # ================================================================
-# 🧩 RUTAS DINÁMICAS
+# 26. RUTAS DINÁMICAS PARA FORMULARIOS
 # ================================================================
 @app.route('/solicitar/<tipo>')
 @login_required
@@ -1027,7 +1337,7 @@ def consultar(tipo):
                          nombre_consulta=NOMBRES_CONSULTAS[tipo])
 
 # ================================================================
-# 🔥 PROCESAMIENTO DE SOLICITUDES - VERSIÓN MEJORADA
+# 27. PROCESAMIENTO DE FORMULARIOS
 # ================================================================
 @app.route("/procesar-solicitud", methods=["POST"])
 @login_required
@@ -1090,9 +1400,6 @@ def procesar_solicitud():
         flash(f"❌ Error al procesar la solicitud: {str(e)}", "error")
         return redirect(url_for('servicios'))
 
-# ================================================================
-# 🔥 PROCESAMIENTO DE DENUNCIAS
-# ================================================================
 @app.route('/procesar-denuncia', methods=['POST'])
 @login_required
 @limiter.limit("5 per hour")
@@ -1122,11 +1429,7 @@ def procesar_denuncia():
         return redirect(url_for('denunciar', tipo=tipo or 'otro'))
     
     try:
-        denuncias_existentes = Denuncia.cargar_todos()
-        nuevo_id = max([d.id for d in denuncias_existentes], default=0) + 1
-        
         nueva_denuncia = Denuncia(
-            id=nuevo_id,
             folio=Denuncia.generar_folio(),
             usuario_email=email,
             usuario_nombre=usuario.nombre_completo or f"{usuario.nombre} {usuario.apellidos}",
@@ -1142,7 +1445,8 @@ def procesar_denuncia():
             geolocalizada=bool(lat and lng)
         )
         
-        Denuncia.guardar(nueva_denuncia)
+        db.session.add(nueva_denuncia)
+        db.session.commit()
         
         if lat and lng:
             flash(f"✅ Denuncia #{nueva_denuncia.folio} registrada exitosamente con ubicación en el mapa.", "success")
@@ -1151,59 +1455,22 @@ def procesar_denuncia():
         
         return redirect(url_for('mis_denuncias'))
     except Exception as e:
+        db.session.rollback()
         print(f"Error al procesar denuncia: {e}")
         import traceback
         traceback.print_exc()
         flash("❌ Error al procesar la denuncia.", "error")
         return redirect(url_for('denunciar', tipo=tipo or 'otro'))
 
-# ================================================================
-# PROCESAMIENTO DE CONSULTAS
-# ================================================================
 @app.route('/procesar-consulta', methods=['POST'])
 @login_required
 @limiter.limit("10 per hour")
 def procesar_consulta():
-    from models import Consulta
-    from models.usuario import Usuario
-    
-    email = session.get("user")
-    if not email:
-        flash("No hay sesión activa.", "error")
-        return redirect(url_for("auth.login"))
-    
-    usuario = Usuario.query.filter_by(email=email).first()
-    
-    tipo = request.form.get('tipo')
-    pregunta = request.form.get('pregunta')
-    
-    if not tipo or not pregunta:
-        flash("❌ Todos los campos obligatorios deben completarse.", "error")
-        return redirect(url_for('consultar', tipo=tipo))
-    
-    try:
-        nueva_consulta = Consulta(
-            folio=Consulta.generar_folio(),
-            usuario_email=email,
-            usuario_nombre=usuario.nombre_completo or f"{usuario.nombre} {usuario.apellidos}",
-            tipo=tipo,
-            tipo_nombre=NOMBRES_CONSULTAS.get(tipo, tipo),
-            pregunta=pregunta,
-            estado='pendiente',
-            fecha_creacion=datetime.now()
-        )
-        
-        Consulta.guardar(nueva_consulta)
-        flash(f"✅ Consulta #{nueva_consulta.folio} enviada exitosamente.", "success")
-        return redirect(url_for('mis_consultas'))
-    except Exception as e:
-        print(f"Error al procesar consulta: {e}")
-        flash("❌ Error al procesar la consulta.", "error")
-        return redirect(url_for('consultar', tipo=tipo))
+    # Nota: Esta funcionalidad requiere el modelo Consulta
+    # Por ahora redirige con mensaje informativo
+    flash("⚠️ Funcionalidad de consultas en desarrollo. Próximamente disponible.", "warning")
+    return redirect(url_for('servicios'))
 
-# ================================================================
-# SOLICITAR CITA
-# ================================================================
 @app.route("/solicitar-cita", methods=["GET", "POST"])
 @login_required
 def solicitar_cita():
@@ -1250,6 +1517,7 @@ def solicitar_cita():
                                      servicios=SERVICIOS_CITAS,
                                      now=datetime.now())
             
+            # CORREGIDO: Eliminado fecha_creacion de los parámetros
             nueva_cita = Cita(
                 folio=Cita.generar_folio(),
                 usuario_email=email,
@@ -1259,8 +1527,7 @@ def solicitar_cita():
                 fecha=fecha,
                 hora=hora,
                 motivo=motivo,
-                estado="pendiente",
-                fecha_creacion=datetime.now()
+                estado="pendiente"
             )
             
             db.session.add(nueva_cita)
@@ -1278,9 +1545,6 @@ def solicitar_cita():
                          servicios=SERVICIOS_CITAS,
                          now=datetime.now())
 
-# ================================================================
-# CANCELAR CITA
-# ================================================================
 @app.route("/cancelar-cita/<int:cita_id>", methods=["POST"])
 @login_required
 def cancelar_cita(cita_id):
@@ -1311,7 +1575,7 @@ def cancelar_cita(cita_id):
     return redirect(url_for("mis_citas"))
 
 # ================================================================
-# API: HORARIOS DISPONIBLES
+# 28. APIs
 # ================================================================
 @app.route("/api/horarios-disponibles")
 @login_required
@@ -1345,9 +1609,6 @@ def horarios_disponibles():
         "fecha": fecha
     })
 
-# ================================================================
-# 🎨 API DE CONFIGURACIÓN DEL SISTEMA
-# ================================================================
 @app.route("/api/configuracion")
 def api_configuracion():
     from models.configuracion import Configuracion
@@ -1415,9 +1676,6 @@ def api_actualizar_configuracion():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
-# ================================================================
-# 🔥 API DE NOTIFICACIONES
-# ================================================================
 @app.route("/api/notificaciones")
 @login_required
 def api_notificaciones():
@@ -1475,42 +1733,33 @@ def api_marcar_todas_notificaciones():
         return jsonify({'error': str(e)}), 500
 
 @app.route("/api/notificaciones/crear", methods=["POST"])
-@login_required
+@admin_required
 def api_crear_notificacion():
     try:
         from models.notificacion import Notificacion
         
-        if not session.get("is_admin"):
-            return jsonify({'error': 'No autorizado'}), 403
-        
         data = request.get_json()
         usuario_email = data.get('usuario_email')
+        tipo = data.get('tipo', 'info')
         titulo = data.get('titulo')
         mensaje = data.get('mensaje')
-        tipo = data.get('tipo', 'info')
-        url = data.get('url', '')
+        datos_extra = data.get('datos_extra')
         
         if not all([usuario_email, titulo, mensaje]):
-            return jsonify({'error': 'Faltan campos requeridos'}), 400
+            return jsonify({'success': False, 'error': 'Faltan campos requeridos'}), 400
         
-        notificacion = Notificacion(
+        notificacion = Notificacion.crear_notificacion(
             usuario_email=usuario_email,
+            tipo=tipo,
             titulo=titulo,
             mensaje=mensaje,
-            tipo=tipo,
-            url=url
+            datos_extra=datos_extra
         )
-        
-        db.session.add(notificacion)
-        db.session.commit()
         
         return jsonify({'success': True, 'notificacion': notificacion.to_dict()})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
-# ================================================================
-# 📨 API DE MENSAJERÍA PARA USUARIOS
-# ================================================================
 @app.route("/api/usuario/tramite/<folio>/mensajes", methods=["GET"])
 @login_required
 def api_usuario_obtener_mensajes(folio):
@@ -1541,6 +1790,14 @@ def api_usuario_obtener_mensajes(folio):
                 if c.folio == folio:
                     pertenece = True
                     break
+        elif tramite_tipo == 'contacto':
+            contactos = Mensaje.query.filter_by(
+                usuario_email=email,
+                tramite_folio=folio,
+                tramite_tipo='consulta'
+            ).first()
+            if contactos:
+                pertenece = True
         
         if not pertenece:
             return jsonify({'success': False, 'error': 'No tienes permiso'}), 403
@@ -1598,6 +1855,13 @@ def api_usuario_responder_mensaje(folio):
                 if c.folio == folio:
                     usuario_email = c.usuario_email
                     break
+        elif tramite_tipo == 'contacto':
+            contacto = Mensaje.query.filter_by(
+                tramite_folio=folio,
+                tramite_tipo='consulta'
+            ).first()
+            if contacto:
+                usuario_email = contacto.usuario_email
         
         if not usuario_email:
             return jsonify({'success': False, 'error': 'Trámite no encontrado'}), 404
@@ -1617,7 +1881,7 @@ def api_usuario_responder_mensaje(folio):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # ================================================================
-# ENCUESTA DE TRÁMITE
+# 29. ENCUESTAS
 # ================================================================
 @app.route("/tramite/<folio>/encuesta", methods=["GET", "POST"])
 @login_required
@@ -1662,7 +1926,7 @@ def encuesta_tramite(folio):
         flash("Trámite no encontrado.", "error")
         return redirect(url_for("mis_tramites"))
     
-    estados_completados = ['completado', 'resuelto', 'completada']
+    estados_completados = ['completado', 'resuelto', 'completada', 'respondido']
     if tramite.estado not in estados_completados:
         flash("❌ Solo puedes evaluar trámites completados.", "error")
         return redirect(url_for("mis_tramites"))
@@ -1714,7 +1978,7 @@ def encuesta_tramite(folio):
                           folio=folio)
 
 # ================================================================
-# ADMIN: ESTADÍSTICAS DE ENCUESTAS
+# 30. ADMIN - ESTADÍSTICAS DE ENCUESTAS
 # ================================================================
 @app.route("/admin/encuestas")
 @admin_required
@@ -1724,38 +1988,74 @@ def admin_encuestas():
     return render_template("admin/encuestas.html", stats=stats)
 
 # ================================================================
-# CONFIGURACIÓN DE CUENTA
+# 31. ADMIN - GESTIÓN DE CONTACTOS
 # ================================================================
-@app.route("/mi-cuenta/configuracion", methods=["GET", "POST"])
-@login_required
-def configuracion_cuenta():
-    from models.usuario import Usuario
-    email = session.get("user")
+@app.route("/admin/contactos")
+@admin_required
+def admin_contactos():
+    from models.mensaje import Mensaje
+    contactos = Mensaje.obtener_todos_contactos()
+    return render_template("admin/contactos.html", contactos=contactos)
+
+@app.route("/admin/responder-contacto", methods=["POST"])
+@admin_required
+def admin_responder_contacto():
+    from models.mensaje import Mensaje
     
-    if not email:
-        flash("No hay sesión activa.", "error")
-        return redirect(url_for("auth.login"))
+    contacto_id = request.form.get("contacto_id")
+    respuesta = request.form.get("respuesta", "").strip()
     
-    usuario = Usuario.query.filter_by(email=email).first()
+    if not respuesta:
+        flash("❌ La respuesta no puede estar vacía.", "error")
+        return redirect(url_for("admin_contactos"))
     
-    if not usuario:
-        flash("Usuario no encontrado.", "error")
-        return redirect(url_for("index"))
-    
-    if request.method == "POST":
-        if hasattr(usuario, 'notificaciones_email'):
-            usuario.notificaciones_email = request.form.get("notificaciones_email") == "on"
-        if hasattr(usuario, 'notificaciones_whatsapp'):
-            usuario.notificaciones_whatsapp = request.form.get("notificaciones_whatsapp") == "on"
+    try:
+        admin_email = session.get("user")
+        admin_nombre = session.get("user_name", "Administrador")
         
-        db.session.commit()
-        flash("✅ Configuración actualizada correctamente.", "success")
-        return redirect(url_for("mi_cuenta"))
+        Mensaje.responder_contacto(contacto_id, admin_email, admin_nombre, respuesta)
+        
+        flash("✅ Respuesta enviada correctamente. El usuario recibirá una notificación.", "success")
+    except Exception as e:
+        flash(f"❌ Error al enviar respuesta: {str(e)}", "error")
     
-    return render_template("usuarios/configuracion.html", usuario=usuario)
+    return redirect(url_for("admin_contactos"))
+
+@app.route("/admin/contacto/<int:contacto_id>/detalle")
+@admin_required
+def admin_contacto_detalle(contacto_id):
+    from models.mensaje import Mensaje
+    
+    conversacion = Mensaje.obtener_conversacion_contacto(contacto_id)
+    
+    if not conversacion:
+        flash("Contacto no encontrado", "error")
+        return redirect(url_for("admin_contactos"))
+    
+    return render_template("admin/contacto_detalle.html", conversacion=conversacion)
+
+@app.route("/admin/contactos/pendientes")
+@admin_required
+def admin_contactos_pendientes():
+    from models.mensaje import Mensaje
+    contactos = Mensaje.obtener_contactos_pendientes()
+    return render_template("admin/contactos_pendientes.html", contactos=contactos)
+
+@app.route("/admin/api/contactos-pendientes")
+@admin_required
+def api_contactos_pendientes():
+    from models.mensaje import Mensaje
+    
+    try:
+        contactos_pendientes = Mensaje.obtener_contactos_pendientes()
+        count = len(contactos_pendientes)
+        return jsonify({'count': count})
+    except Exception as e:
+        print(f"Error al obtener contactos pendientes: {e}")
+        return jsonify({'count': 0})
 
 # ================================================================
-# ADMIN ROUTES (resumen)
+# 32. ADMIN - OTRAS RUTAS
 # ================================================================
 @app.route("/admin/dashboard")
 @admin_required
@@ -1782,7 +2082,7 @@ def api_notificaciones_admin():
         return jsonify({'count': 0, 'notifications': []})
 
 # ================================================================
-# ERROR HANDLERS
+# 33. ERROR HANDLERS
 # ================================================================
 @app.errorhandler(404)
 def page_not_found(e):
@@ -1800,7 +2100,7 @@ def ratelimit_handler(e):
     return redirect(request.referrer or url_for('index'))
 
 # ================================================================
-# 🔥 ARRANQUE
+# 34. ARRANQUE
 # ================================================================
 if __name__ == "__main__":
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -1817,18 +2117,19 @@ if __name__ == "__main__":
     print("✅ API de Configuración disponible")
     print("✅ API de Notificaciones disponible")
     print("✅ API de Mensajería disponible")
-    print("✅ RUTAS DE TRANSPARENCIA CORREGIDAS:")
-    print("   - /transparencia → transparencia.html")
-    print("   - /transparencia/estructura → transparencia_estructura.html")
-    print("   - /transparencia/integrantes → transparencia_integrantes.html")
-    print("   - Y todas las demás rutas de transparencia")
-    print("✅ PROCESAR SOLICITUD VERSIÓN MEJORADA")
+    print("✅ Gestión de Contactos en Admin")
+    print("✅ API de Contactos Pendientes")
+    print("✅ RUTAS DE TRANSPARENCIA CORREGIDAS")
+    print("✅ CONTACTOS GUARDAN EN TABLA mensajes")
+    print("✅ CONTACTOS VISIBLES EN /mis-tramites")
+    print("✅ ERROR DE ORDENAMIENTO CORREGIDO (VERSIÓN ROBUSTA)")
     print("=" * 60)
     print("📌 RUTAS PRINCIPALES:")
     print("   /                 → Inicio")
-    print("   /transparencia    → TRANSPARENCIA (CORREGIDO)")
+    print("   /transparencia    → TRANSPARENCIA")
+    print("   /contacto         → FORMULARIO DE CONTACTO")
     print("   /mis-servicios    → MIS SERVICIOS SOLICITADOS")
-    print("   /mis-tramites     → MIS TRÁMITES")
+    print("   /mis-tramites     → MIS TRÁMITES (INCLUYE CONTACTOS)")
     print("   /mis-solicitudes  → Solo solicitudes")
     print("   /mis-denuncias    → Solo denuncias")
     print("   /mis-citas        → Solo citas")
@@ -1836,10 +2137,21 @@ if __name__ == "__main__":
     print("   /mi-cuenta        → Mi perfil")
     print("   /mapa             → Mapa de incidencias")
     print("=" * 60)
+    print("📌 RUTAS ADMINISTRADOR:")
+    print("   /admin/contactos           → Gestión de contactos")
+    print("   /admin/contactos/pendientes→ Contactos pendientes")
+    print("   /admin/encuestas           → Estadísticas de encuestas")
+    print("   /admin/mapa                → Mapa de incidencias (admin)")
+    print("   /admin/noticias            → Gestión de noticias")
+    print("   /admin/logs                → Dashboard de logs")
+    print("   /admin/api/contactos-pendientes → API contactos pendientes")
+    print("=" * 60)
     print("🌐 Servidor en: http://localhost:5000")
     print("📡 API Configuración: http://localhost:5000/api/configuracion")
     print("🗺️ Mapa de Incidencias: http://localhost:5000/mapa")
     print("🏛️ Transparencia: http://localhost:5000/transparencia")
+    print("📞 Contacto: http://localhost:5000/contacto")
+    print("📰 Noticias: http://localhost:5000/noticias")
     print("=" * 60)
     
     app.run(
