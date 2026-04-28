@@ -57,6 +57,23 @@ init_production_config()
 # 🔥🔥🔥 NUEVA FORMA DE CARGAR CONFIGURACIÓN (CORREGIDO PARA RENDER) 🔥🔥🔥
 app.config.update(get_flask_config())
 
+# 🔥🔥🔥 CONFIGURACIÓN DE SESIONES PARA HTTPS EN PRODUCCIÓN 🔥🔥🔥
+# Esta es la corrección principal para el problema de login en Render
+if is_production():
+    app.config['SESSION_COOKIE_SECURE'] = True          # Solo enviar cookie sobre HTTPS
+    app.config['SESSION_COOKIE_HTTPONLY'] = True        # No accesible via JavaScript
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'       # Protección CSRF
+    app.config['REMEMBER_COOKIE_SECURE'] = True         # Cookie de "recordarme" solo HTTPS
+    app.config['REMEMBER_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_DOMAIN'] = None          # Usar dominio actual
+    print("🔒 Configuración de cookies HTTPS aplicada para producción")
+else:
+    # En desarrollo, permitir cookies sobre HTTP
+    app.config['SESSION_COOKIE_SECURE'] = False
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    print("🔓 Configuración de cookies HTTP aplicada para desarrollo")
+
 # 🔥🔥🔥 PRINT OBLIGATORIO PARA DIAGNÓSTICO 🔥🔥🔥
 print("=" * 80)
 print("🔥 DATABASE FINAL:", app.config.get('SQLALCHEMY_DATABASE_URI', 'NO CONFIGURADA'))
@@ -2127,6 +2144,7 @@ if __name__ == "__main__":
         print(f"   Cloudinary: {'✅' if app.config.get('CLOUDINARY_ENABLED') else '❌'}")
         print(f"   Base de datos: {app.config.get('SQLALCHEMY_DATABASE_URI', 'No configurada')[:80]}...")
         print(f"   SSL Mode: {'✅' if 'sslmode=require' in str(app.config.get('SQLALCHEMY_DATABASE_URI', '')) else '❌'}")
+        print(f"   🔒 Cookies seguras: {'✅' if app.config.get('SESSION_COOKIE_SECURE') else '❌'}")
     else:
         print("💻 MODO DESARROLLO ACTIVADO")
         print("   Debug: True")
@@ -2175,5 +2193,3 @@ if __name__ == "__main__":
         port=port,
         use_reloader=app.debug
     )
-
-    
