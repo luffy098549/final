@@ -2,14 +2,17 @@
 config_manager.py
 Gestión de configuración persistente del sistema sin base de datos.
 Lee y escribe en config.json en la raíz del proyecto.
+Soporte para variables de entorno en producción (Render, Railway, etc.)
 """
 
 import json
 import os
-import shutil
+import smtplib
 import zipfile
 from datetime import datetime
 from pathlib import Path
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 CONFIG_PATH = Path(__file__).parent / 'config.json'
 
@@ -89,13 +92,14 @@ DEFAULT_CONFIG = {
         "audit_log": True,
         "file_log": False,
         "cache_sessions": 3600,
-        "cache_static": 30
+        "cache_static": 30,
+        "secret_key": ""
     },
     "cloudinary": {
         "enabled": True,
-        "cloud_name": "dwst50un4",
-        "api_key": "637837677376111",
-        "api_secret": "i8zTmAcN3st4OJw8",
+        "cloud_name": "",
+        "api_key": "",
+        "api_secret": "",
         "upload_folder": "fotos_perfil",
         "transformation": {
             "width": 300,
@@ -105,6 +109,14 @@ DEFAULT_CONFIG = {
             "quality": "auto",
             "fetch_format": "auto"
         }
+    },
+    "database": {
+        "url": "postgresql://postgres:1234@localhost:5432/ayuntamiento"
+    },
+    "archivos": {
+        "logo": "",
+        "favicon": "",
+        "banner": ""
     }
 }
 
@@ -117,7 +129,6 @@ def cargar_config() -> dict:
     try:
         with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
             data = json.load(f)
-        # Mezclar con defaults para no perder claves nuevas
         return _merge_defaults(data, DEFAULT_CONFIG)
     except (json.JSONDecodeError, IOError):
         return DEFAULT_CONFIG.copy()
@@ -165,21 +176,67 @@ def _merge_defaults(data: dict, defaults: dict) -> dict:
 
 
 # ================================================================
-# CLOUDINARY CONFIGURATION
+# DETECCIÓN DE ENTORNO
+# ================================================================
+
+def is_production() -> bool:
+    """Detecta si estamos en entorno de producción."""
+    return bool(
+        os.environ.get('RENDER') or
+        os.environ.get('RAILWAY_ENVIRONMENT') or
+        os.environ.get('PRODUCTION')
+    )
+
+
+# ================================================================
+# FUNCIÓN CENTRAL: OBTENER DATABASE URL
+# ================================================================
+
+def get_database_url() -> str:
+    """
+    Obtiene la URL de la base de datos con esta prioridad:
+    1. Variable de entorno DATABASE_URL  ← SIEMPRE primero
+    2. config.json
+    3. Default localhost (solo desarrollo)
+    """
+    # ── 1. Variable de entorno (Render, Railway, Heroku) ──────────
+    database_url = os.environ.get('DATABASE_URL', '').strip()
+
+    if database_url:
+        # Render/Heroku usan 'postgres://' pero SQLAlchemy necesita 'postgresql://'
+        if database_url.startswith('postgres://'):
+            database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        # Agregar sslmode=require si no está presente (requerido por Render)
+        if 'postgresql' in database_url and 'sslmode' not in database_url:
+            separator = '&' if '?' in database_url else '?'
+            database_url += f'{separator}sslmode=require'
+        print(f"✅ DATABASE_URL cargada desde variable de entorno")
+        return database_url
+
+    # ── 2. config.json ─────────────────────────────────────────────
+    json_url = get('database', 'url', '').strip()
+    if json_url and 'localhost' not in json_url:
+        print(f"✅ DATABASE_URL cargada desde config.json")
+        return json_url
+
+    # ── 3. Default desarrollo local ────────────────────────────────
+    print("⚠️  Usando DATABASE_URL por defecto (localhost - solo desarrollo)")
+    return "postgresql://postgres:1234@localhost:5432/ayuntamiento"
+
+
+# ================================================================
+# CLOUDINARY
 # ================================================================
 
 def get_cloudinary_config() -> dict:
-    """Devuelve la configuración de Cloudinary"""
     return obtener_seccion('cloudinary')
 
 
 def is_cloudinary_enabled() -> bool:
-    """Verifica si Cloudinary está habilitado"""
     return get('cloudinary', 'enabled', True)
 
 
 def get_cloudinary_credentials() -> dict:
-    """Devuelve las credenciales de Cloudinary"""
     cloud_config = get_cloudinary_config()
     return {
         'cloud_name': cloud_config.get('cloud_name'),
@@ -190,7 +247,7 @@ def get_cloudinary_credentials() -> dict:
 
 
 # ================================================================
-# Subida de archivos (logo, favicon, banner) - LOCAL
+# SUBIDA DE ARCHIVOS DE CONFIGURACIÓN (logo, favicon, banner)
 # ================================================================
 
 UPLOAD_FOLDER = Path(__file__).parent / 'static' / 'uploads' / 'config'
@@ -200,7 +257,6 @@ ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'svg', 'ico', 'webp'}
 def guardar_imagen_config(archivo, tipo: str) -> tuple[bool, str]:
     """
     Guarda logo, favicon o banner en static/uploads/config/.
-    Devuelve (éxito, ruta_relativa_o_error).
     tipo: 'logo' | 'favicon' | 'banner'
     """
     UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
@@ -215,31 +271,20 @@ def guardar_imagen_config(archivo, tipo: str) -> tuple[bool, str]:
     try:
         archivo.save(str(ruta_destino))
         ruta_relativa = f"uploads/config/{nombre_archivo}"
-
-        # Guardar ruta en config
         config = cargar_config()
         config.setdefault('archivos', {})[tipo] = ruta_relativa
         guardar_config(config)
-
         return True, ruta_relativa
     except Exception as e:
         return False, str(e)
 
 
 # ================================================================
-# Test SMTP real
+# TEST SMTP
 # ================================================================
 
 def test_smtp(host: str, port: int, user: str, password: str,
               nombre: str, email_destino: str) -> tuple[bool, str]:
-    """
-    Intenta conectarse al servidor SMTP y enviar un email de prueba.
-    Devuelve (éxito, mensaje).
-    """
-    import smtplib
-    from email.mime.text import MIMEText
-    from email.mime.multipart import MIMEMultipart
-
     if not all([host, user, password, email_destino]):
         return False, "Faltan datos requeridos: host, usuario, contraseña y email destino"
 
@@ -277,98 +322,170 @@ def test_smtp(host: str, port: int, user: str, password: str,
 
 
 # ================================================================
-# Exportar datos como ZIP
+# EXPORTAR DATOS COMO ZIP
 # ================================================================
 
 DATA_FOLDER = Path(__file__).parent / 'data'
 
 
 def exportar_datos_zip() -> tuple[bool, str]:
-    """
-    Crea un ZIP con todos los JSON de datos + config.json.
-    Devuelve (éxito, ruta_del_zip).
-    """
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     zip_nombre = f"backup_villacutupu_{timestamp}.zip"
     zip_ruta = Path(__file__).parent / 'static' / 'exports' / zip_nombre
-
     zip_ruta.parent.mkdir(parents=True, exist_ok=True)
 
     try:
         with zipfile.ZipFile(zip_ruta, 'w', zipfile.ZIP_DEFLATED) as zf:
-            # config.json
             if CONFIG_PATH.exists():
                 zf.write(CONFIG_PATH, 'config.json')
-
-            # Todos los JSON en /data
             if DATA_FOLDER.exists():
                 for archivo in DATA_FOLDER.rglob('*.json'):
-                    nombre_en_zip = f"data/{archivo.name}"
-                    zf.write(archivo, nombre_en_zip)
-
-            # Imágenes de config subidas
+                    zf.write(archivo, f"data/{archivo.name}")
             if UPLOAD_FOLDER.exists():
                 for archivo in UPLOAD_FOLDER.iterdir():
                     zf.write(archivo, f"uploads/config/{archivo.name}")
-
         return True, str(zip_ruta)
     except Exception as e:
         return False, str(e)
 
 
-# ================================================================
-# Limpiar exportaciones viejas
-# ================================================================
-
 def limpiar_exports_viejos(max_archivos: int = 5):
-    """Mantiene solo los últimos N ZIPs de exportación."""
     exports_dir = Path(__file__).parent / 'static' / 'exports'
     if not exports_dir.exists():
         return
-
     zips = sorted(exports_dir.glob('backup_*.zip'), key=os.path.getmtime)
     while len(zips) > max_archivos:
         zips.pop(0).unlink()
 
 
 # ================================================================
-# Configuración de PostgreSQL (para app.py)
+# FLASK CONFIG — AHORA COMO DICCIONARIO DIRECTO
+# ================================================================
+# Se usa get_flask_config() en app.py en lugar de from_object()
+# para garantizar que las env vars se lean en el momento correcto.
+
+def get_flask_config() -> dict:
+    """
+    Devuelve un diccionario listo para app.config.update().
+    Las variables de entorno siempre tienen prioridad sobre config.json.
+    """
+    # ── Base de datos ──────────────────────────────────────────────
+    database_uri = get_database_url()
+
+    # ── Secret key ────────────────────────────────────────────────
+    secret_key = (
+        os.environ.get('SECRET_KEY') or
+        get('sistema', 'secret_key', '') or
+        'clave_secreta_muy_segura_cambiar_en_produccion_123'
+    )
+
+    # ── Debug ─────────────────────────────────────────────────────
+    debug = False if is_production() else get('sistema', 'debug', True)
+
+    # ── Cloudinary ────────────────────────────────────────────────
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME') or get('cloudinary', 'cloud_name', '')
+    api_key    = os.environ.get('CLOUDINARY_API_KEY')    or get('cloudinary', 'api_key', '')
+    api_secret = os.environ.get('CLOUDINARY_API_SECRET') or get('cloudinary', 'api_secret', '')
+    cloudinary_enabled = bool(cloud_name and api_key) and get('cloudinary', 'enabled', True)
+
+    # ── Max upload ────────────────────────────────────────────────
+    max_file_mb = get('servicios', 'max_file_size', 5)
+
+    # ── Sesión ────────────────────────────────────────────────────
+    session_hours = get('seguridad', 'session_hours', 8)
+
+    config = {
+        # Base de datos
+        'SQLALCHEMY_DATABASE_URI':        database_uri,
+        'SQLALCHEMY_TRACK_MODIFICATIONS': False,
+        'SQLALCHEMY_ENGINE_OPTIONS': {
+            'pool_pre_ping': True,
+            'pool_recycle': 300,
+            'connect_args': {'sslmode': 'require'} if is_production() else {},
+        },
+
+        # Seguridad
+        'SECRET_KEY':               secret_key,
+        'DEBUG':                    debug,
+        'TEMPLATES_AUTO_RELOAD':    debug,
+        'SESSION_COOKIE_SECURE':    not debug,
+        'SESSION_COOKIE_HTTPONLY':  True,
+        'SESSION_COOKIE_SAMESITE':  'Lax',
+        'PERMANENT_SESSION_LIFETIME': session_hours * 3600,
+
+        # Uploads
+        'MAX_CONTENT_LENGTH': max_file_mb * 1024 * 1024,
+        'UPLOAD_FOLDER': str(Path(__file__).parent / 'static' / 'uploads'),
+
+        # Cloudinary
+        'CLOUDINARY_CLOUD_NAME':    cloud_name,
+        'CLOUDINARY_API_KEY':       api_key,
+        'CLOUDINARY_API_SECRET':    api_secret,
+        'CLOUDINARY_UPLOAD_FOLDER': get('cloudinary', 'upload_folder', 'fotos_perfil'),
+        'CLOUDINARY_ENABLED':       cloudinary_enabled,
+    }
+
+    # ── Diagnóstico ───────────────────────────────────────────────
+    print("=" * 60)
+    print("📊 DIAGNÓSTICO DE CONFIGURACIÓN:")
+    print(f"   Producción:       {is_production()}")
+    print(f"   Debug:            {debug}")
+    print(f"   DATABASE_URL env: {'✅ Presente' if os.environ.get('DATABASE_URL') else '❌ Ausente'}")
+    print(f"   DB URI:           {database_uri[:80]}...")
+    print(f"   localhost en URI: {'❌ CRÍTICO' if 'localhost' in database_uri else '✅ OK'}")
+    print(f"   SSL Mode:         {'✅' if 'sslmode=require' in database_uri else '⚠️  Sin SSL'}")
+    print(f"   Cloudinary:       {'✅' if cloudinary_enabled else '❌'}")
+    print("=" * 60)
+
+    return config
+
+
+# ================================================================
+# COMPATIBILIDAD — flask_config para imports existentes en app.py
+# ================================================================
+# Si en app.py usas: from config_manager import flask_config
+# esto sigue funcionando, pero ahora es un dict-like wrapper.
+
+class _FlaskConfigCompat:
+    """
+    Wrapper de compatibilidad para que el código existente que use
+    flask_config.ALGO o app.config.from_object(flask_config) siga
+    funcionando. Internamente delega a get_flask_config().
+    """
+    def __getattr__(self, key: str):
+        return get_flask_config().get(key)
+
+    def __getitem__(self, key: str):
+        return get_flask_config().get(key)
+
+    def __contains__(self, key: str):
+        return key in get_flask_config()
+
+    def items(self):
+        return get_flask_config().items()
+
+
+flask_config = _FlaskConfigCompat()
+
+
+# ================================================================
+# INICIALIZACIÓN EN PRODUCCIÓN
 # ================================================================
 
-class Config:
-    """Configuración principal de la aplicación Flask"""
-    
-    # Base de datos PostgreSQL
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:1234@localhost:5432/ayuntamiento"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
-    # Clave secreta
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'clave_secreta_muy_segura_cambiar_en_produccion_123')
-    
-    # Modo desarrollo
-    DEBUG = True
-    TEMPLATES_AUTO_RELOAD = True
-    
-    # Uploads
-    MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB
-    
-    # Cloudinary (desde config.json)
-    @property
-    def CLOUDINARY_CLOUD_NAME(self):
-        return get('cloudinary', 'cloud_name', 'dwst50un4')
-    
-    @property
-    def CLOUDINARY_API_KEY(self):
-        return get('cloudinary', 'api_key', '637837677376111')
-    
-    @property
-    def CLOUDINARY_API_SECRET(self):
-        return get('cloudinary', 'api_secret', 'i8zTmAcN3st4OJw8')
-    
-    @property
-    def CLOUDINARY_ENABLED(self):
-        return get('cloudinary', 'enabled', True)
+def init_production_config():
+    """Configuración específica para producción."""
+    if is_production():
+        config = cargar_config()
+        if 'sistema' in config:
+            config['sistema']['debug'] = False
+            guardar_config(config)
 
+        if not os.environ.get('SECRET_KEY'):
+            print("⚠️  ADVERTENCIA: SECRET_KEY no configurada en variables de entorno")
 
-# Instancia de configuración para usar en app.py
-config = Config()
+        if not os.environ.get('DATABASE_URL'):
+            print("❌ CRÍTICO: DATABASE_URL no configurada en variables de entorno")
+        else:
+            print("✅ DATABASE_URL detectada en variables de entorno")
+
+        print("✅ Configuración de producción activada")

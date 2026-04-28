@@ -1,5 +1,5 @@
 # ================================================================
-# APP.PY - VILLA CUTUPÚ MUNICIPAL SYSTEM (VERSIÓN COMPLETA)
+# APP.PY - VILLA CUTUPÚ MUNICIPAL SYSTEM (VERSIÓN COMPLETA - CORREGIDA PARA RENDER)
 # ================================================================
 
 # ================================================================
@@ -36,7 +36,7 @@ import hashlib
 # ================================================================
 # 3. CONFIGURACIÓN DE EXTENSIONES
 # ================================================================
-from config_manager import Config
+from config_manager import get_flask_config, init_production_config, is_production
 from extensions import db, login_manager, migrate
 
 # ================================================================
@@ -51,19 +51,41 @@ import cloudinary.api
 # ================================================================
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 
-# Cargar configuración desde Config
-app.config.from_object(Config)
+# Inicializar configuración de producción si aplica
+init_production_config()
+
+# 🔥🔥🔥 NUEVA FORMA DE CARGAR CONFIGURACIÓN (CORREGIDO PARA RENDER) 🔥🔥🔥
+app.config.update(get_flask_config())
+
+# 🔥🔥🔥 PRINT OBLIGATORIO PARA DIAGNÓSTICO 🔥🔥🔥
+print("=" * 80)
+print("🔥 DATABASE FINAL:", app.config.get('SQLALCHEMY_DATABASE_URI', 'NO CONFIGURADA'))
+print("=" * 80)
+
+# Imprimir diagnóstico (IMPORTANTE para debug)
+print("=" * 60)
+print("📊 DIAGNÓSTICO DE BASE DE DATOS:")
+print(f"   Modo producción: {is_production()}")
+print(f"   Database URL: {app.config.get('SQLALCHEMY_DATABASE_URI', 'No configurada')[:80]}...")
+print(f"   Es PostgreSQL: {'✅' if 'postgresql' in str(app.config.get('SQLALCHEMY_DATABASE_URI', '')) else '❌'}")
+print(f"   SSL Mode: {'✅' if 'sslmode=require' in str(app.config.get('SQLALCHEMY_DATABASE_URI', '')) else '❌'}")
+print(f"   localhost detectado: {'❌ CRÍTICO!' if 'localhost' in str(app.config.get('SQLALCHEMY_DATABASE_URI', '')) else '✅ OK'}")
+print("=" * 60)
 
 # ================================================================
-# 6. CONFIGURAR CLOUDINARY
+# 6. CONFIGURAR CLOUDINARY (con prioridad a variables de entorno)
 # ================================================================
 cloudinary.config(
-    cloud_name='dwst50un4',
-    api_key='637837677376111',
-    api_secret='i8zTmAcN3st4OJw8',
+    cloud_name=app.config.get('CLOUDINARY_CLOUD_NAME', ''),
+    api_key=app.config.get('CLOUDINARY_API_KEY', ''),
+    api_secret=app.config.get('CLOUDINARY_API_SECRET', ''),
     secure=True
 )
-print("✅ Cloudinary configurado correctamente")
+
+if app.config.get('CLOUDINARY_ENABLED'):
+    print("✅ Cloudinary configurado correctamente")
+else:
+    print("⚠️ Cloudinary no configurado (faltan credenciales)")
 
 # ================================================================
 # 7. INICIALIZAR BASE DE DATOS Y LOGIN
@@ -86,14 +108,7 @@ def load_user(user_id):
 # ================================================================
 # 8. CONFIGURACIÓN DE LA APLICACIÓN
 # ================================================================
-app.debug = True
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
-
-app.secret_key = os.environ.get(
-    "SECRET_KEY",
-    "clave_secreta_muy_segura_cambiar_en_produccion_123"
-)
-app.config['SESSION_TYPE'] = 'filesystem'
 
 # Uploads
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
@@ -103,15 +118,6 @@ ALLOWED_DOC_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'}
 DOCS_MAX_POR_TRAMITE = 5
 DOCS_MAX_SIZE_MB = 10
 
-app.config.update(
-    MAX_CONTENT_LENGTH=5 * 1024 * 1024,
-    UPLOAD_FOLDER=UPLOAD_FOLDER,
-    SEND_FILE_MAX_AGE_DEFAULT=0,
-    TEMPLATES_AUTO_RELOAD=True,
-    JSON_SORT_KEYS=False,
-    PROPAGATE_EXCEPTIONS=True,
-)
-
 # Registrar blueprints
 app.register_blueprint(auth)
 app.register_blueprint(admin_bp)
@@ -119,6 +125,9 @@ app.register_blueprint(admin_bp)
 # ================================================================
 # 9. DETECCIÓN DE REDIS
 # ================================================================
+REDIS_AVAILABLE = False
+redis_client = None
+
 try:
     import redis
     redis_client = redis.Redis(
@@ -229,16 +238,44 @@ def init_default_config():
             print(f"✅ Configuración por defecto creada: {clave} = {valor}")
 
 # ================================================================
-# 13. CREAR TABLAS Y USUARIOS POR DEFECTO
+# 13. CREAR TABLAS Y USUARIOS POR DEFECTO (CORREGIDO)
 # ================================================================
 from auth import crear_usuarios_por_defecto
 from models.configuracion import Configuracion
 
 with app.app_context():
-    db.create_all()
+    # En producción, usar migraciones; en desarrollo, crear tablas
+    if not is_production():
+        db.create_all()
+        print("✅ Tablas de base de datos creadas/verificadas (modo desarrollo)")
+    else:
+        # En producción, intentar crear tablas si no existen (conexión segura)
+        try:
+            # Verificar si las tablas existen
+            from sqlalchemy import inspect
+            inspector = inspect(db.engine)
+            existing_tables = inspector.get_table_names()
+            
+            if not existing_tables:
+                print("⚠️ No se encontraron tablas en producción - creándolas...")
+                db.create_all()
+                print("✅ Tablas creadas exitosamente")
+            else:
+                print(f"✅ Modo producción - {len(existing_tables)} tablas existentes")
+        except Exception as e:
+            print(f"⚠️ Error verificando tablas: {e}")
+            # Intentar crear igualmente
+            try:
+                db.create_all()
+                print("✅ Tablas creadas después de error")
+            except Exception as create_error:
+                print(f"❌ Error crítico creando tablas: {create_error}")
+    
+    # Crear usuarios por defecto
     crear_usuarios_por_defecto()
-    print("✅ Tablas de base de datos creadas/verificadas")
     print("✅ Usuarios por defecto creados/verificados")
+    
+    # Inicializar configuración
     init_default_config()
 
 # ================================================================
@@ -350,6 +387,9 @@ def guardar_contacto_en_bd(nombre, email, telefono, asunto, mensaje):
 # 18. FUNCIONES DE CLOUDINARY
 # ================================================================
 def subir_foto_cloudinary(archivo, email, folder="fotos_perfil"):
+    if not app.config.get('CLOUDINARY_ENABLED'):
+        return {'success': False, 'error': 'Cloudinary no está configurado'}
+    
     try:
         if email is None:
             email_str = "usuario"
@@ -386,6 +426,9 @@ def subir_foto_cloudinary(archivo, email, folder="fotos_perfil"):
         return {'success': False, 'error': str(e)}
 
 def eliminar_foto_cloudinary(public_id):
+    if not app.config.get('CLOUDINARY_ENABLED') or not public_id:
+        return True
+    
     try:
         if not public_id:
             return True
@@ -589,7 +632,6 @@ def create_transparency_view(template_name):
 for route_name, (url_path, template_name) in _TRANSPARENCIA.items():
     app.add_url_rule(url_path, route_name, create_transparency_view(template_name))
 
-
 # ================================================================
 # 23. NOTICIAS Y CONTACTO PÚBLICO (RUTAS COMPLETAS CORREGIDAS)
 # ================================================================
@@ -606,10 +648,8 @@ def noticias():
     pagina = request.args.get('pagina', 1, type=int)
     categoria_slug = request.args.get('categoria', None)
     
-    # Obtener todas las categorías activas para el sidebar
     categorias = CategoriaNoticia.todas_activas()
     
-    # Obtener noticias publicadas con paginación
     resultado = Noticia.listar_publicadas(
         pagina=pagina,
         por_pagina=9,
@@ -620,7 +660,6 @@ def noticias():
     if categoria_slug:
         categoria_actual = CategoriaNoticia.query.filter_by(slug=categoria_slug).first()
     
-    # CORREGIDO: Cambiado de 'noticias_lista.html' a 'noticias.html'
     return render_template(
         'noticias.html',
         noticias=resultado['items'],
@@ -636,7 +675,6 @@ def noticias():
         categoria_actual=categoria_actual
     )
 
-
 # ================================================================
 # 23.2 NOTICIAS - DETALLE
 # ================================================================
@@ -649,17 +687,13 @@ def detalle_noticia(slug):
     
     noticia = Noticia.buscar_por_slug(slug)
     
-    # Verificar si existe y está publicada
     if not noticia or noticia.estado != 'publicado':
         abort(404)
     
-    # Incrementar vistas
     noticia.incrementar_vistas()
     
-    # Obtener comentarios aprobados
     comentarios = ComentarioNoticia.listar_por_noticia(noticia.id, solo_aprobados=True)
     
-    # Verificar si el visitante ya dio like (por IP)
     cliente_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     if cliente_ip and ',' in cliente_ip:
         cliente_ip = cliente_ip.split(',')[0].strip()
@@ -672,7 +706,6 @@ def detalle_noticia(slug):
         comentarios=comentarios,
         ya_dio_like=ya_dio_like
     )
-
 
 # ================================================================
 # 23.3 API - LIKE/NOTICIA (TOGGLE)
@@ -690,7 +723,6 @@ def api_noticia_like(slug):
         if not noticia or noticia.estado != 'publicado':
             return jsonify({'ok': False, 'mensaje': 'Noticia no encontrada'}), 404
         
-        # Obtener IP del cliente
         cliente_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
         if cliente_ip and ',' in cliente_ip:
             cliente_ip = cliente_ip.split(',')[0].strip()
@@ -698,17 +730,14 @@ def api_noticia_like(slug):
         if not cliente_ip:
             return jsonify({'ok': False, 'mensaje': 'No se pudo identificar la IP'}), 400
         
-        # Obtener usuario email si está logueado
         usuario_email = session.get('user') if session.get('user') else None
         
-        # Dar/quitar like
         liked, total_likes = LikeNoticia.dar_like(
             noticia_id=noticia.id,
             usuario_ip=cliente_ip,
             usuario_email=usuario_email
         )
         
-        # Registrar log
         registrar_log(
             accion='like_noticia' if liked else 'unlike_noticia',
             modulo='noticias',
@@ -727,7 +756,6 @@ def api_noticia_like(slug):
         import traceback
         traceback.print_exc()
         return jsonify({'ok': False, 'mensaje': str(e)}), 500
-
 
 # ================================================================
 # 23.4 API - COMENTAR/NOTICIA
@@ -753,7 +781,6 @@ def api_noticia_comentar(slug):
         contenido = data.get('contenido', '').strip()
         autor_email = data.get('autor_email', '').strip()
         
-        # Validaciones
         if not autor_nombre:
             return jsonify({'ok': False, 'mensaje': 'El nombre es obligatorio'}), 400
         
@@ -763,12 +790,10 @@ def api_noticia_comentar(slug):
         if len(contenido) > 5000:
             return jsonify({'ok': False, 'mensaje': 'El comentario es demasiado largo (máx 5000 caracteres)'}), 400
         
-        # Obtener IP
         cliente_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
         if cliente_ip and ',' in cliente_ip:
             cliente_ip = cliente_ip.split(',')[0].strip()
         
-        # Crear comentario
         comentario = ComentarioNoticia.crear(
             noticia_id=noticia.id,
             autor_nombre=autor_nombre,
@@ -777,7 +802,6 @@ def api_noticia_comentar(slug):
             ip_autor=cliente_ip
         )
         
-        # Registrar log
         registrar_log(
             accion='comentar_noticia',
             modulo='noticias',
@@ -796,7 +820,6 @@ def api_noticia_comentar(slug):
         import traceback
         traceback.print_exc()
         return jsonify({'ok': False, 'mensaje': str(e)}), 500
-
 
 # ================================================================
 # 23.5 CONTACTO PÚBLICO
@@ -827,14 +850,12 @@ def enviar_contacto():
     
     return redirect(url_for("contacto"))
 
-
 # ================================================================
 # 23.6 ARCHIVOS SUBIDOS
 # ================================================================
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
     return send_from_directory(os.path.join(app.root_path, 'static', 'uploads'), filename)
-
 
 # ================================================================
 # 24. MI CUENTA - RUTAS DE USUARIO
@@ -1029,7 +1050,7 @@ def configuracion_cuenta():
     return render_template("usuarios/configuracion.html", usuario=usuario)
 
 # ================================================================
-# 25. MIS TRÁMITES - RUTAS DEL USUARIO (CORREGIDA)
+# 25. MIS TRÁMITES - RUTAS DEL USUARIO
 # ================================================================
 @app.route("/mis-servicios")
 @login_required
@@ -1104,7 +1125,6 @@ def mis_tramites():
     try:
         citas = Cita.buscar_por_usuario(email)
         for c in citas:
-            # Convertir fecha de string a datetime si es necesario
             fecha_cita = c.fecha_creacion
             if isinstance(fecha_cita, str):
                 try:
@@ -1134,13 +1154,11 @@ def mis_tramites():
         ).order_by(Mensaje.fecha_creacion.desc()).all()
         
         for c in contactos_usuario:
-            # Buscar si tiene respuesta
             respuesta = Mensaje.query.filter_by(
                 tramite_folio=c.tramite_folio,
                 es_admin=True
             ).first()
             
-            # Asegurar que fecha_creacion es datetime
             fecha_contacto = c.fecha_creacion
             if isinstance(fecha_contacto, str):
                 try:
@@ -1173,7 +1191,6 @@ def mis_tramites():
             return fecha
         if isinstance(fecha, str):
             try:
-                # Intentar diferentes formatos de fecha
                 for fmt in ['%Y-%m-%d %H:%M:%S', '%Y-%m-%d', '%d/%m/%Y %H:%M:%S', '%d/%m/%Y']:
                     try:
                         return dt.strptime(fecha, fmt)
@@ -1281,7 +1298,6 @@ def mis_denuncias():
 @app.route("/mis-consultas")
 @login_required
 def mis_consultas():
-    # Nota: Este endpoint requiere el modelo Consulta. Si no existe, coméntalo o elimínalo
     flash("⚠️ Funcionalidad en desarrollo. Próximamente disponible.", "warning")
     return redirect(url_for("mis_tramites"))
 
@@ -1466,8 +1482,6 @@ def procesar_denuncia():
 @login_required
 @limiter.limit("10 per hour")
 def procesar_consulta():
-    # Nota: Esta funcionalidad requiere el modelo Consulta
-    # Por ahora redirige con mensaje informativo
     flash("⚠️ Funcionalidad de consultas en desarrollo. Próximamente disponible.", "warning")
     return redirect(url_for('servicios'))
 
@@ -1517,7 +1531,6 @@ def solicitar_cita():
                                      servicios=SERVICIOS_CITAS,
                                      now=datetime.now())
             
-            # CORREGIDO: Eliminado fecha_creacion de los parámetros
             nueva_cita = Cita(
                 folio=Cita.generar_folio(),
                 usuario_email=email,
@@ -2103,39 +2116,48 @@ def ratelimit_handler(e):
 # 34. ARRANQUE
 # ================================================================
 if __name__ == "__main__":
+    # Crear directorios necesarios
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     os.makedirs(DOCS_FOLDER, exist_ok=True)
     os.makedirs(os.path.join(app.root_path, 'data'), exist_ok=True)
     
     print("=" * 60)
-    print("🚀 VILLA CUTUPÚ - MODO DESARROLLO ACTIVADO")
+    print("🚀 VILLA CUTUPÚ - SISTEMA MUNICIPAL")
     print("=" * 60)
-    print("✅ Cloudinary configurado para fotos de perfil")
-    print("✅ Base de datos SQLAlchemy inicializada")
+    
+    if is_production():
+        print("🏭 MODO PRODUCCIÓN ACTIVADO")
+        print(f"   Debug: {app.debug}")
+        print(f"   Cloudinary: {'✅' if app.config.get('CLOUDINARY_ENABLED') else '❌'}")
+        print(f"   Base de datos: {app.config.get('SQLALCHEMY_DATABASE_URI', 'No configurada')[:80]}...")
+        print(f"   SSL Mode: {'✅' if 'sslmode=require' in str(app.config.get('SQLALCHEMY_DATABASE_URI', '')) else '❌'}")
+    else:
+        print("💻 MODO DESARROLLO ACTIVADO")
+        print("   Debug: True")
+    
+    print("=" * 60)
+    print("✅ Cloudinary:", "Configurado" if app.config.get('CLOUDINARY_ENABLED') else "No configurado")
+    print("✅ Base de datos: SQLAlchemy inicializada")
     print("✅ Usuarios por defecto creados/verificados")
     print("✅ Configuración global disponible en templates")
     print("✅ API de Configuración disponible")
     print("✅ API de Notificaciones disponible")
     print("✅ API de Mensajería disponible")
     print("✅ Gestión de Contactos en Admin")
-    print("✅ API de Contactos Pendientes")
-    print("✅ RUTAS DE TRANSPARENCIA CORREGIDAS")
-    print("✅ CONTACTOS GUARDAN EN TABLA mensajes")
-    print("✅ CONTACTOS VISIBLES EN /mis-tramites")
-    print("✅ ERROR DE ORDENAMIENTO CORREGIDO (VERSIÓN ROBUSTA)")
     print("=" * 60)
     print("📌 RUTAS PRINCIPALES:")
     print("   /                 → Inicio")
-    print("   /transparencia    → TRANSPARENCIA")
-    print("   /contacto         → FORMULARIO DE CONTACTO")
-    print("   /mis-servicios    → MIS SERVICIOS SOLICITADOS")
-    print("   /mis-tramites     → MIS TRÁMITES (INCLUYE CONTACTOS)")
+    print("   /transparencia    → Transparencia")
+    print("   /contacto         → Formulario de contacto")
+    print("   /mis-servicios    → Mis servicios solicitados")
+    print("   /mis-tramites     → Mis trámites (incluye contactos)")
     print("   /mis-solicitudes  → Solo solicitudes")
     print("   /mis-denuncias    → Solo denuncias")
     print("   /mis-citas        → Solo citas")
     print("   /solicitar-cita   → Solicitar cita")
     print("   /mi-cuenta        → Mi perfil")
     print("   /mapa             → Mapa de incidencias")
+    print("   /noticias         → Noticias y novedades")
     print("=" * 60)
     print("📌 RUTAS ADMINISTRADOR:")
     print("   /admin/contactos           → Gestión de contactos")
@@ -2144,19 +2166,16 @@ if __name__ == "__main__":
     print("   /admin/mapa                → Mapa de incidencias (admin)")
     print("   /admin/noticias            → Gestión de noticias")
     print("   /admin/logs                → Dashboard de logs")
-    print("   /admin/api/contactos-pendientes → API contactos pendientes")
     print("=" * 60)
     print("🌐 Servidor en: http://localhost:5000")
-    print("📡 API Configuración: http://localhost:5000/api/configuracion")
-    print("🗺️ Mapa de Incidencias: http://localhost:5000/mapa")
-    print("🏛️ Transparencia: http://localhost:5000/transparencia")
-    print("📞 Contacto: http://localhost:5000/contacto")
-    print("📰 Noticias: http://localhost:5000/noticias")
     print("=" * 60)
     
+    # Obtener puerto desde variable de entorno (para producción)
+    port = int(os.environ.get('PORT', 5000))
+    
     app.run(
-        debug=True,
+        debug=app.debug,
         host="0.0.0.0",
-        port=5000,
-        use_reloader=True
+        port=port,
+        use_reloader=app.debug
     )
