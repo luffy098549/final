@@ -30,3 +30,15 @@ from .notificacion import Notificacion
 
 # 🔥 IMPORTAR MENSAJES (DEBE EXISTIR)
 from .mensaje import Mensaje
+
+# ================================================================
+# 🔥 NUEVOS MODELOS AGREGADOS
+# ================================================================
+
+# Noticias y comentarios
+from .noticia import CategoriaNoticia, Noticia
+from .like_noticia import LikeNoticia
+from .comentario_noticia import ComentarioNoticia
+
+# Logs de actividad
+from .log_actividad import LogActividad, registrar_log

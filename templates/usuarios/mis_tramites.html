@@ -57,13 +57,18 @@
     .badge-en_proceso{background:var(--info-light);color:var(--info);border:1px solid #b8d3ff}
     .badge-en_investigacion{background:var(--purple-light);color:var(--purple);border:1px solid #d9c9ff}
     .badge-completado{background:var(--success-light);color:var(--success);border:1px solid #b0e5c0}
+    .badge-completada{background:var(--success-light);color:var(--success);border:1px solid #b0e5c0}
     .badge-resuelto{background:var(--success-light);color:var(--success);border:1px solid #b0e5c0}
+    .badge-respondido{background:var(--success-light);color:var(--success);border:1px solid #b0e5c0}
     .badge-rechazado{background:var(--danger-light);color:var(--danger);border:1px solid #ffcfc9}
     .badge-cancelado{background:var(--gray-200);color:var(--gray-700);border:1px solid var(--gray-300)}
+    .badge-cancelada{background:var(--gray-200);color:var(--gray-700);border:1px solid var(--gray-300)}
     .badge-archivado{background:var(--gray-200);color:var(--gray-700);border:1px solid var(--gray-300)}
     .tipo-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .75rem;border-radius:40px;font-size:.8rem;font-weight:500}
     .tipo-solicitud{background:var(--primary-soft);color:var(--primary)}
     .tipo-denuncia{background:var(--warning-light);color:var(--warning)}
+    .tipo-cita{background:var(--purple-light);color:var(--purple)}
+    .tipo-contacto{background:var(--info-light);color:var(--info)}
     .action-buttons{display:flex;gap:.5rem}
     .btn-icon{width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;color:var(--gray-600);background:var(--gray-100);border:1px solid var(--gray-200);cursor:pointer;text-decoration:none}
     .btn-icon:hover{background:var(--primary);color:white;border-color:var(--primary);transform:translateY(-2px)}
@@ -101,6 +106,7 @@
     .alert-tramite{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border-radius:var(--radius-sm);font-size:.85rem;margin-top:.75rem}
     .alert-tramite.rechazado{background:var(--danger-light);color:var(--danger);border:1px solid rgba(179,60,47,.15)}
     .alert-tramite.cancelado{background:var(--gray-100);color:var(--gray-600);border:1px solid var(--gray-300)}
+    .alert-tramite.cancelada{background:var(--gray-100);color:var(--gray-600);border:1px solid var(--gray-300)}
     .historial-list{display:flex;flex-direction:column}
     .hist-item{display:flex;gap:.9rem;padding:.8rem 0;border-bottom:1px solid var(--gray-100);align-items:flex-start}
     .hist-item:last-child{border-bottom:none}
@@ -130,7 +136,6 @@
     .chat-sending{display:none;align-items:center;gap:.5rem;font-size:.82rem;color:var(--gray-400);margin-top:.5rem}
     .chat-sending.visible{display:flex}
     .chat-locked{padding:.75rem 1rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:.85rem;color:var(--gray-500);display:flex;align-items:center;gap:.5rem;margin-top:1rem}
-    /* Documentos */
     .docs-upload-area{border:2px dashed var(--gray-300);border-radius:var(--radius-md);padding:1.25rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--gray-50);position:relative}
     .docs-upload-area:hover,.docs-upload-area.drag-over{border-color:var(--primary);background:var(--primary-soft)}
     .docs-upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -156,7 +161,6 @@
     .docs-empty{font-size:.85rem;color:var(--gray-400);text-align:center;padding:.75rem}
     .docs-counter{font-size:.72rem;color:var(--gray-400);text-align:right;margin-top:.4rem}
     .docs-counter.lleno{color:var(--warning);font-weight:600}
-    /* Encuesta de satisfacción */
     .encuesta-card{margin-top:1.5rem;padding:1.5rem;background:linear-gradient(135deg,#1a3b2e,#2e7d5e);border-radius:var(--radius-md);color:white;text-align:center}
     .encuesta-card p{margin-bottom:1rem;font-size:1rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
     .encuesta-card p i{color:#ffd966}
@@ -169,44 +173,131 @@
 
 {% block content %}
 <div class="tramites-container">
+
     <div class="tramites-header">
         <h1><i class="fas fa-clipboard-list"></i> Mis Trámites</h1>
         <p>Consulta el estado de tus solicitudes, adjunta documentos y comunícate con el equipo municipal.</p>
     </div>
+
     <div class="stats-grid">
-        <div class="stat-card"><div class="stat-icon solicitudes"><i class="fas fa-file-alt"></i></div><div class="stat-content"><h3>Solicitudes</h3><div class="stat-number">{{ stats.solicitudes|default(0) }}</div></div></div>
-        <div class="stat-card"><div class="stat-icon denuncias"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-content"><h3>Denuncias</h3><div class="stat-number">{{ stats.denuncias|default(0) }}</div></div></div>
-        <div class="stat-card"><div class="stat-icon pendientes"><i class="fas fa-clock"></i></div><div class="stat-content"><h3>En proceso</h3><div class="stat-number">{{ stats.pendientes|default(0) }}</div></div></div>
-        <div class="stat-card"><div class="stat-icon completadas"><i class="fas fa-check-circle"></i></div><div class="stat-content"><h3>Completados</h3><div class="stat-number">{{ stats.completados|default(0) }}</div></div></div>
-    </div>
-    <div class="filters-section">
-        <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Buscar por folio, servicio o descripción..." autocomplete="off"></div>
-        <div class="filter-group">
-            <select id="tipoFilter" class="filter-select"><option value="todos">Todos los tipos</option><option value="solicitud">Solicitudes</option><option value="denuncia">Denuncias</option></select>
-            <select id="estadoFilter" class="filter-select"><option value="todos">Todos los estados</option><option value="pendiente">Pendiente</option><option value="en_proceso">En proceso</option><option value="en_investigacion">En investigación</option><option value="completado">Completado</option><option value="resuelto">Resuelto</option><option value="rechazado">Rechazado</option><option value="cancelado">Cancelado</option></select>
+        <div class="stat-card">
+            <div class="stat-icon solicitudes"><i class="fas fa-file-alt"></i></div>
+            <div class="stat-content"><h3>Solicitudes</h3><div class="stat-number">{{ stats.solicitudes|default(0) }}</div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon denuncias"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="stat-content"><h3>Denuncias</h3><div class="stat-number">{{ stats.denuncias|default(0) }}</div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon pendientes"><i class="fas fa-clock"></i></div>
+            <div class="stat-content"><h3>En proceso</h3><div class="stat-number">{{ stats.pendientes|default(0) }}</div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon completadas"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-content"><h3>Completados</h3><div class="stat-number">{{ stats.completados|default(0) }}</div></div>
         </div>
     </div>
+
+    <div class="filters-section">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Buscar por folio, servicio o descripción..." autocomplete="off">
+        </div>
+        <div class="filter-group">
+            <select id="tipoFilter" class="filter-select">
+                <option value="todos">Todos los tipos</option>
+                <option value="solicitud">Solicitudes</option>
+                <option value="denuncia">Denuncias</option>
+                <option value="cita">Citas</option>
+                <option value="contacto">Contactos</option>
+            </select>
+            <select id="estadoFilter" class="filter-select">
+                <option value="todos">Todos los estados</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en_proceso">En proceso</option>
+                <option value="en_investigacion">En investigación</option>
+                <option value="completado">Completado</option>
+                <option value="resuelto">Resuelto</option>
+                <option value="respondido">Respondido</option>
+                <option value="rechazado">Rechazado</option>
+                <option value="cancelado">Cancelado</option>
+            </select>
+        </div>
+    </div>
+
     <div class="type-tabs">
         <button class="type-tab active" data-tipo="todos"><i class="fas fa-th-large"></i> Todos</button>
         <button class="type-tab" data-tipo="solicitud"><i class="fas fa-file-alt"></i> Solicitudes</button>
         <button class="type-tab" data-tipo="denuncia"><i class="fas fa-exclamation-triangle"></i> Denuncias</button>
+        <button class="type-tab" data-tipo="cita"><i class="fas fa-calendar-alt"></i> Citas</button>
+        <button class="type-tab" data-tipo="contacto"><i class="fas fa-envelope"></i> Contactos</button>
     </div>
+
     {% if tramites %}
     <div class="table-container">
         <table class="table" id="tramitesTable">
-            <thead><tr><th>Folio</th><th>Tipo</th><th>Descripción</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Folio</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
             <tbody>
                 {% for item in tramites %}
                 <tr data-tipo="{{ item.tipo }}" data-estado="{{ item.estado }}" data-folio="{{ item.folio }}" onclick="verDetalle('{{ item.folio }}')">
                     <td><strong style="font-family:monospace;font-size:.9rem;">{{ item.folio }}</strong></td>
-                    <td>{% if item.tipo == 'solicitud' %}<span class="tipo-badge tipo-solicitud"><i class="fas fa-file-alt"></i> Solicitud</span>{% else %}<span class="tipo-badge tipo-denuncia"><i class="fas fa-exclamation-triangle"></i> Denuncia</span>{% endif %}</td>
-                    <td><div style="max-width:280px;"><strong>{{ item.servicio_nombre if item.servicio_nombre else item.tipo_nombre }}</strong><div style="color:var(--gray-500);font-size:.82rem;margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ item.descripcion[:55] }}{% if item.descripcion|length > 55 %}...{% endif %}</div></div></td>
-                    <td><span style="font-weight:500;">{{ item.fecha_creacion[:10] }}</span><div style="color:var(--gray-400);font-size:.78rem;">{{ item.fecha_creacion[11:16] if item.fecha_creacion|length > 11 else '' }}</div></td>
                     <td>
-                        <span class="badge badge-{{ item.estado }}"><i class="fas fa-circle" style="font-size:.35rem;"></i> {{ item.estado|replace('_',' ')|title }}</span>
-                        {% if item.documentos and item.documentos|length > 0 %}<span style="font-size:.7rem;color:var(--gray-400);margin-left:.4rem;"><i class="fas fa-paperclip"></i> {{ item.documentos|length }}</span>{% endif %}
+                        {% if item.tipo == 'solicitud' %}
+                            <span class="tipo-badge tipo-solicitud"><i class="fas fa-file-alt"></i> Solicitud</span>
+                        {% elif item.tipo == 'denuncia' %}
+                            <span class="tipo-badge tipo-denuncia"><i class="fas fa-exclamation-triangle"></i> Denuncia</span>
+                        {% elif item.tipo == 'cita' %}
+                            <span class="tipo-badge tipo-cita"><i class="fas fa-calendar-alt"></i> Cita</span>
+                        {% else %}
+                            <span class="tipo-badge tipo-contacto"><i class="fas fa-envelope"></i> Contacto</span>
+                        {% endif %}
                     </td>
-                    <td onclick="event.stopPropagation()"><div class="action-buttons"><button class="btn-icon" onclick="verDetalle('{{ item.folio }}')" title="Ver detalle"><i class="fas fa-comments"></i></button></div></td>
+                    <td>
+                        <div style="max-width:280px;">
+                            <strong>{{ item.nombre }}</strong>
+                            <div style="color:var(--gray-500);font-size:.82rem;margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                {{ item.descripcion[:55] }}{% if item.descripcion|length > 55 %}...{% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {# fecha_creacion siempre llega como string desde app.py #}
+                        {% if item.fecha_creacion %}
+                            <span style="font-weight:500;">{{ item.fecha_creacion[:10] }}</span>
+                            <div style="color:var(--gray-400);font-size:.78rem;">
+                                {% if item.fecha_creacion|length > 11 %}{{ item.fecha_creacion[11:16] }}{% endif %}
+                            </div>
+                        {% else %}
+                            <span style="font-weight:500;">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ item.estado }}">
+                            <i class="fas fa-circle" style="font-size:.35rem;"></i>
+                            {{ item.estado|replace('_',' ')|title }}
+                        </span>
+                        {% if item.documentos and item.documentos|length > 0 %}
+                            <span style="font-size:.7rem;color:var(--gray-400);margin-left:.4rem;">
+                                <i class="fas fa-paperclip"></i> {{ item.documentos|length }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td onclick="event.stopPropagation()">
+                        <div class="action-buttons">
+                            <button class="btn-icon" onclick="verDetalle('{{ item.folio }}')" title="Ver detalle">
+                                <i class="fas fa-comments"></i>
+                            </button>
+                        </div>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -223,8 +314,10 @@
         </div>
     </div>
     {% endif %}
+
 </div>
 
+{# ── MODAL DETALLE ── #}
 <div class="modal" id="detalleModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -232,7 +325,10 @@
             <button class="modal-close" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body" id="modalBody">
-            <div style="text-align:center;padding:3rem;color:var(--gray-400);"><i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i><p style="margin-top:1rem;">Cargando...</p></div>
+            <div style="text-align:center;padding:3rem;color:var(--gray-400);">
+                <i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i>
+                <p style="margin-top:1rem;">Cargando...</p>
+            </div>
         </div>
     </div>
 </div>
@@ -240,263 +336,398 @@
 
 {% block extra_js %}
 <script>
+// ── Datos desde Python (fecha_creacion ya es string) ──────────────────────
 const tramitesData = {{ tramites_json|safe }};
 const MAX_DOCS = 5;
-
-// Registrar encuestas realizadas (esto vendría del backend)
-// Por ahora simulamos con un array vacío - en producción debe venir del backend
 const encuestasRealizadas = [];
 
+// ── Filtros ───────────────────────────────────────────────────────────────
 document.getElementById('searchInput')?.addEventListener('keyup', filtrar);
 document.getElementById('tipoFilter')?.addEventListener('change', filtrar);
 document.getElementById('estadoFilter')?.addEventListener('change', filtrar);
 document.querySelectorAll('.type-tab').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
         document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         document.getElementById('tipoFilter').value = this.dataset.tipo;
         filtrar();
     });
 });
+
 function filtrar() {
-    const q=document.getElementById('searchInput')?.value.toLowerCase()||'';
-    const tipo=document.getElementById('tipoFilter')?.value||'todos';
-    const estado=document.getElementById('estadoFilter')?.value||'todos';
-    document.querySelectorAll('#tramitesTable tbody tr').forEach(row=>{
-        const okQ=!q||row.textContent.toLowerCase().includes(q);
-        const okT=tipo==='todos'||row.dataset.tipo===tipo;
-        const okE=estado==='todos'||row.dataset.estado===estado;
-        row.style.display=(okQ&&okT&&okE)?'':'none';
+    const q     = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const tipo  = document.getElementById('tipoFilter')?.value  || 'todos';
+    const estado= document.getElementById('estadoFilter')?.value || 'todos';
+    document.querySelectorAll('#tramitesTable tbody tr').forEach(row => {
+        const okQ = !q    || row.textContent.toLowerCase().includes(q);
+        const okT = tipo  === 'todos' || row.dataset.tipo   === tipo;
+        const okE = estado=== 'todos' || row.dataset.estado === estado;
+        row.style.display = (okQ && okT && okE) ? '' : 'none';
     });
 }
 
-const PASOS={
+// ── Timeline ──────────────────────────────────────────────────────────────
+const PASOS = {
     solicitud:[{key:'pendiente',label:'Recibida'},{key:'en_proceso',label:'En revisión'},{key:'completado',label:'Completada'}],
-    denuncia:[{key:'pendiente',label:'Recibida'},{key:'en_investigacion',label:'En investigación'},{key:'resuelto',label:'Resuelta'}]
+    denuncia: [{key:'pendiente',label:'Recibida'},{key:'en_investigacion',label:'En investigación'},{key:'resuelto',label:'Resuelta'}],
+    cita:     [{key:'pendiente',label:'Solicitada'},{key:'confirmada',label:'Confirmada'},{key:'completada',label:'Completada'}],
+    contacto: [{key:'pendiente',label:'Recibido'},{key:'respondido',label:'Respondido'}],
 };
-const ESTADOS_OK=['completado','resuelto'];
-const ESTADOS_BAD=['rechazado','cancelado','archivado'];
+const ESTADOS_OK  = ['completado','resuelto','completada','respondido'];
+const ESTADOS_BAD = ['rechazado','cancelado','cancelada','archivado'];
 
-function buildTimeline(t){
-    const pasos=PASOS[t.tipo]||PASOS.solicitud;
-    const isBad=ESTADOS_BAD.includes(t.estado);
-    const isOk=ESTADOS_OK.includes(t.estado);
-    let activeIdx=0;
-    if(isOk)activeIdx=pasos.length-1;
-    else if(!isBad){for(let i=0;i<pasos.length;i++){if(pasos[i].key===t.estado){activeIdx=i;break;}}}
-    let html='<div class="progress-track">';
-    pasos.forEach((paso,i)=>{
-        let cc='',nc='',icon=String(i+1);
-        if(isBad&&i===0){cc='done';nc='done';icon='<i class="fas fa-check"></i>';}
-        else if(!isBad&&i<activeIdx){cc='done';nc='done';icon='<i class="fas fa-check"></i>';}
-        else if(!isBad&&i===activeIdx){cc='active';nc='active';}
-        html+=`<div class="progress-step"><div class="step-circle ${cc}">${icon}</div><span class="step-name ${nc}">${paso.label}</span></div>`;
-        if(i<pasos.length-1)html+=`<div class="step-connector ${(!isBad&&i<activeIdx)?'done':''}"></div>`;
+function buildTimeline(t) {
+    const pasos  = PASOS[t.tipo] || PASOS.solicitud;
+    const isBad  = ESTADOS_BAD.includes(t.estado);
+    const isOk   = ESTADOS_OK.includes(t.estado);
+    let activeIdx = 0;
+    if (isOk) activeIdx = pasos.length - 1;
+    else if (!isBad) { for (let i = 0; i < pasos.length; i++) { if (pasos[i].key === t.estado) { activeIdx = i; break; } } }
+
+    let html = '<div class="progress-track">';
+    pasos.forEach((paso, i) => {
+        let cc = '', nc = '', icon = String(i + 1);
+        if (isBad && i === 0)            { cc = 'done'; nc = 'done'; icon = '<i class="fas fa-check"></i>'; }
+        else if (!isBad && i < activeIdx){ cc = 'done'; nc = 'done'; icon = '<i class="fas fa-check"></i>'; }
+        else if (!isBad && i === activeIdx){ cc = 'active'; nc = 'active'; }
+        html += `<div class="progress-step"><div class="step-circle ${cc}">${icon}</div><span class="step-name ${nc}">${paso.label}</span></div>`;
+        if (i < pasos.length - 1) html += `<div class="step-connector ${(!isBad && i < activeIdx) ? 'done' : ''}"></div>`;
     });
-    html+='</div>';
-    if(isBad)html+=`<div class="alert-tramite ${t.estado}"><i class="fas fa-times-circle"></i><span>Este trámite fue <strong>${t.estado}</strong>.</span></div>`;
+    html += '</div>';
+    if (isBad) html += `<div class="alert-tramite ${t.estado}"><i class="fas fa-times-circle"></i><span>Este trámite fue <strong>${t.estado}</strong>.</span></div>`;
     return html;
 }
 
-function histInfo(tipo){
-    const m={creada:{cls:'hi-creada',icon:'fa-plus-circle'},estado_cambiado:{cls:'hi-cambio',icon:'fa-exchange-alt'},comentario:{cls:'hi-admin',icon:'fa-comment'},asignada:{cls:'hi-asignada',icon:'fa-user-tag'},respuesta:{cls:'hi-admin',icon:'fa-reply'},mensaje_admin:{cls:'hi-admin',icon:'fa-headset'},mensaje_ciudadano:{cls:'hi-ciudadano',icon:'fa-user'},documento:{cls:'hi-doc',icon:'fa-paperclip'},documento_eliminado:{cls:'hi-doc',icon:'fa-trash'}};
-    return m[tipo]||{cls:'hi-default',icon:'fa-circle'};
-}
-function iconoDoc(ext){
-    const m={pdf:'fa-file-pdf',doc:'fa-file-word',docx:'fa-file-word',jpg:'fa-file-image',jpeg:'fa-file-image',png:'fa-file-image'};
-    return m[(ext||'').toLowerCase()]||'fa-file';
-}
-function fechaRel(iso){
-    if(!iso)return'';
-    const diff=Date.now()-new Date(iso);
-    const min=Math.floor(diff/60000),h=Math.floor(diff/3600000),d=Math.floor(diff/86400000);
-    if(min<1)return'Ahora';if(min<60)return`Hace ${min} min`;if(h<24)return`Hace ${h}h`;if(d<7)return`Hace ${d}d`;
-    return new Date(iso).toLocaleDateString('es',{day:'numeric',month:'short'});
+// ── Helpers ───────────────────────────────────────────────────────────────
+function histInfo(tipo) {
+    const m = {
+        creada:              {cls:'hi-creada',   icon:'fa-plus-circle'},
+        estado_cambiado:     {cls:'hi-cambio',   icon:'fa-exchange-alt'},
+        comentario:          {cls:'hi-admin',    icon:'fa-comment'},
+        asignada:            {cls:'hi-asignada', icon:'fa-user-tag'},
+        respuesta:           {cls:'hi-admin',    icon:'fa-reply'},
+        mensaje_admin:       {cls:'hi-admin',    icon:'fa-headset'},
+        mensaje_ciudadano:   {cls:'hi-ciudadano',icon:'fa-user'},
+        documento:           {cls:'hi-doc',      icon:'fa-paperclip'},
+        documento_eliminado: {cls:'hi-doc',      icon:'fa-trash'},
+    };
+    return m[tipo] || {cls:'hi-default', icon:'fa-circle'};
 }
 
-function renderDocs(docs,folio,puedeSubir){
-    const total=docs.length,lleno=total>=MAX_DOCS;
-    let html='<div class="docs-section">';
-    if(puedeSubir&&!lleno){
-        html+=`<div class="docs-upload-area" id="uploadArea-${folio}" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event,'${folio}')">
-            <input type="file" id="fileInput-${folio}" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="subirArchivos(this,'${folio}')">
-            <div class="docs-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-            <div class="docs-upload-text">Arrastra archivos o haz clic para seleccionar</div>
-            <div class="docs-upload-sub">PDF, JPG, PNG, DOC, DOCX · Máx. 10 MB por archivo</div>
-            <div class="docs-upload-progress" id="uploadProgress-${folio}"><div class="docs-progress-bar" id="progressBar-${folio}"></div></div>
-        </div>`;
-    }else if(puedeSubir&&lleno){
-        html+=`<div class="chat-locked"><i class="fas fa-lock"></i> Límite de ${MAX_DOCS} documentos alcanzado.</div>`;
-    }else{
-        html+=`<div class="chat-locked"><i class="fas fa-lock"></i> Solo puedes adjuntar documentos en trámites activos.</div>`;
+function iconoDoc(ext) {
+    const m = {pdf:'fa-file-pdf',doc:'fa-file-word',docx:'fa-file-word',jpg:'fa-file-image',jpeg:'fa-file-image',png:'fa-file-image'};
+    return m[(ext||'').toLowerCase()] || 'fa-file';
+}
+
+function fechaRel(iso) {
+    if (!iso) return '';
+    const diff = Date.now() - new Date(iso);
+    const min = Math.floor(diff / 60000), h = Math.floor(diff / 3600000), d = Math.floor(diff / 86400000);
+    if (min < 1)  return 'Ahora';
+    if (min < 60) return `Hace ${min} min`;
+    if (h < 24)   return `Hace ${h}h`;
+    if (d < 7)    return `Hace ${d}d`;
+    return new Date(iso).toLocaleDateString('es', {day:'numeric', month:'short'});
+}
+
+// ── Documentos ────────────────────────────────────────────────────────────
+function renderDocs(docs, folio, puedeSubir) {
+    const total = docs.length, lleno = total >= MAX_DOCS;
+    let html = '<div class="docs-section">';
+    if (puedeSubir && !lleno) {
+        html += `<div class="docs-upload-area" id="uploadArea-${folio}"
+                    ondragover="event.preventDefault();this.classList.add('drag-over')"
+                    ondragleave="this.classList.remove('drag-over')"
+                    ondrop="handleDrop(event,'${folio}')">
+                    <input type="file" id="fileInput-${folio}" multiple
+                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                        onchange="subirArchivos(this,'${folio}')">
+                    <div class="docs-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <div class="docs-upload-text">Arrastra archivos o haz clic para seleccionar</div>
+                    <div class="docs-upload-sub">PDF, JPG, PNG, DOC, DOCX · Máx. 10 MB por archivo</div>
+                    <div class="docs-upload-progress" id="uploadProgress-${folio}">
+                        <div class="docs-progress-bar" id="progressBar-${folio}"></div>
+                    </div>
+                </div>`;
+    } else if (puedeSubir && lleno) {
+        html += `<div class="chat-locked"><i class="fas fa-lock"></i> Límite de ${MAX_DOCS} documentos alcanzado.</div>`;
+    } else {
+        html += `<div class="chat-locked"><i class="fas fa-lock"></i> Solo puedes adjuntar documentos en trámites activos.</div>`;
     }
-    html+=`<div class="docs-list" id="docsList-${folio}">`;
-    if(!docs.length){html+='<div class="docs-empty"><i class="fas fa-paperclip" style="opacity:.3;margin-right:.4rem;"></i> Sin documentos adjuntos.</div>';}
-    else{docs.forEach(doc=>{
-        const ext=doc.extension||(doc.nombre||'').split('.').pop();
-        html+=`<div class="doc-item" id="doc-${doc.id}">
-            <div class="doc-icon"><i class="fas ${iconoDoc(ext)}"></i></div>
-            <div class="doc-info"><div class="doc-nombre">${doc.nombre||doc.archivo}</div><div class="doc-meta"><i class="fas fa-clock"></i> ${fechaRel(doc.fecha)}</div></div>
-            <div class="doc-actions">
-                <a href="/uploads/documentos/${doc.archivo}" target="_blank" class="btn-doc btn-doc-view"><i class="fas fa-eye"></i></a>
-                ${puedeSubir?`<button class="btn-doc btn-doc-delete" onclick="eliminarDoc('${folio}','${doc.id}')"><i class="fas fa-trash"></i></button>`:''}
-            </div>
-        </div>`;
-    });}
-    html+='</div>';
-    html+=`<div class="docs-counter ${lleno?'lleno':''}">${total} / ${MAX_DOCS} documentos</div>`;
-    html+='</div>';
+    html += `<div class="docs-list" id="docsList-${folio}">`;
+    if (!docs.length) {
+        html += '<div class="docs-empty"><i class="fas fa-paperclip" style="opacity:.3;margin-right:.4rem;"></i> Sin documentos adjuntos.</div>';
+    } else {
+        docs.forEach(doc => {
+            const ext = doc.extension || (doc.nombre || '').split('.').pop();
+            html += `<div class="doc-item" id="doc-${doc.id}">
+                        <div class="doc-icon"><i class="fas ${iconoDoc(ext)}"></i></div>
+                        <div class="doc-info">
+                            <div class="doc-nombre">${doc.nombre || doc.archivo}</div>
+                            <div class="doc-meta"><i class="fas fa-clock"></i> ${fechaRel(doc.fecha)}</div>
+                        </div>
+                        <div class="doc-actions">
+                            <a href="/uploads/documentos/${doc.archivo}" target="_blank" class="btn-doc btn-doc-view"><i class="fas fa-eye"></i></a>
+                            ${puedeSubir ? `<button class="btn-doc btn-doc-delete" onclick="eliminarDoc('${folio}','${doc.id}')"><i class="fas fa-trash"></i></button>` : ''}
+                        </div>
+                    </div>`;
+        });
+    }
+    html += '</div>';
+    html += `<div class="docs-counter ${lleno ? 'lleno' : ''}">${total} / ${MAX_DOCS} documentos</div>`;
+    html += '</div>';
     return html;
 }
 
-function verDetalle(folio){
-    const t=tramitesData.find(x=>x.folio===folio);
-    if(!t){alert('No se encontró información.');return;}
-    document.getElementById('modalTitle').textContent=t.folio;
-    document.getElementById('modalIcon').className=t.tipo==='solicitud'?'fas fa-file-alt':'fas fa-flag';
-    const servicio=t.servicio_nombre||t.tipo_nombre||'—';
-    const tipoLabel=t.tipo==='solicitud'?'Solicitud':'Denuncia';
-    const estadoBadge=`<span class="badge badge-${t.estado}"><i class="fas fa-circle" style="font-size:.35rem;"></i> ${(t.estado||'—').replace(/_/g,' ')}</span>`;
-    const hist=t.historial||[];
-    let histHTML='';
-    hist.forEach(h=>{
-        const info=histInfo(h.tipo);
-        const isAdmin=h.tipo==='mensaje_admin';
-        const isCiudad=h.tipo==='mensaje_ciudadano';
-        const msgClass=isAdmin?'msg-admin':(isCiudad?'msg-ciudadano':'');
-        const fecha=(h.fecha||'').slice(0,16).replace('T',' ');
-        const quien=h.nombre||h.usuario||'Sistema';
-        histHTML+=`<div class="hist-item ${msgClass}"><div class="hist-icon ${info.cls}"><i class="fas ${info.icon}"></i></div><div class="hist-body"><div class="hist-desc">${h.descripcion||''}</div><div class="hist-meta"><i class="fas fa-clock"></i>${fecha}&nbsp;·&nbsp;<i class="fas fa-user"></i>${quien}</div></div></div>`;
+// ── Modal detalle ─────────────────────────────────────────────────────────
+function verDetalle(folio) {
+    const t = tramitesData.find(x => x.folio === folio);
+    if (!t) { alert('No se encontró información.'); return; }
+
+    document.getElementById('modalTitle').textContent = t.folio;
+    document.getElementById('modalIcon').className =
+        t.tipo === 'solicitud' ? 'fas fa-file-alt' :
+        t.tipo === 'denuncia'  ? 'fas fa-flag' :
+        t.tipo === 'cita'      ? 'fas fa-calendar-alt' : 'fas fa-envelope';
+
+    const servicio   = t.nombre || t.servicio_nombre || t.tipo_nombre || '—';
+    const tipoLabel  = {solicitud:'Solicitud', denuncia:'Denuncia', cita:'Cita', contacto:'Contacto'}[t.tipo] || t.tipo;
+    const estadoBadge= `<span class="badge badge-${t.estado}"><i class="fas fa-circle" style="font-size:.35rem;"></i> ${(t.estado||'—').replace(/_/g,' ')}</span>`;
+
+    // fecha_creacion ya es string porque la normalizamos en Python
+    const fechaDisplay = (t.fecha_creacion || '—').slice(0, 16).replace('T', ' ');
+
+    const hist = t.historial || [];
+    let histHTML = '';
+    hist.forEach(h => {
+        const info      = histInfo(h.tipo);
+        const isAdmin   = h.tipo === 'mensaje_admin';
+        const isCiudad  = h.tipo === 'mensaje_ciudadano';
+        const msgClass  = isAdmin ? 'msg-admin' : (isCiudad ? 'msg-ciudadano' : '');
+        const fecha     = (h.fecha || '').slice(0, 16).replace('T', ' ');
+        const quien     = h.nombre || h.usuario || 'Sistema';
+        histHTML += `<div class="hist-item ${msgClass}">
+                        <div class="hist-icon ${info.cls}"><i class="fas ${info.icon}"></i></div>
+                        <div class="hist-body">
+                            <div class="hist-desc">${h.descripcion || ''}</div>
+                            <div class="hist-meta"><i class="fas fa-clock"></i>${fecha}&nbsp;·&nbsp;<i class="fas fa-user"></i>${quien}</div>
+                        </div>
+                    </div>`;
     });
-    if(!histHTML)histHTML='<p style="color:var(--gray-400);font-size:.88rem;">Sin actividad registrada.</p>';
-    const estadosAbiertos=['pendiente','en_proceso','en_investigacion'];
-    const puedeChat=estadosAbiertos.includes(t.estado);
-    const chatHTML=puedeChat
-        ?`<div class="chat-box"><p class="section-title"><i class="fas fa-comments"></i> Enviar mensaje al equipo municipal</p><div class="chat-wrap"><textarea class="chat-textarea" id="chatInput-${folio}" placeholder="Escribe tu consulta..." rows="1" oninput="autoResize(this)" maxlength="500"></textarea><button class="btn-send" id="chatBtn-${folio}" onclick="enviarMensaje('${folio}')"><i class="fas fa-paper-plane"></i> Enviar</button></div><div class="chat-sending" id="chatSending-${folio}"><i class="fas fa-spinner fa-spin"></i> Enviando...</div><p class="chat-note"><i class="fas fa-info-circle"></i> El equipo responderá a la brevedad.</p></div>`
-        :`<div class="chat-locked"><i class="fas fa-lock"></i> Mensajes disponibles solo en trámites activos.</div>`;
-    const docs=t.documentos||[];
-    const docsHTML=renderDocs(docs,folio,puedeChat);
-    
-    // Verificar si el trámite está completado y no tiene encuesta
-    const estaCompletado = ['completado', 'resuelto'].includes(t.estado);
-    const encuestaRealizada = encuestasRealizadas.includes(folio); // Esto debe venir del backend
-    
-    const encuestaHTML = (estaCompletado && !encuestaRealizada) 
+    if (!histHTML) histHTML = '<p style="color:var(--gray-400);font-size:.88rem;">Sin actividad registrada.</p>';
+
+    const estadosAbiertos = ['pendiente', 'en_proceso', 'en_investigacion', 'confirmada'];
+    const puedeChat = estadosAbiertos.includes(t.estado);
+
+    const chatHTML = puedeChat
+        ? `<div class="chat-box">
+                <p class="section-title"><i class="fas fa-comments"></i> Enviar mensaje al equipo municipal</p>
+                <div class="chat-wrap">
+                    <textarea class="chat-textarea" id="chatInput-${folio}"
+                        placeholder="Escribe tu consulta..." rows="1"
+                        oninput="autoResize(this)" maxlength="500"></textarea>
+                    <button class="btn-send" id="chatBtn-${folio}" onclick="enviarMensaje('${folio}')">
+                        <i class="fas fa-paper-plane"></i> Enviar
+                    </button>
+                </div>
+                <div class="chat-sending" id="chatSending-${folio}">
+                    <i class="fas fa-spinner fa-spin"></i> Enviando...
+                </div>
+                <p class="chat-note"><i class="fas fa-info-circle"></i> El equipo responderá a la brevedad.</p>
+           </div>`
+        : `<div class="chat-locked"><i class="fas fa-lock"></i> Mensajes disponibles solo en trámites activos.</div>`;
+
+    const docs  = t.documentos || [];
+    const docsHTML = renderDocs(docs, folio, puedeChat);
+
+    const estaCompletado   = ESTADOS_OK.includes(t.estado);
+    const encuestaRealizada= encuestasRealizadas.includes(folio);
+    const encuestaHTML = (estaCompletado && !encuestaRealizada && (t.tipo === 'solicitud' || t.tipo === 'denuncia'))
         ? `<div class="encuesta-card">
-            <p><i class="fas fa-star"></i> <strong>¿Cómo fue tu experiencia con este trámite?</strong></p>
-            <a href="{{ url_for('encuesta_tramite', folio='${folio}') }}" class="btn-encuesta">
-                <i class="fas fa-star"></i> Evaluar este trámite
-            </a>
+                <p><i class="fas fa-star"></i> <strong>¿Cómo fue tu experiencia con este trámite?</strong></p>
+                <a href="/tramite/${folio}/encuesta" class="btn-encuesta">
+                    <i class="fas fa-star"></i> Evaluar este trámite
+                </a>
            </div>`
         : '';
-    
-    document.getElementById('modalBody').innerHTML=`
+
+    // Respuesta de contacto
+    const respuestaHTML = (t.tipo === 'contacto' && t.respuesta)
+        ? `<div style="margin-top:1rem;padding:1rem;background:var(--info-light);border-radius:var(--radius-sm);border-left:3px solid var(--info);">
+                <div style="font-size:.75rem;font-weight:600;color:var(--info);margin-bottom:.4rem;"><i class="fas fa-headset"></i> RESPUESTA DEL EQUIPO MUNICIPAL</div>
+                <div style="font-size:.9rem;color:var(--gray-800);">${t.respuesta}</div>
+           </div>`
+        : '';
+
+    document.getElementById('modalBody').innerHTML = `
         <div class="detail-grid">
-            <div class="detail-item"><div class="detail-label"><i class="fas fa-hashtag"></i> Folio</div><div class="detail-value">${t.folio}</div></div>
-            <div class="detail-item"><div class="detail-label"><i class="fas fa-tag"></i> Tipo</div><div class="detail-value">${tipoLabel}</div></div>
-            <div class="detail-item"><div class="detail-label"><i class="fas fa-concierge-bell"></i> Servicio</div><div class="detail-value">${servicio}</div></div>
-            <div class="detail-item"><div class="detail-label"><i class="fas fa-info-circle"></i> Estado</div><div class="detail-value">${estadoBadge}</div></div>
-            <div class="detail-item"><div class="detail-label"><i class="fas fa-calendar-alt"></i> Creado</div><div class="detail-value">${(t.fecha_creacion||'—').slice(0,16).replace('T',' ')}</div></div>
-            <div class="detail-item"><div class="detail-label"><i class="fas fa-sync-alt"></i> Actualizado</div><div class="detail-value">${((t.fecha_actualizacion||t.fecha_creacion)||'—').slice(0,16).replace('T',' ')}</div></div>
-            ${t.descripcion?`<div class="detail-item" style="grid-column:1/-1"><div class="detail-label"><i class="fas fa-align-left"></i> Descripción</div><div class="detail-value" style="font-weight:400;font-size:.95rem;line-height:1.6;">${t.descripcion}</div></div>`:''}
+            <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-hashtag"></i> Folio</div>
+                <div class="detail-value">${t.folio}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-tag"></i> Tipo</div>
+                <div class="detail-value">${tipoLabel}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-concierge-bell"></i> Servicio / Nombre</div>
+                <div class="detail-value">${servicio}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-info-circle"></i> Estado</div>
+                <div class="detail-value">${estadoBadge}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-calendar-alt"></i> Creado</div>
+                <div class="detail-value">${fechaDisplay}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-sync-alt"></i> Actualizado</div>
+                <div class="detail-value">${((t.fecha_actualizacion || t.fecha_creacion) || '—').slice(0,16).replace('T',' ')}</div>
+            </div>
+            ${t.descripcion
+                ? `<div class="detail-item" style="grid-column:1/-1">
+                        <div class="detail-label"><i class="fas fa-align-left"></i> Descripción</div>
+                        <div class="detail-value" style="font-weight:400;font-size:.95rem;line-height:1.6;">${t.descripcion}</div>
+                   </div>`
+                : ''}
         </div>
+
         <p class="section-title"><i class="fas fa-route"></i> Progreso del trámite</p>
         ${buildTimeline(t)}
         ${encuestaHTML}
+        ${respuestaHTML}
+
         <p class="section-title"><i class="fas fa-paperclip"></i> Documentos adjuntos</p>
         ${docsHTML}
+
         <p class="section-title"><i class="fas fa-history"></i> Historial de actividad</p>
         <div class="historial-list" id="histList-${folio}">${histHTML}</div>
-        ${chatHTML}`;
+        ${chatHTML}
+    `;
+
     document.getElementById('detalleModal').classList.add('active');
-    document.body.style.overflow='hidden';
+    document.body.style.overflow = 'hidden';
 }
 
-function cerrarModal(){document.getElementById('detalleModal').classList.remove('active');document.body.style.overflow='';}
-window.addEventListener('click',e=>{if(e.target===document.getElementById('detalleModal'))cerrarModal();});
+function cerrarModal() {
+    document.getElementById('detalleModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+window.addEventListener('click', e => {
+    if (e.target === document.getElementById('detalleModal')) cerrarModal();
+});
 
-function handleDrop(event,folio){event.preventDefault();document.getElementById(`uploadArea-${folio}`)?.classList.remove('drag-over');const files=event.dataTransfer?.files;if(files&&files.length)subirArchivosLista(files,folio);}
-function subirArchivos(input,folio){if(input.files&&input.files.length)subirArchivosLista(input.files,folio);}
+// ── Subir documentos ──────────────────────────────────────────────────────
+function handleDrop(event, folio) {
+    event.preventDefault();
+    document.getElementById(`uploadArea-${folio}`)?.classList.remove('drag-over');
+    const files = event.dataTransfer?.files;
+    if (files && files.length) subirArchivosLista(files, folio);
+}
+function subirArchivos(input, folio) {
+    if (input.files && input.files.length) subirArchivosLista(input.files, folio);
+}
 
-async function subirArchivosLista(files,folio){
-    const progressWrap=document.getElementById(`uploadProgress-${folio}`);
-    const progressBar=document.getElementById(`progressBar-${folio}`);
-    for(const file of files){
-        const t=tramitesData.find(x=>x.folio===folio);
-        if((t?.documentos||[]).length>=MAX_DOCS){alert(`Límite de ${MAX_DOCS} documentos alcanzado.`);break;}
+async function subirArchivosLista(files, folio) {
+    const progressWrap = document.getElementById(`uploadProgress-${folio}`);
+    const progressBar  = document.getElementById(`progressBar-${folio}`);
+    for (const file of files) {
+        const t = tramitesData.find(x => x.folio === folio);
+        if ((t?.documentos || []).length >= MAX_DOCS) { alert(`Límite de ${MAX_DOCS} documentos alcanzado.`); break; }
         progressWrap?.classList.add('visible');
-        if(progressBar)progressBar.style.width='30%';
-        const formData=new FormData();
-        formData.append('archivo',file);
-        try{
-            if(progressBar)progressBar.style.width='60%';
-            const res=await fetch(`/api/tramite/${folio}/documentos`,{method:'POST',body:formData});
-            const data=await res.json();
-            if(progressBar)progressBar.style.width='100%';
-            setTimeout(()=>{progressWrap?.classList.remove('visible');if(progressBar)progressBar.style.width='0%';},600);
-            if(data.success){
-                if(t){if(!t.documentos)t.documentos=[];t.documentos.push(data.documento);}
-                const listEl=document.getElementById(`docsList-${folio}`);
-                if(listEl){
-                    const empty=listEl.querySelector('.docs-empty');if(empty)empty.remove();
-                    const nuevoItem=document.createElement('div');
-                    nuevoItem.className='doc-item';nuevoItem.id=`doc-${data.documento.id}`;
-                    nuevoItem.innerHTML=`<div class="doc-icon"><i class="fas ${iconoDoc(data.documento.extension)}"></i></div><div class="doc-info"><div class="doc-nombre">${data.documento.nombre}</div><div class="doc-meta"><i class="fas fa-clock"></i> Ahora</div></div><div class="doc-actions"><a href="/uploads/documentos/${data.documento.archivo}" target="_blank" class="btn-doc btn-doc-view"><i class="fas fa-eye"></i></a><button class="btn-doc btn-doc-delete" onclick="eliminarDoc('${folio}','${data.documento.id}')"><i class="fas fa-trash"></i></button></div>`;
+        if (progressBar) progressBar.style.width = '30%';
+        const formData = new FormData();
+        formData.append('archivo', file);
+        try {
+            if (progressBar) progressBar.style.width = '60%';
+            const res  = await fetch(`/api/tramite/${folio}/documentos`, {method:'POST', body:formData});
+            const data = await res.json();
+            if (progressBar) progressBar.style.width = '100%';
+            setTimeout(() => { progressWrap?.classList.remove('visible'); if (progressBar) progressBar.style.width = '0%'; }, 600);
+            if (data.success) {
+                if (t) { if (!t.documentos) t.documentos = []; t.documentos.push(data.documento); }
+                const listEl = document.getElementById(`docsList-${folio}`);
+                if (listEl) {
+                    const empty = listEl.querySelector('.docs-empty'); if (empty) empty.remove();
+                    const nuevoItem = document.createElement('div');
+                    nuevoItem.className = 'doc-item';
+                    nuevoItem.id = `doc-${data.documento.id}`;
+                    nuevoItem.innerHTML = `
+                        <div class="doc-icon"><i class="fas ${iconoDoc(data.documento.extension)}"></i></div>
+                        <div class="doc-info">
+                            <div class="doc-nombre">${data.documento.nombre}</div>
+                            <div class="doc-meta"><i class="fas fa-clock"></i> Ahora</div>
+                        </div>
+                        <div class="doc-actions">
+                            <a href="/uploads/documentos/${data.documento.archivo}" target="_blank" class="btn-doc btn-doc-view"><i class="fas fa-eye"></i></a>
+                            <button class="btn-doc btn-doc-delete" onclick="eliminarDoc('${folio}','${data.documento.id}')"><i class="fas fa-trash"></i></button>
+                        </div>`;
                     listEl.appendChild(nuevoItem);
-                    const counter=listEl.closest('.docs-section')?.querySelector('.docs-counter');
-                    if(counter){counter.textContent=`${t.documentos.length} / ${MAX_DOCS} documentos`;if(t.documentos.length>=MAX_DOCS)counter.classList.add('lleno');}
-                    if(data.restantes===0){const area=document.getElementById(`uploadArea-${folio}`);if(area)area.innerHTML=`<div class="chat-locked" style="margin:0;"><i class="fas fa-lock"></i> Límite de ${MAX_DOCS} documentos alcanzado.</div>`;}
+                    const counter = listEl.closest('.docs-section')?.querySelector('.docs-counter');
+                    if (counter) { counter.textContent = `${t.documentos.length} / ${MAX_DOCS} documentos`; if (t.documentos.length >= MAX_DOCS) counter.classList.add('lleno'); }
+                    if (data.restantes === 0) {
+                        const area = document.getElementById(`uploadArea-${folio}`);
+                        if (area) area.innerHTML = `<div class="chat-locked" style="margin:0;"><i class="fas fa-lock"></i> Límite de ${MAX_DOCS} documentos alcanzado.</div>`;
+                    }
                 }
-            }else{alert(data.error||'Error al subir.');}
-        }catch{alert('Error de conexión.');progressWrap?.classList.remove('visible');}
+            } else { alert(data.error || 'Error al subir.'); }
+        } catch { alert('Error de conexión.'); progressWrap?.classList.remove('visible'); }
     }
-    const inp=document.getElementById(`fileInput-${folio}`);if(inp)inp.value='';
+    const inp = document.getElementById(`fileInput-${folio}`); if (inp) inp.value = '';
 }
 
-async function eliminarDoc(folio,docId){
-    if(!confirm('¿Eliminar este documento?'))return;
-    try{
-        const res=await fetch(`/api/tramite/${folio}/documentos/${docId}`,{method:'DELETE'});
-        const data=await res.json();
-        if(data.success){
+async function eliminarDoc(folio, docId) {
+    if (!confirm('¿Eliminar este documento?')) return;
+    try {
+        const res  = await fetch(`/api/tramite/${folio}/documentos/${docId}`, {method:'DELETE'});
+        const data = await res.json();
+        if (data.success) {
             document.getElementById(`doc-${docId}`)?.remove();
-            const t=tramitesData.find(x=>x.folio===folio);
-            if(t)t.documentos=(t.documentos||[]).filter(d=>d.id!==docId);
-            const listEl=document.getElementById(`docsList-${folio}`);
-            if(listEl&&t){
-                const counter=listEl.closest('.docs-section')?.querySelector('.docs-counter');
-                if(counter){counter.textContent=`${t.documentos.length} / ${MAX_DOCS} documentos`;counter.classList.remove('lleno');}
-                if(t.documentos.length===0)listEl.innerHTML='<div class="docs-empty"><i class="fas fa-paperclip" style="opacity:.3;margin-right:.4rem;"></i> Sin documentos adjuntos.</div>';
+            const t = tramitesData.find(x => x.folio === folio);
+            if (t) t.documentos = (t.documentos || []).filter(d => d.id !== docId);
+            const listEl = document.getElementById(`docsList-${folio}`);
+            if (listEl && t) {
+                const counter = listEl.closest('.docs-section')?.querySelector('.docs-counter');
+                if (counter) { counter.textContent = `${t.documentos.length} / ${MAX_DOCS} documentos`; counter.classList.remove('lleno'); }
+                if (t.documentos.length === 0) listEl.innerHTML = '<div class="docs-empty"><i class="fas fa-paperclip" style="opacity:.3;margin-right:.4rem;"></i> Sin documentos adjuntos.</div>';
             }
-        }else{alert(data.error||'Error al eliminar.');}
-    }catch{alert('Error de conexión.');}
+        } else { alert(data.error || 'Error al eliminar.'); }
+    } catch { alert('Error de conexión.'); }
 }
 
-function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+// ── Chat ──────────────────────────────────────────────────────────────────
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
 
-async function enviarMensaje(folio){
-    const inputEl=document.getElementById(`chatInput-${folio}`);
-    const btnEl=document.getElementById(`chatBtn-${folio}`);
-    const sendingEl=document.getElementById(`chatSending-${folio}`);
-    const texto=inputEl?.value?.trim();
-    if(!texto||texto.length<3){inputEl.style.borderColor='var(--danger)';setTimeout(()=>inputEl.style.borderColor='',2000);return;}
-    btnEl.disabled=true;sendingEl.classList.add('visible');
-    try{
-        const res=await fetch(`/api/tramite/${folio}/mensaje`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({texto})});
-        const data=await res.json();
-        if(data.success){
-            const lista=document.getElementById(`histList-${folio}`);
-            const ahora=new Date().toISOString().slice(0,16).replace('T',' ');
-            const item=document.createElement('div');
-            item.className='hist-item msg-ciudadano';
-            item.innerHTML=`<div class="hist-icon hi-ciudadano"><i class="fas fa-user"></i></div><div class="hist-body"><div class="hist-desc">${texto}</div><div class="hist-meta" style="justify-content:flex-end;"><i class="fas fa-clock"></i>${ahora}&nbsp;·&nbsp;<i class="fas fa-user"></i>Tú</div></div>`;
-            lista?.appendChild(item);item.scrollIntoView({behavior:'smooth',block:'nearest'});
-            const t=tramitesData.find(x=>x.folio===folio);
-            if(t){if(!t.historial)t.historial=[];t.historial.push(data.mensaje);}
-            inputEl.value='';inputEl.style.height='44px';
-        }else{alert(data.error||'Error al enviar.');}
-    }catch{alert('Error de conexión.');}
-    finally{btnEl.disabled=false;sendingEl.classList.remove('visible');}
+async function enviarMensaje(folio) {
+    const inputEl   = document.getElementById(`chatInput-${folio}`);
+    const btnEl     = document.getElementById(`chatBtn-${folio}`);
+    const sendingEl = document.getElementById(`chatSending-${folio}`);
+    const texto     = inputEl?.value?.trim();
+    if (!texto || texto.length < 3) { inputEl.style.borderColor = 'var(--danger)'; setTimeout(() => inputEl.style.borderColor = '', 2000); return; }
+    btnEl.disabled = true; sendingEl.classList.add('visible');
+    try {
+        const res  = await fetch(`/api/tramite/${folio}/mensaje`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({texto})});
+        const data = await res.json();
+        if (data.success) {
+            const lista = document.getElementById(`histList-${folio}`);
+            const ahora = new Date().toISOString().slice(0, 16).replace('T', ' ');
+            const item  = document.createElement('div');
+            item.className = 'hist-item msg-ciudadano';
+            item.innerHTML = `
+                <div class="hist-icon hi-ciudadano"><i class="fas fa-user"></i></div>
+                <div class="hist-body">
+                    <div class="hist-desc">${texto}</div>
+                    <div class="hist-meta" style="justify-content:flex-end;"><i class="fas fa-clock"></i>${ahora}&nbsp;·&nbsp;<i class="fas fa-user"></i>Tú</div>
+                </div>`;
+            lista?.appendChild(item);
+            item.scrollIntoView({behavior:'smooth', block:'nearest'});
+            const t = tramitesData.find(x => x.folio === folio);
+            if (t) { if (!t.historial) t.historial = []; t.historial.push(data.mensaje); }
+            inputEl.value = ''; inputEl.style.height = '44px';
+        } else { alert(data.error || 'Error al enviar.'); }
+    } catch { alert('Error de conexión.'); }
+    finally { btnEl.disabled = false; sendingEl.classList.remove('visible'); }
 }
 </script>
 {% endblock %}

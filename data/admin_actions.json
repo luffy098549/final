@@ -178,5 +178,29 @@
     "tipo": "actualizar_solicitud",
     "descripcion": "Solicitud SOL-260425-51937 actualizada a en_proceso",
     "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-04-26T18:23:11.073210",
+    "tipo": "actualizar_solicitud",
+    "descripcion": "Solicitud SOL-260426-91775 actualizada a completado",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-04-27T07:13:01.762641",
+    "tipo": "actualizar_solicitud",
+    "descripcion": "Solicitud SOL-260427-87879 actualizada a pendiente",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-04-27T07:14:00.938558",
+    "tipo": "actualizar_solicitud",
+    "descripcion": "Solicitud SOL-260427-87879 actualizada a completado",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-04-27T07:26:26.739829",
+    "tipo": "actualizar_solicitud",
+    "descripcion": "Solicitud SOL-260427-49953 actualizada a rechazado",
+    "admin": "superadmin@cutupu.gob.do"
   }
 ]

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Contactos Pendientes - Villa Cutupú{% endblock %}
+
+{% block content %}
+<style>
+  .pending-page { padding: 2rem; }
+  .pending-stat { background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 12px; padding: 1rem 1.25rem; }
+  .pending-stat .label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #6c757d; margin-bottom: 4px; }
+  .pending-stat .value { font-size: 26px; font-weight: 600; }
+  .pending-card { border: 1px solid rgba(0,0,0,.09); border-top: 3px solid #EF9F27; border-radius: 12px; overflow: hidden; background: #fff; }
+  .pending-card-header { background: #FAEEDA; border-bottom: 1px solid #FAC775; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+  .avatar-circle { width: 32px; height: 32px; border-radius: 50%; background: #BA7517; color: #FAEEDA; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .meta-row { font-size: 13px; color: #6c757d; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .meta-row code { font-size: 12px; background: #f1f1f1; padding: 2px 6px; border-radius: 4px; color: #333; }
+  .msg-preview { background: #f8f9fa; border-left: 3px solid #EF9F27; border-radius: 0 6px 6px 0; padding: 10px 12px; font-size: 13px; color: #555; line-height: 1.6; margin: 12px 0; }
+  .badge-nuevo { background: #FCEBEB; color: #A32D2D; border: 1px solid #F7C1C1; border-radius: 20px; font-size: 11px; font-weight: 500; padding: 3px 9px; }
+  .badge-pendiente { background: #FAEEDA; color: #854F0B; border: 1px solid #FAC775; border-radius: 20px; font-size: 11px; font-weight: 500; padding: 3px 9px; }
+  .btn-respond { width: 100%; padding: 9px; background: #FAEEDA; border: 1px solid #BA7517; color: #412402; border-radius: 8px; font-size: 13px; font-weight: 500; text-align: center; text-decoration: none; display: block; transition: background .15s; }
+  .btn-respond:hover { background: #FAC775; color: #412402; }
+  .empty-icon { width: 64px; height: 64px; border-radius: 50%; background: #EAF3DE; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #3B6D11; margin: 0 auto 1rem; }
+</style>
+
+<div class="pending-page">
+  <!-- Encabezado -->
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
+    <div>
+      <h1 class="h2 mb-1 fw-semibold">
+        <i class="fas fa-clock me-2 text-warning"></i>Contactos Pendientes
+      </h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('admin_contactos') }}">Contactos</a></li>
+          <li class="breadcrumb-item active">Pendientes</li>
+        </ol>
+      </nav>
+    </div>
+    <a href="{{ url_for('admin_contactos') }}" class="btn btn-outline-secondary">
+      <i class="fas fa-arrow-left me-1"></i> Volver
+    </a>
+  </div>
+
+  <!-- Estadísticas rápidas -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="pending-stat">
+        <div class="label">Total pendientes</div>
+        <div class="value" style="color:#BA7517">{{ contactos|length }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="pending-stat">
+        <div class="label">No leídos</div>
+        <div class="value" style="color:#A32D2D">{{ contactos|selectattr('leido','equalto',false)|list|length }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="pending-stat">
+        <div class="label">Hoy recibidos</div>
+        <div class="value" style="color:#185FA5">
+          {{ contactos|selectattr('fecha_creacion')|list|length }}
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="pending-stat">
+        <div class="label">Esta semana</div>
+        <div class="value" style="color:#3B6D11">{{ contactos|length }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tarjetas de contactos -->
+  {% if contactos %}
+  <p class="text-muted small text-uppercase fw-semibold mb-3" style="letter-spacing:.05em">Mensajes sin responder</p>
+  <div class="row g-3">
+    {% for contacto in contactos %}
+    {% set iniciales = contacto.autor_nombre.split()[:2]|map('first')|join('')|upper %}
+    <div class="col-md-6">
+      <div class="pending-card">
+        <div class="pending-card-header">
+          <div class="d-flex align-items-center gap-2">
+            <div class="avatar-circle">{{ iniciales }}</div>
+            <strong style="color:#412402;font-size:14px">{{ contacto.autor_nombre }}</strong>
+          </div>
+          <small style="color:#854F0B">{{ contacto.fecha_creacion.strftime('%d/%m/%Y · %H:%M') }}</small>
+        </div>
+        <div class="card-body p-3">
+          <div class="meta-row">
+            <i class="fas fa-envelope"></i>{{ contacto.usuario_email }}
+          </div>
+          <div class="meta-row">
+            <i class="fas fa-tag"></i>Folio: <code>{{ contacto.tramite_folio }}</code>
+          </div>
+          <div class="msg-preview">
+            {{ contacto.mensaje[:150] }}{% if contacto.mensaje|length > 150 %}...{% endif %}
+          </div>
+          <div class="d-flex gap-2 mb-3">
+            {% if not contacto.leido %}
+            <span class="badge-nuevo">● Nuevo</span>
+            {% endif %}
+            <span class="badge-pendiente">⏳ Pendiente</span>
+          </div>
+          <a href="{{ url_for('admin_contacto_detalle', contacto_id=contacto.id) }}" class="btn-respond">
+            Responder ahora →
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="text-center py-5">
+    <div class="empty-icon"><i class="fas fa-check"></i></div>
+    <h4 class="fw-semibold mb-2">¡Sin pendientes!</h4>
+    <p class="text-muted mb-3">Todos los mensajes han sido respondidos correctamente.</p>
+    <a href="{{ url_for('admin_contactos') }}" class="btn btn-outline-primary">Ver todos los contactos</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

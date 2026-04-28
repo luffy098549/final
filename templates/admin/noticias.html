@@ -1,0 +1,253 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Gestión de Noticias - Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<style>
+    .img-thumbnail-custom {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .badge-borrador { background-color: #6c757d; color: white; }
+    .badge-publicado { background-color: #28a745; color: white; }
+    .badge-archivado { background-color: #ffc107; color: #212529; }
+    .destacada-icon { color: #ffc107; font-size: 1.2rem; }
+    .action-buttons .btn { padding: 0.25rem 0.5rem; margin: 0 0.2rem; }
+    .filters-section {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .comment-badge {
+        background-color: #dc3545;
+        color: white;
+        border-radius: 20px;
+        padding: 0.2rem 0.6rem;
+        font-size: 0.7rem;
+        margin-left: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Gestión de Noticias</h1>
+    <a href="{{ url_for('admin.admin_noticia_nueva') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Nueva Noticia
+    </a>
+</div>
+
+<!-- Filtros -->
+<div class="filters-section">
+    <form method="GET" class="row g-3" id="filtrosForm">
+        <div class="col-md-3">
+            <label class="form-label">Buscar por título</label>
+            <input type="text" name="busqueda" class="form-control" placeholder="Título..." value="{{ request.args.get('busqueda', '') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Estado</label>
+            <select name="estado" class="form-select">
+                <option value="">Todos</option>
+                <option value="borrador" {% if request.args.get('estado') == 'borrador' %}selected{% endif %}>Borrador</option>
+                <option value="publicado" {% if request.args.get('estado') == 'publicado' %}selected{% endif %}>Publicado</option>
+                <option value="archivado" {% if request.args.get('estado') == 'archivado' %}selected{% endif %}>Archivado</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Categoría</label>
+            <select name="categoria" class="form-select">
+                <option value="">Todas</option>
+                {% for cat in categorias %}
+                <option value="{{ cat.id }}" {% if request.args.get('categoria')|int == cat.id %}selected{% endif %}>{{ cat.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Filtrar
+                </button>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <div>
+                <a href="{{ url_for('admin.admin_noticias') }}" class="btn btn-secondary w-100">
+                    <i class="fas fa-eraser"></i> Limpiar
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Tabla de noticias -->
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Imagen</th>
+                <th>Título</th>
+                <th>Categoría</th>
+                <th>Estado</th>
+                <th>Destacada</th>
+                <th>Vistas</th>
+                <th>Likes</th>
+                <th>Comentarios</th>
+                <th>Fecha Publicación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for noticia in noticias %}
+            <tr>
+                <td>
+                    {% if noticia.imagen_url %}
+                    <img src="{{ noticia.imagen_url }}" alt="{{ noticia.titulo }}" class="img-thumbnail-custom">
+                    {% else %}
+                    <div class="img-thumbnail-custom bg-secondary d-flex align-items-center justify-content-center text-white">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    {% endif %}
+                </td>
+                <td>
+                    <strong>{{ noticia.titulo[:50] }}{% if noticia.titulo|length > 50 %}...{% endif %}</strong>
+                </td>
+                <td>
+                    {% if noticia.categoria %}
+                    <span class="badge" style="background-color: {{ noticia.categoria.color }}; color: white;">
+                        <i class="fas fa-{{ noticia.categoria.icono }}"></i> {{ noticia.categoria.nombre }}
+                    </span>
+                    {% else %}
+                    <span class="badge bg-secondary">Sin categoría</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if noticia.estado == 'borrador' %}
+                    <span class="badge badge-borrador">Borrador</span>
+                    {% elif noticia.estado == 'publicado' %}
+                    <span class="badge badge-publicado">Publicado</span>
+                    {% else %}
+                    <span class="badge badge-archivado">Archivado</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% if noticia.destacada %}
+                    <i class="fas fa-star destacada-icon"></i>
+                    {% else %}
+                    <i class="far fa-star text-muted"></i>
+                    {% endif %}
+                </td>
+                <td class="text-center">{{ noticia.vistas|default(0) }}</td>
+                <td class="text-center">{{ noticia.likes.count() if noticia.likes else 0 }}</td>
+                <td class="text-center">
+                    {% set comentarios_pendientes = noticia.comentarios.filter_by(aprobado=False).count() if noticia.comentarios else 0 %}
+                    {% if comentarios_pendientes > 0 %}
+                    <a href="{{ url_for('admin.admin_comentarios', noticia_id=noticia.id) }}" class="badge bg-warning text-dark text-decoration-none">
+                        {{ comentarios_pendientes }} pendientes
+                    </a>
+                    {% else %}
+                    <span class="text-muted">0</span>
+                    {% endif %}
+                </td>
+                <td>{{ noticia.fecha_publicacion.strftime('%d/%m/%Y') if noticia.fecha_publicacion else '-' }}</td>
+                <td class="action-buttons">
+                    <a href="{{ url_for('admin.admin_noticia_editar', noticia_id=noticia.id) }}" class="btn btn-sm btn-outline-primary" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    {% if noticia.estado == 'publicado' %}
+                    <form action="{{ url_for('admin.admin_noticia_archivar', noticia_id=noticia.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Archivar esta noticia?')">
+                        <button type="submit" class="btn btn-sm btn-outline-warning" title="Archivar">
+                            <i class="fas fa-archive"></i>
+                        </button>
+                    </form>
+                    {% else %}
+                    <form action="{{ url_for('admin.admin_noticia_publicar', noticia_id=noticia.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Publicar esta noticia?')">
+                        <button type="submit" class="btn btn-sm btn-outline-success" title="Publicar">
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                    <form action="{{ url_for('admin.admin_noticia_eliminar', noticia_id=noticia.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar esta noticia permanentemente? Esta acción no se puede deshacer.')">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="10" class="text-center py-5">
+                    <i class="fas fa-newspaper fa-3x text-muted mb-3 d-block"></i>
+                    <p class="text-muted">No hay noticias registradas</p>
+                    <a href="{{ url_for('admin.admin_noticia_nueva') }}" class="btn btn-sm btn-primary">Crear primera noticia</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Paginación -->
+{% if paginacion and paginacion.pages > 1 %}
+<nav aria-label="Paginación" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if paginacion.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin.admin_noticias', pagina=paginacion.prev_num, estado=request.args.get('estado', ''), categoria=request.args.get('categoria', ''), busqueda=request.args.get('busqueda', '')) }}">
+                <i class="fas fa-chevron-left"></i> Anterior
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        {% endif %}
+        
+        {% for p in range(1, paginacion.pages + 1) %}
+            {% if p == paginacion.page %}
+            <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin.admin_noticias', pagina=p, estado=request.args.get('estado', ''), categoria=request.args.get('categoria', ''), busqueda=request.args.get('busqueda', '')) }}">
+                    {{ p }}
+                </a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if paginacion.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin.admin_noticias', pagina=paginacion.next_num, estado=request.args.get('estado', ''), categoria=request.args.get('categoria', ''), busqueda=request.args.get('busqueda', '')) }}">
+                Siguiente <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<script>
+    // Auto-submit al cambiar selects
+    document.querySelectorAll('select[name="estado"], select[name="categoria"]').forEach(select => {
+        select.addEventListener('change', () => {
+            document.getElementById('filtrosForm').submit();
+        });
+    });
+    
+    // Debounce para input de búsqueda
+    let timeout;
+    const searchInput = document.querySelector('input[name="busqueda"]');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                document.getElementById('filtrosForm').submit();
+            }, 500);
+        });
+    }
+</script>
+{% endblock %}

@@ -353,8 +353,18 @@
                             <br><small>{{ s.usuario_email }}</small>
                         </div>
                     </td>
-                    <td>{{ servicios.get(s.servicio_id|string, 'Desconocido') }}</td>
-                    <td>{{ s.fecha_creacion[:10] }}</td>
+                    <td>{{ servicios.get(s.servicio_id|string, s.servicio_nombre|default('Desconocido')) }}</td>
+                    <td>
+                        {% if s.fecha_creacion %}
+                            {% if s.fecha_creacion is string %}
+                                {{ s.fecha_creacion[:10] }}
+                            {% else %}
+                                {{ s.fecha_creacion.strftime('%d/%m/%Y') }}
+                            {% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                     <td>
                         <span class="badge badge-{{ s.estado }}">
                             <i class="fas fa-circle" style="font-size: 0.4rem;"></i>
@@ -383,25 +393,6 @@
 
 {% block extra_js %}
 <script>
-let solicitudesData = {{ solicitudes_json|safe }};
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Solicitudes cargadas:', solicitudesData.length);
-    
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keyup', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#solicitudesTable tbody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-    }
-});
-
 function aplicarFiltros() {
     const estado = document.getElementById('estadoFilter').value;
     const servicio = document.getElementById('servicioFilter').value;
@@ -412,5 +403,16 @@ function aplicarFiltros() {
     
     window.location.href = url.toString();
 }
+
+// Búsqueda en tiempo real
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#solicitudesTable tbody tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
 </script>
 {% endblock %}

@@ -110,6 +110,17 @@
                             <span class="badge-count" id="citasPendientes">0</span>
                         </a>
                     </li>
+                    <!-- NOTICIAS CON BADGE DE COMENTARIOS PENDIENTES -->
+                    <li>
+                        <a href="{{ url_for('admin.admin_noticias') }}" class="{{ 'active' if request.endpoint == 'admin.admin_noticias' else '' }}">
+                            <i class="fas fa-newspaper"></i>
+                            <span>Noticias</span>
+                            {% set pendientes = comentarios_pendientes | default(0) %}
+                            {% if pendientes > 0 %}
+                                <span class="badge-count bg-danger" style="background-color: #dc3545 !important;">{{ pendientes }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
                 </ul>
                 
                 <div class="nav-section">HERRAMIENTAS</div>
@@ -132,6 +143,22 @@
                             <span>Plantillas</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ url_for('admin.admin_logs') }}" class="{{ 'active' if request.endpoint == 'admin.admin_logs' else '' }}">
+                            <i class="fas fa-history"></i>
+                            <span>Logs</span>
+                        </a>
+                    </li>
+                    <!-- CONTACTOS - Enlace agregado -->
+                    <li>
+                        <a href="{{ url_for('admin_contactos') }}" class="{{ 'active' if request.endpoint == 'admin_contactos' else '' }}">
+                            <i class="fas fa-envelope"></i>
+                            <span>Contactos</span>
+                            <span class="badge-count" id="contactosPendientes">0</span>
+                        </a>
+                    </li>
+                    <!-- FIN CONTACTOS -->
+                    
                     <li>
                         <a href="{{ url_for('admin.configuracion') }}" class="{{ 'active' if request.endpoint == 'admin.configuracion' else '' }}">
                             <i class="fas fa-cog"></i>
@@ -329,12 +356,14 @@
             loadCitasPendientes();
             loadSolicitudesPendientes();
             loadDenunciasPendientes();
+            loadContactosPendientes();
             cargarNotificaciones();
 
             // Recargar cada 30 segundos
             setInterval(loadSolicitudesPendientes, 30000);
             setInterval(loadDenunciasPendientes, 30000);
             setInterval(loadCitasPendientes, 30000);
+            setInterval(loadContactosPendientes, 30000);
             setInterval(cargarNotificaciones, 30000);
 
             // Marcar todas al hacer clic
@@ -348,21 +377,15 @@
         function loadSolicitudesPendientes() {
             console.log("🔄 Cargando solicitudes pendientes...");
             fetch('/admin/api/solicitudes-pendientes')
-                .then(r => {
-                    console.log("📡 Respuesta solicitudes - Status:", r.status);
-                    return r.json();
-                })
+                .then(r => r.json())
                 .then(data => {
-                    console.log("📊 Datos solicitudes:", data);
                     const badge = document.getElementById('solicitudesPendientes');
                     if (badge) {
                         if (data.count > 0) {
                             badge.textContent = data.count > 9 ? '9+' : data.count;
                             badge.style.display = 'inline-flex';
-                            console.log(`✅ Solicitudes pendientes: ${data.count}`);
                         } else {
                             badge.style.display = 'none';
-                            console.log(`⚠️ No hay solicitudes pendientes`);
                         }
                     }
                 })
@@ -373,21 +396,15 @@
         function loadDenunciasPendientes() {
             console.log("🔄 Cargando denuncias pendientes...");
             fetch('/admin/api/denuncias-pendientes')
-                .then(r => {
-                    console.log("📡 Respuesta denuncias - Status:", r.status);
-                    return r.json();
-                })
+                .then(r => r.json())
                 .then(data => {
-                    console.log("📊 Datos denuncias:", data);
                     const badge = document.getElementById('denunciasPendientes');
                     if (badge) {
                         if (data.count > 0) {
                             badge.textContent = data.count > 9 ? '9+' : data.count;
                             badge.style.display = 'inline-flex';
-                            console.log(`✅ Denuncias pendientes: ${data.count}`);
                         } else {
                             badge.style.display = 'none';
-                            console.log(`⚠️ No hay denuncias pendientes`);
                         }
                     }
                 })
@@ -398,25 +415,38 @@
         function loadCitasPendientes() {
             console.log("🔄 Cargando citas pendientes...");
             fetch('/admin/api/citas-pendientes')
-                .then(r => {
-                    console.log("📡 Respuesta citas - Status:", r.status);
-                    return r.json();
-                })
+                .then(r => r.json())
                 .then(data => {
-                    console.log("📊 Datos citas:", data);
                     const badge = document.getElementById('citasPendientes');
                     if (badge) {
                         if (data.count > 0) {
                             badge.textContent = data.count > 9 ? '9+' : data.count;
                             badge.style.display = 'inline-flex';
-                            console.log(`✅ Citas pendientes: ${data.count}`);
                         } else {
                             badge.style.display = 'none';
-                            console.log(`⚠️ No hay citas pendientes`);
                         }
                     }
                 })
                 .catch(error => console.error('❌ Error loading citas:', error));
+        }
+
+        // ─── Contactos pendientes ────────────────────────────────────────────────────
+        function loadContactosPendientes() {
+            console.log("🔄 Cargando contactos pendientes...");
+            fetch('/admin/api/contactos-pendientes')
+                .then(r => r.json())
+                .then(data => {
+                    const badge = document.getElementById('contactosPendientes');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.style.display = 'inline-flex';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(e => console.error('❌ Error loading contactos:', e));
         }
 
         // ─── Notificaciones ─────────────────────────────────────────────────────────
@@ -425,7 +455,6 @@
             fetch('/api/notificaciones')
                 .then(res => res.json())
                 .then(data => {
-                    console.log("📊 Datos notificaciones:", data);
                     const badge = document.getElementById('notifBadge');
                     const list = document.getElementById('notificationsList');
                     const marcarBtn = document.getElementById('marcarTodasBtn');

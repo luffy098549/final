@@ -1,0 +1,643 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Contactos - Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<style>
+
+  .dropdown-menu { z-index: 2001 !important; }
+  /* ── Fix navbar y modal ── */
+  .modal-backdrop { display: none !important; }
+  body.modal-open { overflow: auto !important; padding-right: 0 !important; }
+  .main-header { z-index: 2000 !important; }
+  .modal { z-index: 1050 !important; }
+  .modal-content { box-shadow: 0 25px 80px rgba(0,0,0,.22) !important; }
+
+  /* ── Layout base ── */
+  .contacts-page {
+    padding: 2rem;
+    padding-top: calc(72px + 2rem);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  /* ── Stats ── */
+  .stat-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all .2s ease;
+    cursor: pointer;
+  }
+  .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.08); }
+  .stat-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #6c757d; margin-bottom: 4px; font-weight: 600; }
+  .stat-card .value { font-size: 28px; font-weight: 700; line-height: 1; }
+  .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+
+  /* ── Emergencias ── */
+  .emergencias-section {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.75rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .emergencias-section::before {
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(255,255,255,.05);
+    pointer-events: none;
+  }
+  .emergencias-title {
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: #fca5a5; margin-bottom: .5rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #f87171; display: inline-block;
+    animation: pulseDot 1.4s infinite;
+  }
+  @keyframes pulseDot {
+    0%,100% { opacity:1; transform:scale(1); box-shadow: 0 0 0 0 rgba(248,113,113,.6); }
+    50%      { opacity:.8; transform:scale(1.15); box-shadow: 0 0 0 6px rgba(248,113,113,0); }
+  }
+  .emergencia-card {
+    background: rgba(255,255,255,.09);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 12px; padding: 12px 16px;
+    display: flex; justify-content: space-between;
+    align-items: center; gap: 1rem; flex-wrap: wrap;
+    margin-top: .75rem; transition: background .2s;
+  }
+  .emergencia-card:hover { background: rgba(255,255,255,.14); }
+  .emergencia-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(239,68,68,.4); border: 2px solid #f87171;
+    color: #fecaca; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .emergencia-nombre { font-weight: 600; font-size: 14px; color: #fff; }
+  .emergencia-texto { font-size: 12px; color: #fca5a5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 380px; }
+  .btn-emergencia {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 18px; border-radius: 30px;
+    background: #ef4444; border: 1px solid #dc2626;
+    color: #fff; font-size: 12px; font-weight: 600;
+    text-decoration: none; white-space: nowrap; transition: background .2s;
+  }
+  .btn-emergencia:hover { background: #dc2626; color: #fff; }
+  .sin-emergencias { color: #86efac; font-size: 13px; display: flex; align-items: center; gap: 8px; margin-top: .5rem; }
+
+  /* ── Pestañas ── */
+  .tabs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-bottom: 1.5rem;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 50px;
+    padding: 5px;
+    width: fit-content;
+  }
+  .tab-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 18px; border-radius: 50px;
+    font-size: 13px; font-weight: 500;
+    color: #6c757d; background: transparent;
+    border: none; cursor: pointer;
+    transition: all .2s ease;
+    white-space: nowrap;
+    font-family: 'Outfit', sans-serif;
+  }
+  .tab-btn:hover { background: #f1f3f5; color: #333; }
+  .tab-btn.active {
+    background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(45,106,79,.3);
+  }
+  .tab-btn.tab-emergencia { color: #dc2626; }
+  .tab-btn.tab-emergencia.active {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+    box-shadow: 0 4px 12px rgba(220,38,38,.3);
+    color: white;
+  }
+  .tab-badge {
+    font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 20px;
+    background: rgba(0,0,0,.1);
+  }
+  .tab-btn.active .tab-badge { background: rgba(255,255,255,.25); }
+
+  /* ── Tabla ── */
+  .table-card { background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 16px; overflow: hidden; }
+  .table-card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+    display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: .75rem;
+    background: #fafbfc;
+  }
+  .table-card-header h5 { margin: 0; font-size: 15px; font-weight: 600; font-family: 'Outfit', sans-serif; }
+  .buscar-input {
+    padding: 8px 18px; border-radius: 25px;
+    border: 1px solid #ddd; font-size: 13px;
+    width: 260px; transition: border-color .2s, box-shadow .2s;
+    font-family: 'Outfit', sans-serif;
+  }
+  .buscar-input:focus {
+    border-color: #2d6a4f; outline: none;
+    box-shadow: 0 0 0 3px rgba(45,106,79,.1);
+  }
+  .table thead th {
+    font-size: 11px !important; text-transform: uppercase;
+    letter-spacing: .05em; color: #6c757d !important;
+    font-weight: 600 !important; background: #f8f9fa;
+    padding: 10px 12px; font-family: 'Outfit', sans-serif;
+    border-bottom: 1px solid #e9ecef;
+  }
+  .table tbody td { vertical-align: middle; padding: 11px 12px; font-size: 13px; font-family: 'Outfit', sans-serif; }
+  .table tbody tr { transition: background .15s; }
+  code { font-size: 11px; background: #f1f1f1; padding: 3px 8px; border-radius: 5px; color: #333; }
+
+  /* ── Avatares ── */
+  .avatar-sm {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, #2d6a4f, #1b4332);
+    color: white; font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-family: 'Outfit', sans-serif;
+  }
+  .avatar-sm.rojo { background: linear-gradient(135deg, #dc2626, #991b1b); }
+
+  /* ── Badges ── */
+  .badge-respondido { background: #EAF3DE; color: #3B6D11; border-radius: 20px; font-size: 11px; font-weight: 600; padding: 4px 10px; white-space: nowrap; display: inline-block; }
+  .badge-pendiente  { background: #FAEEDA; color: #854F0B; border-radius: 20px; font-size: 11px; font-weight: 600; padding: 4px 10px; white-space: nowrap; display: inline-block; }
+  .badge-nuevo      { background: #FCEBEB; color: #A32D2D; border-radius: 20px; font-size: 10px; font-weight: 600; padding: 3px 8px; white-space: nowrap; display: inline-block; }
+  .badge-emerg-tag  { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 20px; font-size: 10px; font-weight: 700; padding: 3px 8px; white-space: nowrap; display: inline-block; }
+
+  /* ── Botones acción ── */
+  .btn-accion {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 13px; border-radius: 20px;
+    font-size: 12px; font-weight: 500;
+    text-decoration: none; cursor: pointer;
+    transition: all .15s; border: 1px solid;
+    font-family: 'Outfit', sans-serif;
+    background: none;
+  }
+  .btn-accion.verde { border-color: #C0DD97; background: #EAF3DE; color: #3B6D11; }
+  .btn-accion.verde:hover { background: #C0DD97; }
+  .btn-accion.azul  { border-color: #B5D4F4; background: #E6F1FB; color: #0C447C; }
+  .btn-accion.azul:hover  { background: #B5D4F4; }
+  .btn-accion.rojo  { border-color: #fca5a5; background: #fef2f2; color: #991b1b; }
+  .btn-accion.rojo:hover  { background: #fee2e2; }
+
+  /* ── Modales ── */
+  .modal-content { border: none; border-radius: 16px; overflow: hidden; }
+  .modal-header { padding: 1.1rem 1.5rem; }
+  .modal-body   { padding: 1.5rem; }
+  .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(0,0,0,.06); }
+  .modal-hdr-verde { background: linear-gradient(135deg,#2d6a4f,#1b4332); color: white; }
+  .modal-hdr-verde .btn-close { filter: brightness(0) invert(1); }
+  .modal-hdr-rojo  { background: linear-gradient(135deg,#dc2626,#991b1b); color: white; }
+  .modal-hdr-rojo  .btn-close { filter: brightness(0) invert(1); }
+  .modal-hdr-azul  { background: linear-gradient(135deg,#1d4ed8,#1e40af); color: white; }
+  .modal-hdr-azul  .btn-close { filter: brightness(0) invert(1); }
+  .msg-original  { background: #f8f9fa; border-left: 4px solid #2d6a4f; border-radius: 0 10px 10px 0; padding: 1rem; }
+  .msg-respuesta { background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 0 10px 10px 0; padding: 1rem; }
+
+  /* ── Filas especiales ── */
+  .row-unread     { background: #FFFDF5 !important; }
+  .row-emergencia { background: #fff5f5 !important; border-left: 3px solid #ef4444; }
+  .tabla-vacia td { padding: 3rem !important; text-align: center; }
+
+  @media (max-width: 768px) {
+    .contacts-page { padding: 1rem; padding-top: calc(72px + 1rem); }
+    .buscar-input { width: 100%; }
+    .table-card-header { flex-direction: column; align-items: stretch; }
+    .tabs-container { border-radius: 12px; width: 100%; }
+    .emergencia-texto { max-width: 160px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contacts-page">
+
+  <!-- ══ ENCABEZADO ══ -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:1.75rem">
+    <div>
+      <h1 style="font-size:24px;font-weight:700;margin-bottom:4px;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:10px">
+        <i class="fas fa-envelope-open-text" style="color:#2d6a4f;font-size:20px"></i>
+        Gestión de Contactos
+      </h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0" style="font-size:13px">
+          <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}" style="color:#2d6a4f">Dashboard</a></li>
+          <li class="breadcrumb-item active">Contactos</li>
+        </ol>
+      </nav>
+    </div>
+    <button onclick="location.reload()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:25px;border:1px solid #ddd;background:#fff;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif">
+      <i class="fas fa-sync-alt" style="color:#6c757d"></i> Actualizar
+    </button>
+  </div>
+
+  <!-- ══ EMERGENCIAS ══ -->
+  {% set emergencias_activas = contactos|selectattr('es_emergencia','equalto',true)|selectattr('tiene_respuesta','equalto',false)|list %}
+  <div class="emergencias-section">
+    <div class="emergencias-title">
+      <span class="pulse-dot"></span>
+      <i class="fas fa-exclamation-triangle"></i>
+      Emergencias activas
+      {% if emergencias_activas %}
+        <span style="background:rgba(239,68,68,.3);color:#fca5a5;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700">
+          {{ emergencias_activas|length }} sin responder
+        </span>
+      {% endif %}
+    </div>
+    {% if emergencias_activas %}
+      {% for em in emergencias_activas %}
+      <div class="emergencia-card">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+          <div class="emergencia-avatar">{{ em.autor_nombre.split()[:2]|map('first')|join('')|upper }}</div>
+          <div style="min-width:0">
+            <div class="emergencia-nombre">{{ em.autor_nombre }}</div>
+            <div class="emergencia-texto">{{ em.mensaje[:80] }}{% if em.mensaje|length > 80 %}...{% endif %}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-shrink:0">
+          <small style="color:#fca5a5"><i class="far fa-clock me-1"></i>{{ em.fecha_creacion.strftime('%d/%m · %H:%M') }}</small>
+          <a href="{{ url_for('admin_contacto_detalle', contacto_id=em.id) }}" class="btn-emergencia">
+            <i class="fas fa-reply"></i> Responder ahora
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="sin-emergencias">
+        <i class="fas fa-check-circle"></i> No hay emergencias activas en este momento.
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- ══ ESTADÍSTICAS ══ -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.75rem">
+    <div class="stat-card" onclick="cambiarTab('todos')">
+      <div>
+        <div class="label">Total contactos</div>
+        <div class="value" style="color:#185FA5">{{ contactos|length }}</div>
+      </div>
+      <div class="stat-icon" style="background:#E6F1FB">
+        <i class="fas fa-envelope" style="color:#185FA5"></i>
+      </div>
+    </div>
+    <div class="stat-card" onclick="cambiarTab('pendientes')">
+      <div>
+        <div class="label">Sin responder</div>
+        <div class="value" style="color:#BA7517">{{ contactos|selectattr('tiene_respuesta','equalto',false)|list|length }}</div>
+      </div>
+      <div class="stat-icon" style="background:#FAEEDA">
+        <i class="fas fa-hourglass-half" style="color:#BA7517"></i>
+      </div>
+    </div>
+    <div class="stat-card" onclick="cambiarTab('respondidos')">
+      <div>
+        <div class="label">Respondidos</div>
+        <div class="value" style="color:#3B6D11">{{ contactos|selectattr('tiene_respuesta','equalto',true)|list|length }}</div>
+      </div>
+      <div class="stat-icon" style="background:#EAF3DE">
+        <i class="fas fa-check-circle" style="color:#3B6D11"></i>
+      </div>
+    </div>
+    <div class="stat-card" onclick="cambiarTab('noleidos')">
+      <div>
+        <div class="label">No leídos</div>
+        <div class="value" style="color:#A32D2D">{{ contactos|selectattr('leido','equalto',false)|list|length }}</div>
+      </div>
+      <div class="stat-icon" style="background:#FCEBEB">
+        <i class="fas fa-bell" style="color:#A32D2D"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PESTAÑAS ══ -->
+  <div class="tabs-container" id="tabsContainer">
+    <button class="tab-btn active" data-tab="todos">
+      <i class="fas fa-list"></i> Todos
+      <span class="tab-badge">{{ contactos|length }}</span>
+    </button>
+    <button class="tab-btn" data-tab="pendientes">
+      <i class="fas fa-clock"></i> Pendientes
+      <span class="tab-badge">{{ contactos|selectattr('tiene_respuesta','equalto',false)|list|length }}</span>
+    </button>
+    <button class="tab-btn" data-tab="respondidos">
+      <i class="fas fa-check-circle"></i> Respondidos
+      <span class="tab-badge">{{ contactos|selectattr('tiene_respuesta','equalto',true)|list|length }}</span>
+    </button>
+    <button class="tab-btn" data-tab="noleidos">
+      <i class="fas fa-bell"></i> No leídos
+      <span class="tab-badge">{{ contactos|selectattr('leido','equalto',false)|list|length }}</span>
+    </button>
+    <button class="tab-btn tab-emergencia" data-tab="emergencias">
+      <i class="fas fa-exclamation-triangle"></i> Emergencias
+      <span class="tab-badge">{{ contactos|selectattr('es_emergencia','equalto',true)|selectattr('tiene_respuesta','equalto',false)|list|length }}</span>
+    </button>
+  </div>
+
+  <!-- ══ TABLA ══ -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <h5 id="tituloTabla">
+        <i class="fas fa-table me-2" style="color:#9ca3af"></i>Todos los contactos
+      </h5>
+      <input type="text" class="buscar-input" id="buscarContacto"
+             placeholder="🔍 Buscar nombre, email o folio...">
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0" id="tablaContactos">
+        <thead>
+          <tr>
+            <th style="padding-left:1.25rem">Folio</th>
+            <th>Remitente</th>
+            <th>Email</th>
+            <th>Asunto</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyContactos"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ MODALES ══ -->
+<div id="modalesContainer"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const CONTACTOS = {{ contactos|tojson|safe }};
+
+const iniciales = n => (n||'').split(' ').slice(0,2).map(p=>p[0]||'').join('').toUpperCase();
+
+function formatFecha(str) {
+  if (!str) return '';
+  try {
+    const d = new Date(str);
+    return d.toLocaleDateString('es-DO', { day:'2-digit', month:'2-digit', year:'numeric' });
+  } catch { return str.split(' ')[0] || str; }
+}
+
+function cambiarTab(tipo) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`.tab-btn[data-tab="${tipo}"]`);
+  if (btn) btn.classList.add('active');
+
+  const titulos = {
+    todos:       '<i class="fas fa-table me-2" style="color:#9ca3af"></i>Todos los contactos',
+    pendientes:  '<i class="fas fa-clock me-2" style="color:#BA7517"></i>Contactos pendientes',
+    respondidos: '<i class="fas fa-check-circle me-2" style="color:#3B6D11"></i>Contactos respondidos',
+    noleidos:    '<i class="fas fa-bell me-2" style="color:#A32D2D"></i>No leídos',
+    emergencias: '<i class="fas fa-exclamation-triangle me-2" style="color:#dc2626"></i>Emergencias'
+  };
+  document.getElementById('tituloTabla').innerHTML = titulos[tipo] || titulos.todos;
+
+  let datos = CONTACTOS;
+  if (tipo === 'pendientes')   datos = CONTACTOS.filter(c => !c.tiene_respuesta);
+  if (tipo === 'respondidos')  datos = CONTACTOS.filter(c =>  c.tiene_respuesta);
+  if (tipo === 'noleidos')     datos = CONTACTOS.filter(c => !c.leido);
+  if (tipo === 'emergencias')  datos = CONTACTOS.filter(c =>  c.es_emergencia && !c.tiene_respuesta);
+
+  renderTabla(datos);
+  document.getElementById('buscarContacto').value = '';
+}
+
+function renderTabla(lista) {
+  const tbody = document.getElementById('tbodyContactos');
+  const modalesDiv = document.getElementById('modalesContainer');
+
+  if (!lista.length) {
+    tbody.innerHTML = `
+      <tr class="tabla-vacia">
+        <td colspan="7">
+          <i class="fas fa-inbox" style="font-size:2.5rem;color:#d1d5db;display:block;margin-bottom:.75rem"></i>
+          <p style="color:#6c757d;margin:0">No hay contactos en esta categoría</p>
+        </td>
+      </tr>`;
+    modalesDiv.innerHTML = '';
+    return;
+  }
+
+  let html = '';
+  let modalesHtml = '';
+
+  for (const c of lista) {
+    const esEmerg = !!c.es_emergencia;
+    const rowClass = esEmerg ? 'row-emergencia' : (!c.leido ? 'row-unread' : '');
+    const asuntoTexto = c.asunto || c.mensaje || '';
+    const asunto = asuntoTexto.substring(0,55) + (asuntoTexto.length > 55 ? '…' : '');
+    const folio = c.folio || c.tramite_folio || '';
+
+    html += `
+      <tr class="${rowClass}">
+        <td style="padding-left:1.25rem"><code>${folio}</code></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="avatar-sm ${esEmerg?'rojo':''}">${iniciales(c.autor_nombre)}</div>
+            <strong style="font-size:13px">${c.autor_nombre}</strong>
+          </div>
+        </td>
+        <td style="color:#6c757d">${c.usuario_email}</td>
+        <td><div style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${asunto}</div></td>
+        <td style="color:#6c757d;white-space:nowrap">${formatFecha(c.fecha_creacion)}</td>
+        <td>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+            ${c.tiene_respuesta
+              ? '<span class="badge-respondido"><i class="fas fa-check-circle me-1"></i>Respondido</span>'
+              : '<span class="badge-pendiente"><i class="fas fa-clock me-1"></i>Pendiente</span>'}
+            ${!c.leido ? '<span class="badge-nuevo">● Nuevo</span>' : ''}
+            ${esEmerg ? '<span class="badge-emerg-tag">🚨 Urgente</span>' : ''}
+          </div>
+        </td>
+        <td>
+          <div style="display:flex;gap:6px;justify-content:center">
+            ${!c.tiene_respuesta
+              ? `<button class="btn-accion ${esEmerg?'rojo':'verde'}"
+                   onclick="abrirModal('responder',${c.id})">
+                   <i class="fas fa-reply"></i> Responder
+                 </button>`
+              : ''}
+            <button class="btn-accion azul" onclick="abrirModal('ver',${c.id})">
+              <i class="fas fa-eye"></i> Ver
+            </button>
+          </div>
+        </td>
+      </tr>`;
+
+    modalesHtml += buildModales(c);
+  }
+
+  tbody.innerHTML = html;
+  modalesDiv.innerHTML = modalesHtml;
+}
+
+function buildModales(c) {
+  const esEmerg = !!c.es_emergencia;
+  const hdrClass = esEmerg ? 'modal-hdr-rojo' : 'modal-hdr-verde';
+  const folio = c.folio || c.tramite_folio || '';
+  const mensaje = (c.mensaje_sin_asunto || c.mensaje || '').replace(/\n/g,'<br>');
+  const fecha = formatFecha(c.fecha_creacion);
+
+  return `
+    <!-- Modal Responder ${c.id} -->
+    <div class="modal fade" id="mResp${c.id}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <form method="POST" action="{{ url_for('admin_responder_contacto') }}">
+            <input type="hidden" name="contacto_id" value="${c.id}">
+            <div class="modal-header ${hdrClass}">
+              <h5 class="modal-title" style="font-family:'Outfit',sans-serif;font-size:15px">
+                <i class="fas fa-reply-all me-2"></i>
+                ${esEmerg ? '🚨 Emergencia — ' : ''}Responder a ${c.autor_nombre}
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              ${esEmerg ? `<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:10px 14px;margin-bottom:1rem;font-size:13px;color:#991b1b;font-family:'Outfit',sans-serif">
+                <i class="fas fa-exclamation-triangle me-2"></i><strong>Mensaje urgente.</strong> Por favor responde lo antes posible.
+              </div>` : ''}
+              <p style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#6c757d;font-weight:600;margin-bottom:.5rem;font-family:'Outfit',sans-serif">Mensaje original</p>
+              <div class="msg-original mb-3">
+                <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:.75rem;font-size:13px;font-family:'Outfit',sans-serif">
+                  <span><strong>Folio:</strong> ${folio}</span>
+                  <span><strong>De:</strong> ${c.autor_nombre}</span>
+                  <span><strong>Fecha:</strong> ${fecha}</span>
+                </div>
+                <p style="font-size:13px;margin-bottom:.5rem;font-family:'Outfit',sans-serif"><strong>Asunto:</strong> ${c.asunto||''}</p>
+                <hr style="margin:.5rem 0">
+                <div style="font-size:14px;line-height:1.7;font-family:'Outfit',sans-serif">${mensaje}</div>
+              </div>
+              <p style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#6c757d;font-weight:600;margin-bottom:.5rem;font-family:'Outfit',sans-serif">Tu respuesta</p>
+              <textarea class="form-control" name="respuesta" rows="6" required
+                placeholder="Escribe tu respuesta aquí..."
+                style="font-family:'Outfit',sans-serif;font-size:14px;border-radius:10px;resize:vertical"></textarea>
+              <div style="background:#E6F1FB;border:1px solid #B5D4F4;border-radius:8px;padding:8px 14px;font-size:12px;color:#0C447C;margin-top:.75rem;font-family:'Outfit',sans-serif">
+                <i class="fas fa-info-circle me-1"></i> El usuario recibirá una notificación por correo electrónico.
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                style="border-radius:25px;font-family:'Outfit',sans-serif;font-size:13px">
+                <i class="fas fa-times me-1"></i> Cancelar
+              </button>
+              <button type="submit" class="btn ${esEmerg?'btn-danger':'btn-success'}"
+                style="border-radius:25px;font-family:'Outfit',sans-serif;font-size:13px">
+                <i class="fas fa-paper-plane me-1"></i> Enviar respuesta
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Ver ${c.id} -->
+    <div class="modal fade" id="mVer${c.id}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header modal-hdr-azul">
+            <h5 class="modal-title" style="font-family:'Outfit',sans-serif;font-size:15px">
+              <i class="fas fa-comments me-2"></i>Conversación — ${folio}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="msg-original mb-3">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem">
+                <strong style="font-family:'Outfit',sans-serif">
+                  <i class="fas fa-user-circle me-1" style="color:#2d6a4f"></i>${c.autor_nombre}
+                </strong>
+                <small style="color:#6c757d;font-family:'Outfit',sans-serif">${fecha}</small>
+              </div>
+              <p style="font-size:13px;color:#6c757d;margin-bottom:4px;font-family:'Outfit',sans-serif"><strong>Asunto:</strong> ${c.asunto||''}</p>
+              <p style="font-size:13px;color:#6c757d;margin-bottom:.5rem;font-family:'Outfit',sans-serif"><strong>Email:</strong> ${c.usuario_email}</p>
+              <hr style="margin:.5rem 0">
+              <div style="font-size:14px;line-height:1.7;font-family:'Outfit',sans-serif">${mensaje}</div>
+            </div>
+            ${c.respuesta ? `
+            <div class="msg-respuesta">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem">
+                <strong style="font-family:'Outfit',sans-serif">
+                  <i class="fas fa-user-shield me-1" style="color:#2d6a4f"></i>Administrador
+                </strong>
+                <small style="color:#555;font-family:'Outfit',sans-serif">${formatFecha(c.fecha_respuesta||'')}</small>
+              </div>
+              <div style="font-size:14px;line-height:1.7;font-family:'Outfit',sans-serif">${c.respuesta.replace(/\n/g,'<br>')}</div>
+            </div>` : `
+            <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+              <span style="font-size:13px;color:#92400e;font-family:'Outfit',sans-serif">
+                <i class="fas fa-clock me-2"></i>Este contacto aún no ha sido respondido.
+              </span>
+              <button class="btn btn-warning btn-sm"
+                style="border-radius:20px;font-family:'Outfit',sans-serif;font-size:12px"
+                data-bs-dismiss="modal"
+                onclick="setTimeout(()=>abrirModal('responder',${c.id}),350)">
+                <i class="fas fa-reply me-1"></i> Responder
+              </button>
+            </div>`}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+              style="border-radius:25px;font-family:'Outfit',sans-serif;font-size:13px">
+              <i class="fas fa-times me-1"></i> Cerrar
+            </button>
+            ${!c.respuesta ? `
+            <button type="button" class="btn btn-success"
+              style="border-radius:25px;font-family:'Outfit',sans-serif;font-size:13px"
+              data-bs-dismiss="modal"
+              onclick="setTimeout(()=>abrirModal('responder',${c.id}),350)">
+              <i class="fas fa-reply me-1"></i> Responder
+            </button>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function abrirModal(tipo, id) {
+  const modalId = tipo === 'responder' ? `mResp${id}` : `mVer${id}`;
+  const el = document.getElementById(modalId);
+  if (el) new bootstrap.Modal(el).show();
+}
+
+document.getElementById('buscarContacto').addEventListener('keyup', function() {
+  const texto = this.value.toLowerCase();
+  document.querySelectorAll('#tbodyContactos tr').forEach(fila => {
+    if (fila.cells && fila.cells.length > 1)
+      fila.style.display = fila.innerText.toLowerCase().includes(texto) ? '' : 'none';
+  });
+});
+
+document.getElementById('tabsContainer').addEventListener('click', function(e) {
+  const btn = e.target.closest('.tab-btn');
+  if (btn) cambiarTab(btn.dataset.tab);
+});
+
+document.addEventListener('DOMContentLoaded', () => cambiarTab('todos'));
+</script>
+{% endblock %}

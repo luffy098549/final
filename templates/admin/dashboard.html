@@ -125,14 +125,14 @@
                             <span class="badge badge-{{ sol.estado }}">{{ sol.estado }}</span>
                         </div>
                         <div class="activity-meta">
-                            <span><i class="far fa-user"></i> {{ sol.usuario_nombre }}</span>
-                            <span><i class="far fa-calendar"></i> {{ sol.fecha_creacion[:10] }}</span>
+                            <span><i class="far fa-user"></i> {{ sol.usuario_nombre if sol.usuario_nombre else 'Usuario' }}</span>
+                            <span><i class="far fa-calendar"></i> {{ sol.fecha_str if sol.fecha_str else sol.fecha_creacion }}</span>
                             <span><i class="fas fa-tag"></i> {{ sol.folio }}</span>
                         </div>
                     </div>
                     {% if sol.estado == 'pendiente' %}
                     <div class="activity-action">
-                        <button class="btn-icon" onclick="quickAction('solicitud', {{ sol.id }})">
+                        <button class="btn-icon" onclick="quickAction('solicitud', '{{ sol.id }}')">
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
@@ -173,9 +173,9 @@
                         </div>
                         <div class="activity-meta">
                             <span><i class="fas fa-map-marker-alt"></i> {{ den.direccion[:30] if den.direccion else 'Sin dirección' }}{% if den.direccion and den.direccion|length > 30 %}...{% endif %}</span>
-                            <span><i class="far fa-calendar"></i> {{ den.fecha_creacion[:10] }}</span>
+                            <span><i class="far fa-calendar"></i> {{ den.fecha_str if den.fecha_str else den.fecha_creacion }}</span>
                             {% if not den.anonimo %}
-                            <span><i class="far fa-user"></i> {{ den.usuario_nombre }}</span>
+                            <span><i class="far fa-user"></i> {{ den.usuario_nombre if den.usuario_nombre else 'Usuario' }}</span>
                             {% else %}
                             <span><i class="fas fa-user-secret"></i> Anónimo</span>
                             {% endif %}
@@ -201,7 +201,7 @@
             <i class="fas fa-user-plus"></i>
             <span>Crear Administrador</span>
         </a>
-        <a href="#" class="action-card" onclick="exportReport()">
+        <a href="#" class="action-card" onclick="exportReport(); return false;">
             <i class="fas fa-file-export"></i>
             <span>Exportar Reportes</span>
         </a>
@@ -217,7 +217,7 @@
 </div>
 
 <!-- Modal de acción rápida -->
-<div class="modal fade" id="quickActionModal">
+<div class="modal fade" id="quickActionModal" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -230,12 +230,14 @@
         </div>
     </div>
 </div>
+
+<!-- Overlay para modal -->
+<div class="modal-backdrop" style="display: none;"></div>
 {% endblock %}
 
 {% block scripts %}
 {# Chart.js solo se carga en el dashboard, no en todas las páginas #}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{{ url_for('static', filename='js/admin-charts.js') }}"></script>
 <script>
 // Datos para gráficos desde el backend
 {% if stats and stats.solicitudes and stats.solicitudes.por_mes %}
@@ -307,32 +309,104 @@ const denunciasData = {
 };
 {% endif %}
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar gráficos
-    if (typeof initCharts === 'function') {
-        initCharts(solicitudesData, denunciasData);
+let chartsInitialized = false;
+let refreshInterval = null;
+
+function initCharts(solicitudesData, denunciasData) {
+    if (chartsInitialized) return;
+    
+    // Gráfico de líneas - Solicitudes por mes
+    const solicitudesCtx = document.getElementById('solicitudesChart')?.getContext('2d');
+    if (solicitudesCtx) {
+        new Chart(solicitudesCtx, {
+            type: 'line',
+            data: solicitudesData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
     }
     
-    // Auto-refresh cada 30 segundos
-    if (typeof startAutoRefresh === 'function') {
-        startAutoRefresh(30000);
+    // Gráfico de pastel - Denuncias por tipo
+    const denunciasCtx = document.getElementById('denunciasPieChart')?.getContext('2d');
+    if (denunciasCtx) {
+        new Chart(denunciasCtx, {
+            type: 'pie',
+            data: denunciasData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
-});
+    
+    chartsInitialized = true;
+}
 
 function changeChartPeriod(period) {
     // Actualizar botones
     document.querySelectorAll('.chart-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    if (event.target) {
+    if (event && event.target) {
         event.target.classList.add('active');
     }
     
     console.log('Cambiando período a:', period);
+    // Aquí puedes implementar la lógica para cargar datos de diferentes períodos
 }
 
 function quickAction(type, id) {
     console.log('Acción rápida:', type, id);
+    const modal = document.getElementById('quickActionModal');
+    const modalBody = document.getElementById('quickActionBody');
+    const backdrop = document.querySelector('.modal-backdrop');
+    
+    if (modal && modalBody) {
+        modalBody.innerHTML = `
+            <div class="text-center p-4">
+                <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+                <p>Cargando opciones para ${type}...</p>
+            </div>
+        `;
+        modal.style.display = 'block';
+        if (backdrop) backdrop.style.display = 'block';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
 }
 
 function exportReport() {
@@ -341,11 +415,55 @@ function exportReport() {
 
 function closeModal() {
     const modal = document.getElementById('quickActionModal');
+    const backdrop = document.querySelector('.modal-backdrop');
     if (modal) {
         modal.classList.remove('show');
         modal.style.display = 'none';
     }
-    document.querySelector('.modal-backdrop')?.remove();
+    if (backdrop) backdrop.style.display = 'none';
 }
+
+function startAutoRefresh(interval) {
+    if (refreshInterval) {
+        clearInterval(refreshInterval);
+    }
+    refreshInterval = setInterval(function() {
+        // Recargar solo los datos sin recargar toda la página
+        fetch(window.location.href)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newStats = doc.querySelector('.stats-grid');
+                const newCharts = doc.querySelector('.charts-grid');
+                const newActivity = doc.querySelector('.recent-activity-grid');
+                
+                if (newStats) document.querySelector('.stats-grid')?.replaceWith(newStats);
+                if (newCharts) document.querySelector('.charts-grid')?.replaceWith(newCharts);
+                if (newActivity) document.querySelector('.recent-activity-grid')?.replaceWith(newActivity);
+                
+                // Reinicializar gráficos
+                chartsInitialized = false;
+                initCharts(solicitudesData, denunciasData);
+            })
+            .catch(error => console.error('Error refreshing data:', error));
+    }, interval);
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar gráficos
+    initCharts(solicitudesData, denunciasData);
+    
+    // Auto-refresh cada 30 segundos (opcional, comentado por defecto)
+    // startAutoRefresh(30000);
+});
+
+// Limpiar intervalo al salir de la página
+window.addEventListener('beforeunload', function() {
+    if (refreshInterval) {
+        clearInterval(refreshInterval);
+    }
+});
 </script>
 {% endblock %}

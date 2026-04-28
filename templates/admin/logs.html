@@ -1,0 +1,276 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Logs de Actividad - Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.2rem;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+        height: 100%;
+    }
+    .stats-card:hover { transform: translateY(-3px); }
+    .stats-number { font-size: 2rem; font-weight: 700; line-height: 1.2; }
+    .stats-label { color: #6c757d; font-size: 0.8rem; margin-top: 0.3rem; }
+    .badge-info { background-color: #0dcaf0; color: #000; }
+    .badge-warning { background-color: #ffc107; color: #000; }
+    .badge-error { background-color: #dc3545; color: #fff; }
+    .badge-critico { background-color: #8b0000; color: #fff; }
+    .filters-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .export-buttons { display: flex; gap: 0.5rem; }
+    .table-log { font-size: 0.85rem; }
+    .table-log td { vertical-align: middle; }
+    .descripcion-cell { max-width: 250px; word-break: break-word; }
+    .ip-cell code { font-size: 0.75rem; }
+    @media (max-width: 768px) {
+        .export-buttons { margin-top: 0.5rem; }
+        .descripcion-cell { max-width: 150px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+    <h1 class="h3">Logs de Actividad</h1>
+    <div class="export-buttons">
+        <a href="#" class="btn btn-success" id="exportExcelBtn">
+            <i class="fas fa-file-excel"></i> Excel
+        </a>
+        <a href="#" class="btn btn-danger" id="exportPdfBtn">
+            <i class="fas fa-file-pdf"></i> PDF
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="stats-card">
+            <div class="stats-number text-primary">{{ estadisticas.total_hoy|default(0) }}</div>
+            <div class="stats-label">Logs hoy</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stats-card">
+            <div class="stats-number text-danger">{{ estadisticas.errores_hoy|default(0) }}</div>
+            <div class="stats-label">Errores hoy</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stats-card">
+            <div class="stats-number text-warning">{{ estadisticas.warnings_hoy|default(0) }}</div>
+            <div class="stats-label">Warnings hoy</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stats-card">
+            <div class="stats-number text-info">{{ estadisticas.ips_sospechosas|default(0) }}</div>
+            <div class="stats-label">IPs sospechosas</div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="filters-card">
+    <form method="GET" id="filtrosForm" class="row g-3">
+        <div class="col-md-2 col-sm-6">
+            <label class="form-label">Módulo</label>
+            <select name="modulo" class="form-select">
+                <option value="">Todos</option>
+                {% for modulo in modulos_disponibles %}
+                <option value="{{ modulo }}" {% if request.args.get('modulo') == modulo %}selected{% endif %}>{{ modulo|capitalize }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-6">
+            <label class="form-label">Nivel</label>
+            <select name="nivel" class="form-select">
+                <option value="">Todos</option>
+                {% for nivel in niveles_disponibles %}
+                <option value="{{ nivel }}" {% if request.args.get('nivel') == nivel %}selected{% endif %}>{{ nivel|capitalize }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-6">
+            <label class="form-label">Usuario</label>
+            <input type="text" name="usuario" class="form-control" placeholder="Email o nombre" value="{{ request.args.get('usuario', '') }}">
+        </div>
+        <div class="col-md-2 col-sm-6">
+            <label class="form-label">Fecha desde</label>
+            <input type="date" name="fecha_desde" class="form-control" value="{{ request.args.get('fecha_desde', '') }}">
+        </div>
+        <div class="col-md-2 col-sm-6">
+            <label class="form-label">Fecha hasta</label>
+            <input type="date" name="fecha_hasta" class="form-control" value="{{ request.args.get('fecha_hasta', '') }}">
+        </div>
+        <div class="col-md-2 col-sm-6">
+            <label class="form-label">&nbsp;</label>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">
+                    <i class="fas fa-search"></i> Aplicar
+                </button>
+                <a href="{{ url_for('admin.admin_logs') }}" class="btn btn-secondary">
+                    <i class="fas fa-eraser"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Tabla de logs -->
+<div class="table-responsive">
+    <table class="table table-hover table-log">
+        <thead class="table-light">
+            <tr>
+                <th>Fecha/Hora</th>
+                <th>Usuario</th>
+                <th>Módulo</th>
+                <th>Acción</th>
+                <th>Descripción</th>
+                <th>IP</th>
+                <th>Nivel</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs.items %}
+            <tr>
+                <td class="text-nowrap">{{ log.fecha_creacion.strftime('%d/%m/%Y %H:%M:%S') if log.fecha_creacion else '-' }}</td>
+                <td>
+                    {% if log.usuario_nombre %}
+                    <strong>{{ log.usuario_nombre }}</strong><br>
+                    <small class="text-muted">{{ log.usuario_email or '' }}</small>
+                    {% else %}
+                    <span class="text-muted"><i class="fas fa-user-secret"></i> Anónimo</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if log.modulo %}
+                    <span class="badge bg-secondary">{{ log.modulo|capitalize }}</span>
+                    {% else %}
+                    <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+                <td>{{ log.accion|replace('_', ' ')|title }}</td>
+                <td class="descripcion-cell" title="{{ log.descripcion or '' }}">
+                    {{ log.descripcion[:80] }}{% if log.descripcion and log.descripcion|length > 80 %}...{% endif %}
+                </td>
+                <td class="ip-cell"><code>{{ log.ip_address or '-' }}</code></td>
+                <td>
+                    {% if log.nivel == 'info' %}
+                    <span class="badge badge-info">info</span>
+                    {% elif log.nivel == 'warning' %}
+                    <span class="badge badge-warning">warning</span>
+                    {% elif log.nivel == 'error' %}
+                    <span class="badge badge-error">error</span>
+                    {% elif log.nivel == 'critico' %}
+                    <span class="badge badge-critico">crítico</span>
+                    {% else %}
+                    <span class="badge bg-secondary">{{ log.nivel }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center py-5">
+                    <i class="fas fa-history fa-3x text-muted mb-3 d-block"></i>
+                    <p class="text-muted">No hay logs registrados con los filtros actuales</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Paginación -->
+{% if logs.pages > 1 %}
+<nav aria-label="Paginación" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if logs.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin.admin_logs', pagina=logs.prev_num, modulo=request.args.get('modulo', ''), nivel=request.args.get('nivel', ''), usuario=request.args.get('usuario', ''), fecha_desde=request.args.get('fecha_desde', ''), fecha_hasta=request.args.get('fecha_hasta', '')) }}">
+                <i class="fas fa-chevron-left"></i> Anterior
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        {% endif %}
+        
+        {% for p in range(1, logs.pages + 1) %}
+            {% if p == logs.page %}
+            <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin.admin_logs', pagina=p, modulo=request.args.get('modulo', ''), nivel=request.args.get('nivel', ''), usuario=request.args.get('usuario', ''), fecha_desde=request.args.get('fecha_desde', ''), fecha_hasta=request.args.get('fecha_hasta', '')) }}">
+                    {{ p }}
+                </a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if logs.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin.admin_logs', pagina=logs.next_num, modulo=request.args.get('modulo', ''), nivel=request.args.get('nivel', ''), usuario=request.args.get('usuario', ''), fecha_desde=request.args.get('fecha_desde', ''), fecha_hasta=request.args.get('fecha_hasta', '')) }}">
+                Siguiente <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<script>
+    // Exportar a Excel
+    document.getElementById('exportExcelBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        const params = new URLSearchParams(window.location.search);
+        params.set('formato', 'excel');
+        window.location.href = "{{ url_for('admin.admin_logs_exportar') }}?" + params.toString();
+    });
+    
+    // Exportar a PDF
+    document.getElementById('exportPdfBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        const params = new URLSearchParams(window.location.search);
+        params.set('formato', 'pdf');
+        window.location.href = "{{ url_for('admin.admin_logs_exportar') }}?" + params.toString();
+    });
+    
+    // Auto-submit al cambiar selects
+    document.querySelectorAll('select[name="modulo"], select[name="nivel"]').forEach(select => {
+        select.addEventListener('change', () => {
+            document.getElementById('filtrosForm').submit();
+        });
+    });
+    
+    // Debounce para input de usuario
+    let timeout;
+    const usuarioInput = document.querySelector('input[name="usuario"]');
+    if (usuarioInput) {
+        usuarioInput.addEventListener('input', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                document.getElementById('filtrosForm').submit();
+            }, 500);
+        });
+    }
+    
+    // Auto-submit al cambiar fechas
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        input.addEventListener('change', () => {
+            document.getElementById('filtrosForm').submit();
+        });
+    });
+</script>
+{% endblock %}
