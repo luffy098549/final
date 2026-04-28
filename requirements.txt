@@ -21,3 +21,10 @@ typing_extensions==4.15.0
 packaging==26.0
 colorama==0.4.6
 MarkupSafe==3.0.3
+
+# Dependencias que faltaban (basado en tus errores)
+cloudinary==1.36.0
+flask-limiter==3.7.0
+flask-caching==2.3.0
+flask-migrate==4.0.7
+flask-login==0.6.3
