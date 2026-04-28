@@ -244,39 +244,35 @@ from auth import crear_usuarios_por_defecto
 from models.configuracion import Configuracion
 
 with app.app_context():
-    # En producción, usar migraciones; en desarrollo, crear tablas
     if not is_production():
         db.create_all()
-        print("✅ Tablas de base de datos creadas/verificadas (modo desarrollo)")
+        print("✅ Tablas creadas (desarrollo)")
     else:
-        # En producción, intentar crear tablas si no existen (conexión segura)
         try:
-            # Verificar si las tablas existen
-            from sqlalchemy import inspect
+            from sqlalchemy import inspect, text
+            with db.engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
             inspector = inspect(db.engine)
             existing_tables = inspector.get_table_names()
-            
             if not existing_tables:
-                print("⚠️ No se encontraron tablas en producción - creándolas...")
                 db.create_all()
-                print("✅ Tablas creadas exitosamente")
+                print("✅ Tablas creadas en producción")
             else:
-                print(f"✅ Modo producción - {len(existing_tables)} tablas existentes")
+                print(f"✅ {len(existing_tables)} tablas existentes")
         except Exception as e:
-            print(f"⚠️ Error verificando tablas: {e}")
-            # Intentar crear igualmente
-            try:
-                db.create_all()
-                print("✅ Tablas creadas después de error")
-            except Exception as create_error:
-                print(f"❌ Error crítico creando tablas: {create_error}")
-    
-    # Crear usuarios por defecto
-    crear_usuarios_por_defecto()
-    print("✅ Usuarios por defecto creados/verificados")
-    
-    # Inicializar configuración
-    init_default_config()
+            print(f"⚠️ BD no disponible al iniciar: {e}")
+            print("⚠️ La app iniciará sin verificar tablas")
+
+    try:
+        crear_usuarios_por_defecto()
+        print("✅ Usuarios por defecto creados/verificados")
+    except Exception as e:
+        print(f"⚠️ No se pudieron crear usuarios por defecto: {e}")
+
+    try:
+        init_default_config()
+    except Exception as e:
+        print(f"⚠️ No se pudo inicializar config: {e}")
 
 # ================================================================
 # 14. CABECERAS DE RENDIMIENTO Y SEGURIDAD
@@ -2179,3 +2175,5 @@ if __name__ == "__main__":
         port=port,
         use_reloader=app.debug
     )
+
+    
