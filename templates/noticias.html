@@ -5,454 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noticias - Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* ===== ESTILOS COMPLETOS PARA NOTICIAS ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8fafc;
-            color: #1e293b;
-        }
-
-        /* Header */
-        .main-header {
-            background: #1a472a;
-            color: white;
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .main-header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .logo a {
-            display: flex;
-            align-items: center;
-        }
-
-        .main-nav ul {
-            display: flex;
-            list-style: none;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .main-nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .main-nav a:hover, .main-nav a.active {
-            color: #ffd700;
-        }
-
-        .btn-login, .btn-registro, .btn-logout {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-        }
-
-        .btn-login {
-            background: #ffd700;
-            color: #1a472a !important;
-        }
-
-        .btn-registro {
-            background: transparent;
-            border: 1px solid #ffd700;
-        }
-
-        .btn-logout {
-            background: #dc2626;
-        }
-
-        /* Page Header */
-        .page-header {
-            background: linear-gradient(135deg, #1a472a, #2d6a4f);
-            color: white;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .page-header-eyebrow {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.9;
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            margin: 1rem 0;
-        }
-
-        .page-header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Filtro de categorías */
-        .categorias-filtro {
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            margin-bottom: 2rem;
-            position: sticky;
-            top: 80px;
-            z-index: 10;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .categorias-filtro .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
-            justify-content: center;
-        }
-
-        .categoria-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1.2rem;
-            border-radius: 2rem;
-            font-size: 0.85rem;
-            font-weight: 500;
-            text-decoration: none;
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .categoria-btn i {
-            font-size: 0.85rem;
-        }
-
-        .categoria-btn:hover {
-            background: #e2e8f0;
-            transform: translateY(-2px);
-        }
-
-        .categoria-btn.active {
-            background: #1a472a;
-            border-color: #1a472a;
-            color: white;
-        }
-
-        /* Grid de noticias */
-        .noticias-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-
-        .noticia-card {
-            background: white;
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .noticia-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-        }
-
-        .noticia-imagen {
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .noticia-imagen img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .noticia-card:hover .noticia-imagen img {
-            transform: scale(1.05);
-        }
-
-        .imagen-placeholder {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: #94a3b8;
-        }
-
-        .noticia-body {
-            padding: 1.5rem;
-        }
-
-        .noticia-meta {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .noticia-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 2rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .noticia-fecha {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-
-        .noticia-body h2 {
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-            color: #1e293b;
-            line-height: 1.4;
-        }
-
-        .noticia-body p {
-            color: #475569;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .noticia-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: #1a472a;
-            color: white;
-            text-decoration: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .btn:hover {
-            background: #2d6a4f;
-        }
-
-        .like-btn {
-            background: transparent;
-            border: 1px solid #e2e8f0;
-            border-radius: 2rem;
-            padding: 0.4rem 1rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-            color: #64748b;
-        }
-
-        .like-btn:hover {
-            border-color: #ef4444;
-            color: #ef4444;
-        }
-
-        .like-btn.liked {
-            background: #ef4444;
-            border-color: #ef4444;
-            color: white;
-        }
-
-        .like-count {
-            font-weight: 600;
-        }
-
-        /* Sin noticias */
-        .no-noticias {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 1rem;
-            border: 2px dashed #cbd5e1;
-            margin: 2rem;
-        }
-
-        .no-noticias i {
-            font-size: 3rem;
-            color: #94a3b8;
-            margin-bottom: 1rem;
-        }
-
-        .no-noticias p {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #475569;
-        }
-
-        /* Paginación */
-        .paginacion {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding: 1.5rem 0;
-            margin-top: 1rem;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .paginacion-info {
-            font-size: 0.85rem;
-            color: #64748b;
-        }
-
-        .paginacion-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .page-btn, .page-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.85rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s;
-            background: white;
-            border: 1px solid #e2e8f0;
-            color: #475569;
-            min-width: 2.5rem;
-        }
-
-        .page-btn:hover, .page-number:hover {
-            background: #f1f5f9;
-            border-color: #1a472a;
-            color: #1a472a;
-        }
-
-        .page-number.active {
-            background: #1a472a;
-            border-color: #1a472a;
-            color: white;
-        }
-
-        .page-btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        /* Footer */
-        footer {
-            background: #0f2c1d;
-            color: #e2e8f0;
-            padding: 3rem 0 1rem;
-            margin-top: 3rem;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-info h3, .footer-links h3, .footer-contact h3 {
-            margin-bottom: 1rem;
-            color: #ffd700;
-        }
-
-        .footer-links ul {
-            list-style: none;
-        }
-
-        .footer-links a, .footer-contact a {
-            color: #cbd5e1;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover, .footer-contact a:hover {
-            color: #ffd700;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #2d6a4f;
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 768px) {
-            .main-header .container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            .main-nav ul {
-                justify-content: center;
-            }
-            .noticias-grid {
-                grid-template-columns: 1fr;
-                padding: 1rem;
-            }
-            .page-header h1 {
-                font-size: 1.75rem;
-            }
-            .categorias-filtro .container {
-                padding: 0.75rem 1rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/noticias.css') }}?v=5">
+   
 </head>
 <body>
 
@@ -474,7 +28,7 @@
                 <li><a href="/noticias" class="active">Noticias</a></li>
                 <li><a href="/contacto">Contacto</a></li>
                 {% if logged %}
-                    <li><a href="/mi-cuenta">Mi Cuenta</a></li>
+                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
                     <li><a href="/mis-solicitudes">Mis solicitudes</a></li>
                     <li><a href="/mis-denuncias">Mis denuncias</a></li>
                     <li><a href="/logout" class="btn-logout">Salir</a></li>
@@ -499,27 +53,30 @@
     <!-- FILTRO DE CATEGORÍAS -->
     <div class="categorias-filtro">
         <div class="container">
-            <a href="/noticias" class="categoria-btn {% if not categoria_actual %}active{% endif %}">
-                <i class="fas fa-newspaper"></i> Todas
-            </a>
+            <a href="/noticias" class="categoria-btn {% if not categoria_actual %}active{% endif %}">Todas</a>
             {% for cat in categorias %}
             <a href="/noticias?categoria={{ cat.slug }}" 
-               class="categoria-btn {% if categoria_actual and categoria_actual.id == cat.id %}active{% endif %}">
-                <i class="fas fa-tag"></i>
+               class="categoria-btn {% if categoria_actual and categoria_actual.id == cat.id %}active{% endif %}"
+               style="--cat-color: {{ cat.color }};">
+                <i class="fas fa-{{ cat.icono }}"></i>
                 {{ cat.nombre }}
             </a>
             {% endfor %}
         </div>
     </div>
 
-    <!-- GRID NOTICIAS -->
-    <div class="noticias-grid">
+    <!-- GRID NOTICIAS DINÁMICAS -->
+    <section class="noticias-grid" id="noticias">
+
         {% if noticias %}
             {% for noticia in noticias %}
-            <article class="noticia-card" data-slug="{{ noticia.slug }}">
+            <article class="noticia-card" 
+                     data-slug="{{ noticia.slug }}"
+                     data-likes="{{ noticia.likes.count() if noticia.likes else 0 }}"
+                     data-liked="false">
                 <div class="noticia-imagen">
                     {% if noticia.imagen_url %}
-                    <img src="{{ noticia.imagen_url }}" alt="{{ noticia.titulo }}" loading="lazy">
+                    <img src="{{ noticia.imagen_url }}" alt="{{ noticia.titulo }}">
                     {% else %}
                     <div class="imagen-placeholder">
                         <i class="fas fa-newspaper"></i>
@@ -529,86 +86,103 @@
                 <div class="noticia-body">
                     <div class="noticia-meta">
                         {% if noticia.categoria %}
-                        <span class="noticia-tag" style="background: {{ noticia.categoria.color }}20; color: {{ noticia.categoria.color }};">
-                            <i class="fas fa-tag"></i>
+                        <span class="noticia-tag" style="background-color: {{ noticia.categoria.color }}20; color: {{ noticia.categoria.color }};">
+                            <i class="fas fa-{{ noticia.categoria.icono }}"></i>
                             {{ noticia.categoria.nombre }}
                         </span>
                         {% endif %}
                         <span class="noticia-fecha">
                             <i class="far fa-calendar-alt"></i>
-                            {{ noticia.fecha_publicacion.strftime('%d/%m/%Y') if noticia.fecha_publicacion else 'Próximamente' }}
+                        {{ noticia.fecha_publicacion.strftime('%d/%m/%Y') if noticia.fecha_publicacion else 'Próximamente' }}
                         </span>
                     </div>
                     <h2>{{ noticia.titulo }}</h2>
                     <p>{{ noticia.resumen[:150] }}{% if noticia.resumen|length > 150 %}...{% endif %}</p>
                     <div class="noticia-footer">
-                        <a href="/noticias/{{ noticia.slug }}" class="btn">
-                            Leer más <i class="fas fa-arrow-right"></i>
-                        </a>
-                        <button class="like-btn" data-slug="{{ noticia.slug }}">
-                            <i class="far fa-heart"></i>
-                            <span class="like-count">{{ noticia.likes.count() if noticia.likes else 0 }}</span>
-                            <span class="like-text">Me gusta</span>
-                        </button>
+                        <a href="/noticias/{{ noticia.slug }}" class="btn">Leer más <i class="fas fa-arrow-right"></i></a>
+                        <div class="like-container">
+                            <button class="like-btn" 
+                                    data-slug="{{ noticia.slug }}"
+                                    data-liked="false" 
+                                    data-likes="{{ noticia.likes.count() if noticia.likes else 0 }}">
+                                <i class="far fa-heart"></i>
+                                <span class="like-count">{{ noticia.likes.count() if noticia.likes else 0 }}</span>
+                                <span class="like-text">Me gusta</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </article>
             {% endfor %}
         {% else %}
             <div class="no-noticias">
-                <i class="fas fa-newspaper"></i>
+                <i class="fas fa-newspaper fa-3x"></i>
                 <p>No hay noticias publicadas aún.</p>
                 <span>Próximamente compartiremos las últimas novedades de nuestro municipio.</span>
             </div>
         {% endif %}
 
-        <!-- PAGINACIÓN -->
+        <!-- PAGINACIÓN DINÁMICA -->
         {% if paginacion and paginacion.total_paginas > 1 %}
-        <div class="paginacion">
+        <div class="paginacion noticias-stats">
             <div class="paginacion-info">
                 Mostrando <strong>{{ noticias|length }}</strong> de <strong>{{ paginacion.total }}</strong> noticias
             </div>
             <div class="paginacion-buttons">
                 {% if paginacion.tiene_anterior %}
                 <a href="?pagina={{ paginacion.pagina - 1 }}{% if categoria_actual %}&categoria={{ categoria_actual.slug }}{% endif %}" 
-                   class="page-btn">
+                   class="page-btn prev">
                     <i class="fas fa-chevron-left"></i> Anterior
                 </a>
                 {% else %}
-                <span class="page-btn disabled">
+                <span class="page-btn prev disabled">
                     <i class="fas fa-chevron-left"></i> Anterior
                 </span>
                 {% endif %}
 
-                {% for p in range(1, paginacion.total_paginas + 1) %}
-                    {% if p == paginacion.pagina %}
-                    <span class="page-number active">{{ p }}</span>
-                    {% elif p >= paginacion.pagina - 2 and p <= paginacion.pagina + 2 %}
-                    <a href="?pagina={{ p }}{% if categoria_actual %}&categoria={{ categoria_actual.slug }}{% endif %}" class="page-number">{{ p }}</a>
-                    {% elif p == 1 or p == paginacion.total_paginas %}
-                    <a href="?pagina={{ p }}{% if categoria_actual %}&categoria={{ categoria_actual.slug }}{% endif %}" class="page-number">{{ p }}</a>
-                    {% elif p == paginacion.pagina - 3 or p == paginacion.pagina + 3 %}
+                {% set start_page = [paginacion.pagina - 2, 1]|max %}
+                {% set end_page = [paginacion.pagina + 2, paginacion.total_paginas]|min %}
+                
+                {% if start_page > 1 %}
+                <a href="?pagina=1{% if categoria_actual %}&categoria={{ categoria_actual.slug }}{% endif %}" class="page-number">1</a>
+                    {% if start_page > 2 %}
                     <span class="page-dots">...</span>
                     {% endif %}
+                {% endif %}
+                
+                {% for p in range(start_page, end_page + 1) %}
+                    {% if p == paginacion.pagina %}
+                    <span class="page-number active">{{ p }}</span>
+                    {% else %}
+                    <a href="?pagina={{ p }}{% if categoria_actual %}&categoria={{ categoria_actual.slug }}{% endif %}" class="page-number">{{ p }}</a>
+                    {% endif %}
                 {% endfor %}
+                
+                {% if end_page < paginacion.total_paginas %}
+                    {% if end_page < paginacion.total_paginas - 1 %}
+                    <span class="page-dots">...</span>
+                    {% endif %}
+                <a href="?pagina={{ paginacion.total_paginas }}{% if categoria_actual %}&categoria={{ categoria_actual.slug }}{% endif %}" class="page-number">{{ paginacion.total_paginas }}</a>
+                {% endif %}
 
                 {% if paginacion.tiene_siguiente %}
                 <a href="?pagina={{ paginacion.pagina + 1 }}{% if categoria_actual %}&categoria={{ categoria_actual.slug }}{% endif %}" 
-                   class="page-btn">
+                   class="page-btn next">
                     Siguiente <i class="fas fa-chevron-right"></i>
                 </a>
                 {% else %}
-                <span class="page-btn disabled">
+                <span class="page-btn next disabled">
                     Siguiente <i class="fas fa-chevron-right"></i>
                 </span>
                 {% endif %}
             </div>
         </div>
         {% endif %}
-    </div>
+
+    </section>
 </main>
 
-<!-- FOOTER -->
+<!-- FOOTER MEJORADO - MÁS ROBUSTO -->
 <footer>
     <div class="container">
         <div class="footer-grid">
@@ -648,116 +222,267 @@
     </div>
 </footer>
 
-<script>
-    // Animación de entrada con Intersection Observer
-    (function() {
-        const cards = document.querySelectorAll('.noticia-card');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '50px' });
-        
-        cards.forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(30px)';
-            card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-            observer.observe(card);
-        });
-    })();
-
-    // Sistema de Likes
-    (function() {
-        const likeBtns = document.querySelectorAll('.like-btn');
-        
-        async function handleLike(btn) {
-            const slug = btn.getAttribute('data-slug');
-            if (!slug) return;
-            
-            const liked = btn.classList.contains('liked');
-            const icon = btn.querySelector('i:first-child');
-            const countSpan = btn.querySelector('.like-count');
-            const currentLikes = parseInt(countSpan.textContent) || 0;
-            
-            // Optimistic update
-            if (!liked) {
-                btn.classList.add('liked');
-                if (icon) icon.classList.remove('far');
-                if (icon) icon.classList.add('fas');
-                countSpan.textContent = currentLikes + 1;
-            } else {
-                btn.classList.remove('liked');
-                if (icon) icon.classList.remove('fas');
-                if (icon) icon.classList.add('far');
-                countSpan.textContent = Math.max(0, currentLikes - 1);
-            }
-            
-            try {
-                const response = await fetch(`/api/noticias/${slug}/like`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data.ok) {
-                    countSpan.textContent = data.total;
-                    if (data.liked) {
-                        btn.classList.add('liked');
-                        if (icon) icon.classList.remove('far');
-                        if (icon) icon.classList.add('fas');
-                    } else {
-                        btn.classList.remove('liked');
-                        if (icon) icon.classList.remove('fas');
-                        if (icon) icon.classList.add('far');
-                    }
-                } else {
-                    // Revert on error
-                    if (!liked) {
-                        btn.classList.remove('liked');
-                        if (icon) icon.classList.remove('fas');
-                        if (icon) icon.classList.add('far');
-                        countSpan.textContent = currentLikes;
-                    } else {
-                        btn.classList.add('liked');
-                        if (icon) icon.classList.remove('far');
-                        if (icon) icon.classList.add('fas');
-                        countSpan.textContent = currentLikes;
-                    }
-                    console.error('Error:', data.mensaje);
-                }
-            } catch (error) {
-                console.error('Error en like:', error);
-                // Revert on error
-                if (!liked) {
-                    btn.classList.remove('liked');
-                    if (icon) icon.classList.remove('fas');
-                    if (icon) icon.classList.add('far');
-                    countSpan.textContent = currentLikes;
-                } else {
-                    btn.classList.add('liked');
-                    if (icon) icon.classList.remove('far');
-                    if (icon) icon.classList.add('fas');
-                    countSpan.textContent = currentLikes;
-                }
-            }
+<!-- Estilos adicionales para el nuevo filtro de categorías y paginación -->
+<style>
+    /* Filtro de categorías */
+    .categorias-filtro {
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 2rem;
+        position: sticky;
+        top: 80px;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        background: rgba(255,255,255,0.95);
+    }
+    .categorias-filtro .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 1rem 2rem;
+        justify-content: center;
+    }
+    .categoria-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1.2rem;
+        border-radius: 3rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        background: white;
+        color: #4b5563;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+    }
+    .categoria-btn i {
+        font-size: 0.85rem;
+    }
+    .categoria-btn:hover {
+        border-color: #c8960c;
+        color: #c8960c;
+        transform: translateY(-2px);
+    }
+    .categoria-btn.active {
+        background: #2d5016;
+        border-color: #2d5016;
+        color: white;
+    }
+    
+    /* Placeholder imagen */
+    .imagen-placeholder {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #e5e7eb, #f3f4f6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        font-size: 2.5rem;
+    }
+    
+    /* Tarjetas like */
+    .noticia-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .like-container {
+        flex-shrink: 0;
+    }
+    .like-btn {
+        background: transparent;
+        border: 1px solid #e5e7eb;
+        border-radius: 2rem;
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+        color: #6b7280;
+    }
+    .like-btn:hover {
+        border-color: #e74c3c;
+        color: #e74c3c;
+    }
+    .like-btn.liked {
+        background: #e74c3c;
+        border-color: #e74c3c;
+        color: white;
+    }
+    .like-btn.liked i {
+        color: white;
+    }
+    .like-btn i {
+        transition: transform 0.2s;
+        font-size: 0.9rem;
+    }
+    .like-btn:active {
+        transform: scale(0.95);
+    }
+    .like-count {
+        font-weight: 600;
+    }
+    
+    /* Sin noticias */
+    .no-noticias {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 1rem;
+        border: 2px dashed #e5e7eb;
+        margin: 2rem 0;
+    }
+    .no-noticias i {
+        color: #c8960c;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    .no-noticias p {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 0.5rem;
+    }
+    .no-noticias span {
+        font-size: 0.9rem;
+        color: #9ca3af;
+    }
+    
+    /* Paginación */
+    .paginacion {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1.5rem 0;
+        margin-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+    }
+    .paginacion-info {
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+    .paginacion-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .page-btn, .page-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        background: white;
+        border: 1px solid #e5e7eb;
+        color: #4b5563;
+        cursor: pointer;
+        min-width: 2.5rem;
+    }
+    .page-btn i {
+        font-size: 0.75rem;
+    }
+    .page-btn:hover, .page-number:hover {
+        background: #f3f4f6;
+        border-color: #c8960c;
+        color: #c8960c;
+        transform: translateY(-2px);
+    }
+    .page-number.active {
+        background: #2d5016;
+        border-color: #2d5016;
+        color: white;
+        cursor: default;
+    }
+    .page-btn.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    .page-dots {
+        padding: 0 0.25rem;
+        color: #9ca3af;
+    }
+    
+    @media (max-width: 768px) {
+        .categorias-filtro .container {
+            padding: 0.75rem 1rem;
+            gap: 0.3rem;
         }
-        
-        likeBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleLike(btn);
-            });
+        .categoria-btn {
+            padding: 0.35rem 0.9rem;
+            font-size: 0.75rem;
+        }
+        .paginacion {
+            flex-direction: column;
+            align-items: center;
+        }
+        .noticia-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .like-container {
+            text-align: center;
+        }
+        .like-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<script src="{{ url_for('static', filename='js/noticia.js') }}"></script>
+
+<script>
+// Animación suave al hacer scroll
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.noticia-card');
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.style.opacity = '1';
+                e.target.style.transform = 'translateY(0)';
+                io.unobserve(e.target);
+            }
         });
-    })();
+    }, { threshold: 0.1 });
+    
+    cards.forEach(c => {
+        c.style.opacity = '0';
+        c.style.transform = 'translateY(20px)';
+        c.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        io.observe(c);
+    });
+    
+    // Inicializar el sistema de likes (noticia.js se encarga)
+    // Pero aseguramos que los botones tengan los atributos correctos
+    const likeBtns = document.querySelectorAll('.like-btn');
+    likeBtns.forEach(btn => {
+        const card = btn.closest('.noticia-card');
+        if (card && !btn.hasAttribute('data-slug')) {
+            const slug = card.getAttribute('data-slug');
+            if (slug) btn.setAttribute('data-slug', slug);
+        }
+        const likes = card?.getAttribute('data-likes');
+        if (likes && !btn.hasAttribute('data-likes')) {
+            btn.setAttribute('data-likes', likes);
+        }
+    });
+});
 </script>
 </body>
 </html>
