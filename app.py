@@ -1,5 +1,5 @@
 # ================================================================
-# APP.PY - VILLA CUTUPÚ MUNICIPAL SYSTEM (VERSIÓN COMPLETA - CORREGIDA PARA RENDER)
+# APP.PY - VILLA CUTUPÚ MUNICIPAL SYSTEM (VERSIÓN COMPLETA - CORREGIDA)
 # ================================================================
 
 # ================================================================
@@ -54,43 +54,39 @@ app = Flask(__name__, static_folder='static', static_url_path='/static')
 # Inicializar configuración de producción si aplica
 init_production_config()
 
-# 🔥🔥🔥 NUEVA FORMA DE CARGAR CONFIGURACIÓN (CORREGIDO PARA RENDER) 🔥🔥🔥
+# 🔥 CARGAR CONFIGURACIÓN
 app.config.update(get_flask_config())
 
-# 🔥🔥🔥 CONFIGURACIÓN DE SESIONES PARA HTTPS EN PRODUCCIÓN 🔥🔥🔥
-# Esta es la corrección principal para el problema de login en Render
+# 🔥 CONFIGURACIÓN DE SESIONES PARA HTTPS EN PRODUCCIÓN
 if is_production():
-    app.config['SESSION_COOKIE_SECURE'] = True          # Solo enviar cookie sobre HTTPS
-    app.config['SESSION_COOKIE_HTTPONLY'] = True        # No accesible via JavaScript
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'       # Protección CSRF
-    app.config['REMEMBER_COOKIE_SECURE'] = True         # Cookie de "recordarme" solo HTTPS
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['REMEMBER_COOKIE_SECURE'] = True
     app.config['REMEMBER_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_DOMAIN'] = None          # Usar dominio actual
+    app.config['SESSION_COOKIE_DOMAIN'] = None
+    app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24 horas
     print("🔒 Configuración de cookies HTTPS aplicada para producción")
 else:
-    # En desarrollo, permitir cookies sobre HTTP
     app.config['SESSION_COOKIE_SECURE'] = False
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     print("🔓 Configuración de cookies HTTP aplicada para desarrollo")
 
-# 🔥🔥🔥 PRINT OBLIGATORIO PARA DIAGNÓSTICO 🔥🔥🔥
+# 🔥 DIAGNÓSTICO DE BASE DE DATOS
 print("=" * 80)
 print("🔥 DATABASE FINAL:", app.config.get('SQLALCHEMY_DATABASE_URI', 'NO CONFIGURADA'))
 print("=" * 80)
-
-# Imprimir diagnóstico (IMPORTANTE para debug)
 print("=" * 60)
 print("📊 DIAGNÓSTICO DE BASE DE DATOS:")
 print(f"   Modo producción: {is_production()}")
 print(f"   Database URL: {app.config.get('SQLALCHEMY_DATABASE_URI', 'No configurada')[:80]}...")
 print(f"   Es PostgreSQL: {'✅' if 'postgresql' in str(app.config.get('SQLALCHEMY_DATABASE_URI', '')) else '❌'}")
 print(f"   SSL Mode: {'✅' if 'sslmode=require' in str(app.config.get('SQLALCHEMY_DATABASE_URI', '')) else '❌'}")
-print(f"   localhost detectado: {'❌ CRÍTICO!' if 'localhost' in str(app.config.get('SQLALCHEMY_DATABASE_URI', '')) else '✅ OK'}")
 print("=" * 60)
 
 # ================================================================
-# 6. CONFIGURAR CLOUDINARY (con prioridad a variables de entorno)
+# 6. CONFIGURAR CLOUDINARY
 # ================================================================
 cloudinary.config(
     cloud_name=app.config.get('CLOUDINARY_CLOUD_NAME', ''),
@@ -255,7 +251,7 @@ def init_default_config():
             print(f"✅ Configuración por defecto creada: {clave} = {valor}")
 
 # ================================================================
-# 13. CREAR TABLAS Y USUARIOS POR DEFECTO (CORREGIDO)
+# 13. CREAR TABLAS Y USUARIOS POR DEFECTO
 # ================================================================
 from auth import crear_usuarios_por_defecto
 from models.configuracion import Configuracion
@@ -278,7 +274,6 @@ with app.app_context():
                 print(f"✅ {len(existing_tables)} tablas existentes")
         except Exception as e:
             print(f"⚠️ BD no disponible al iniciar: {e}")
-            print("⚠️ La app iniciará sin verificar tablas")
 
     try:
         crear_usuarios_por_defecto()
@@ -397,27 +392,39 @@ def guardar_contacto_en_bd(nombre, email, telefono, asunto, mensaje):
         return False, str(e)
 
 # ================================================================
-# 18. FUNCIONES DE CLOUDINARY
+# 18. FUNCIONES DE CLOUDINARY (CORREGIDAS)
 # ================================================================
 def subir_foto_cloudinary(archivo, email, folder="fotos_perfil"):
     if not app.config.get('CLOUDINARY_ENABLED'):
         return {'success': False, 'error': 'Cloudinary no está configurado'}
     
     try:
+        # Validar que el archivo no esté vacío
+        if not archivo or archivo.filename == '':
+            return {'success': False, 'error': 'Archivo vacío'}
+        
+        # Leer el archivo correctamente
+        archivo.stream.seek(0)
+        file_content = archivo.read()
+        
+        if len(file_content) == 0:
+            return {'success': False, 'error': 'El archivo está vacío'}
+        
+        # Crear nombre único
         if email is None:
             email_str = "usuario"
         else:
-            email_str = str(email)
-
-        email_str = email_str.replace(' ', '_').replace('@', '_').replace('.', '_')
+            email_str = str(email).replace(' ', '_').replace('@', '_').replace('.', '_')
+        
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         public_id = f"{folder}/{email_str}_{timestamp}"
         
-        print(f"📤 Subiendo a Cloudinary con public_id: {public_id}")
-        archivo.stream.seek(0)
+        print(f"📤 Subiendo a Cloudinary - Public ID: {public_id}")
+        print(f"📤 Tamaño del archivo: {len(file_content)} bytes")
         
+        # Subir a Cloudinary
         upload_result = cloudinary.uploader.upload(
-            archivo.stream,
+            file_content,
             public_id=public_id,
             folder=folder,
             overwrite=True,
@@ -426,6 +433,8 @@ def subir_foto_cloudinary(archivo, email, folder="fotos_perfil"):
                 {"fetch_format": "auto", "quality": "auto"}
             ]
         )
+        
+        print(f"✅ Subida exitosa: {upload_result.get('secure_url')}")
         
         return {
             'success': True,
@@ -484,11 +493,21 @@ SERVICIOS_CITAS = {
 }
 
 # ================================================================
-# 20. CONTEXTO GLOBAL DE TEMPLATES
+# 20. CONTEXTO GLOBAL DE TEMPLATES (CON VERIFICACIÓN DE SESIÓN)
 # ================================================================
 @app.context_processor
 def inject_global_variables():
     from models.configuracion import Configuracion
+    
+    # VERIFICAR QUE LA SESIÓN SEA VÁLIDA
+    if "user" in session:
+        from models.usuario import Usuario
+        email = session.get("user")
+        if email:
+            usuario = Usuario.query.filter_by(email=email).first()
+            if not usuario:
+                # Usuario no existe en BD, limpiar sesión
+                session.clear()
     
     config = {
         'nombre_municipio': Configuracion.get('nombre_municipio', 'Villa Cutupú'),
@@ -646,16 +665,12 @@ for route_name, (url_path, template_name) in _TRANSPARENCIA.items():
     app.add_url_rule(url_path, route_name, create_transparency_view(template_name))
 
 # ================================================================
-# 23. NOTICIAS Y CONTACTO PÚBLICO (RUTAS COMPLETAS CORREGIDAS)
+# 23. NOTICIAS Y CONTACTO PÚBLICO
 # ================================================================
 
-# ================================================================
-# 23.1 NOTICIAS - LISTADO PAGINADO
-# ================================================================
 @app.route("/noticias")
 @cache_response(timeout=180)
 def noticias():
-    """Lista paginada de noticias"""
     from models.noticia import Noticia, CategoriaNoticia
     
     pagina = request.args.get('pagina', 1, type=int)
@@ -688,12 +703,8 @@ def noticias():
         categoria_actual=categoria_actual
     )
 
-# ================================================================
-# 23.2 NOTICIAS - DETALLE
-# ================================================================
 @app.route("/noticias/<slug>")
 def detalle_noticia(slug):
-    """Detalle de una noticia"""
     from models.noticia import Noticia
     from models.comentario_noticia import ComentarioNoticia
     from models.like_noticia import LikeNoticia
@@ -720,13 +731,9 @@ def detalle_noticia(slug):
         ya_dio_like=ya_dio_like
     )
 
-# ================================================================
-# 23.3 API - LIKE/NOTICIA (TOGGLE)
-# ================================================================
 @app.route("/api/noticias/<slug>/like", methods=["POST"])
 @limiter.limit("30 per minute")
 def api_noticia_like(slug):
-    """Toggle like en una noticia"""
     from models.noticia import Noticia
     from models.like_noticia import LikeNoticia
     from models.log_actividad import registrar_log
@@ -770,13 +777,9 @@ def api_noticia_like(slug):
         traceback.print_exc()
         return jsonify({'ok': False, 'mensaje': str(e)}), 500
 
-# ================================================================
-# 23.4 API - COMENTAR/NOTICIA
-# ================================================================
 @app.route("/api/noticias/<slug>/comentar", methods=["POST"])
 @limiter.limit("10 per minute")
 def api_noticia_comentar(slug):
-    """Agregar un comentario a una noticia"""
     from models.noticia import Noticia
     from models.comentario_noticia import ComentarioNoticia
     from models.log_actividad import registrar_log
@@ -834,9 +837,6 @@ def api_noticia_comentar(slug):
         traceback.print_exc()
         return jsonify({'ok': False, 'mensaje': str(e)}), 500
 
-# ================================================================
-# 23.5 CONTACTO PÚBLICO
-# ================================================================
 @app.route("/contacto", methods=["GET"])
 def contacto():
     return render_template("contacto.html")
@@ -863,9 +863,6 @@ def enviar_contacto():
     
     return redirect(url_for("contacto"))
 
-# ================================================================
-# 23.6 ARCHIVOS SUBIDOS
-# ================================================================
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
     return send_from_directory(os.path.join(app.root_path, 'static', 'uploads'), filename)
@@ -892,6 +889,7 @@ def mi_cuenta():
     
     if not usuario:
         flash("Usuario no encontrado.", "error")
+        session.clear()
         return redirect(url_for("index"))
     
     try:
@@ -1195,7 +1193,6 @@ def mis_tramites():
         import traceback
         traceback.print_exc()
     
-    # Función robusta para obtener la fecha como datetime
     def get_fecha_comparable(item):
         fecha = item.get('fecha')
         if fecha is None:
@@ -1214,7 +1211,6 @@ def mis_tramites():
                 return dt.min
         return dt.min
     
-    # Normalizar fecha_creacion como string en todos los trámites
     for t in tramites:
         fecha = t.get('fecha')
         if fecha is None:
@@ -1226,10 +1222,8 @@ def mis_tramites():
         else:
             t['fecha_creacion'] = str(fecha)
 
-    # Ordenar usando la función robusta
     tramites.sort(key=get_fecha_comparable, reverse=True)
 
-    # Estadísticas
     stats = {
         'total': len(tramites),
         'solicitudes': len([t for t in tramites if t['tipo'] == 'solicitud']),
@@ -1498,23 +1492,35 @@ def procesar_consulta():
     flash("⚠️ Funcionalidad de consultas en desarrollo. Próximamente disponible.", "warning")
     return redirect(url_for('servicios'))
 
+# ================================================================
+# 27.5 SOLICITAR CITA - CORREGIDA
+# ================================================================
 @app.route("/solicitar-cita", methods=["GET", "POST"])
 @login_required
 def solicitar_cita():
     from models.cita import Cita
     from models.usuario import Usuario
     
+    # Debug
+    print(f"🔍 [CITA] Session user: {session.get('user')}")
+    print(f"🔍 [CITA] Session keys: {list(session.keys())}")
+    
     email = session.get("user")
     
     if not email:
-        flash("No hay sesión activa.", "error")
+        print("❌ No hay email en sesión")
+        flash("No hay sesión activa. Por favor inicia sesión nuevamente.", "error")
         return redirect(url_for("auth.login"))
     
     usuario = Usuario.query.filter_by(email=email).first()
     
     if not usuario:
-        flash("Usuario no encontrado.", "error")
-        return redirect(url_for("index"))
+        print(f"❌ Usuario no encontrado: {email}")
+        flash("Usuario no encontrado. Por favor contacta al administrador.", "error")
+        session.clear()
+        return redirect(url_for("auth.login"))
+    
+    print(f"✅ Usuario encontrado: {usuario.email}")
     
     if request.method == "POST":
         try:
@@ -1523,6 +1529,8 @@ def solicitar_cita():
             hora = request.form.get("hora")
             motivo = request.form.get("motivo", "")
             
+            print(f"📝 Datos cita: servicio={servicio}, fecha={fecha}, hora={hora}")
+            
             if not all([servicio, fecha, hora]):
                 flash("❌ Todos los campos obligatorios deben completarse.", "error")
                 return render_template("citas/solicitar_cita.html", 
@@ -1530,6 +1538,7 @@ def solicitar_cita():
                                      servicios=SERVICIOS_CITAS,
                                      now=datetime.now())
             
+            # Verificar disponibilidad
             cita_existente = Cita.query.filter_by(
                 servicio=servicio,
                 fecha=fecha,
@@ -1544,6 +1553,7 @@ def solicitar_cita():
                                      servicios=SERVICIOS_CITAS,
                                      now=datetime.now())
             
+            # Crear cita
             nueva_cita = Cita(
                 folio=Cita.generar_folio(),
                 usuario_email=email,
@@ -1559,12 +1569,16 @@ def solicitar_cita():
             db.session.add(nueva_cita)
             db.session.commit()
             
+            print(f"✅ Cita creada: {nueva_cita.folio}")
             flash(f"✅ Cita solicitada exitosamente. Tu folio es: {nueva_cita.folio}", "success")
             return redirect(url_for("mis_citas"))
+            
         except Exception as e:
             db.session.rollback()
-            print(f"Error al crear cita: {e}")
-            flash("❌ Error al procesar la solicitud.", "error")
+            print(f"❌ Error al crear cita: {e}")
+            import traceback
+            traceback.print_exc()
+            flash(f"❌ Error al procesar la solicitud: {str(e)}", "error")
     
     return render_template("citas/solicitar_cita.html", 
                          usuario=usuario,
