@@ -307,7 +307,7 @@ def set_performance_headers(response):
     return response
 
 # ================================================================
-# 15. DECORADOR CACHÉ DE API
+# 15. DECORADOR CACHÉ DE API (SOLO PARA APIS)
 # ================================================================
 def cache_response(timeout=300, key_prefix='api'):
     def decorator(f):
@@ -546,30 +546,25 @@ def inject_global_variables():
     )
 
 # ================================================================
-# 21. RUTAS PÚBLICAS
+# 21. RUTAS PÚBLICAS (CORREGIDO - SIN CACHÉ)
 # ================================================================
 @app.route("/")
-@cache_response(timeout=60)
 def index():
     return render_template("index.html")
 
 @app.route("/municipio")
-@cache_response(timeout=300)
 def municipio():
     return render_template("municipio.html")
 
 @app.route("/servicios")
-@cache_response(timeout=300)
 def servicios():
     return render_template("servicios.html")
 
 @app.route("/bitacora")
-@cache_response(timeout=300)
 def bitacora():
     return render_template("bitacora.html")
 
 @app.route("/mapa")
-@cache_response(timeout=60)
 def mapa_incidencias():
     try:
         from models import Denuncia
@@ -640,7 +635,7 @@ def detalle_denuncia_publica(denuncia_id):
         return redirect(url_for('mapa_incidencias'))
 
 # ================================================================
-# 22. TRANSPARENCIA - RUTAS
+# 22. TRANSPARENCIA - RUTAS (CORREGIDO - SIN CACHÉ)
 # ================================================================
 _TRANSPARENCIA = {
     "transparencia": ("/transparencia", "transparencia.html"),
@@ -656,7 +651,6 @@ _TRANSPARENCIA = {
 }
 
 def create_transparency_view(template_name):
-    @cache_response(timeout=300)
     def view():
         return render_template(template_name)
     return view
@@ -665,11 +659,10 @@ for route_name, (url_path, template_name) in _TRANSPARENCIA.items():
     app.add_url_rule(url_path, route_name, create_transparency_view(template_name))
 
 # ================================================================
-# 23. NOTICIAS Y CONTACTO PÚBLICO
+# 23. NOTICIAS Y CONTACTO PÚBLICO (CORREGIDO - SIN CACHÉ)
 # ================================================================
 
 @app.route("/noticias")
-@cache_response(timeout=180)
 def noticias():
     from models.noticia import Noticia, CategoriaNoticia
     
@@ -1615,7 +1608,7 @@ def cancelar_cita(cita_id):
     return redirect(url_for("mis_citas"))
 
 # ================================================================
-# 28. APIs
+# 28. APIs (CON CACHÉ - ESTÁ BIEN PORQUE SON DATOS PÚBLICOS)
 # ================================================================
 @app.route("/api/horarios-disponibles")
 @login_required
@@ -1650,6 +1643,7 @@ def horarios_disponibles():
     })
 
 @app.route("/api/configuracion")
+@cache_response(timeout=300)
 def api_configuracion():
     from models.configuracion import Configuracion
     
