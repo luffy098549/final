@@ -1,4 +1,4 @@
-# admin.py - VERSIÓN COMPLETA CON RUTAS DE NOTICIAS Y LOGS
+# admin.py - VERSIÓN COMPLETA CON RUTAS DE NOTICIAS Y LOGS (CORREGIDO)
 """
 Blueprint de administración profesional.
 Maneja todas las funciones exclusivas de administradores.
@@ -239,6 +239,16 @@ def agregar_fecha_formateada(objeto):
     if hasattr(objeto, 'fecha_creacion'):
         objeto.fecha_str = formatear_fecha_para_template(objeto.fecha_creacion)
     return objeto
+
+
+def sanitizar_comentarios_admin(denuncia):
+    """Sanitiza los comentarios_admin para que todas las fechas sean strings"""
+    comentarios = denuncia.comentarios_admin or []
+    for c in comentarios:
+        if isinstance(c.get('fecha'), datetime):
+            c['fecha'] = c['fecha'].isoformat()
+    denuncia.comentarios_admin = comentarios
+    return denuncia
 
 
 # ================================================================
@@ -558,7 +568,7 @@ def eliminar_solicitud(solicitud_id):
 
 
 # ================================================================
-# GESTIÓN DE DENUNCIAS
+# GESTIÓN DE DENUNCIAS (CORREGIDO)
 # ================================================================
 
 @admin_bp.route("/denuncias")
@@ -567,6 +577,9 @@ def eliminar_solicitud(solicitud_id):
 def listar_denuncias():
     try:
         denuncias = Denuncia.query.all()
+        # Sanitizar comentarios de todas las denuncias para evitar errores en el template
+        for d in denuncias:
+            sanitizar_comentarios_admin(d)
     except:
         denuncias = []
     
@@ -616,11 +629,15 @@ def listar_denuncias():
 @admin_required
 @permiso_requerido(Permiso.VER_DENUNCIAS)
 def detalle_denuncia(denuncia_id):
+    """Ver detalle de una denuncia específica"""
     try:
         denuncia = Denuncia.query.get(denuncia_id)
         if not denuncia:
             flash("Denuncia no encontrada.", "error")
             return redirect(url_for("admin.listar_denuncias"))
+        
+        # ✅ SANITIZAR comentarios_admin para que todas las fechas sean strings
+        denuncia = sanitizar_comentarios_admin(denuncia)
         
         categorias = {
             'solicitud': 'Solicitudes',
@@ -668,14 +685,17 @@ def actualizar_denuncia(denuncia_id):
             denuncia.estado = nuevo_estado
             denuncia.fecha_actualizacion = datetime.utcnow()
             
+            # ✅ CORRECCIÓN: Usar flag_modified para que SQLAlchemy detecte cambios en JSON
             if comentario:
-                if not hasattr(denuncia, 'comentarios_admin'):
-                    denuncia.comentarios_admin = []
-                denuncia.comentarios_admin.append({
-                    'fecha': datetime.now().isoformat(),
+                from sqlalchemy.orm.attributes import flag_modified
+                comentarios_actuales = list(denuncia.comentarios_admin or [])
+                comentarios_actuales.append({
+                    'fecha': datetime.now().isoformat(),  # Siempre string, no datetime
                     'admin': admin_email,
                     'comentario': comentario
                 })
+                denuncia.comentarios_admin = comentarios_actuales
+                flag_modified(denuncia, 'comentarios_admin')  # Fuerza a SQLAlchemy a detectar el cambio
             
             db.session.commit()
             
@@ -689,6 +709,7 @@ def actualizar_denuncia(denuncia_id):
         
         return redirect(url_for("admin.detalle_denuncia", denuncia_id=denuncia.id))
     except Exception as e:
+        db.session.rollback()
         flash(f"Error al actualizar: {str(e)}", "error")
         return redirect(url_for("admin.listar_denuncias"))
 
@@ -1194,7 +1215,7 @@ def admin_encuestas():
 
 
 # ================================================================
-# NOTICIAS - ADMINISTRACIÓN (CORREGIDO - USA admin/noticias.html)
+# NOTICIAS - ADMINISTRACIÓN
 # ================================================================
 
 @admin_bp.route("/noticias")
