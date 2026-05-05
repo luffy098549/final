@@ -510,7 +510,8 @@
     });
 
     // ===== NOTIFICACIONES =====
-    {% if logged %}
+  // @ts-nocheck
+{% if logged %}
     const NOTIF_KEY = 'notif_leidas_{{ session.get("user", "") | replace("@","_") | replace(".","_") }}';
 
     function getLeidas() {

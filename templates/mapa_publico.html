@@ -412,7 +412,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Datos de las denuncias
-        const denuncias = {{ denuncias|tojson|safe }};
+let denuncias = JSON.parse('{{ denuncias | tojson | safe }}');
         
         // Inicializar mapa
         let map;

@@ -86,7 +86,8 @@
                 <div class="noticia-body">
                     <div class="noticia-meta">
                         {% if noticia.categoria %}
-                        <span class="noticia-tag" style="background-color: {{ noticia.categoria.color }}20; color: {{ noticia.categoria.color }};">
+                       <span class="noticia-tag" 
+      style="--color: {{ noticia.categoria.color }};">
                             <i class="fas fa-{{ noticia.categoria.icono }}"></i>
                             {{ noticia.categoria.nombre }}
                         </span>
@@ -485,4 +486,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
-</html>
+</html

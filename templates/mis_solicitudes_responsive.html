@@ -138,10 +138,8 @@
 {% block extra_js %}
 <script>
 // ✅ CORREGIDO: Verificar si existe la variable
-let solicitudes = [];
-{% if solicitudes_json %}
-    solicitudes = {{ solicitudes_json|safe }};
-{% else %}
+
+let solicitudes = JSON.parse('{{ solicitudes_json | default("[]") | safe }}');
     console.log('No hay solicitudes_json, usando datos de la tabla');
     // Extraer datos de la tabla como fallback
     document.querySelectorAll('#solicitudesTable tbody tr').forEach(row => {
@@ -151,7 +149,7 @@ let solicitudes = [];
             solicitudes.push({ folio, usuario });
         }
     });
-{% endif %}
+
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Solicitudes cargadas:', solicitudes.length);

@@ -65,9 +65,8 @@
 <script>
 let map;
 let markers = [];
-let denuncias = {{ denuncias|tojson }};
-let tipos = {{ tipos|tojson }};
-
+let denuncias = JSON.parse('{{ denuncias | tojson | safe }}');
+let tipos = JSON.parse('{{ tipos | tojson | safe }}');
 // Inicializar mapa
 function initMap() {
     // Centro aproximado de Villa Cutupú

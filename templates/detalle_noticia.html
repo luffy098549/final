@@ -17,16 +17,15 @@
         .noticia-header {
             margin-bottom: 2rem;
         }
-        .noticia-categoria {
-            display: inline-block;
-            background: {{ noticia.categoria.color if noticia.categoria else '#2D5016' }};
-            color: white;
-            padding: 0.3rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
+      .noticia-categoria {
+    display: inline-block;
+    color: white;
+    padding: 0.3rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
         .noticia-titulo {
             font-family: 'Playfair Display', serif;
             font-size: clamp(1.8rem, 5vw, 2.8rem);
@@ -340,7 +339,7 @@
     <article class="detalle-noticia">
         <div class="noticia-header">
             {% if noticia.categoria %}
-            <span class="noticia-categoria" style="background-color: {{ noticia.categoria.color }}">
+         <span class="noticia-categoria" style="--color: {{ noticia.categoria.color }}">
                 <i class="fas fa-{{ noticia.categoria.icono }}"></i> {{ noticia.categoria.nombre }}
             </span>
             {% endif %}

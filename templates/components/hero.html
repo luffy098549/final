@@ -76,9 +76,8 @@
                      data-label="{{ photo.label }}"
                      data-place="{{ photo.place }}"
                      data-url="{{ url_for('static', filename='img/' ~ photo.file) }}">
-                    <div class="cine-bg"
-                         style="background-image:url('{{ url_for('static', filename='img/' ~ photo.file) }}')">
-                    </div>
+                   <div class="cine-bg"
+     style="--bg: url({{ url_for('static', filename='img/' ~ photo.file) }})">
                     <div class="cine-gradient"></div>
                     <div class="cine-overlay-effect"></div>
                 </div>
@@ -188,6 +187,9 @@
     --smooth: cubic-bezier(0.2, 0.9, 0.4, 1.1);
     --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.cine-bg {
+    background-image: var(--bg);
 }
 
 .hero {

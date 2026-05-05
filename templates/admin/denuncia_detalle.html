@@ -634,15 +634,29 @@
                             </div>
                             <div class="info-value">{{ denuncia.folio }}</div>
                         </div>
+
+                        {# ============================================================ #}
+                        {# FECHA CORREGIDA: usa strftime si es datetime, slice si es str #}
+                        {# ============================================================ #}
                         <div class="info-item">
                             <div class="info-label">
                                 <i class="fas fa-calendar"></i> Fecha de Creación
                             </div>
                             <div class="info-value">
-                                {{ denuncia.fecha_creacion[:10] }}<br>
-                                <small class="text-muted">{{ denuncia.fecha_creacion[11:16] }}</small>
+                                {% if denuncia.fecha_creacion %}
+                                    {% if denuncia.fecha_creacion is string %}
+                                        {{ denuncia.fecha_creacion[:10] }}<br>
+                                        <small class="text-muted">{{ denuncia.fecha_creacion[11:16] }}</small>
+                                    {% else %}
+                                        {{ denuncia.fecha_creacion.strftime('%d/%m/%Y') }}<br>
+                                        <small class="text-muted">{{ denuncia.fecha_creacion.strftime('%H:%M') }}</small>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">Sin fecha</span>
+                                {% endif %}
                             </div>
                         </div>
+
                         <div class="info-item">
                             <div class="info-label">
                                 <i class="fas fa-tag"></i> Tipo
@@ -666,7 +680,7 @@
                             </div>
                             <div class="direccion-box">
                                 <i class="fas fa-location-dot"></i>
-                                {{ denuncia.direccion }}
+                                {{ denuncia.direccion or 'No especificada' }}
                             </div>
                         </div>
                         <div class="info-item full-width">
@@ -700,9 +714,12 @@
                                             <i class="fas fa-user-shield"></i>
                                             {{ comentario.admin or 'Sistema' }}
                                         </span>
+                                        {# comentario.fecha siempre es string (viene de .isoformat()) #}
                                         <span class="timeline-date">
                                             <i class="far fa-clock"></i>
-                                            {{ comentario.fecha[:10] }} {{ comentario.fecha[11:16] }}
+                                            {% if comentario.fecha %}
+                                                {{ comentario.fecha[:10] }} {{ comentario.fecha[11:16] }}
+                                            {% endif %}
                                         </span>
                                     </div>
                                     <div class="timeline-text">
@@ -820,14 +837,14 @@
                                 <i class="fas fa-user-circle"></i>
                                 <div class="info">
                                     <span class="label">Nombre</span>
-                                    <span class="value">{{ denuncia.usuario_nombre }}</span>
+                                    <span class="value">{{ denuncia.usuario_nombre or 'No especificado' }}</span>
                                 </div>
                             </div>
                             <div class="user-info-item">
                                 <i class="fas fa-envelope"></i>
                                 <div class="info">
                                     <span class="label">Email</span>
-                                    <span class="value">{{ denuncia.usuario_email }}</span>
+                                    <span class="value">{{ denuncia.usuario_email or 'No especificado' }}</span>
                                 </div>
                             </div>
                         </div>

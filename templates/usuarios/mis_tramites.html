@@ -337,7 +337,7 @@
 {% block extra_js %}
 <script>
 // ── Datos desde Python (fecha_creacion ya es string) ──────────────────────
-const tramitesData = {{ tramites_json|safe }};
+let tramitesData = JSON.parse('{{ tramites_json | default("[]") | safe }}');
 const MAX_DOCS = 5;
 const encuestasRealizadas = [];
 
