@@ -57,27 +57,6 @@ init_production_config()
 # 🔥 CARGAR CONFIGURACIÓN
 app.config.update(get_flask_config())
 
-# Configurar Cloudinary DIRECTAMENTE con variables de entorno
-CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME', 'dwst50un4')
-CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY', '637837677376111')
-CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET', 'i8zTmAcN3st4OJw8')
-
-cloudinary.config(
-    cloud_name=CLOUDINARY_CLOUD_NAME,
-    api_key=CLOUDINARY_API_KEY,
-    api_secret=CLOUDINARY_API_SECRET,
-    secure=True
-)
-
-# Verificar Cloudinary
-CLOUDINARY_ENABLED = bool(CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET)
-app.config['CLOUDINARY_ENABLED'] = CLOUDINARY_ENABLED
-
-if CLOUDINARY_ENABLED:
-    print(f"✅ Cloudinary configurado: {CLOUDINARY_CLOUD_NAME}")
-else:
-    print("⚠️ Cloudinary no configurado (faltan credenciales)")
-
 # 🔥 CONFIGURACIÓN DE SESIONES PARA HTTPS EN PRODUCCIÓN
 if is_production():
     app.config['SESSION_COOKIE_SECURE'] = True
@@ -107,7 +86,22 @@ print(f"   SSL Mode: {'✅' if 'sslmode=require' in str(app.config.get('SQLALCHE
 print("=" * 60)
 
 # ================================================================
-# 6. INICIALIZAR BASE DE DATOS Y LOGIN
+# 6. CONFIGURAR CLOUDINARY
+# ================================================================
+cloudinary.config(
+    cloud_name=app.config.get('CLOUDINARY_CLOUD_NAME', ''),
+    api_key=app.config.get('CLOUDINARY_API_KEY', ''),
+    api_secret=app.config.get('CLOUDINARY_API_SECRET', ''),
+    secure=True
+)
+
+if app.config.get('CLOUDINARY_ENABLED'):
+    print("✅ Cloudinary configurado correctamente")
+else:
+    print("⚠️ Cloudinary no configurado (faltan credenciales)")
+
+# ================================================================
+# 7. INICIALIZAR BASE DE DATOS Y LOGIN
 # ================================================================
 db.init_app(app)
 login_manager.init_app(app)
@@ -125,7 +119,7 @@ def load_user(user_id):
         return None
 
 # ================================================================
-# 7. CONFIGURACIÓN DE LA APLICACIÓN
+# 8. CONFIGURACIÓN DE LA APLICACIÓN
 # ================================================================
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
@@ -142,7 +136,7 @@ app.register_blueprint(auth)
 app.register_blueprint(admin_bp)
 
 # ================================================================
-# 8. DETECCIÓN DE REDIS
+# 9. DETECCIÓN DE REDIS
 # ================================================================
 REDIS_AVAILABLE = False
 redis_client = None
@@ -161,7 +155,7 @@ except Exception:
     print("⚠️ Redis no disponible, usando caché en memoria")
 
 # ================================================================
-# 9. CACHÉ
+# 10. CACHÉ
 # ================================================================
 _cache_cfg = {
     'CACHE_KEY_PREFIX': 'municipio_',
@@ -189,7 +183,7 @@ except Exception as e:
     print(f"⚠️ No se pudo limpiar caché: {e}")
 
 # ================================================================
-# 10. RATE LIMITING
+# 11. RATE LIMITING
 # ================================================================
 limiter = Limiter(
     app=app,
@@ -201,7 +195,7 @@ limiter = Limiter(
 print("✅ Caché y Rate Limiting configurados")
 
 # ================================================================
-# 11. CONFIGURACIÓN POR DEFECTO
+# 12. CONFIGURACIÓN POR DEFECTO
 # ================================================================
 def init_default_config():
     from models.configuracion import Configuracion
@@ -257,7 +251,7 @@ def init_default_config():
             print(f"✅ Configuración por defecto creada: {clave} = {valor}")
 
 # ================================================================
-# 12. CREAR TABLAS Y USUARIOS POR DEFECTO
+# 13. CREAR TABLAS Y USUARIOS POR DEFECTO
 # ================================================================
 from auth import crear_usuarios_por_defecto
 from models.configuracion import Configuracion
@@ -293,7 +287,7 @@ with app.app_context():
         print(f"⚠️ No se pudo inicializar config: {e}")
 
 # ================================================================
-# 13. CABECERAS DE RENDIMIENTO Y SEGURIDAD
+# 14. CABECERAS DE RENDIMIENTO Y SEGURIDAD
 # ================================================================
 @app.after_request
 def set_performance_headers(response):
@@ -301,7 +295,6 @@ def set_performance_headers(response):
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['X-XSS-Protection'] = '1; mode=block'
 
-    # Forzar NO caché para archivos estáticos TEMPORALMENTE
     if request.path.startswith('/static/'):
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
         response.headers['Pragma'] = 'no-cache'
@@ -314,7 +307,7 @@ def set_performance_headers(response):
     return response
 
 # ================================================================
-# 14. DECORADOR CACHÉ DE API (SOLO PARA APIS)
+# 15. DECORADOR CACHÉ DE API (SOLO PARA APIS)
 # ================================================================
 def cache_response(timeout=300, key_prefix='api'):
     def decorator(f):
@@ -337,7 +330,7 @@ def cache_response(timeout=300, key_prefix='api'):
     return decorator
 
 # ================================================================
-# 15. FUNCIONES AUXILIARES
+# 16. FUNCIONES AUXILIARES
 # ================================================================
 def _allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -368,7 +361,7 @@ def _icono_doc(filename):
     }.get(ext, 'fa-file')
 
 # ================================================================
-# 16. FUNCIÓN PARA GUARDAR CONTACTOS
+# 17. FUNCIÓN PARA GUARDAR CONTACTOS
 # ================================================================
 def guardar_contacto_en_bd(nombre, email, telefono, asunto, mensaje):
     try:
@@ -399,10 +392,10 @@ def guardar_contacto_en_bd(nombre, email, telefono, asunto, mensaje):
         return False, str(e)
 
 # ================================================================
-# 17. FUNCIONES DE CLOUDINARY (CORREGIDAS - PASAR OBJETO DIRECTAMENTE)
+# 18. FUNCIONES DE CLOUDINARY (CORREGIDAS)
 # ================================================================
 def subir_foto_cloudinary(archivo, email, folder="fotos_perfil"):
-    if not CLOUDINARY_ENABLED:
+    if not app.config.get('CLOUDINARY_ENABLED'):
         return {'success': False, 'error': 'Cloudinary no está configurado'}
     
     try:
@@ -410,8 +403,12 @@ def subir_foto_cloudinary(archivo, email, folder="fotos_perfil"):
         if not archivo or archivo.filename == '':
             return {'success': False, 'error': 'Archivo vacío'}
         
-        # Reiniciar el puntero del archivo
+        # Leer el archivo correctamente
         archivo.stream.seek(0)
+        file_content = archivo.read()
+        
+        if len(file_content) == 0:
+            return {'success': False, 'error': 'El archivo está vacío'}
         
         # Crear nombre único
         if email is None:
@@ -420,14 +417,14 @@ def subir_foto_cloudinary(archivo, email, folder="fotos_perfil"):
             email_str = str(email).replace(' ', '_').replace('@', '_').replace('.', '_')
         
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        public_id = f"{email_str}_{timestamp}"
+        public_id = f"{folder}/{email_str}_{timestamp}"
         
-        print(f"📤 Subiendo a Cloudinary - Public ID: {folder}/{public_id}")
-        print(f"📤 Nombre del archivo: {archivo.filename}")
+        print(f"📤 Subiendo a Cloudinary - Public ID: {public_id}")
+        print(f"📤 Tamaño del archivo: {len(file_content)} bytes")
         
-        # ✅ CORREGIDO: Pasar el objeto de archivo directamente, NO leer los bytes
+        # Subir a Cloudinary
         upload_result = cloudinary.uploader.upload(
-            archivo,  # ← PASAR EL OBJETO, NO bytes
+            file_content,
             public_id=public_id,
             folder=folder,
             overwrite=True,
@@ -451,7 +448,7 @@ def subir_foto_cloudinary(archivo, email, folder="fotos_perfil"):
         return {'success': False, 'error': str(e)}
 
 def eliminar_foto_cloudinary(public_id):
-    if not CLOUDINARY_ENABLED or not public_id:
+    if not app.config.get('CLOUDINARY_ENABLED') or not public_id:
         return True
     
     try:
@@ -464,7 +461,7 @@ def eliminar_foto_cloudinary(public_id):
         return False
 
 # ================================================================
-# 18. CATÁLOGOS
+# 19. CATÁLOGOS
 # ================================================================
 NOMBRES_SERVICIOS = {
     "funeraria": "Funerarias Municipales",
@@ -496,7 +493,7 @@ SERVICIOS_CITAS = {
 }
 
 # ================================================================
-# 19. CONTEXTO GLOBAL DE TEMPLATES (CON VERIFICACIÓN DE SESIÓN)
+# 20. CONTEXTO GLOBAL DE TEMPLATES (CON VERIFICACIÓN DE SESIÓN)
 # ================================================================
 @app.context_processor
 def inject_global_variables():
@@ -549,7 +546,7 @@ def inject_global_variables():
     )
 
 # ================================================================
-# 20. RUTAS PÚBLICAS
+# 21. RUTAS PÚBLICAS (CORREGIDO - SIN CACHÉ)
 # ================================================================
 @app.route("/")
 def index():
@@ -638,7 +635,7 @@ def detalle_denuncia_publica(denuncia_id):
         return redirect(url_for('mapa_incidencias'))
 
 # ================================================================
-# 21. TRANSPARENCIA - RUTAS
+# 22. TRANSPARENCIA - RUTAS (CORREGIDO - SIN CACHÉ)
 # ================================================================
 _TRANSPARENCIA = {
     "transparencia": ("/transparencia", "transparencia.html"),
@@ -662,7 +659,7 @@ for route_name, (url_path, template_name) in _TRANSPARENCIA.items():
     app.add_url_rule(url_path, route_name, create_transparency_view(template_name))
 
 # ================================================================
-# 22. NOTICIAS Y CONTACTO PÚBLICO
+# 23. NOTICIAS Y CONTACTO PÚBLICO (CORREGIDO - SIN CACHÉ)
 # ================================================================
 
 @app.route("/noticias")
@@ -864,7 +861,7 @@ def uploaded_file(filename):
     return send_from_directory(os.path.join(app.root_path, 'static', 'uploads'), filename)
 
 # ================================================================
-# 23. MI CUENTA - RUTAS DE USUARIO
+# 24. MI CUENTA - RUTAS DE USUARIO
 # ================================================================
 @app.route("/perfil")
 @login_required
@@ -1057,7 +1054,7 @@ def configuracion_cuenta():
     return render_template("usuarios/configuracion.html", usuario=usuario)
 
 # ================================================================
-# 24. MIS TRÁMITES - RUTAS DEL USUARIO
+# 25. MIS TRÁMITES - RUTAS DEL USUARIO
 # ================================================================
 @app.route("/mis-servicios")
 @login_required
@@ -1319,7 +1316,7 @@ def mis_citas():
     return render_template("citas/mis_citas.html", citas=citas, servicios=SERVICIOS_CITAS)
 
 # ================================================================
-# 25. RUTAS DINÁMICAS PARA FORMULARIOS
+# 26. RUTAS DINÁMICAS PARA FORMULARIOS
 # ================================================================
 @app.route('/solicitar/<tipo>')
 @login_required
@@ -1356,7 +1353,7 @@ def consultar(tipo):
                          nombre_consulta=NOMBRES_CONSULTAS[tipo])
 
 # ================================================================
-# 26. PROCESAMIENTO DE FORMULARIOS
+# 27. PROCESAMIENTO DE FORMULARIOS
 # ================================================================
 @app.route("/procesar-solicitud", methods=["POST"])
 @login_required
@@ -1489,7 +1486,7 @@ def procesar_consulta():
     return redirect(url_for('servicios'))
 
 # ================================================================
-# 27. SOLICITAR CITA
+# 27.5 SOLICITAR CITA - CORREGIDA
 # ================================================================
 @app.route("/solicitar-cita", methods=["GET", "POST"])
 @login_required
@@ -1497,18 +1494,26 @@ def solicitar_cita():
     from models.cita import Cita
     from models.usuario import Usuario
     
+    # Debug
+    print(f"🔍 [CITA] Session user: {session.get('user')}")
+    print(f"🔍 [CITA] Session keys: {list(session.keys())}")
+    
     email = session.get("user")
     
     if not email:
+        print("❌ No hay email en sesión")
         flash("No hay sesión activa. Por favor inicia sesión nuevamente.", "error")
         return redirect(url_for("auth.login"))
     
     usuario = Usuario.query.filter_by(email=email).first()
     
     if not usuario:
+        print(f"❌ Usuario no encontrado: {email}")
         flash("Usuario no encontrado. Por favor contacta al administrador.", "error")
         session.clear()
         return redirect(url_for("auth.login"))
+    
+    print(f"✅ Usuario encontrado: {usuario.email}")
     
     if request.method == "POST":
         try:
@@ -1516,6 +1521,8 @@ def solicitar_cita():
             fecha = request.form.get("fecha")
             hora = request.form.get("hora")
             motivo = request.form.get("motivo", "")
+            
+            print(f"📝 Datos cita: servicio={servicio}, fecha={fecha}, hora={hora}")
             
             if not all([servicio, fecha, hora]):
                 flash("❌ Todos los campos obligatorios deben completarse.", "error")
@@ -1555,6 +1562,7 @@ def solicitar_cita():
             db.session.add(nueva_cita)
             db.session.commit()
             
+            print(f"✅ Cita creada: {nueva_cita.folio}")
             flash(f"✅ Cita solicitada exitosamente. Tu folio es: {nueva_cita.folio}", "success")
             return redirect(url_for("mis_citas"))
             
@@ -1600,7 +1608,7 @@ def cancelar_cita(cita_id):
     return redirect(url_for("mis_citas"))
 
 # ================================================================
-# 28. APIs
+# 28. APIs (CON CACHÉ - ESTÁ BIEN PORQUE SON DATOS PÚBLICOS)
 # ================================================================
 @app.route("/api/horarios-disponibles")
 @login_required
@@ -2141,7 +2149,7 @@ if __name__ == "__main__":
     if is_production():
         print("🏭 MODO PRODUCCIÓN ACTIVADO")
         print(f"   Debug: {app.debug}")
-        print(f"   Cloudinary: {'✅' if CLOUDINARY_ENABLED else '❌'}")
+        print(f"   Cloudinary: {'✅' if app.config.get('CLOUDINARY_ENABLED') else '❌'}")
         print(f"   Base de datos: {app.config.get('SQLALCHEMY_DATABASE_URI', 'No configurada')[:80]}...")
         print(f"   SSL Mode: {'✅' if 'sslmode=require' in str(app.config.get('SQLALCHEMY_DATABASE_URI', '')) else '❌'}")
         print(f"   🔒 Cookies seguras: {'✅' if app.config.get('SESSION_COOKIE_SECURE') else '❌'}")
@@ -2150,19 +2158,36 @@ if __name__ == "__main__":
         print("   Debug: True")
     
     print("=" * 60)
-    print("✅ Cloudinary:", "Configurado" if CLOUDINARY_ENABLED else "No configurado")
+    print("✅ Cloudinary:", "Configurado" if app.config.get('CLOUDINARY_ENABLED') else "No configurado")
     print("✅ Base de datos: SQLAlchemy inicializada")
     print("✅ Usuarios por defecto creados/verificados")
     print("✅ Configuración global disponible en templates")
+    print("✅ API de Configuración disponible")
+    print("✅ API de Notificaciones disponible")
+    print("✅ API de Mensajería disponible")
+    print("✅ Gestión de Contactos en Admin")
     print("=" * 60)
     print("📌 RUTAS PRINCIPALES:")
     print("   /                 → Inicio")
     print("   /transparencia    → Transparencia")
     print("   /contacto         → Formulario de contacto")
-    print("   /mis-tramites     → Mis trámites")
+    print("   /mis-servicios    → Mis servicios solicitados")
+    print("   /mis-tramites     → Mis trámites (incluye contactos)")
+    print("   /mis-solicitudes  → Solo solicitudes")
+    print("   /mis-denuncias    → Solo denuncias")
+    print("   /mis-citas        → Solo citas")
+    print("   /solicitar-cita   → Solicitar cita")
     print("   /mi-cuenta        → Mi perfil")
     print("   /mapa             → Mapa de incidencias")
-    print("   /noticias         → Noticias")
+    print("   /noticias         → Noticias y novedades")
+    print("=" * 60)
+    print("📌 RUTAS ADMINISTRADOR:")
+    print("   /admin/contactos           → Gestión de contactos")
+    print("   /admin/contactos/pendientes→ Contactos pendientes")
+    print("   /admin/encuestas           → Estadísticas de encuestas")
+    print("   /admin/mapa                → Mapa de incidencias (admin)")
+    print("   /admin/noticias            → Gestión de noticias")
+    print("   /admin/logs                → Dashboard de logs")
     print("=" * 60)
     print("🌐 Servidor en: http://localhost:5000")
     print("=" * 60)
