@@ -202,5 +202,11 @@
     "tipo": "actualizar_solicitud",
     "descripcion": "Solicitud SOL-260427-49953 actualizada a rechazado",
     "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-06T07:25:03.260636",
+    "tipo": "actualizar_solicitud",
+    "descripcion": "Solicitud SOL-260427-49953 actualizada a completado",
+    "admin": "superadmin@cutupu.gob.do"
   }
 ]
