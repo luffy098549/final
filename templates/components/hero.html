@@ -61,21 +61,21 @@
             <div class="cine-slider" id="cineSlider">
 
                 {% set slider_photos = [
-                    {'file': 'ayuntamiento1.jpeg', 'label': 'Sede Administrativa', 'place': 'Edificio Principal - Villa Cutupú'},
-                    {'file': 'ayuntamiento2.jpeg', 'label': 'Fachada Principal', 'place': 'Junta Distrital - Gestión 2024-2028'},
-                    {'file': 'ayuntamiento3.jpeg', 'label': 'Oficinas Modernas', 'place': 'Espacios para la comunidad'},
-                    {'file': 'ayuntamiento4.jpeg', 'label': 'Área de Atención', 'place': 'Servicio de calidad al ciudadano'},
-                    {'file': 'ayunttamiento6.jpeg', 'label': 'Vista Panorámica', 'place': 'Nuestra casa de todos'},
-                    {'file': 'ayuntamiento7.jpeg', 'label': 'Salón de Eventos', 'place': 'Reuniones comunitarias'},
-                    {'file': 'ayuntamiento1.jpeg', 'label': 'Gestión Transparente', 'place': 'Compromiso con el progreso'}
+                    {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068522/ayuntamiento1_j2zt8n.jpg', 'label': 'Sede Administrativa', 'place': 'Edificio Principal - Villa Cutupú'},
+                    {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068546/ayuntamiento2_oybbs1.jpg', 'label': 'Fachada Principal', 'place': 'Junta Distrital - Gestión 2024-2028'},
+                    {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068557/ayuntamiento3_kodswv.jpg', 'label': 'Oficinas Modernas', 'place': 'Espacios para la comunidad'},
+                    {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068565/ayuntamiento4_m68o6b.jpg', 'label': 'Área de Atención', 'place': 'Servicio de calidad al ciudadano'},
+                    {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068597/ayunttamiento6_oey2fa.jpg', 'label': 'Vista Panorámica', 'place': 'Nuestra casa de todos'},
+                    {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068627/ayuntamiento7_cjgxp5.jpg', 'label': 'Salón de Eventos', 'place': 'Reuniones comunitarias'},
+                    {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068522/ayuntamiento1_j2zt8n.jpg', 'label': 'Gestión Transparente', 'place': 'Compromiso con el progreso'}
                 ] %}
 
                 {% for photo in slider_photos %}
                 <div class="cine-slide {% if loop.first %}is-active{% endif %}"
                      data-label="{{ photo.label }}"
                      data-place="{{ photo.place }}"
-                     data-url="{{ url_for('static', filename='img/' ~ photo.file) }}">
-                    <div class="cine-bg" style="--bg: url('{{ url_for('static', filename='img/' ~ photo.file) }}')">
+                     data-url="{{ photo.url }}">
+                    <div class="cine-bg" style="--bg: url('{{ photo.url }}')">
                         <div class="cine-gradient"></div>
                         <div class="cine-overlay-effect"></div>
                     </div>

@@ -2,20 +2,13 @@ import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
 import os
-import urllib3
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-# Deshabilitar verificacion SSL para Windows
-import ssl
-ssl._create_default_https_context = ssl._create_unverified_context
 
 load_dotenv()
 
 cloudinary.config(
     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
     api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
-    secure=True
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
 
 carpeta = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'img')
@@ -35,12 +28,9 @@ for img in imagenes:
         print('NO ENCONTRADO: ' + ruta)
         continue
     nombre = img.split('.')[0]
-    try:
-        result = cloudinary.uploader.upload(
-            ruta,
-            public_id='slider/' + nombre,
-            overwrite=True
-        )
-        print(img + ' -> ' + result['secure_url'])
-    except Exception as e:
-        print('ERROR en ' + img + ': ' + str(e))
+    result = cloudinary.uploader.upload(
+        ruta,
+        public_id='slider/' + nombre,
+        overwrite=True
+    )
+    print(img + ' -> ' + result['secure_url'])
