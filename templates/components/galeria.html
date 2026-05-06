@@ -32,7 +32,7 @@
             <div class="galeria-item large anim anim-left" style="--d:.10s"
                  data-index="0">
                 <div class="galeria-img-wrap">
-                    <img src="{{ url_for('static', filename='img/ayuntamiento6.jpeg') }}"
+                    <img src="https://res.cloudinary.com/dwst50un4/image/upload/v1778068597/ayunttamiento6_oey2fa.jpg"
                          alt="Vista Panorámica" loading="lazy">
                     <div class="galeria-shimmer"></div>
                 </div>
@@ -53,7 +53,7 @@
             <div class="galeria-item anim" style="--d:.18s"
                  data-index="1">
                 <div class="galeria-img-wrap">
-                    <img src="{{ url_for('static', filename='img/distrito.jpeg') }}"
+                    <img src="https://res.cloudinary.com/dwst50un4/image/upload/v1778068546/ayuntamiento2_oybbs1.jpg"
                          alt="Parque Central" loading="lazy">
                     <div class="galeria-shimmer"></div>
                 </div>
@@ -74,7 +74,7 @@
             <div class="galeria-item anim anim-right" style="--d:.26s"
                  data-index="2">
                 <div class="galeria-img-wrap">
-                    <img src="{{ url_for('static', filename='img/ayuntamiento1.jpeg') }}"
+                    <img src="https://res.cloudinary.com/dwst50un4/image/upload/v1778068522/ayuntamiento1_j2zt8n.jpg"
                          alt="Sede de la Junta" loading="lazy">
                     <div class="galeria-shimmer"></div>
                 </div>
@@ -668,17 +668,17 @@
     /* ── Datos de las imágenes ── */
     const fotos = [
         {
-            src:   document.querySelectorAll('.galeria-item')[0]?.querySelector('img')?.src || '',
+            src:   'https://res.cloudinary.com/dwst50un4/image/upload/v1778068597/ayunttamiento6_oey2fa.jpg',
             title: 'Vista Panorámica',
             desc:  'Nuestro hermoso distrito rodeado de naturaleza'
         },
         {
-            src:   document.querySelectorAll('.galeria-item')[1]?.querySelector('img')?.src || '',
+            src:   'https://res.cloudinary.com/dwst50un4/image/upload/v1778068546/ayuntamiento2_oybbs1.jpg',
             title: 'Parque Central',
             desc:  'Espacio de recreación y encuentro familiar'
         },
         {
-            src:   document.querySelectorAll('.galeria-item')[2]?.querySelector('img')?.src || '',
+            src:   'https://res.cloudinary.com/dwst50un4/image/upload/v1778068522/ayuntamiento1_j2zt8n.jpg',
             title: 'Sede de la Junta Distrital',
             desc:  'Oficina central del Ayuntamiento de Cutupú'
         }
