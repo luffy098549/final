@@ -9,6 +9,82 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    .motivo-cell {
+        font-size: .82rem;
+        max-width: 220px;
+        max-height: 58px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        line-height: 1.45;
+        color: #555;
+        cursor: help;
+    }
+    .badge-pendiente   { background: #fff3cd; color: #856404; border: 1px solid #ffc10720; }
+    .badge-confirmada  { background: #d1fae5; color: #065f46; border: 1px solid #10b98120; }
+    .badge-cancelada   { background: #fee2e2; color: #991b1b; border: 1px solid #ef444420; }
+    .badge-completada  { background: #dbeafe; color: #1e40af; border: 1px solid #3b82f620; }
+    .badge {
+        padding: .3rem .75rem;
+        border-radius: 20px;
+        font-size: .75rem;
+        font-weight: 600;
+        letter-spacing: .3px;
+        white-space: nowrap;
+    }
+    .fecha-cell { white-space: nowrap; }
+    .fecha-cell div { margin-bottom: .2rem; font-size: .85rem; }
+    .fecha-cell i { margin-right: .3rem; opacity: .6; }
+    .folio-code {
+        font-family: monospace;
+        font-size: .82rem;
+        background: #f3f4f6;
+        padding: .2rem .5rem;
+        border-radius: 6px;
+        color: #374151;
+        white-space: nowrap;
+    }
+    .servicio-badge {
+        display: inline-block;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+        padding: .2rem .6rem;
+        border-radius: 8px;
+        font-size: .78rem;
+        font-weight: 600;
+    }
+    .table tbody tr:hover { background: #f9fafb; }
+    .table td { vertical-align: middle; padding: .85rem 1rem; }
+    .table th { font-size: .78rem; letter-spacing: .5px; text-transform: uppercase; }
+    .btn-icon {
+        width: 34px; height: 34px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        transition: all .2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+    }
+    .btn-icon:hover {
+        background: #2d6a4f;
+        color: white;
+        border-color: #2d6a4f;
+        transform: scale(1.08);
+    }
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #9ca3af;
+    }
+    .empty-state i { font-size: 2.5rem; margin-bottom: .8rem; display: block; }
+</style>
+
 <!-- Stats -->
 <div class="stats-grid" style="margin-bottom:2rem">
     <div class="stat-card">
@@ -53,7 +129,7 @@
 <div class="filters-section" style="margin-bottom:1.5rem">
     <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Buscar por folio, usuario..." autocomplete="off">
+        <input type="text" id="searchInput" placeholder="Buscar por folio, usuario, motivo..." autocomplete="off">
     </div>
     <div class="filter-group">
         <select id="estadoFilter" class="filter-select">
@@ -66,7 +142,7 @@
     </div>
 </div>
 
-<!-- Tabla de citas -->
+<!-- Tabla -->
 <div class="table-container">
     <table class="table" id="citasTable">
         <thead>
@@ -83,45 +159,67 @@
         <tbody>
             {% for cita in citas %}
             <tr data-estado="{{ cita.estado }}" data-fecha="{{ cita.fecha }}">
-                <td><strong style="font-family:monospace;">{{ cita.folio }}</strong></td>
+                <td>
+                    <span class="folio-code">{{ cita.folio }}</span>
+                </td>
                 <td>
                     <div><strong>{{ cita.usuario_nombre }}</strong></div>
-                    <div style="font-size:.8rem;color:var(--gray-400)">{{ cita.usuario_email }}</div>
+                    <div style="font-size:.78rem;color:#9ca3af;margin-top:.15rem">{{ cita.usuario_email }}</div>
                 </td>
                 <td>
-                    {% if cita.servicio == 'asesoria_legal' %}Asesoría Legal
-                    {% elif cita.servicio == 'catastro' %}Catastro
-                    {% elif cita.servicio == 'licencias' %}Licencias
-                    {% elif cita.servicio == 'atencion_ciudadana' %}Atención Ciudadana
-                    {% elif cita.servicio == 'tesoreria' %}Tesorería
-                    {% elif cita.servicio == 'planeamiento' %}Planeamiento
-                    {% elif cita.servicio == 'oaim' %}OAI/M
-                    {% elif cita.servicio == 'funeraria' %}Funeraria
-                    {% else %}{{ cita.servicio }}
-                    {% endif %}
+                    <span class="servicio-badge">
+                        {% if cita.servicio == 'asesoria_legal' %}Asesoría Legal
+                        {% elif cita.servicio == 'catastro' %}Catastro
+                        {% elif cita.servicio == 'licencias' %}Licencias
+                        {% elif cita.servicio == 'atencion_ciudadana' %}Atención Ciudadana
+                        {% elif cita.servicio == 'tesoreria' %}Tesorería
+                        {% elif cita.servicio == 'planeamiento' %}Planeamiento
+                        {% elif cita.servicio == 'oaim' %}OAI/M
+                        {% elif cita.servicio == 'funeraria' %}Funeraria
+                        {% else %}{{ cita.servicio }}
+                        {% endif %}
+                    </span>
                 </td>
-                <td>
-                    <div><i class="fas fa-calendar"></i> {{ cita.fecha }}</div>
+                <td class="fecha-cell">
+                    <div><i class="fas fa-calendar-alt"></i> {{ cita.fecha }}</div>
                     <div><i class="fas fa-clock"></i> {{ cita.hora }}</div>
                 </td>
                 <td>
-                    <div style="font-size:.85rem;max-width:200px">{{ cita.motivo or '—' }}</div>
+                    <div class="motivo-cell" title="{{ cita.motivo or '' }}">
+                        {{ cita.motivo or '—' }}
+                    </div>
                 </td>
                 <td>
-                    <span class="badge badge-{{ cita.estado }}">{{ cita.estado|title }}</span>
+                    <span class="badge badge-{{ cita.estado }}">
+                        {% if cita.estado == 'pendiente' %}<i class="fas fa-hourglass-half" style="margin-right:.3rem"></i>{% endif %}
+                        {% if cita.estado == 'confirmada' %}<i class="fas fa-check" style="margin-right:.3rem"></i>{% endif %}
+                        {% if cita.estado == 'cancelada' %}<i class="fas fa-times" style="margin-right:.3rem"></i>{% endif %}
+                        {% if cita.estado == 'completada' %}<i class="fas fa-check-double" style="margin-right:.3rem"></i>{% endif %}
+                        {{ cita.estado|title }}
+                    </span>
                 </td>
-                <tr>
+                <td>
                     <button class="btn-icon" onclick="cambiarEstado('{{ cita.id }}')" title="Cambiar estado">
                         <i class="fas fa-edit"></i>
                     </button>
                 </td>
             </tr>
             {% endfor %}
+            {% if not citas %}
+            <tr>
+                <td colspan="7">
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-times"></i>
+                        No hay citas registradas aún.
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
         </tbody>
     </table>
 </div>
 
-<!-- Modal de cambio de estado -->
+<!-- Modal cambio de estado -->
 <div class="modal" id="estadoModal">
     <div class="modal-content" style="max-width:500px">
         <div class="modal-header">
@@ -133,15 +231,15 @@
                 <div class="form-group" style="margin-bottom:1rem">
                     <label class="form-label">Nuevo Estado</label>
                     <select name="estado" class="form-control" required>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="confirmada">Confirmada</option>
-                        <option value="cancelada">Cancelada</option>
-                        <option value="completada">Completada</option>
+                        <option value="pendiente">⏳ Pendiente</option>
+                        <option value="confirmada">✅ Confirmada</option>
+                        <option value="cancelada">❌ Cancelada</option>
+                        <option value="completada">✔️ Completada</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin-bottom:1.5rem">
-                    <label class="form-label">Notas (opcional)</label>
-                    <textarea name="notas" class="form-control" rows="3"></textarea>
+                    <label class="form-label">Notas para el ciudadano (opcional)</label>
+                    <textarea name="notas" class="form-control" rows="3" placeholder="Ej: Su cita ha sido confirmada para las 9:00 AM..."></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width:100%">
                     <i class="fas fa-save"></i> Guardar Cambios
@@ -154,29 +252,24 @@
 
 {% block scripts %}
 <script>
-let citaActual = null;
-
 function cambiarEstado(citaId) {
-    citaActual = citaId;
-    const modal = document.getElementById('estadoModal');
     const form = document.getElementById('estadoForm');
     form.action = `/admin/citas/${citaId}/estado`;
-    modal.classList.add('active');
+    document.getElementById('estadoModal').classList.add('active');
 }
 
 function cerrarModal() {
     document.getElementById('estadoModal').classList.remove('active');
 }
 
-// Filtros
 document.getElementById('searchInput').addEventListener('keyup', filtrar);
 document.getElementById('estadoFilter').addEventListener('change', filtrar);
 
 function filtrar() {
-    const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
-    const estado = document.getElementById('estadoFilter')?.value || 'todos';
-    
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const estado = document.getElementById('estadoFilter').value;
     document.querySelectorAll('#citasTable tbody tr').forEach(row => {
+        if (row.querySelector('.empty-state')) return;
         const okQ = !q || row.textContent.toLowerCase().includes(q);
         const okE = estado === 'todos' || row.dataset.estado === estado;
         row.style.display = (okQ && okE) ? '' : 'none';
