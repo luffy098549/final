@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Municipio - Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/municipio.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="main-header">
+    <div class="container">
+        <div class="logo">
+            <a href="/">
+               <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio" class="active">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                {% if logged %}
+                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                    <li><a href="/mis-solicitudes">Mis solicitudes</a></li>
+                    <li><a href="/mis-denuncias">Mis denuncias</a></li>
+                    <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="page-header">
+        <h1>Junta Municipal Río Verde Arriba</h1>
+        <p>Historia, demografía, cultura y turismo de nuestro municipio</p>
+    </section>
+
+    <nav class="page-nav">
+        <ul>
+            <li><a href="#historia">Historia</a></li>
+            <li><a href="#demografia">Demografía</a></li>
+            <li><a href="#cultura">Cultura</a></li>
+            <li><a href="#turismo">Turismo</a></li>
+            <li><a href="#autoridades">Autoridades</a></li>
+        </ul>
+    </nav>
+
+    <section class="page">
+
+        <!-- HISTORIA -->
+        <h2 id="historia">Historia</h2>
+        <div class="seccion-imagen">
+            <img src="{{ url_for('static', filename='img/historia.jpg') }}" 
+                 alt="Historia de Villa Cutupú">
+        </div>
+        <p>Sobre el origen del nombre de Cutupú, que es la cabecera del Distrito Municipal, existen diferentes versiones entre ellas tenemos:</p>
+        <ul>
+            <li>Se dice que Cutupú se llamaba un señor de nacionalidad haitiana que vivía en el paraje llamado hoy como El Colí.</li>
+            <li>El Prof. Juan Bosch (1909-2001, político y escritor dominicano), sostenía que el nombre de Cutupú se originó por el Cutupú de las tamboras que se escuchaban en la zona. Las personas al llegar de trabajo, solían reunirse en alguna casa para compartir; y para saber en casa de quien se iban a reunir, estos se orientaban por el sonido de la tambora y la gente decía: "Oye, por allá se escucha el Cutupú de las tamboras". Siendo esta versión la más aceptada.</li>
+            <li>Existe una tercera versión de que el nombre se debe al trotar de los caballos, debido a que como en casi todos los lugares el principal medio de transporte era el caballo, en Cutupú también y al ser el terreno en ciertos lugares hueco, la gente decía al oír el sonido: "Por allá se oye el Cutupú de los caballos".</li>
+        </ul>
+        <p>Esta era una tierra habitada en tiempo de la colonización por aborígenes, los cuales le llamaban a la Zona, Mellác. Esta raza indígena estuvo diseminada por toda la zona que hoy pertenece al Distrito Municipal, el cual era parte del Cacicazgo de Guariones. Después de la exterminación de esta raza, Cutupú empezó a ser poblada por algunos dominicanos, y poco más tarde por un grupo de haitianos que decidieron residir en la zona, ya que era una gran fuente de trabajo para ellos, por la gran cantidad de tabaco que se producía, además cacao, yuca y batata, entre otros productos agrícolas de la época.</p>
+
+        <!-- DEMOGRAFÍA -->
+        <h2 id="demografia">Demografía</h2>
+        <div class="seccion-imagen">
+            <img src="{{ url_for('static', filename='img/demografia.jpg') }}" 
+                 alt="Geografía y paisaje de Río Verde Arriba">
+        </div>
+        <p>El Distrito Municipal de Río Verde Arriba se encuentra ubicado en la provincia de La Vega, situada en el centro del valle del Cibao de la República Dominicana. Fue fundado en tiempo de la colonia, siendo una de las comunidades más antiguas del municipio de La Vega.</p>
+
+        <h3>Geografía</h3>
+        <p>El Distrito Municipal de Río Verde Arriba cuenta con la siguiente descripción geográfica:</p>
+        <ul>
+            <li><strong>Al norte:</strong> Por la carretera que divide la provincia de La Vega y Espaillat.</li>
+            <li><strong>Al sur:</strong> La sección de Burende (La Cañada, Medranche y Loma de Santo Cerro).</li>
+            <li><strong>Al este:</strong> Por los ríos Guanabito y Licey.</li>
+            <li><strong>Al oeste:</strong> Por la carretera Duarte vieja.</li>
+        </ul>
+        <p>El Distrito de Río Verde Arriba está enclavado en el centro del Valle de La Vega Real, con sus fértiles tierras, vegetación abundante y una gran diversidad animal. En el mismo se registra un clima tropical, con una temperatura aproximada anual de 24°C a 25°C. Cuenta con una extensión de doscientos trece mil trescientos sesenta y siete (213,367) tareas de tierras, equivalente a 133.35 km².</p>
+
+        <h3>Economía</h3>
+        <p>La economía de Cutupú ha sido el resultado del esfuerzo constante de grandes hombres y mujeres que han habitado dicho lugar. Podemos decir que la misma se originó desde que empezaron a residir las primeras personas en la zona, tal es el caso del señor Félix Martínez, quien fuera fundador del primer colmado que hubo en Cutupú.</p>
+        <p>A partir de dicha época fueron surgiendo diversos negocios, los cuales fueron pasando de generación en generación y de un negociante a otro. En la actualidad, en Cutupú, que es la cabecera del Distrito Municipal, la economía aún se basa en los negocios, contando con cuatro ferreterías, tres supermercados, dos agroquímicas, más de veinte colmados, sastrería, mueblería, centro de Internet, papelerías, aulas virtuales y discotecas, entre otras.</p>
+        <p>Ya en las secciones del distrito, la principal economía es la agricultura (cultivo de plátano, yuca, batata, tabaco, habichuela, maíz, entre otros), además de la ganadería, colmados, bancas de lotería, etc.</p>
+
+        <!-- CULTURA -->
+        <h2 id="cultura">Cultura</h2>
+        <div class="seccion-imagen">
+            <img src="{{ url_for('static', filename='img/cultura.jpg') }}" 
+                 alt="Cultura y tradiciones de Villa Cutupú">
+        </div>
+        <h3>La Religión</h3>
+        <p>Esta comunidad ha sido eminentemente católica desde su origen hasta nuestro tiempo. Hay una Parroquia la cual está asistida por tres padres que brindan los servicios religiosos para mantener la fe de las personas que viven en la comunidad.</p>
+
+        <h3>Fiestas Patronales</h3>
+        <p>Estas son organizadas generalmente por los grupos, la iglesia y el club. Las mismas son en honor al Patrón (San Lorenzo) y son celebradas desde el 1 al 10 del mes de agosto.</p>
+
+        <!-- TURISMO -->
+        <h2 id="turismo">Turismo</h2>
+        <div class="seccion-imagen">
+            <img src="{{ url_for('static', filename='img/turismo.jpg') }}" 
+                 alt="Las Ruinas de La Vega Vieja - Turismo">
+        </div>
+        <p>Nuestro atractivo turístico consiste en La Ruina de La Vega Vieja, la cual fue el lugar escogido por Cristóbal Colón para construir uno de los primeros asentamientos para afianzar la presencia de los españoles en la Isla Española.</p>
+        <p>El Almirante se interesó en el lugar tras comprobar que en estos predios, en el río Verde, encontraron oro. Además, en el lugar abundaba la madera preciosa y había muchos indios jóvenes.</p>
+
+        <h3>Fortaleza de la Concepción</h3>
+        <p>Alrededor de esta fortaleza se levantó entonces una villa llamada también La Concepción y que más tarde se conoció como La Vega. En el lugar se levantó también una iglesia y unas 48 casas de cantería, sobre la base de piedras, ladrillos y argamasa. Además se construyeron alrededor de 300 casas menores, de madera y cana.</p>
+        <p>En La Vega se instaló el primer trapiche, la primera casa de alfarería, una de las primeras catedrales, la primera casa de fundición de metal y la primera casa de acuñar monedas en toda América. La ciudad alcanzó su clímax de prosperidad en 1516. Entre los años 1521 y 1525 se registró una mortandad que acabó con gran parte de los indios. A partir de 1543 se inició una decadencia progresiva de la ciudad.</p>
+
+        <!-- AUTORIDADES -->
+        <h2 id="autoridades">Autoridades</h2>
+        <ul class="services">
+            <li><strong>Director Municipal (Alcalde)</strong>Robert Donald Tolentino Grullón</li>
+            <li><strong>Vicealcaldesa</strong>Kelly Bueno</li>
+            <li><strong>Secretario Municipal</strong>Carlos Martínez</li>
+            <li><strong>Tesorero</strong>Ana Gómez</li>
+            <li><strong>Encargado de Obras Públicas</strong>Pedro Sánchez</li>
+            <li><strong>Encargada de Servicios Sociales</strong>María Rodríguez</li>
+        </ul>
+
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/municipio.js') }}"></script>
+</body>
+</html>

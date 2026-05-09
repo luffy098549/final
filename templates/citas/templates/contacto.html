@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - Junta Distrital Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/contacto.css') }}">
+</head>
+<body>
+
+<header class="main-header" id="mainHeader">
+    <div class="container">
+        <div class="logo">
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
+                     alt="Logo Junta Distrital Villa Cutupú"
+                     class="header-logo">
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/municipio">Municipio</a></li>
+                <li><a href="/servicios">Servicios</a></li>
+                <li><a href="/transparencia">Transparencia</a></li>
+                <li><a href="/noticias">Noticias</a></li>
+                <li><a href="/contacto" class="active">Contacto</a></li>
+                {% if logged %}
+                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
+                    <li><a href="/mis-solicitudes">Mis solicitudes</a></li>
+                    <li><a href="/mis-denuncias">Mis denuncias</a></li>
+                    <li><a href="/logout" class="btn-logout">Salir</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
+                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+    <!-- HERO -->
+    <section class="page-header">
+        <div class="page-header-inner">
+            <span class="page-header-eyebrow">Junta Distrital de Villa Cutupú</span>
+            <h1>Contáctenos</h1>
+            <p>Comuníquese con nosotros para cualquier consulta, solicitud o comentario. Estamos para servirle.</p>
+        </div>
+    </section>
+
+    <!-- GRID PRINCIPAL -->
+    <div class="contacto-container">
+
+        <!-- INFORMACIÓN DE CONTACTO -->
+        <section class="contacto-info" aria-label="Información de contacto">
+            <div class="contacto-info-header">
+                <h2>Información de contacto</h2>
+                <p>Estamos disponibles para atenderle</p>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon" aria-hidden="true">📍</div>
+                <div class="info-body">
+                    <h3>Dirección física</h3>
+                    <p>Junta Distrital de Villa Cutupú<br>
+                    Calle Principal, Villa Cutupú<br>
+                    Río Verde Arriba, La Vega<br>
+                    República Dominicana</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon" aria-hidden="true">📞</div>
+                <div class="info-body">
+                    <h3>Teléfonos</h3>
+                    <p>
+                        Tel.: <a href="tel:+18096917111">(809) 691-7111</a><br>
+                        Fax: <a href="tel:+18096917112">(809) 691-7112</a><br>
+                        Emergencias: <a href="tel:911">911</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon" aria-hidden="true">✉️</div>
+                <div class="info-body">
+                    <h3>Correo electrónico</h3>
+                    <p>
+                        Contacto: <a href="mailto:info@tudominio.gob.do">info@tudominio.gob.do</a><br>
+                        General: <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon" aria-hidden="true">🕒</div>
+                <div class="info-body">
+                    <h3>Horario de atención</h3>
+                    <p>
+                        Lunes a Viernes: 8:00 am – 2:00 pm<br>
+                        Sábados: Cerrado <br>
+                        Domingos: Cerrado
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-social">
+                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" rel="noopener" class="social-pill">
+                    📘 Facebook
+                </a>
+                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" rel="noopener" class="social-pill">
+                    📸 Instagram
+                </a>
+            </div>
+        </section>
+
+        <!-- FORMULARIO -->
+        <section class="contacto-form" aria-label="Formulario de contacto">
+            <div class="contacto-form-header">
+                <h2>Envíenos un mensaje</h2>
+                <p>Responderemos a la brevedad posible</p>
+            </div>
+
+            <form id="contactoForm" action="{{ url_for('enviar_contacto') }}" method="POST" novalidate>
+                <div class="form-group">
+                    <label for="nombre">Nombre completo *</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej: Juan Pérez" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Correo electrónico *</label>
+                    <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono" placeholder="(809) 000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="asunto">Asunto *</label>
+                    <input type="text" id="asunto" name="asunto" placeholder="¿En qué podemos ayudarle?" required>
+                </div>
+
+                <div class="form-group full">
+                    <label for="mensaje">Mensaje *</label>
+                    <textarea id="mensaje" name="mensaje" rows="6" placeholder="Escriba aquí su consulta o comentario..." required></textarea>
+                </div>
+
+                <div class="form-group full">
+                    <button type="submit" class="btn">
+                        Enviar mensaje
+                        <span class="btn-arrow" aria-hidden="true">→</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+    </div>
+
+    <!-- MAPA -->
+   <section class="mapa">
+    <h2 class="mapa-titulo">Ubicación</h2>
+
+    <div class="mapa-container">
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3765.2053859271678!2d-70.54179958830814!3d19.316891981862504!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eb1d39032b62f21%3A0xbca30595419d1733!2sAyuntamiento%20Rio%20Verde%20Arriba%20(Cutupu)!5e0!3m2!1ses!2sdo!4v1772416027520!5m2!1ses!2sdo"
+            title="Ubicación Junta Distrital de Villa Cutupú"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+    </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📍 Calle Principal, Villa Cutupú</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" rel="noopener" class="social-link">Facebook</a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" rel="noopener" class="social-link">Instagram</a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/municipio">Municipio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li>
+                    <li><a href="/noticias">Noticias</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>📠 Fax: <a href="tel:+18096917112">(809) 691-7112</a></p>
+                <p>✉️ <a href="mailto:info@tudominio.gob.do">info@tudominio.gob.do</a></p>
+                <p>🕒 Lun–Vie: 8:00 AM – 2:00 PM</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- ===================================================
+     JS — CONTACTO
+     =================================================== -->
+<script>
+(function () {
+    'use strict';
+
+    // -----------------------------------------------
+    // UTILIDAD — throttle
+    // -----------------------------------------------
+    function throttle(fn, limit) {
+        let inThrottle;
+        return function () {
+            if (!inThrottle) {
+                fn.apply(this, arguments);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        };
+    }
+
+    // -----------------------------------------------
+    // 1. HEADER — OCULTAR AL BAJAR, MOSTRAR AL SUBIR
+    // -----------------------------------------------
+    const header = document.getElementById('mainHeader');
+
+    if (header) {
+        let lastScrollTop = 0;
+
+        function handleHeaderScroll() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            // Sombra al hacer scroll
+            header.classList.toggle('scrolled', scrollTop > 10);
+
+            // Ocultar/mostrar
+            if (scrollTop > lastScrollTop && scrollTop > header.offsetHeight) {
+                header.classList.add('header-hidden');
+            } else {
+                header.classList.remove('header-hidden');
+            }
+
+            lastScrollTop = Math.max(0, scrollTop);
+        }
+
+        window.addEventListener('scroll', throttle(handleHeaderScroll, 80), { passive: true });
+    }
+
+    // -----------------------------------------------
+    // 2. VALIDACIÓN DE FORMULARIO EN TIEMPO REAL
+    // -----------------------------------------------
+    const form = document.getElementById('contactoForm');
+
+    if (form) {
+        const requiredFields = form.querySelectorAll('[required]');
+
+        // Estilo de error inline
+        function setError(input, msg) {
+            input.style.borderColor = '#c0392b';
+            input.style.boxShadow = '0 0 0 3px rgba(192,57,43,0.1)';
+            let err = input.parentNode.querySelector('.field-error');
+            if (!err) {
+                err = document.createElement('span');
+                err.className = 'field-error';
+                err.style.cssText = 'font-size:0.75rem;color:#c0392b;font-weight:600;margin-top:2px;';
+                input.parentNode.appendChild(err);
+            }
+            err.textContent = msg;
+        }
+
+        function clearError(input) {
+            input.style.borderColor = '';
+            input.style.boxShadow = '';
+            const err = input.parentNode.querySelector('.field-error');
+            if (err) err.remove();
+        }
+
+        // Validación live al salir del campo
+        requiredFields.forEach(input => {
+            input.addEventListener('blur', () => {
+                if (!input.value.trim()) {
+                    setError(input, 'Este campo es requerido.');
+                } else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
+                    setError(input, 'Ingrese un correo válido.');
+                } else {
+                    clearError(input);
+                }
+            });
+
+            input.addEventListener('input', () => {
+                if (input.value.trim()) clearError(input);
+            });
+        });
+
+        // Submit
+        form.addEventListener('submit', function (e) {
+            let hasError = false;
+
+            requiredFields.forEach(input => {
+                if (!input.value.trim()) {
+                    setError(input, 'Este campo es requerido.');
+                    hasError = true;
+                } else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
+                    setError(input, 'Ingrese un correo válido.');
+                    hasError = true;
+                }
+            });
+
+            if (hasError) {
+                e.preventDefault();
+                // Scroll al primer error
+                const firstError = form.querySelector('.field-error');
+                if (firstError) {
+                    firstError.closest('.form-group').querySelector('input, textarea').focus();
+                }
+            }
+        });
+    }
+
+    // -----------------------------------------------
+    // 3. ANIMACIONES DE ENTRADA (Intersection Observer)
+    // -----------------------------------------------
+    const animTargets = document.querySelectorAll('.contacto-info, .contacto-form, .mapa-container');
+
+    if (animTargets.length > 0) {
+        animTargets.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(24px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        });
+
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, i * 100);
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        animTargets.forEach(el => io.observe(el));
+    }
+
+    // -----------------------------------------------
+    // 4. DISPOSITIVOS TÁCTILES
+    // -----------------------------------------------
+    if ('ontouchstart' in window) {
+        document.body.classList.add('touch-device');
+    }
+
+    // -----------------------------------------------
+    // 5. PREVENIR CLICKS EN ENLACES VACÍOS
+    // -----------------------------------------------
+    document.querySelectorAll('a[href="#"]').forEach(link => {
+        link.addEventListener('click', e => e.preventDefault());
+    });
+
+})();
+</script>
+
+</body>
+</html>

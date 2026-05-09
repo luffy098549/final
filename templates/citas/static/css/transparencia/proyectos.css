@@ -1,0 +1,625 @@
+/* ============================================================
+   proyectos.css — Proyectos y Obras
+   Junta Distrital de Villa Cutupú
+   Coherente con actas.css v3.0
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,400&display=swap');
+
+/* ===== VARIABLES ===== */
+:root {
+    /* Verde natural */
+    --green:          #6B7E63;
+    --green-dark:     #4A5E43;
+    --green-light:    #9DB094;
+    --green-xlight:   #F0F4EF;
+
+    /* Azul acento */
+    --blue-sky:       #2563A8;
+    --blue-sky-light: #EBF3FB;
+
+    /* Rojo para emergencias */
+    --red-light:      #fef2f2;
+    --red:            #b91c1c;
+    --red-border:     #fecaca;
+
+    /* Tierra */
+    --beige:          #C4BCAF;
+    --beige-light:    #D8D2C8;
+    --brown:          #6B6258;
+
+    /* Grises */
+    --white:          #FFFFFF;
+    --gray-50:        #FAFAF9;
+    --gray-100:       #F4F4F2;
+    --gray-200:       #EAEAE7;
+    --gray-300:       #DDDDD9;
+    --gray-400:       #B0B0AA;
+    --gray-500:       #7A7A73;
+    --gray-600:       #545450;
+    --gray-700:       #3D3D39;
+    --gray-800:       #252523;
+    --gray-900:       #141412;
+
+    /* Textos */
+    --text:           #1A1A18;
+    --text-soft:      #3A3A37;
+    --text-light:     #6B6B65;
+
+    /* Bordes */
+    --border:         #E4E4E0;
+
+    /* Sombras */
+    --shadow-xs:      0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-sm:      0 2px 8px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
+    --shadow-md:      0 4px 20px rgba(0,0,0,0.07);
+    --shadow-hover:   0 8px 30px rgba(74, 94, 67, 0.10), 0 2px 8px rgba(0,0,0,0.05);
+
+    /* Radios */
+    --radius-sm:      6px;
+    --radius-card:    10px;
+    --radius-block:   16px;
+    --radius-full:    999px;
+    --radius-progress: 20px;
+
+    /* Espaciado */
+    --space-1:  0.5rem;
+    --space-2:  1rem;
+    --space-3:  1.5rem;
+    --space-4:  2rem;
+    --space-5:  3rem;
+    --space-6:  4rem;
+
+    /* Transiciones */
+    --transition-fast: 150ms cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-base: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-slow: 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ===================================================
+   PÁGINA CONTENEDOR
+   =================================================== */
+.page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 5% var(--space-6);
+    background: #F7F7F5;
+}
+
+.page > *:last-child {
+    margin-bottom: 0;
+}
+
+/* ===================================================
+   CABECERA DE PÁGINA
+   =================================================== */
+.page-header {
+    padding: var(--space-6) 5% var(--space-4);
+    background: #1A1E18;
+    border-bottom: 1px solid rgba(107, 126, 99, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 420px; height: 100%;
+    background: radial-gradient(ellipse at top right, rgba(107, 126, 99, 0.13) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+.page-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--green-dark), transparent);
+}
+
+.page-header h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    font-style: italic;
+    color: #FFFFFF;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+    position: relative;
+    z-index: 1;
+}
+
+.page-header p {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.55);
+    max-width: 600px;
+    line-height: 1.7;
+    font-weight: 400;
+    position: relative;
+    z-index: 1;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: var(--space-3);
+    letter-spacing: 0.01em;
+    position: relative;
+    z-index: 1;
+}
+
+.breadcrumb a {
+    color: var(--green-light);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    position: relative;
+}
+
+.breadcrumb a::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 1px;
+    background: var(--green-light);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-base);
+}
+
+.breadcrumb a:hover {
+    color: #FFFFFF;
+}
+
+.breadcrumb a:hover::after {
+    transform: scaleX(1);
+}
+
+.breadcrumb span {
+    color: rgba(255,255,255,0.2);
+}
+
+/* ===================================================
+   BLOQUE INTRO
+   =================================================== */
+.intro-block {
+    background: var(--white);
+    border-left: 3px solid var(--green-dark);
+    padding: var(--space-3) var(--space-4);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    margin-bottom: var(--space-5);
+    font-size: 1rem;
+    color: var(--text-soft);
+    box-shadow: var(--shadow-xs);
+    line-height: 1.8;
+    animation: fadeUpProyectos var(--transition-slow) 80ms both;
+}
+
+.intro-block strong {
+    color: var(--green-dark);
+    font-weight: 600;
+}
+
+/* ===================================================
+   TÍTULOS DE BLOQUE
+   =================================================== */
+.bloque-titulo {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text);
+    margin: var(--space-5) 0 var(--space-3);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    position: relative;
+    padding-bottom: var(--space-2);
+    animation: fadeUpProyectos var(--transition-slow) 120ms both;
+}
+
+.bloque-titulo::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 36px; height: 2px;
+    background: var(--green-dark);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-slow);
+}
+
+.bloque-titulo:hover::after {
+    width: 72px;
+}
+
+/* ===================================================
+   ESTADÍSTICAS
+   =================================================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: var(--space-5);
+    animation: fadeUpProyectos var(--transition-slow) 140ms both;
+}
+
+.stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: var(--space-3) var(--space-2);
+    text-align: center;
+    box-shadow: var(--shadow-xs);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green-dark), var(--green-light));
+    transform: scaleX(0);
+    transition: transform var(--transition-base);
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.stat-card:hover::after {
+    transform: scaleX(1);
+}
+
+.stat-valor {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 700;
+    color: var(--green-dark);
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    line-height: 1.4;
+    text-align: center;
+    max-width: 140px;
+}
+
+/* ===================================================
+   TABLAS
+   =================================================== */
+.tabla-wrapper {
+    background: var(--white);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    overflow-x: auto;
+    margin-bottom: var(--space-5);
+    box-shadow: var(--shadow-xs);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+    animation: fadeUpProyectos var(--transition-slow) 160ms both;
+    will-change: box-shadow;
+}
+
+.tabla-wrapper:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.93rem;
+    min-width: 680px;
+}
+
+thead {
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    text-align: left;
+    padding: 0.9rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-500);
+    white-space: nowrap;
+}
+
+td {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-soft);
+    vertical-align: middle;
+    transition: background var(--transition-fast);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover td {
+    background-color: var(--green-xlight);
+}
+
+td strong {
+    color: var(--text);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+td small {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* Columnas numéricas */
+td:nth-child(2),
+th:nth-child(2) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+td:nth-child(4),
+th:nth-child(4) {
+    text-align: left;
+    white-space: nowrap;
+}
+
+th:last-child,
+td:last-child {
+    text-align: center;
+}
+
+/* ===================================================
+   BADGES
+   =================================================== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.72rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    line-height: 1;
+    background: var(--gray-200);
+    color: var(--gray-700);
+    border: 1px solid transparent;
+}
+
+.badge-verde {
+    background: var(--green-xlight);
+    color: var(--green-dark);
+    border-color: rgba(107, 126, 99, 0.22);
+}
+
+.badge-azul {
+    background: var(--blue-sky-light);
+    color: var(--blue-sky);
+    border-color: rgba(37, 99, 168, 0.20);
+}
+
+.badge-gold {
+    background: #fef9ec;
+    color: #7a5a00;
+    border-color: rgba(234, 179, 8, 0.22);
+}
+
+.badge-gris {
+    background: var(--gray-100);
+    color: var(--gray-600);
+    border-color: var(--gray-300);
+}
+
+.badge-rojo {
+    background: var(--red-light);
+    color: var(--red);
+    border-color: var(--red-border);
+}
+
+/* ===================================================
+   BARRA DE PROGRESO
+   =================================================== */
+.progreso-barra {
+    display: inline-block;
+    width: 70px;
+    height: 6px;
+    background: var(--gray-200);
+    border-radius: var(--radius-progress);
+    overflow: hidden;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+.progreso-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green-dark), var(--green-light));
+    border-radius: var(--radius-progress);
+    width: 0%;
+    transition: width var(--transition-slow);
+}
+
+/* Para la celda que contiene barra + porcentaje */
+td:nth-child(4) {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+/* ===================================================
+   ANIMACIONES
+   =================================================== */
+@keyframes fadeUpProyectos {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===================================================
+   RESPONSIVE — TABLET
+   =================================================== */
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: var(--space-4) 4% var(--space-3);
+    }
+
+    .page-header h1 {
+        font-size: 1.9rem;
+    }
+
+    .bloque-titulo {
+        font-size: 1.5rem;
+    }
+
+    th, td {
+        padding: 0.75rem 1rem;
+        font-size: 0.88rem;
+    }
+
+    .badge {
+        font-size: 0.65rem;
+        padding: 0.22rem 0.6rem;
+    }
+
+    td:nth-child(2),
+    th:nth-child(2) {
+        text-align: left;
+    }
+
+    td:nth-child(4) {
+        flex-wrap: wrap;
+    }
+
+    .progreso-barra {
+        width: 50px;
+    }
+}
+
+/* ===================================================
+   RESPONSIVE — MÓVIL
+   =================================================== */
+@media (max-width: 480px) {
+    .page {
+        padding: 0 4% var(--space-5);
+    }
+
+    .page-header {
+        padding: var(--space-3) 4% var(--space-2);
+    }
+
+    .page-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .intro-block {
+        padding: var(--space-2) var(--space-3);
+        font-size: 0.93rem;
+    }
+
+    .bloque-titulo {
+        font-size: 1.35rem;
+        margin: var(--space-4) 0 var(--space-2);
+    }
+
+    .bloque-titulo::after {
+        width: 30px;
+        height: 2px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .stat-valor {
+        font-size: 1.7rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+    }
+
+    .tabla-wrapper {
+        border-radius: var(--radius-sm);
+        margin-bottom: var(--space-4);
+    }
+
+    th, td {
+        padding: 0.65rem 0.8rem;
+        font-size: 0.83rem;
+    }
+}
+
+/* ===================================================
+   TOUCH — desactivar hovers
+   =================================================== */
+@media (hover: none) {
+    .tabla-wrapper:hover,
+    .stat-card:hover {
+        transform: none;
+        box-shadow: var(--shadow-xs);
+    }
+
+    .stat-card:hover::after {
+        transform: scaleX(0);
+    }
+
+    tbody tr:hover td {
+        background-color: transparent;
+    }
+
+    .bloque-titulo:hover::after {
+        width: 36px;
+    }
+}
+
+/* ===================================================
+   PREFERS REDUCED MOTION
+   =================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

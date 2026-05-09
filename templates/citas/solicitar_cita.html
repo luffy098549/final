@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Solicitar Cita | Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cita-container{max-width:600px;margin:2rem auto;padding:0 1.5rem}
+    .cita-header{background:linear-gradient(135deg,#1a3b2e,#2e7d5e);border-radius:16px;padding:2rem;margin-bottom:2rem;color:white}
+    .cita-header h1{font-size:2rem;font-weight:700;margin-bottom:.5rem}
+    .form-group{margin-bottom:1.5rem}
+    .form-group label{display:block;font-weight:600;margin-bottom:.5rem;color:var(--gray-700)}
+    .form-control{width:100%;padding:.75rem;border:2px solid var(--gray-300);border-radius:8px;font-size:1rem}
+    .form-control:focus{border-color:#1a3b2e;outline:none}
+    .horarios-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.5rem}
+    .hora-btn{padding:.5rem;border:1px solid var(--gray-300);border-radius:6px;background:white;cursor:pointer;font-size:.9rem}
+    .hora-btn:hover{background:var(--gray-100)}
+    .hora-btn.selected{background:#1a3b2e;color:white;border-color:#1a3b2e}
+    .btn-submit{width:100%;padding:1rem;background:#1a3b2e;color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer}
+    .btn-submit:hover{background:#2e7d5e}
+    .loading{text-align:center;padding:1rem;color:var(--gray-500)}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cita-container">
+    <div class="cita-header">
+        <h1><i class="fas fa-calendar-check"></i> Solicitar Cita</h1>
+        <p>Selecciona servicio, fecha y hora disponible</p>
+    </div>
+
+    <form method="POST" id="citaForm">
+        <div class="form-group">
+            <label>Servicio *</label>
+            <select name="servicio" id="servicio" class="form-control" required>
+                <option value="">-- Selecciona un servicio --</option>
+                <option value="asesoria_legal">Asesoría Legal</option>
+                <option value="catastro">Catastro</option>
+                <option value="licencias">Licencias</option>
+                <option value="atencion_ciudadana">Atención Ciudadana</option>
+                <option value="tesoreria">Tesorería</option>
+                <option value="planeamiento">Planeamiento</option>
+                <option value="oaim">Oficina de Acceso a la Información</option>
+                <option value="funeraria">Servicios Funerarios</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Fecha *</label>
+            <input type="date" name="fecha" id="fecha" class="form-control" 
+                   min="{{ now.strftime('%Y-%m-%d') }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Hora *</label>
+            <input type="hidden" name="hora" id="hora" required>
+            <div id="horariosContainer" style="min-height:100px;">
+                <p class="loading">Selecciona servicio y fecha para ver horarios</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Motivo (opcional)</label>
+            <textarea name="motivo" class="form-control" rows="3" 
+                      placeholder="Describe el motivo de tu cita"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+            <i class="fas fa-calendar-plus"></i> Solicitar Cita
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Elementos del DOM
+const servicioSelect = document.getElementById('servicio');
+const fechaInput = document.getElementById('fecha');
+const horariosContainer = document.getElementById('horariosContainer');
+const horaInput = document.getElementById('hora');
+const submitBtn = document.getElementById('submitBtn');
+
+// Event listeners
+servicioSelect.addEventListener('change', cargarHorarios);
+fechaInput.addEventListener('change', cargarHorarios);
+
+// Función para cargar horarios
+async function cargarHorarios() {
+    const servicio = servicioSelect.value;
+    const fecha = fechaInput.value;
+    
+    if (!servicio || !fecha) {
+        horariosContainer.innerHTML = '<p class="loading">Selecciona servicio y fecha para ver horarios</p>';
+        return;
+    }
+    
+    horariosContainer.innerHTML = '<p class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando horarios...</p>';
+    horaInput.value = ''; // Limpiar hora seleccionada
+    
+    try {
+        const response = await fetch(`/api/horarios-disponibles?servicio=${servicio}&fecha=${fecha}`);
+        const data = await response.json();
+        
+        if (data.disponibles && data.disponibles.length > 0) {
+            let html = '<div class="horarios-grid">';
+            data.disponibles.forEach(hora => {
+                html += `<button type="button" class="hora-btn" onclick="seleccionarHora('${hora}')">${hora}</button>`;
+            });
+            html += '</div>';
+            horariosContainer.innerHTML = html;
+        } else {
+            horariosContainer.innerHTML = '<p class="loading">No hay horarios disponibles para esta fecha</p>';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        horariosContainer.innerHTML = '<p class="loading">Error al cargar horarios</p>';
+    }
+}
+
+// Función para seleccionar hora
+function seleccionarHora(hora) {
+    // Quitar clase selected de todos
+    document.querySelectorAll('.hora-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    // Agregar clase selected al clickeado
+    event.target.classList.add('selected');
+    
+    // Guardar hora en input hidden
+    horaInput.value = hora;
+}
+
+// Validar antes de enviar
+document.getElementById('citaForm').addEventListener('submit', function(e) {
+    if (!horaInput.value) {
+        e.preventDefault();
+        alert('Por favor selecciona una hora');
+    }
+});
+</script>
+{% endblock %}

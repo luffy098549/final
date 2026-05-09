@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error del servidor - Villa Cutupú</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/500.css') }}">
+
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <h1>Error interno del servidor</h1>
+        <p>Lo sentimos, ha ocurrido un error inesperado. Estamos trabajando para solucionarlo.</p>
+        <a href="/" class="btn">Volver al inicio</a>
+    </div>
+        <script src="{{ url_for('static', filename='js/500.js') }}"></script>
+</body>
+</html>
