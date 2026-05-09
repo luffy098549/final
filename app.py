@@ -1376,9 +1376,8 @@ def mis_citas():
         return redirect(url_for("auth.login"))
     
     citas = Cita.buscar_por_usuario(email)
-  citas.sort(key=lambda x: str(x.fecha) + ' ' + str(x.hora or ''), reverse=True)
+    citas.sort(key=lambda x: str(x.fecha) + ' ' + str(x.hora or ''), reverse=True)
     return render_template("citas/mis_citas.html", citas=citas, servicios=SERVICIOS_CITAS)
-
 # ================================================================
 # 27. RUTAS DINÁMICAS PARA FORMULARIOS
 # ================================================================
