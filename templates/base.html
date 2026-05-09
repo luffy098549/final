@@ -306,6 +306,19 @@
         background: #fee2e2 !important;
     }
 
+    .admin-link {
+        color: var(--verde) !important;
+        font-weight: 600 !important;
+    }
+
+    .admin-link i {
+        color: var(--verde) !important;
+    }
+
+    .admin-link:hover {
+        background: var(--verde-xlight) !important;
+    }
+
     /* Botones especiales */
     .btn-login {
         border:1.5px solid var(--verde) !important;
@@ -781,6 +794,11 @@
                         <a href="/perfil">
                             <i class="fas fa-id-card"></i> Mi Perfil
                         </a>
+                        {% if is_admin %}
+                        <a href="/admin/dashboard" class="admin-link">
+                            <i class="fas fa-shield-alt"></i> Panel Admin
+                        </a>
+                        {% endif %}
                         <div class="dropdown-divider"></div>
                         <a href="/logout" class="logout-link">
                             <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
@@ -821,6 +839,9 @@
         <li><a href="/mis-tramites"><i class="fas fa-file-alt"></i> Mis Trámites</a></li>
         <li><a href="/mis-servicios"><i class="fas fa-concierge-bell"></i> Mis Servicios</a></li>
         <li><a href="/perfil"><i class="fas fa-id-card"></i> Mi Perfil</a></li>
+        {% if is_admin %}
+        <li><a href="/admin/dashboard"><i class="fas fa-shield-alt"></i> Panel Admin</a></li>
+        {% endif %}
         <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
         {% else %}
         <li><a href="/login">Iniciar sesión</a></li>
