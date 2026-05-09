@@ -1031,8 +1031,14 @@ def admin_citas():
         from models.cita import Cita
         citas = Cita.query.all()
         
+        # ✅ CORRECCIÓN: Manejar correctamente fechas que pueden ser datetime.date o string
         def get_fecha(c):
-            return c.fecha + ' ' + c.hora if c.fecha and c.hora else ""
+            if c.fecha:
+                if hasattr(c.fecha, 'strftime'):
+                    return c.fecha.strftime('%Y-%m-%d') + ' ' + (c.hora or '')
+                else:
+                    return str(c.fecha) + ' ' + (c.hora or '')
+            return (c.hora or '')
         
         citas.sort(key=get_fecha)
         
@@ -1041,7 +1047,7 @@ def admin_citas():
             'total': len(citas),
             'pendientes': len([c for c in citas if c.estado == 'pendiente']),
             'confirmadas': len([c for c in citas if c.estado == 'confirmada']),
-            'hoy': len([c for c in citas if c.fecha == hoy])
+            'hoy': len([c for c in citas if c.fecha and str(c.fecha) == hoy])
         }
         
         return render_template("admin/citas.html", citas=citas, stats=stats, servicios=SERVICIOS_CITAS)
