@@ -13,19 +13,19 @@
     .motivo-cell {
         font-size: .82rem;
         max-width: 220px;
-        max-height: 58px;
+        max-height: 48px;
         overflow: hidden;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         line-height: 1.45;
-        color: #555;
-        cursor: help;
+        color: #6b7280;
+        font-style: italic;
     }
-    .badge-pendiente   { background: #fff3cd; color: #856404; border: 1px solid #ffc10720; }
-    .badge-confirmada  { background: #d1fae5; color: #065f46; border: 1px solid #10b98120; }
-    .badge-cancelada   { background: #fee2e2; color: #991b1b; border: 1px solid #ef444420; }
-    .badge-completada  { background: #dbeafe; color: #1e40af; border: 1px solid #3b82f620; }
+    .badge-pendiente   { background: #fff3cd; color: #856404; border: 1px solid #ffc10740; }
+    .badge-confirmada  { background: #d1fae5; color: #065f46; border: 1px solid #10b98140; }
+    .badge-cancelada   { background: #fee2e2; color: #991b1b; border: 1px solid #ef444440; }
+    .badge-completada  { background: #dbeafe; color: #1e40af; border: 1px solid #3b82f640; }
     .badge {
         padding: .3rem .75rem;
         border-radius: 20px;
@@ -33,32 +33,36 @@
         font-weight: 600;
         letter-spacing: .3px;
         white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
     }
     .fecha-cell { white-space: nowrap; }
     .fecha-cell div { margin-bottom: .2rem; font-size: .85rem; }
-    .fecha-cell i { margin-right: .3rem; opacity: .6; }
+    .fecha-cell i { margin-right: .3rem; opacity: .5; }
     .folio-code {
         font-family: monospace;
         font-size: .82rem;
         background: #f3f4f6;
-        padding: .2rem .5rem;
+        padding: .25rem .55rem;
         border-radius: 6px;
         color: #374151;
         white-space: nowrap;
+        border: 1px solid #e5e7eb;
     }
     .servicio-badge {
         display: inline-block;
         background: #eff6ff;
         color: #1d4ed8;
         border: 1px solid #bfdbfe;
-        padding: .2rem .6rem;
+        padding: .25rem .65rem;
         border-radius: 8px;
         font-size: .78rem;
         font-weight: 600;
     }
     .table tbody tr:hover { background: #f9fafb; }
-    .table td { vertical-align: middle; padding: .85rem 1rem; }
-    .table th { font-size: .78rem; letter-spacing: .5px; text-transform: uppercase; }
+    .table td { vertical-align: middle; padding: .9rem 1rem; }
+    .table th { font-size: .75rem; letter-spacing: .5px; text-transform: uppercase; }
     .btn-icon {
         width: 34px; height: 34px;
         border: 1px solid #e5e7eb;
@@ -82,7 +86,27 @@
         padding: 3rem;
         color: #9ca3af;
     }
-    .empty-state i { font-size: 2.5rem; margin-bottom: .8rem; display: block; }
+    .empty-state i { font-size: 2.5rem; margin-bottom: .8rem; display: block; opacity: .4; }
+    .motivo-box {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+        margin-bottom: 1.2rem;
+    }
+    .motivo-box-label {
+        font-size: .7rem;
+        font-weight: 700;
+        color: #9ca3af;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+        margin-bottom: .4rem;
+    }
+    .motivo-box-texto {
+        font-size: .88rem;
+        color: #374151;
+        line-height: 1.55;
+    }
 </style>
 
 <!-- Stats -->
@@ -185,21 +209,26 @@
                     <div><i class="fas fa-clock"></i> {{ cita.hora }}</div>
                 </td>
                 <td>
-                    <div class="motivo-cell" title="{{ cita.motivo or '' }}">
-                        {{ cita.motivo or '—' }}
-                    </div>
+                    <div class="motivo-cell">{{ cita.motivo or '—' }}</div>
                 </td>
                 <td>
                     <span class="badge badge-{{ cita.estado }}">
-                        {% if cita.estado == 'pendiente' %}<i class="fas fa-hourglass-half" style="margin-right:.3rem"></i>{% endif %}
-                        {% if cita.estado == 'confirmada' %}<i class="fas fa-check" style="margin-right:.3rem"></i>{% endif %}
-                        {% if cita.estado == 'cancelada' %}<i class="fas fa-times" style="margin-right:.3rem"></i>{% endif %}
-                        {% if cita.estado == 'completada' %}<i class="fas fa-check-double" style="margin-right:.3rem"></i>{% endif %}
+                        {% if cita.estado == 'pendiente' %}<i class="fas fa-hourglass-half"></i>
+                        {% elif cita.estado == 'confirmada' %}<i class="fas fa-check"></i>
+                        {% elif cita.estado == 'cancelada' %}<i class="fas fa-times"></i>
+                        {% elif cita.estado == 'completada' %}<i class="fas fa-check-double"></i>
+                        {% endif %}
                         {{ cita.estado|title }}
                     </span>
                 </td>
                 <td>
-                    <button class="btn-icon" onclick="cambiarEstado('{{ cita.id }}')" title="Cambiar estado">
+                    <button class="btn-icon"
+                        data-id="{{ cita.id }}"
+                        data-motivo="{{ cita.motivo or '' }}"
+                        data-nombre="{{ cita.usuario_nombre }}"
+                        data-folio="{{ cita.folio }}"
+                        onclick="cambiarEstado(this)"
+                        title="Ver detalle y cambiar estado">
                         <i class="fas fa-edit"></i>
                     </button>
                 </td>
@@ -221,12 +250,27 @@
 
 <!-- Modal cambio de estado -->
 <div class="modal" id="estadoModal">
-    <div class="modal-content" style="max-width:500px">
+    <div class="modal-content" style="max-width:520px">
         <div class="modal-header">
-            <h2><i class="fas fa-edit"></i> Cambiar Estado de Cita</h2>
+            <h2><i class="fas fa-calendar-check"></i> Gestionar Cita</h2>
             <button class="modal-close" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
+
+            <!-- Info cita -->
+            <div style="margin-bottom:1rem;padding:.65rem .9rem;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;font-size:.83rem;color:#166534;display:flex;align-items:center;gap:.5rem">
+                <i class="fas fa-info-circle"></i>
+                <span id="infoCita">—</span>
+            </div>
+
+            <!-- Motivo completo -->
+            <div class="motivo-box" id="motivoBox" style="display:none">
+                <div class="motivo-box-label">
+                    <i class="fas fa-comment-alt" style="margin-right:.3rem"></i>Motivo de la cita
+                </div>
+                <div class="motivo-box-texto" id="motivoTexto"></div>
+            </div>
+
             <form method="POST" id="estadoForm">
                 <div class="form-group" style="margin-bottom:1rem">
                     <label class="form-label">Nuevo Estado</label>
@@ -239,7 +283,8 @@
                 </div>
                 <div class="form-group" style="margin-bottom:1.5rem">
                     <label class="form-label">Notas para el ciudadano (opcional)</label>
-                    <textarea name="notas" class="form-control" rows="3" placeholder="Ej: Su cita ha sido confirmada para las 9:00 AM..."></textarea>
+                    <textarea name="notas" class="form-control" rows="3"
+                        placeholder="Ej: Su cita ha sido confirmada. Preséntese con su cédula..."></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width:100%">
                     <i class="fas fa-save"></i> Guardar Cambios
@@ -252,9 +297,24 @@
 
 {% block scripts %}
 <script>
-function cambiarEstado(citaId) {
-    const form = document.getElementById('estadoForm');
-    form.action = `/admin/citas/${citaId}/estado`;
+function cambiarEstado(btn) {
+    const citaId = btn.dataset.id;
+    const motivo = btn.dataset.motivo;
+    const nombre = btn.dataset.nombre;
+    const folio  = btn.dataset.folio;
+
+    document.getElementById('estadoForm').action = `/admin/citas/${citaId}/estado`;
+    document.getElementById('infoCita').textContent = `${folio} — ${nombre}`;
+
+    const box   = document.getElementById('motivoBox');
+    const texto = document.getElementById('motivoTexto');
+    if (motivo && motivo.trim()) {
+        texto.textContent = motivo;
+        box.style.display = 'block';
+    } else {
+        box.style.display = 'none';
+    }
+
     document.getElementById('estadoModal').classList.add('active');
 }
 
@@ -266,7 +326,7 @@ document.getElementById('searchInput').addEventListener('keyup', filtrar);
 document.getElementById('estadoFilter').addEventListener('change', filtrar);
 
 function filtrar() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
+    const q      = document.getElementById('searchInput').value.toLowerCase();
     const estado = document.getElementById('estadoFilter').value;
     document.querySelectorAll('#citasTable tbody tr').forEach(row => {
         if (row.querySelector('.empty-state')) return;
