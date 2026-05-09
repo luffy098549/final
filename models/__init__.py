@@ -6,7 +6,15 @@ from .denuncia import Denuncia
 from .cita import Cita
 from .encuesta import Encuesta
 from .plantilla import Plantilla
-from .configuracion import Configuracion 
+from .configuracion import Configuracion
+
+# ================================================================
+# 🔥 NUEVOS MODELOS DE CONTENIDO
+# ================================================================
+
+from .contenido import Contenido
+from .transparencia import Transparencia
+from .menu_item import MenuItem
 
 # 🔥 IMPORTAR REPORTES CON SEGURIDAD
 try:
@@ -25,20 +33,22 @@ except ImportError:
         def obtener_denuncias_por_tipo():
             return {}
 
-# 🔥 IMPORTAR NOTIFICACIONES (DEBE EXISTIR)
+# 🔥 IMPORTAR NOTIFICACIONES
 from .notificacion import Notificacion
 
-# 🔥 IMPORTAR MENSAJES (DEBE EXISTIR)
+# 🔥 IMPORTAR MENSAJES
 from .mensaje import Mensaje
 
 # ================================================================
-# 🔥 NUEVOS MODELOS AGREGADOS
+# 🔥 MODELOS DE NOTICIAS Y COMENTARIOS
 # ================================================================
 
-# Noticias y comentarios
 from .noticia import CategoriaNoticia, Noticia
 from .like_noticia import LikeNoticia
 from .comentario_noticia import ComentarioNoticia
 
-# Logs de actividad
+# ================================================================
+# 🔥 LOGS DE ACTIVIDAD
+# ================================================================
+
 from .log_actividad import LogActividad, registrar_log

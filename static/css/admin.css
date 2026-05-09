@@ -1345,3 +1345,36 @@
     .header-search { display: none; }
     .actions-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+.actions-grid { grid-template-columns: repeat(2, 1fr); }
+
+
+/* ================================================
+   FIX CRÍTICO: Modales Bootstrap — No eliminar
+   ================================================ */
+.modal-backdrop { z-index: 1040 !important; }
+.modal { z-index: 1045 !important; }
+.modal-dialog { pointer-events: all !important; }
+.modal-content { pointer-events: all !important; position: relative !important; }
+.modal-content * { pointer-events: auto !important; }
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+    pointer-events: auto !important;
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    cursor: text !important;
+    opacity: 1 !important;
+    background: #ffffff !important;
+    color: #212529 !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+.modal-content input[type="checkbox"],
+.modal-content input[type="radio"] {
+    cursor: pointer !important;
+}
+.modal-content button {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}

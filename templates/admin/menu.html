@@ -1,0 +1,259 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestión de Menú - Admin{% endblock %}
+
+{% block page_title %}Gestión del Menú de Navegación{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Inicio</a>
+<span class="separator">/</span>
+<span>Menú</span>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="fas fa-bars me-2"></i>Gestión del Menú de Navegación</h4>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMenuItem" onclick="resetForm()">
+            <i class="fas fa-plus me-2"></i>Nuevo Ítem
+        </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h3 class="text-success">{{ items|length }}</h3>
+                    <p class="mb-0 text-muted">Total Ítems</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h3 class="text-success">{{ items|selectattr('activo', 'equalto', true)|list|length }}</h3>
+                    <p class="mb-0 text-muted">Activos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h3 class="text-success">{{ items|selectattr('parent_id', 'equalto', None)|list|length }}</h3>
+                    <p class="mb-0 text-muted">Ítems Raíz</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if items %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Orden</th>
+                    <th>Título</th>
+                    <th>URL</th>
+                    <th>Icono</th>
+                    <th>Padre</th>
+                    <th>Nueva Tab</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items if not item.parent_id %}
+                <tr>
+                    <td>{{ item.orden }}</td>
+                    <td><strong>{{ item.titulo }}</strong></td>
+                    <td><code>{{ item.url }}</code></td>
+                    <td>{% if item.icono %}<i class="{{ item.icono }}"></i>{% else %}—{% endif %}</td>
+                    <td><span class="badge bg-secondary">Raíz</span></td>
+                    <td>{% if item.target_blank %}<span class="badge bg-info">Sí</span>{% else %}No{% endif %}</td>
+                    <td>{% if item.activo %}<span class="badge bg-success">Activo</span>{% else %}<span class="badge bg-secondary">Inactivo</span>{% endif %}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick='editarItem({{ item.id }})' data-bs-toggle="modal" data-bs-target="#modalMenuItem">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <form action="{{ url_for('admin.admin_menu_toggle', id=item.id) }}" method="POST" style="display:inline">
+                            <button class="btn btn-sm btn-warning" type="submit">
+                                {% if item.activo %}<i class="fas fa-eye-slash"></i>{% else %}<i class="fas fa-eye"></i>{% endif %}
+                            </button>
+                        </form>
+                        <form action="{{ url_for('admin.admin_menu_eliminar', id=item.id) }}" method="POST" style="display:inline" onsubmit="return confirm('¿Eliminar este ítem?')">
+                            <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% for hijo in item.hijos %}
+                <tr style="background-color: #f8f9fc">
+                    <tr>{{ hijo.orden }}</td>
+                    <td><span style="margin-left: 25px;">└─ </span>{{ hijo.titulo }}</td>
+                    <td><code>{{ hijo.url }}</code></td>
+                    <td>{% if hijo.icono %}<i class="{{ hijo.icono }}"></i>{% else %}—{% endif %}</td>
+                    <td><span class="badge bg-secondary">{{ item.titulo }}</span></td>
+                    <td>{% if hijo.target_blank %}<span class="badge bg-info">Sí</span>{% else %}No{% endif %}</td>
+                    <td>{% if hijo.activo %}<span class="badge bg-success">Activo</span>{% else %}<span class="badge bg-secondary">Inactivo</span>{% endif %}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick='editarItem({{ hijo.id }})' data-bs-toggle="modal" data-bs-target="#modalMenuItem">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <form action="{{ url_for('admin.admin_menu_toggle', id=hijo.id) }}" method="POST" style="display:inline">
+                            <button class="btn btn-sm btn-warning" type="submit">
+                                {% if hijo.activo %}<i class="fas fa-eye-slash"></i>{% else %}<i class="fas fa-eye"></i>{% endif %}
+                            </button>
+                        </form>
+                        <form action="{{ url_for('admin.admin_menu_eliminar', id=hijo.id) }}" method="POST" style="display:inline" onsubmit="return confirm('¿Eliminar este ítem?')">
+                            <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">No hay ítems en el menú. Agrega el primero.</div>
+    {% endif %}
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalMenuItem" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalTitle">Nuevo Ítem</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="menuItemForm" method="POST" action="{{ url_for('admin.admin_menu_crear') }}">
+                <div class="modal-body">
+                    <input type="hidden" id="itemId" name="item_id">
+                    <div class="mb-3">
+                        <label class="form-label">Título *</label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">URL *</label>
+                        <input type="text" class="form-control" id="url" name="url" required placeholder="/ruta">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Icono</label>
+                        <input type="text" class="form-control" id="icono" name="icono" placeholder="fas fa-home">
+                        <small class="text-muted">Clases de Font Awesome (ej: fas fa-home)</small>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Orden</label>
+                            <input type="number" class="form-control" id="orden" name="orden" value="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Padre</label>
+                            <select class="form-select" id="parent_id" name="parent_id">
+                                <option value="">Ninguno (Raíz)</option>
+                                {% for item in items if not item.parent_id %}
+                                <option value="{{ item.id }}">{{ item.titulo }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="target_blank" name="target_blank" value="on">
+                            <label class="form-check-label">Abrir en nueva pestaña</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="activo" name="activo" value="on" checked>
+                            <label class="form-check-label">Activo</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Guardar las URLs base al cargar la página (Jinja2 se ejecuta una sola vez)
+    const URL_CREAR = "{{ url_for('admin.admin_menu_crear') }}";
+    const URL_EDITAR_BASE = "{{ url_for('admin.admin_menu_editar', id=0) }}";
+
+    function resetForm() {
+        document.getElementById('modalTitle').innerText = 'Nuevo Ítem';
+        document.getElementById('menuItemForm').reset();
+        document.getElementById('itemId').value = '';
+        document.getElementById('activo').checked = true;
+        document.getElementById('target_blank').checked = false;
+        document.getElementById('orden').value = 0;
+        document.getElementById('parent_id').value = '';
+
+        const form = document.getElementById('menuItemForm');
+        form.action = URL_CREAR;
+        form.method = "POST";
+
+        // Eliminar cualquier input _method residual
+        const methodInput = form.querySelector('input[name="_method"]');
+        if (methodInput) methodInput.remove();
+    }
+
+    function editarItem(itemId) {
+        fetch('/admin/api/menu-item/' + itemId)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    var item = data.item;
+                    document.getElementById('modalTitle').innerText = 'Editar Ítem';
+                    document.getElementById('itemId').value = item.id;
+                    document.getElementById('titulo').value = item.titulo;
+                    document.getElementById('url').value = item.url;
+                    document.getElementById('icono').value = item.icono || '';
+                    document.getElementById('orden').value = item.orden || 0;
+                    document.getElementById('parent_id').value = item.parent_id || '';
+                    document.getElementById('target_blank').checked = item.target_blank === true;
+                    document.getElementById('activo').checked = item.activo === true;
+
+                    const form = document.getElementById('menuItemForm');
+                    form.action = URL_EDITAR_BASE.replace('0', item.id);
+                    form.method = "POST";
+
+                    // Eliminar _method porque el backend usa POST directamente
+                    let methodInput = form.querySelector('input[name="_method"]');
+                    if (methodInput) methodInput.remove();
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                alert('Error al cargar los datos del ítem');
+            });
+    }
+
+    // Validar formulario antes de enviar
+    document.getElementById('menuItemForm').addEventListener('submit', function(e) {
+        var titulo = document.getElementById('titulo').value.trim();
+        var url = document.getElementById('url').value.trim();
+
+        if (!titulo) {
+            e.preventDefault();
+            alert('El título es obligatorio');
+            return false;
+        }
+
+        if (!url) {
+            e.preventDefault();
+            alert('La URL es obligatoria');
+            return false;
+        }
+
+        return true;
+    });
+</script>
+{% endblock %}

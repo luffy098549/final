@@ -739,12 +739,26 @@
 
         <nav class="main-nav" aria-label="Navegación principal">
             <ul>
-                <li><a href="/" class="nav-link">Inicio</a></li>
-                <li><a href="/municipio" class="nav-link">Municipio</a></li>
-                <li><a href="/servicios" class="nav-link">Servicios</a></li>
-                <li><a href="/transparencia" class="nav-link">Transparencia</a></li>
-                <li><a href="/noticias" class="nav-link">Noticias</a></li>
-                <li><a href="/contacto" class="nav-link">Contacto</a></li>
+                <!-- MENÚ DINÁMICO DESDE BASE DE DATOS -->
+                {% if menu and menu|length > 0 %}
+                    {% for item in menu if item.activo and not item.parent_id %}
+                    <li>
+                        <a href="{{ item.url }}" class="nav-link"
+                           {% if item.target_blank %}target="_blank"{% endif %}>
+                            {% if item.icono %}<i class="{{ item.icono }}"></i>{% endif %}
+                            {{ item.titulo }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <!-- MENÚ POR DEFECTO (FALLBACK) -->
+                    <li><a href="/" class="nav-link">Inicio</a></li>
+                    <li><a href="/municipio" class="nav-link">Municipio</a></li>
+                    <li><a href="/servicios" class="nav-link">Servicios</a></li>
+                    <li><a href="/transparencia" class="nav-link">Transparencia</a></li>
+                    <li><a href="/noticias" class="nav-link">Noticias</a></li>
+                    <li><a href="/contacto" class="nav-link">Contacto</a></li>
+                {% endif %}
                 
                 {% if logged %}
                 <!-- Menú desplegable para usuarios logueados -->
@@ -785,12 +799,23 @@
 <!-- Menú móvil -->
 <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
     <ul>
-        <li><a href="/">Inicio</a></li>
-        <li><a href="/municipio">Municipio</a></li>
-        <li><a href="/servicios">Servicios</a></li>
-        <li><a href="/transparencia">Transparencia</a></li>
-        <li><a href="/noticias">Noticias</a></li>
-        <li><a href="/contacto">Contacto</a></li>
+        {% if menu and menu|length > 0 %}
+            {% for item in menu if item.activo and not item.parent_id %}
+            <li>
+                <a href="{{ item.url }}" {% if item.target_blank %}target="_blank"{% endif %}>
+                    {% if item.icono %}<i class="{{ item.icono }}"></i>{% endif %}
+                    {{ item.titulo }}
+                </a>
+            </li>
+            {% endfor %}
+        {% else %}
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/municipio">Municipio</a></li>
+            <li><a href="/servicios">Servicios</a></li>
+            <li><a href="/transparencia">Transparencia</a></li>
+            <li><a href="/noticias">Noticias</a></li>
+            <li><a href="/contacto">Contacto</a></li>
+        {% endif %}
         {% if logged %}
         <li><a href="/solicitar-cita"><i class="fas fa-calendar-plus"></i> Solicitar Cita</a></li>
         <li><a href="/mis-tramites"><i class="fas fa-file-alt"></i> Mis Trámites</a></li>
@@ -854,12 +879,18 @@
             <div class="footer-links anim" style="transition-delay:.12s">
                 <h3>Enlaces rápidos</h3>
                 <ul>
-                    <li><a href="/">Inicio</a></li>
-                    <li><a href="/municipio">Municipio</a></li>
-                    <li><a href="/servicios">Servicios</a></li>
-                    <li><a href="/transparencia">Transparencia</a></li>
-                    <li><a href="/noticias">Noticias</a></li>
-                    <li><a href="/contacto">Contacto</a></li>
+                    {% if menu and menu|length > 0 %}
+                        {% for item in menu if item.activo and not item.parent_id %}
+                        <li><a href="{{ item.url }}">{{ item.titulo }}</a></li>
+                        {% endfor %}
+                    {% else %}
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/municipio">Municipio</a></li>
+                        <li><a href="/servicios">Servicios</a></li>
+                        <li><a href="/transparencia">Transparencia</a></li>
+                        <li><a href="/noticias">Noticias</a></li>
+                        <li><a href="/contacto">Contacto</a></li>
+                    {% endif %}
                 </ul>
             </div>
 

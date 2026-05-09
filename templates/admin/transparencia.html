@@ -1,0 +1,610 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Transparencia - Admin{% endblock %}
+
+{% block page_title %}Gestión de Transparencia{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilos específicos para la gestión de transparencia */
+    .stats-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 4px solid #2d6a4f;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d6a4f;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stats-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stats-icon {
+        font-size: 2.5rem;
+        color: #2d6a4f20;
+        float: right;
+        margin-top: -1rem;
+    }
+    
+    .table-transparencia {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .table-transparencia thead {
+        background: #f8f9fc;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .table-transparencia th {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+    }
+    
+    .table-transparencia td {
+        padding: 1rem;
+        vertical-align: middle;
+    }
+    
+    .table-transparencia tbody tr:hover {
+        background-color: #f8f9fc;
+    }
+    
+    .badge-status {
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .badge-publicado {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .badge-borrador {
+        background-color: #e2e3e5;
+        color: #383d41;
+    }
+    
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        margin: 0 2px;
+    }
+    
+    .modal-header {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        border-bottom: none;
+    }
+    
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+    
+    .modal-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #2d6a4f;
+        box-shadow: 0 0 0 0.2rem rgba(45, 106, 79, 0.25);
+    }
+    
+    .btn-primary {
+        background-color: #2d6a4f;
+        border-color: #2d6a4f;
+    }
+    
+    .btn-primary:hover {
+        background-color: #1b4332;
+        border-color: #1b4332;
+    }
+    
+    .btn-outline-primary {
+        color: #2d6a4f;
+        border-color: #2d6a4f;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: #2d6a4f;
+        border-color: #2d6a4f;
+    }
+    
+    .action-buttons {
+        white-space: nowrap;
+    }
+    
+    .categoria-badge {
+        background-color: #e9ecef;
+        color: #495057;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .filter-bar {
+        background: white;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 12px;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 1rem;
+    }
+    
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .toolbar-title h4 {
+        margin: 0;
+        color: #2d6a4f;
+        font-weight: 600;
+    }
+    
+    .toolbar-title p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Inicio</a>
+<span class="separator">/</span>
+<span>Transparencia</span>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="toolbar-title">
+            <h4>
+                <i class="fas fa-file-alt me-2"></i>Gestión de Transparencia
+            </h4>
+            <p>Administra los documentos públicos del portal de transparencia</p>
+        </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDocumento" onclick="resetForm()">
+            <i class="fas fa-plus me-2"></i>Nuevo Documento
+        </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stats-card">
+                <i class="fas fa-folder-open stats-icon"></i>
+                <div class="stats-number">{{ documentos|length }}</div>
+                <div class="stats-label">Total Documentos</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <i class="fas fa-check-circle stats-icon"></i>
+                <div class="stats-number">{{ documentos|selectattr('publicado', 'equalto', true)|list|length }}</div>
+                <div class="stats-label">Publicados</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <i class="fas fa-pencil-alt stats-icon"></i>
+                <div class="stats-number">{{ documentos|selectattr('publicado', 'equalto', false)|list|length }}</div>
+                <div class="stats-label">Borradores</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros rápidos -->
+    <div class="filter-bar">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <label class="form-label mb-1">Filtrar por categoría</label>
+                <select class="form-select form-select-sm" id="filterCategoria" onchange="filterTable()">
+                    <option value="all">Todas las categorías</option>
+                    {% for cat_key, cat_name in categorias %}
+                    <option value="{{ cat_key }}">{{ cat_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label mb-1">Filtrar por estado</label>
+                <select class="form-select form-select-sm" id="filterEstado" onchange="filterTable()">
+                    <option value="all">Todos</option>
+                    <option value="published">Publicados</option>
+                    <option value="draft">Borradores</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label mb-1">Buscar</label>
+                <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Buscar por título..." onkeyup="filterTable()">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de documentos -->
+    {% if documentos %}
+    <div class="table-responsive">
+        <table class="table table-transparencia" id="documentosTable">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Categoría</th>
+                    <th>Año/Periodo</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in documentos %}
+                <tr data-categoria="{{ doc.categoria }}" data-publicado="{{ doc.publicado|lower }}" data-titulo="{{ doc.titulo|lower }}" data-doc-id="{{ doc.id }}">
+                    <td>
+                        <strong>{{ doc.titulo }}</strong>
+                        {% if doc.descripcion %}
+                        <br>
+                        <small class="text-muted">{{ doc.descripcion|truncate(60) }}</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for cat_key, cat_name in categorias %}
+                            {% if cat_key == doc.categoria %}
+                            <span class="categoria-badge">{{ cat_name }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if doc.anio %}
+                            {{ doc.anio }}
+                            {% if doc.periodo %} - {{ doc.periodo }}{% endif %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if doc.publicado %}
+                        <span class="badge-status badge-publicado">
+                            <i class="fas fa-check-circle me-1"></i>Publicado
+                        </span>
+                        {% else %}
+                        <span class="badge-status badge-borrador">
+                            <i class="fas fa-edit me-1"></i>Borrador
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <small>
+                            {% if doc.fecha_doc %}
+                                {{ doc.fecha_doc.strftime('%d/%m/%Y') if doc.fecha_doc is not string else doc.fecha_doc[:10] }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </small>
+                    </td>
+                    <td class="action-buttons">
+                        <button type="button" class="btn btn-sm btn-outline-primary" 
+                                onclick='editarDocumento({{ doc.id }})' 
+                                data-bs-toggle="modal" data-bs-target="#modalDocumento">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        
+                        <form action="{{ url_for('admin.admin_transparencia_toggle', id=doc.id) }}" 
+                              method="POST" style="display: inline-block;">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary" 
+                                    onclick='return confirmToggle("{{ doc.titulo|replace('"', '\\"') }}", {{ doc.publicado|tojson }})'>
+                                {% if doc.publicado %}
+                                <i class="fas fa-eye-slash"></i>
+                                {% else %}
+                                <i class="fas fa-eye"></i>
+                                {% endif %}
+                            </button>
+                        </form>
+                        
+                        <form action="{{ url_for('admin.admin_transparencia_eliminar', id=doc.id) }}" 
+                              method="POST" style="display: inline-block;" 
+                              onsubmit='return confirmarEliminacion("{{ doc.titulo|replace('"', '\\"') }}")'>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-folder-open"></i>
+        <h5>No hay documentos</h5>
+        <p class="text-muted">Comienza agregando el primer documento de transparencia</p>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDocumento" onclick="resetForm()">
+            <i class="fas fa-plus me-2"></i>Agregar Documento
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para Nuevo/Editar Documento -->
+<div class="modal fade" id="modalDocumento" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-file-alt me-2"></i>
+                    <span id="modalTitle">Nuevo Documento</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="documentoForm" method="POST" action="{{ url_for('admin.admin_transparencia_crear') }}">
+                <div class="modal-body">
+                    <input type="hidden" id="docId" name="doc_id" value="">
+                    
+                    <!-- Título -->
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título *</label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" required>
+                    </div>
+                    
+                    <!-- Categoría -->
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label">Categoría *</label>
+                        <select class="form-select" id="categoria" name="categoria" required>
+                            <option value="">Seleccionar categoría</option>
+                            {% for cat_key, cat_name in categorias %}
+                            <option value="{{ cat_key }}">{{ cat_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Año -->
+                    <div class="mb-3">
+                        <label for="anio" class="form-label">Año</label>
+                        <input type="number" class="form-control" id="anio" name="anio" min="2000" max="2030">
+                    </div>
+                    
+                    <!-- Periodo -->
+                    <div class="mb-3">
+                        <label for="periodo" class="form-label">Periodo</label>
+                        <input type="text" class="form-control" id="periodo" name="periodo" placeholder="Ej: Enero-Junio">
+                    </div>
+                    
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+                    </div>
+                    
+                    <!-- URL documento -->
+                    <div class="mb-3">
+                        <label for="archivo_url" class="form-label">URL del documento</label>
+                        <input type="url" class="form-control" id="archivo_url" name="archivo_url" placeholder="https://ejemplo.com/documento.pdf">
+                        <small class="text-muted">Enlace directo al PDF o documento</small>
+                    </div>
+                    
+                    <!-- Enlace externo -->
+                    <div class="mb-3">
+                        <label for="enlace_ext" class="form-label">Enlace externo</label>
+                        <input type="url" class="form-control" id="enlace_ext" name="enlace_ext" placeholder="https://ejemplo.com/pagina">
+                        <small class="text-muted">Enlace a página externa (opcional)</small>
+                    </div>
+                    
+                    <!-- Publicado -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="publicado" name="publicado" value="on">
+                            <label class="form-check-label" for="publicado">
+                                <i class="fas fa-globe me-1"></i>Publicar inmediatamente
+                            </label>
+                        </div>
+                        <small class="text-muted">Si no se marca, el documento se guardará como borrador</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmit">
+                        <i class="fas fa-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Configuración de la tabla
+    let currentDocId = null;
+    
+    function filterTable() {
+        const categoria = document.getElementById('filterCategoria').value;
+        const estado = document.getElementById('filterEstado').value;
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        const rows = document.querySelectorAll('#documentosTable tbody tr');
+        let visibleCount = 0;
+        
+        rows.forEach(row => {
+            let show = true;
+            
+            if (categoria !== 'all') {
+                const rowCategoria = row.getAttribute('data-categoria');
+                if (rowCategoria !== categoria) show = false;
+            }
+            
+            if (show && estado !== 'all') {
+                const isPublished = row.getAttribute('data-publicado') === 'true';
+                if (estado === 'published' && !isPublished) show = false;
+                if (estado === 'draft' && isPublished) show = false;
+            }
+            
+            if (show && searchTerm) {
+                const titulo = row.getAttribute('data-titulo') || '';
+                if (!titulo.includes(searchTerm)) show = false;
+            }
+            
+            row.style.display = show ? '' : 'none';
+            if (show) visibleCount++;
+        });
+        
+        const tbody = document.querySelector('#documentosTable tbody');
+        let emptyMsg = document.getElementById('noResultsMsg');
+        
+        if (visibleCount === 0 && tbody) {
+            if (!emptyMsg) {
+                emptyMsg = document.createElement('tr');
+                emptyMsg.id = 'noResultsMsg';
+                emptyMsg.innerHTML = '<td colspan="6" class="text-center py-4 text-muted">No se encontraron documentos con los filtros aplicados</td>';
+                tbody.appendChild(emptyMsg);
+            }
+        } else if (emptyMsg) {
+            emptyMsg.remove();
+        }
+    }
+    
+    function resetForm() {
+        document.getElementById('modalTitle').innerText = 'Nuevo Documento';
+        document.getElementById('documentoForm').reset();
+        document.getElementById('docId').value = '';
+        document.getElementById('publicado').checked = false;
+        
+        const form = document.getElementById('documentoForm');
+        form.action = "{{ url_for('admin.admin_transparencia_crear') }}";
+        form.method = "POST";
+        
+        let methodInput = form.querySelector('input[name="_method"]');
+        if (methodInput) methodInput.remove();
+    }
+    
+    function editarDocumento(docId) {
+        fetch('/admin/api/transparencia/' + docId)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    var doc = data.documento;
+                    
+                    document.getElementById('modalTitle').innerText = 'Editar Documento';
+                    document.getElementById('docId').value = doc.id;
+                    document.getElementById('titulo').value = doc.titulo;
+                    document.getElementById('categoria').value = doc.categoria;
+                    document.getElementById('anio').value = doc.anio || '';
+                    document.getElementById('periodo').value = doc.periodo || '';
+                    document.getElementById('descripcion').value = doc.descripcion || '';
+                    document.getElementById('archivo_url').value = doc.archivo_url || '';
+                    document.getElementById('enlace_ext').value = doc.enlace_ext || '';
+                    document.getElementById('publicado').checked = doc.publicado === true || doc.publicado === 'true';
+                    
+                    var form = document.getElementById('documentoForm');
+                    form.action = "{{ url_for('admin.admin_transparencia_editar', id=0) }}".replace('0', doc.id);
+                    form.method = "POST";
+                    
+                    var methodInput = form.querySelector('input[name="_method"]');
+                    if (!methodInput) {
+                        methodInput = document.createElement('input');
+                        methodInput.type = 'hidden';
+                        methodInput.name = '_method';
+                        form.appendChild(methodInput);
+                    }
+                    methodInput.value = 'PUT';
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                alert('Error al cargar los datos del documento');
+            });
+    }
+    
+    function confirmToggle(titulo, isPublished) {
+        var accion = isPublished ? 'ocultar (convertir a borrador)' : 'publicar';
+        return confirm('¿Estás seguro de ' + accion + ' el documento "' + titulo + '"?');
+    }
+    
+    function confirmarEliminacion(titulo) {
+        return confirm('¿Estás seguro de eliminar el documento "' + titulo + '"?\n\nEsta acción no se puede deshacer.');
+    }
+    
+    document.getElementById('documentoForm')?.addEventListener('submit', function(e) {
+        var titulo = document.getElementById('titulo').value.trim();
+        var categoria = document.getElementById('categoria').value;
+        var archivoUrl = document.getElementById('archivo_url').value.trim();
+        var enlaceExt = document.getElementById('enlace_ext').value.trim();
+        
+        if (!titulo) {
+            e.preventDefault();
+            alert('El título es obligatorio');
+            return false;
+        }
+        
+        if (!categoria) {
+            e.preventDefault();
+            alert('Debes seleccionar una categoría');
+            return false;
+        }
+        
+        if (!archivoUrl && !enlaceExt) {
+            e.preventDefault();
+            alert('Debes proporcionar al menos una URL del documento o un enlace externo');
+            return false;
+        }
+        
+        return true;
+    });
+    
+    var anioInput = document.getElementById('anio');
+    if (anioInput && !anioInput.value) {
+        var currentYear = new Date().getFullYear();
+        anioInput.value = currentYear;
+    }
+</script>
+{% endblock %}

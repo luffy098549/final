@@ -1,0 +1,645 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Gestión de Menú - Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilos específicos para la gestión de menú */
+    .stats-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 4px solid #2d6a4f;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d6a4f;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stats-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stats-icon {
+        font-size: 2.5rem;
+        color: #2d6a4f20;
+        float: right;
+        margin-top: -1rem;
+    }
+    
+    .table-menu {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .table-menu thead {
+        background: #f8f9fc;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .table-menu th {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+    }
+    
+    .table-menu td {
+        padding: 1rem;
+        vertical-align: middle;
+    }
+    
+    .table-menu tbody tr:hover {
+        background-color: #f8f9fc;
+    }
+    
+    .badge-status {
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .badge-activo {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .badge-inactivo {
+        background-color: #e2e3e5;
+        color: #383d41;
+    }
+    
+    .badge-hijo {
+        background-color: #cfe2ff;
+        color: #084298;
+    }
+    
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        margin: 0 2px;
+    }
+    
+    .modal-header {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+        color: white;
+        border-bottom: none;
+    }
+    
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+    
+    .modal-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #2d6a4f;
+        box-shadow: 0 0 0 0.2rem rgba(45, 106, 79, 0.25);
+    }
+    
+    .btn-primary {
+        background-color: #2d6a4f;
+        border-color: #2d6a4f;
+    }
+    
+    .btn-primary:hover {
+        background-color: #1b4332;
+        border-color: #1b4332;
+    }
+    
+    .btn-outline-primary {
+        color: #2d6a4f;
+        border-color: #2d6a4f;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: #2d6a4f;
+        border-color: #2d6a4f;
+    }
+    
+    .action-buttons {
+        white-space: nowrap;
+    }
+    
+    .icon-preview {
+        font-size: 1.25rem;
+        width: 32px;
+        text-align: center;
+    }
+    
+    .child-item {
+        background-color: #f8f9fc;
+    }
+    
+    .indent-1 {
+        padding-left: 2rem !important;
+    }
+    
+    .indent-1::before {
+        content: "└─ ";
+        color: #6c757d;
+        font-family: monospace;
+    }
+    
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .toolbar-title h4 {
+        margin: 0;
+        color: #2d6a4f;
+        font-weight: 600;
+    }
+    
+    .toolbar-title p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+    
+    .info-note {
+        background-color: #e7f3ff;
+        border-left: 4px solid #2d6a4f;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1.5rem;
+    }
+    
+    .info-note i {
+        color: #2d6a4f;
+        margin-right: 0.5rem;
+    }
+    
+    .info-note p {
+        margin: 0;
+        color: #495057;
+        font-size: 0.875rem;
+    }
+    
+    .orden-input {
+        width: 60px;
+        display: inline-block;
+        text-align: center;
+    }
+    
+    .external-link-badge {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="toolbar-title">
+            <h4>
+                <i class="fas fa-bars me-2"></i>Gestión del Menú de Navegación
+            </h4>
+            <p>Organiza la estructura del menú principal del sitio municipal</p>
+        </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMenuItem" onclick="resetForm()">
+            <i class="fas fa-plus me-2"></i>Nuevo Ítem
+        </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stats-card">
+                <i class="fas fa-list stats-icon"></i>
+                <div class="stats-number">{{ items|length }}</div>
+                <div class="stats-label">Total Ítems</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <i class="fas fa-check-circle stats-icon"></i>
+                <div class="stats-number">{{ items|selectattr('activo', 'equalto', true)|list|length }}</div>
+                <div class="stats-label">Activos</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <i class="fas fa-sitemap stats-icon"></i>
+                <div class="stats-number">{{ items|selectattr('hijos', 'defined')|selectattr('hijos', 'ne', [])|list|length }}</div>
+                <div class="stats-label">Con Submenú</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de menú -->
+    {% if items %}
+    <div class="table-responsive">
+        <table class="table table-menu" id="menuTable">
+            <thead>
+                <tr>
+                    <th style="width: 60px">Orden</th>
+                    <th>Etiqueta</th>
+                    <th>URL</th>
+                    <th style="width: 60px">Icono</th>
+                    <th>Padre</th>
+                    <th style="width: 80px">Nueva Pestaña</th>
+                    <th style="width: 100px">Estado</th>
+                    <th style="width: 140px">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items recursive %}
+                    {% if not item.padre_id %}
+                    <tr data-item-id="{{ item.id }}">
+                        <td class="text-center">{{ item.orden }}</td>
+                        <td>
+                            <strong>{{ item.etiqueta }}</strong>
+                        </td>
+                        <td>
+                            <code>{{ item.url|truncate(40) }}</code>
+                        </td>
+                        <td class="text-center">
+                            {% if item.icono %}
+                            <i class="{{ item.icono }}"></i>
+                            {% else %}
+                            <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">Raíz</span>
+                        </td>
+                        <td class="text-center">
+                            {% if item.nueva_tab %}
+                            <span class="external-link-badge">
+                                <i class="fas fa-external-link-alt me-1"></i>Sí
+                            </span>
+                            {% else %}
+                            <span class="text-muted">No</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.activo %}
+                            <span class="badge-status badge-activo">
+                                <i class="fas fa-check-circle me-1"></i>Activo
+                            </span>
+                            {% else %}
+                            <span class="badge-status badge-inactivo">
+                                <i class="fas fa-ban me-1"></i>Inactivo
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="action-buttons">
+                            <button type="button" class="btn btn-sm btn-outline-primary" 
+                                    onclick='editarMenuItem({{ item.id|tojson }})' 
+                                    data-bs-toggle="modal" data-bs-target="#modalMenuItem">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            
+                            <form action="{{ url_for('admin.admin_toggle_menu_item', item_id=item.id) }}" 
+                                  method="POST" style="display: inline-block;">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary" 
+                                        onclick="return confirmToggle('{{ item.etiqueta|escapejs }}', {{ item.activo|tojson }})">
+                                    {% if item.activo %}
+                                    <i class="fas fa-eye-slash"></i>
+                                    {% else %}
+                                    <i class="fas fa-eye"></i>
+                                    {% endif %}
+                                </button>
+                            </form>
+                            
+                            <form action="{{ url_for('admin.admin_eliminar_menu_item', item_id=item.id) }}" 
+                                  method="POST" style="display: inline-block;" 
+                                  onsubmit="return confirmarEliminacion('{{ item.etiqueta|escapejs }}')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% if item.hijos %}
+                        {% for hijo in item.hijos|sort(attribute='orden') %}
+                        <tr class="child-item" data-item-id="{{ hijo.id }}">
+                            <td class="text-center indent-1">{{ hijo.orden }}</td>
+                            <td class="indent-1">
+                                {{ hijo.etiqueta }}
+                            </td>
+                            <td>
+                                <code>{{ hijo.url|truncate(40) }}</code>
+                            </td>
+                            <td class="text-center">
+                                {% if hijo.icono %}
+                                <i class="{{ hijo.icono }}"></i>
+                                {% else %}
+                                <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="categoria-badge">{{ item.etiqueta }}</span>
+                            </td>
+                            <td class="text-center">
+                                {% if hijo.nueva_tab %}
+                                <span class="external-link-badge">
+                                    <i class="fas fa-external-link-alt me-1"></i>Sí
+                                </span>
+                                {% else %}
+                                <span class="text-muted">No</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if hijo.activo %}
+                                <span class="badge-status badge-activo">
+                                    <i class="fas fa-check-circle me-1"></i>Activo
+                                </span>
+                                {% else %}
+                                <span class="badge-status badge-inactivo">
+                                    <i class="fas fa-ban me-1"></i>Inactivo
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="action-buttons">
+                                <button type="button" class="btn btn-sm btn-outline-primary" 
+                                        onclick='editarMenuItem({{ hijo.id|tojson }})' 
+                                        data-bs-toggle="modal" data-bs-target="#modalMenuItem">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                
+                                <form action="{{ url_for('admin.admin_toggle_menu_item', item_id=hijo.id) }}" 
+                                      method="POST" style="display: inline-block;">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary" 
+                                            onclick="return confirmToggle('{{ hijo.etiqueta|escapejs }}', {{ hijo.activo|tojson }})">
+                                        {% if hijo.activo %}
+                                        <i class="fas fa-eye-slash"></i>
+                                        {% else %}
+                                        <i class="fas fa-eye"></i>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                                
+                                <form action="{{ url_for('admin.admin_eliminar_menu_item', item_id=hijo.id) }}" 
+                                      method="POST" style="display: inline-block;" 
+                                      onsubmit="return confirmarEliminacion('{{ hijo.etiqueta|escapejs }}')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state text-center py-5 bg-white rounded-3">
+        <i class="fas fa-bars fa-3x text-muted mb-3"></i>
+        <h5>No hay ítems en el menú</h5>
+        <p class="text-muted">Comienza agregando el primer elemento del menú</p>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMenuItem" onclick="resetForm()">
+            <i class="fas fa-plus me-2"></i>Agregar Ítem
+        </button>
+    </div>
+    {% endif %}
+    
+    <!-- Nota informativa -->
+    <div class="info-note">
+        <i class="fas fa-info-circle"></i>
+        <strong>Nota:</strong> Los cambios al menú se reflejan en el sitio público automáticamente si la ruta <code>/transparencia</code> usa <code>MenuItem.obtener_menu_completo()</code>
+    </div>
+</div>
+
+<!-- Modal para Nuevo/Editar Ítem -->
+<div class="modal fade" id="modalMenuItem" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-bars me-2"></i>
+                    <span id="modalTitle">Nuevo Ítem</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="menuItemForm" method="POST" action="">
+                <div class="modal-body">
+                    <input type="hidden" id="itemId" name="item_id" value="">
+                    
+                    <div class="mb-3">
+                        <label for="etiqueta" class="form-label">Etiqueta *</label>
+                        <input type="text" class="form-control" id="etiqueta" name="etiqueta" required 
+                               placeholder="Ej: Inicio, Servicios, Transparencia">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="url" class="form-label">URL *</label>
+                        <input type="text" class="form-control" id="url" name="url" required 
+                               placeholder="Ej: /, /servicios, /transparencia">
+                        <small class="text-muted">Puedes usar rutas relativas o URL completas</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="icono" class="form-label">Icono (Font Awesome)</label>
+                        <input type="text" class="form-control" id="icono" name="icono" 
+                               placeholder="Ej: fas fa-home, fas fa-file-alt">
+                        <small class="text-muted">
+                            <i class="fas fa-home me-1"></i> 
+                            <i class="fas fa-file-alt me-1"></i> 
+                            <i class="fas fa-envelope me-1"></i>
+                            Clases de Font Awesome
+                        </small>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="orden" class="form-label">Orden</label>
+                            <input type="number" class="form-control" id="orden" name="orden" value="0" min="0">
+                            <small class="text-muted">Menor número = más arriba</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="padre_id" class="form-label">Ítem Padre</label>
+                            <select class="form-select" id="padre_id" name="padre_id">
+                                <option value="">Ninguno (Raíz)</option>
+                                {% for item in items if not item.padre_id %}
+                                <option value="{{ item.id }}">{{ item.etiqueta }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Dejar en blanco para menú principal</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="nueva_tab" name="nueva_tab" value="true">
+                                <label class="form-check-label" for="nueva_tab">
+                                    <i class="fas fa-external-link-alt me-1"></i>Abrir en nueva pestaña
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="activo" name="activo" value="true" checked>
+                                <label class="form-check-label" for="activo">
+                                    <i class="fas fa-check-circle me-1"></i>Activo
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmit">
+                        <i class="fas fa-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function resetForm() {
+        document.getElementById('modalTitle').innerText = 'Nuevo Ítem';
+        document.getElementById('menuItemForm').reset();
+        document.getElementById('itemId').value = '';
+        document.getElementById('activo').checked = true;
+        document.getElementById('nueva_tab').checked = false;
+        document.getElementById('orden').value = 0;
+        
+        var form = document.getElementById('menuItemForm');
+        form.action = "{{ url_for('admin.admin_crear_menu_item') }}";
+        form.method = "POST";
+        
+        var methodInput = form.querySelector('input[name="_method"]');
+        if (methodInput) methodInput.remove();
+    }
+    
+    function editarMenuItem(itemId) {
+        fetch('/admin/api/menu-item/' + itemId)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    var item = data.item;
+                    
+                    document.getElementById('modalTitle').innerText = 'Editar Ítem';
+                    document.getElementById('itemId').value = item.id;
+                    document.getElementById('etiqueta').value = item.etiqueta;
+                    document.getElementById('url').value = item.url;
+                    document.getElementById('icono').value = item.icono || '';
+                    document.getElementById('orden').value = item.orden || 0;
+                    document.getElementById('padre_id').value = item.padre_id || '';
+                    document.getElementById('nueva_tab').checked = item.nueva_tab === true || item.nueva_tab === 'true';
+                    document.getElementById('activo').checked = item.activo === true || item.activo === 'true';
+                    
+                    var form = document.getElementById('menuItemForm');
+                    form.action = "{{ url_for('admin.admin_editar_menu_item', item_id=0) }}".replace('0', item.id);
+                    form.method = "POST";
+                    
+                    var methodInput = form.querySelector('input[name="_method"]');
+                    if (!methodInput) {
+                        methodInput = document.createElement('input');
+                        methodInput.type = 'hidden';
+                        methodInput.name = '_method';
+                        form.appendChild(methodInput);
+                    }
+                    methodInput.value = 'PUT';
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                alert('Error al cargar los datos del ítem');
+            });
+    }
+    
+    function confirmToggle(etiqueta, isActive) {
+        var accion = isActive ? 'desactivar' : 'activar';
+        return confirm('¿Estás seguro de ' + accion + ' el ítem "' + etiqueta + '"?');
+    }
+    
+    function confirmarEliminacion(etiqueta) {
+        return confirm('¿Estás seguro de eliminar el ítem "' + etiqueta + '"?\n\nSi tiene subítems, estos también serán eliminados. Esta acción no se puede deshacer.');
+    }
+    
+    document.getElementById('menuItemForm')?.addEventListener('submit', function(e) {
+        var etiqueta = document.getElementById('etiqueta').value.trim();
+        var url = document.getElementById('url').value.trim();
+        
+        if (!etiqueta) {
+            e.preventDefault();
+            alert('La etiqueta es obligatoria');
+            return false;
+        }
+        
+        if (!url) {
+            e.preventDefault();
+            alert('La URL es obligatoria');
+            return false;
+        }
+        
+        return true;
+    });
+</script>
+
+<style>
+    .empty-state {
+        background: white;
+        border-radius: 12px;
+        padding: 3rem;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .categoria-badge {
+        background-color: #e9ecef;
+        color: #495057;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    code {
+        background-color: #f8f9fc;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        color: #2d6a4f;
+    }
+</style>
+{% endblock %}

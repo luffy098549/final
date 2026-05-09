@@ -1,0 +1,613 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestión de Contenidos - Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Estilos específicos para modales de contenido (CSS puro, sin Bootstrap) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 9998;
+    display: none;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 700px;
+    max-height: 85vh;
+    overflow-y: auto;
+    z-index: 9999;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    animation: slideIn 0.25s ease-out;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, var(--verde-municipio, #2D5016), var(--verde-oscuro, #1f3c12));
+    border-radius: 1rem 1rem 0 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    background: #f9fafb;
+    border-radius: 0 0 1rem 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.form-group label .required {
+    color: #dc2626;
+    margin-left: 0.25rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--verde-municipio, #2D5016);
+    box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+    font-family: monospace;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.form-check-input {
+    width: 1.1rem;
+    height: 1.1rem;
+    cursor: pointer;
+}
+
+.form-check-label {
+    margin: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--verde-municipio, #2D5016);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--verde-oscuro, #1f3c12);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+}
+
+.btn-outline-primary {
+    background: transparent;
+    border: 1px solid var(--verde-municipio, #2D5016);
+    color: var(--verde-municipio, #2D5016);
+}
+
+.btn-outline-primary:hover {
+    background: var(--verde-municipio, #2D5016);
+    color: white;
+}
+
+.btn-outline-success {
+    background: transparent;
+    border: 1px solid #10b981;
+    color: #10b981;
+}
+
+.btn-outline-success:hover {
+    background: #10b981;
+    color: white;
+}
+
+.btn-outline-danger {
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+}
+
+.btn-outline-danger:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-outline-warning {
+    background: transparent;
+    border: 1px solid #f59e0b;
+    color: #f59e0b;
+}
+
+.btn-outline-warning:hover {
+    background: #f59e0b;
+    color: white;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 2rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.badge-active {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.info-note {
+    background: #eff6ff;
+    border-left: 4px solid var(--verde-municipio, #2D5016);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: #1e40af;
+}
+
+.info-note i {
+    margin-right: 0.5rem;
+    color: var(--verde-municipio, #2D5016);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.stat-card h3 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--verde-municipio, #2D5016);
+}
+
+.stat-card .stat-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.section-badge {
+    background: #e0e7ff;
+    color: #4338ca;
+    padding: 0.2rem 0.55rem;
+    border-radius: 2rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">
+            <i class="fas fa-file-alt me-2" style="color: var(--verde-municipio, #2D5016);"></i>
+            Gestión de Contenidos
+        </h1>
+        <p class="text-muted mb-0">Administra los contenidos editables del sitio web</p>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="openModal('new')">
+        <i class="fas fa-plus me-1"></i> Nuevo contenido
+    </button>
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3><i class="fas fa-database me-1"></i> Total</h3>
+        <div class="stat-number">{{ contenidos|length }}</div>
+        <div class="stat-label">contenidos registrados</div>
+    </div>
+    <div class="stat-card">
+        <h3><i class="fas fa-check-circle me-1"></i> Activos</h3>
+        <div class="stat-number">{{ contenidos|selectattr('activo', 'equalto', true)|list|length }}</div>
+        <div class="stat-label">contenidos publicados</div>
+    </div>
+    <div class="stat-card">
+        <h3><i class="fas fa-clock me-1"></i> Inactivos</h3>
+        <div class="stat-number">{{ contenidos|selectattr('activo', 'equalto', false)|list|length }}</div>
+        <div class="stat-label">contenidos archivados</div>
+    </div>
+    <div class="stat-card">
+        <h3><i class="fas fa-layer-group me-1"></i> Secciones</h3>
+        <div class="stat-number">{{ contenidos|map(attribute='seccion')|unique|list|length }}</div>
+        <div class="stat-label">diferentes secciones</div>
+    </div>
+</div>
+
+<!-- Tabla de contenidos -->
+<div class="table-responsive">
+    <table class="table table-hover table-light">
+        <thead>
+            <tr>
+                <th style="width: 15%"><i class="fas fa-key me-1"></i> Clave</th>
+                <th style="width: 25%"><i class="fas fa-heading me-1"></i> Título</th>
+                <th style="width: 15%"><i class="fas fa-layer-group me-1"></i> Sección</th>
+                <th style="width: 10%"><i class="fas fa-toggle-on me-1"></i> Estado</th>
+                <th style="width: 15%"><i class="fas fa-calendar me-1"></i> Actualización</th>
+                <th style="width: 20%"><i class="fas fa-cog me-1"></i> Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contenido in contenidos %}
+            <tr>
+                <td>
+                    <code>{{ contenido.clave }}</code>
+                </td>
+                <td>
+                    <strong>{{ contenido.titulo or 'Sin título' }}</strong>
+                    {% if contenido.cuerpo and contenido.cuerpo|length > 50 %}
+                    <br><small class="text-muted">{{ contenido.cuerpo|striptags|truncate(60) }}</small>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="section-badge">{{ contenido.seccion or 'general' }}</span>
+                </td>
+                <td>
+                    {% if contenido.activo %}
+                    <span class="badge badge-active">
+                        <i class="fas fa-check-circle"></i> Activo
+                    </span>
+                    {% else %}
+                    <span class="badge badge-inactive">
+                        <i class="fas fa-circle"></i> Inactivo
+                    </span>
+                    {% endif %}
+                </td>
+                <td>
+                    <small>
+                        <i class="far fa-calendar-alt me-1"></i>
+                        {{ contenido.actualizado_en.strftime('%d/%m/%Y %H:%M') if contenido.actualizado_en else contenido.creado_en.strftime('%d/%m/%Y') if contenido.creado_en else 'N/A' }}
+                    </small>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="openModal('edit', {{ contenido.id }})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <form action="{{ url_for('admin.admin_toggle_contenido', contenido_id=contenido.id) }}" method="POST" style="display: inline-block;">
+                            <button type="submit" class="btn btn-sm btn-outline-{{ 'warning' if contenido.activo else 'success' }}" title="{{ 'Desactivar' if contenido.activo else 'Activar' }}">
+                                <i class="fas fa-{{ 'toggle-off' if contenido.activo else 'toggle-on' }}"></i>
+                            </button>
+                        </form>
+                        <form action="{{ url_for('admin.admin_eliminar_contenido', contenido_id=contenido.id) }}" method="POST" style="display: inline-block;" onsubmit="return confirmDelete()">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3 d-block"></i>
+                    <p class="text-muted mb-0">No hay contenidos registrados</p>
+                    <button type="button" class="btn btn-sm btn-primary mt-3" onclick="openModal('new')">
+                        <i class="fas fa-plus me-1"></i> Crear primer contenido
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Nota informativa -->
+<div class="info-note">
+    <i class="fas fa-info-circle"></i>
+    <strong>Información importante:</strong> La <strong>clave</strong> es el identificador único que se usa en los templates para mostrar el contenido. 
+    Para mostrar este contenido en cualquier página usa: 
+    <code class="bg-white p-1 rounded">Contenido.obtener_por_clave('clave')</code> o en el template con 
+    <code class="bg-white p-1 rounded">{{ '{{ obtener_contenido("clave").cuerpo|safe }}' }}</code>
+</div>
+
+<!-- Modal para crear/editar contenido (CSS puro) -->
+<div id="contenidoModal" class="modal-overlay">
+    <div class="modal-container">
+        <form id="contenidoForm" method="POST">
+            <div class="modal-header">
+                <h3 id="modalTitle">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Nuevo Contenido
+                </h3>
+                <button type="button" class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="clave">
+                        Clave <span class="required">*</span>
+                        <small class="text-muted d-block fs-small">Identificador único (formato: snake_case)</small>
+                    </label>
+                    <input type="text" class="form-control" id="clave" name="clave" required 
+                           placeholder="ej: bienvenida, mision, vision, contacto_info">
+                </div>
+                <div class="form-group">
+                    <label for="titulo">Título <small class="text-muted">(opcional)</small></label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" 
+                           placeholder="Título del contenido">
+                </div>
+                <div class="form-group">
+                    <label for="cuerpo">
+                        Contenido <span class="required">*</span>
+                        <small class="text-muted d-block fs-small">Acepta HTML (puedes usar negritas, listas, enlaces)</small>
+                    </label>
+                    <textarea class="form-control" id="cuerpo" name="cuerpo" rows="8" required 
+                              placeholder="Escribe el contenido aquí... Soporta HTML"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="seccion">Sección <small class="text-muted">(organización)</small></label>
+                    <input type="text" class="form-control" id="seccion" name="seccion" 
+                           placeholder="inicio / footer / servicios / sobre_nosotros">
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="activo" name="activo" checked>
+                    <label class="form-check-label" for="activo">
+                        <i class="fas fa-check-circle text-success me-1"></i> Activo
+                        <small class="text-muted d-block">Los contenidos inactivos no se muestran en el sitio</small>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> Guardar contenido
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Variables globales
+let currentContentId = null;
+
+// Abrir modal para crear o editar
+function openModal(action, id = null) {
+    const modal = document.getElementById('contenidoModal');
+    const form = document.getElementById('contenidoForm');
+    const modalTitle = document.getElementById('modalTitle');
+    
+    if (action === 'new') {
+        modalTitle.innerHTML = '<i class="fas fa-plus-circle me-2"></i> Nuevo Contenido';
+        form.action = "{{ url_for('admin.admin_crear_contenido') }}";
+        form.reset();
+        document.getElementById('activo').checked = true;
+        currentContentId = null;
+    } else if (action === 'edit' && id) {
+        modalTitle.innerHTML = '<i class="fas fa-edit me-2"></i> Editar Contenido';
+        form.action = "{{ url_for('admin.admin_editar_contenido', contenido_id=0) }}".replace('0', id);
+        currentContentId = id;
+        
+        // Cargar datos del contenido via AJAX
+        fetch(`/admin/api/contenido/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('clave').value = data.contenido.clave || '';
+                    document.getElementById('titulo').value = data.contenido.titulo || '';
+                    document.getElementById('cuerpo').value = data.contenido.cuerpo || '';
+                    document.getElementById('seccion').value = data.contenido.seccion || '';
+                    document.getElementById('activo').checked = data.contenido.activo === true;
+                } else {
+                    alert('Error al cargar el contenido: ' + data.error);
+                    closeModal();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar los datos del contenido');
+                closeModal();
+            });
+    }
+    
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+// Cerrar modal
+function closeModal() {
+    const modal = document.getElementById('contenidoModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    currentContentId = null;
+}
+
+// Confirmar eliminación
+function confirmDelete() {
+    return confirm('¿Estás seguro de que deseas eliminar este contenido?\n\nEsta acción no se puede deshacer.');
+}
+
+// Cerrar modal al hacer click fuera
+document.getElementById('contenidoModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+// Cerrar modal con tecla ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('contenidoModal');
+        if (modal.style.display === 'block') {
+            closeModal();
+        }
+    }
+});
+
+// Validación del formulario antes de enviar
+document.getElementById('contenidoForm').addEventListener('submit', function(e) {
+    const clave = document.getElementById('clave').value.trim();
+    const cuerpo = document.getElementById('cuerpo').value.trim();
+    
+    if (!clave) {
+        e.preventDefault();
+        alert('La clave es obligatoria');
+        document.getElementById('clave').focus();
+        return false;
+    }
+    
+    if (!cuerpo) {
+        e.preventDefault();
+        alert('El contenido es obligatorio');
+        document.getElementById('cuerpo').focus();
+        return false;
+    }
+    
+    // Validar formato de clave (solo letras, números, guiones y guiones bajos)
+    const claveRegex = /^[a-zA-Z0-9_-]+$/;
+    if (!claveRegex.test(clave)) {
+        e.preventDefault();
+        alert('La clave solo puede contener letras, números, guiones y guiones bajos');
+        document.getElementById('clave').focus();
+        return false;
+    }
+});
+</script>
+{% endblock %}

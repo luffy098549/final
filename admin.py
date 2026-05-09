@@ -1,4 +1,4 @@
-# admin.py - VERSIÓN COMPLETA CON RUTAS DE NOTICIAS Y LOGS (CORREGIDO)
+# admin.py - VERSIÓN COMPLETA CON RUTAS DE NOTICIAS, LOGS, CONTENIDO, TRANSPARENCIA Y MENÚ
 """
 Blueprint de administración profesional.
 Maneja todas las funciones exclusivas de administradores.
@@ -31,6 +31,11 @@ from models.noticia import Noticia, CategoriaNoticia
 from models.like_noticia import LikeNoticia
 from models.comentario_noticia import ComentarioNoticia
 from models.log_actividad import LogActividad, registrar_log
+
+# Importar modelos de contenido, transparencia y menú
+from models.contenido import Contenido
+from models.transparencia import Transparencia
+from models.menu_item import MenuItem
 
 # Intentar importar nombres desde app.py
 try:
@@ -1723,6 +1728,529 @@ def api_responder_mensaje_admin(folio):
 
 
 # ================================================================
+# GESTIÓN DE CONTENIDO (PÁGINAS ESTÁTICAS) - CORREGIDO
+# ================================================================
+
+@admin_bp.route("/contenidos")
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_contenidos():
+    """Listar todos los contenidos/páginas estáticas"""
+    contenidos = Contenido.query.order_by(Contenido.id).all()
+    return render_template("admin/contenidos.html", contenidos=contenidos)
+
+
+@admin_bp.route("/contenidos/crear", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_contenido_crear():
+    """Crear nuevo contenido/página estática"""
+    try:
+        slug = request.form.get('slug', '').strip()
+        titulo = request.form.get('titulo', '').strip()
+        contenido = request.form.get('contenido', '')
+        meta_descripcion = request.form.get('meta_descripcion', '')
+        palabras_clave = request.form.get('palabras_clave', '')
+        activo = request.form.get('activo') == 'on'
+        
+        if not slug or not titulo:
+            flash("❌ Slug y título son obligatorios.", "error")
+            return redirect(url_for('admin.admin_contenidos'))
+        
+        # Verificar slug único
+        if Contenido.query.filter_by(slug=slug).first():
+            flash(f"❌ Ya existe un contenido con el slug '{slug}'.", "error")
+            return redirect(url_for('admin.admin_contenidos'))
+        
+        nuevo = Contenido(
+            slug=slug,
+            titulo=titulo,
+            contenido=contenido,
+            meta_descripcion=meta_descripcion,
+            palabras_clave=palabras_clave,
+            activo=activo
+        )
+        db.session.add(nuevo)
+        db.session.commit()
+        
+        registrar_log(
+            accion='crear_contenido',
+            modulo='contenido',
+            descripcion=f"Creó la página '{titulo}' (slug: {slug})"
+        )
+        
+        flash(f"✅ Página '{titulo}' creada exitosamente.", "success")
+    except Exception as e:
+        flash(f"❌ Error al crear: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_contenidos'))
+
+
+@admin_bp.route("/contenidos/<int:id>/editar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_contenido_editar(id):
+    """Editar contenido/página estática"""
+    try:
+        contenido_obj = Contenido.query.get_or_404(id)
+        
+        titulo_anterior = contenido_obj.titulo
+        
+        contenido_obj.slug = request.form.get('slug', '').strip()
+        contenido_obj.titulo = request.form.get('titulo', '').strip()
+        contenido_obj.contenido = request.form.get('contenido', '')
+        contenido_obj.meta_descripcion = request.form.get('meta_descripcion', '')
+        contenido_obj.palabras_clave = request.form.get('palabras_clave', '')
+        contenido_obj.activo = request.form.get('activo') == 'on'
+        
+        db.session.commit()
+        
+        registrar_log(
+            accion='editar_contenido',
+            modulo='contenido',
+            descripcion=f"Editó la página '{contenido_obj.titulo}' (ID: {id})"
+        )
+        
+        flash(f"✅ Página '{contenido_obj.titulo}' actualizada correctamente.", "success")
+    except Exception as e:
+        flash(f"❌ Error al editar: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_contenidos'))
+
+
+@admin_bp.route("/contenidos/<int:id>/eliminar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_contenido_eliminar(id):
+    """Eliminar contenido/página estática"""
+    try:
+        contenido_obj = Contenido.query.get_or_404(id)
+        titulo = contenido_obj.titulo
+        
+        db.session.delete(contenido_obj)
+        db.session.commit()
+        
+        registrar_log(
+            accion='eliminar_contenido',
+            modulo='contenido',
+            descripcion=f"Eliminó la página '{titulo}' (ID: {id})"
+        )
+        
+        flash(f"✅ Página '{titulo}' eliminada correctamente.", "success")
+    except Exception as e:
+        flash(f"❌ Error al eliminar: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_contenidos'))
+
+
+# ================================================================
+# GESTIÓN DE TRANSPARENCIA (DOCUMENTOS PÚBLICOS)
+# ================================================================
+
+@admin_bp.route("/transparencia")
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_transparencia():
+    """Listar todos los documentos de transparencia"""
+    try:
+        documentos = Transparencia.query.order_by(Transparencia.id).all()
+    except:
+        documentos = Transparencia.query.all()
+    return render_template("admin/transparencia.html", documentos=documentos, categorias=Transparencia.CATEGORIAS)
+
+
+@admin_bp.route("/transparencia/crear", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_transparencia_crear():
+    """Crear nuevo documento de transparencia"""
+    try:
+        titulo = request.form.get('titulo', '').strip()
+        descripcion = request.form.get('descripcion', '')
+        categoria = request.form.get('categoria', 'general')
+        anio = request.form.get('anio', type=int)
+        periodo = request.form.get('periodo', '')
+        archivo_url = request.form.get('archivo_url', '')
+        enlace_ext = request.form.get('enlace_ext', '')
+        publicado = request.form.get('publicado') == 'on'
+        fecha_doc_str = request.form.get('fecha_doc', '')
+        
+        if not titulo:
+            flash("❌ El título es obligatorio.", "error")
+            return redirect(url_for('admin.admin_transparencia'))
+        
+        fecha_doc = None
+        if fecha_doc_str:
+            try:
+                fecha_doc = datetime.strptime(fecha_doc_str, '%Y-%m-%d')
+            except:
+                pass
+        
+        nuevo = Transparencia(
+            titulo=titulo,
+            descripcion=descripcion,
+            categoria=categoria,
+            anio=anio,
+            periodo=periodo,
+            archivo_url=archivo_url,
+            enlace_ext=enlace_ext,
+            publicado=publicado,
+            fecha_doc=fecha_doc
+        )
+        db.session.add(nuevo)
+        db.session.commit()
+        
+        registrar_log(
+            accion='crear_documento_transparencia',
+            modulo='transparencia',
+            descripcion=f"Creó documento de transparencia '{titulo}'"
+        )
+        
+        flash(f"✅ Documento '{titulo}' creado exitosamente.", "success")
+    except Exception as e:
+        flash(f"❌ Error al crear: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_transparencia'))
+
+
+@admin_bp.route("/transparencia/<int:id>/editar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_transparencia_editar(id):
+    """Editar documento de transparencia"""
+    try:
+        documento = Transparencia.query.get_or_404(id)
+        
+        documento.titulo = request.form.get('titulo', '').strip()
+        documento.descripcion = request.form.get('descripcion', '')
+        documento.categoria = request.form.get('categoria', 'general')
+        documento.anio = request.form.get('anio', type=int) or None
+        documento.periodo = request.form.get('periodo', '')
+        documento.archivo_url = request.form.get('archivo_url', '')
+        documento.enlace_ext = request.form.get('enlace_ext', '')
+        documento.publicado = request.form.get('publicado') == 'on'
+        
+        fecha_doc_str = request.form.get('fecha_doc', '')
+        if fecha_doc_str:
+            try:
+                documento.fecha_doc = datetime.strptime(fecha_doc_str, '%Y-%m-%d')
+            except:
+                pass
+        
+        db.session.commit()
+        
+        registrar_log(
+            accion='editar_documento_transparencia',
+            modulo='transparencia',
+            descripcion=f"Editó documento '{documento.titulo}'"
+        )
+        
+        flash(f"✅ Documento '{documento.titulo}' actualizado correctamente.", "success")
+    except Exception as e:
+        flash(f"❌ Error al editar: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_transparencia'))
+
+
+@admin_bp.route("/transparencia/<int:id>/toggle", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_transparencia_toggle(id):
+    """Alternar estado publicado de un documento de transparencia"""
+    try:
+        documento = Transparencia.query.get_or_404(id)
+        documento.publicado = not documento.publicado
+        db.session.commit()
+        
+        estado = "publicado" if documento.publicado else "archivado"
+        registrar_log(
+            accion='toggle_transparencia',
+            modulo='transparencia',
+            descripcion=f"Cambió estado de '{documento.titulo}' a {estado}"
+        )
+        
+        flash(f"✅ Documento '{documento.titulo}' {estado}.", "success")
+    except Exception as e:
+        flash(f"❌ Error: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_transparencia'))
+
+
+@admin_bp.route("/transparencia/<int:id>/eliminar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_transparencia_eliminar(id):
+    """Eliminar documento de transparencia"""
+    try:
+        documento = Transparencia.query.get_or_404(id)
+        titulo = documento.titulo
+        
+        db.session.delete(documento)
+        db.session.commit()
+        
+        registrar_log(
+            accion='eliminar_documento_transparencia',
+            modulo='transparencia',
+            descripcion=f"Eliminó documento de transparencia '{titulo}'"
+        )
+        
+        flash(f"✅ Documento '{titulo}' eliminado correctamente.", "success")
+    except Exception as e:
+        flash(f"❌ Error al eliminar: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_transparencia'))
+
+
+# ================================================================
+# GESTIÓN DE MENÚ (NAVEGACIÓN DINÁMICA)
+# ================================================================
+
+@admin_bp.route("/menu")
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_menu():
+    """Listar todos los ítems del menú"""
+    items = MenuItem.query.order_by(MenuItem.orden).all()
+    return render_template("admin/menu.html", items=items)
+
+
+@admin_bp.route("/menu/crear", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_menu_crear():
+    """Crear nuevo ítem de menú"""
+    try:
+        titulo = request.form.get('titulo', '').strip()
+        url = request.form.get('url', '').strip()
+        icono = request.form.get('icono', '')
+        parent_id = request.form.get('parent_id', type=int) or None
+        orden = request.form.get('orden', 0, type=int)
+        activo = request.form.get('activo') == 'on'
+        target_blank = request.form.get('target_blank') == 'on'
+        requiere_login = request.form.get('requiere_login') == 'on'
+        roles_permitidos = request.form.get('roles_permitidos', '')
+        
+        if not titulo:
+            flash("❌ El título es obligatorio.", "error")
+            return redirect(url_for('admin.admin_menu'))
+        
+        # Si no hay URL, usar '#' como placeholder
+        if not url:
+            url = '#'
+        
+        nuevo = MenuItem(
+            titulo=titulo,
+            url=url,
+            icono=icono,
+            parent_id=parent_id,
+            orden=orden,
+            activo=activo,
+            target_blank=target_blank,
+            requiere_login=requiere_login,
+            roles_permitidos=roles_permitidos
+        )
+        db.session.add(nuevo)
+        db.session.commit()
+        
+        registrar_log(
+            accion='crear_menu_item',
+            modulo='menu',
+            descripcion=f"Creó ítem de menú '{titulo}'"
+        )
+        
+        flash(f"✅ Ítem de menú '{titulo}' creado exitosamente.", "success")
+    except Exception as e:
+        flash(f"❌ Error al crear: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_menu'))
+
+
+@admin_bp.route("/menu/<int:id>/editar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_menu_editar(id):
+    """Editar ítem de menú"""
+    try:
+        item = MenuItem.query.get_or_404(id)
+        
+        item.titulo = request.form.get('titulo', '').strip()
+        item.url = request.form.get('url', '').strip() or '#'
+        item.icono = request.form.get('icono', '')
+        item.parent_id = request.form.get('parent_id', type=int) or None
+        item.orden = request.form.get('orden', 0, type=int)
+        item.activo = request.form.get('activo') == 'on'
+        item.target_blank = request.form.get('target_blank') == 'on'
+        item.requiere_login = request.form.get('requiere_login') == 'on'
+        item.roles_permitidos = request.form.get('roles_permitidos', '')
+        
+        db.session.commit()
+        
+        registrar_log(
+            accion='editar_menu_item',
+            modulo='menu',
+            descripcion=f"Editó ítem de menú '{item.titulo}'"
+        )
+        
+        flash(f"✅ Ítem de menú '{item.titulo}' actualizado correctamente.", "success")
+    except Exception as e:
+        flash(f"❌ Error al editar: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_menu'))
+
+
+@admin_bp.route("/menu/<int:id>/toggle", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_menu_toggle(id):
+    """Alternar estado activo de un ítem de menú"""
+    try:
+        item = MenuItem.query.get_or_404(id)
+        item.activo = not item.activo
+        db.session.commit()
+        
+        estado = "activado" if item.activo else "desactivado"
+        registrar_log(
+            accion='toggle_menu_item',
+            modulo='menu',
+            descripcion=f"Cambió estado del ítem '{item.titulo}' a {estado}"
+        )
+        
+        flash(f"✅ Ítem de menú '{item.titulo}' {estado}.", "success")
+    except Exception as e:
+        flash(f"❌ Error: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_menu'))
+
+
+@admin_bp.route("/menu/<int:id>/eliminar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_menu_eliminar(id):
+    """Eliminar ítem de menú"""
+    try:
+        item = MenuItem.query.get_or_404(id)
+        titulo = item.titulo
+        
+        # Verificar si tiene hijos
+        hijos = MenuItem.query.filter_by(parent_id=id).count()
+        if hijos > 0:
+            flash(f"❌ No se puede eliminar '{titulo}' porque tiene {hijos} subítems asociados.", "error")
+            return redirect(url_for('admin.admin_menu'))
+        
+        db.session.delete(item)
+        db.session.commit()
+        
+        registrar_log(
+            accion='eliminar_menu_item',
+            modulo='menu',
+            descripcion=f"Eliminó ítem de menú '{titulo}'"
+        )
+        
+        flash(f"✅ Ítem de menú '{titulo}' eliminado correctamente.", "success")
+    except Exception as e:
+        flash(f"❌ Error al eliminar: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_menu'))
+
+
+@admin_bp.route("/menu/reordenar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_CONFIG)
+def admin_menu_reordenar():
+    """Actualizar el orden de los ítems del menú vía AJAX"""
+    try:
+        data = request.get_json()
+        
+        if not data or 'items' not in data:
+            return jsonify({"success": False, "error": "Datos inválidos"}), 400
+        
+        items_data = data.get('items', [])
+        
+        for item_info in items_data:
+            item_id = item_info.get('id')
+            nuevo_orden = item_info.get('orden')
+            nuevo_parent = item_info.get('parent_id', None)
+            
+            if item_id is not None and nuevo_orden is not None:
+                item = MenuItem.query.get(item_id)
+                if item:
+                    item.orden = nuevo_orden
+                    if nuevo_parent is not None:
+                        item.parent_id = nuevo_parent if nuevo_parent else None
+        
+        db.session.commit()
+        
+        registrar_log(
+            accion='reordenar_menu',
+            modulo='menu',
+            descripcion=f"Reordenó {len(items_data)} ítems del menú"
+        )
+        
+        return jsonify({"success": True, "message": "Orden del menú actualizado correctamente"})
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error al reordenar menú: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@admin_bp.route("/api/menu-item/<int:id>")
+@admin_required
+def api_menu_item(id):
+    """API para obtener datos de un ítem de menú"""
+    try:
+        item = MenuItem.query.get_or_404(id)
+        return jsonify({
+            'success': True,
+            'item': {
+                'id': item.id,
+                'titulo': item.titulo,
+                'url': item.url,
+                'icono': item.icono,
+                'parent_id': item.parent_id,
+                'orden': item.orden,
+                'activo': item.activo,
+                'target_blank': item.target_blank,
+                'requiere_login': item.requiere_login,
+                'roles_permitidos': item.roles_permitidos
+            }
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+# ================================================================
+# API PARA TRANSPARENCIA (OBTENER DOCUMENTO)
+# ================================================================
+
+@admin_bp.route("/api/transparencia/<int:id>")
+@admin_required
+def api_transparencia_item(id):
+    """API para obtener datos de un documento de transparencia"""
+    try:
+        doc = Transparencia.query.get_or_404(id)
+        return jsonify({
+            'success': True,
+            'documento': {
+                'id': doc.id,
+                'titulo': doc.titulo,
+                'descripcion': doc.descripcion or '',
+                'categoria': doc.categoria,
+                'anio': doc.anio,
+                'periodo': doc.periodo or '',
+                'archivo_url': doc.archivo_url or '',
+                'enlace_ext': doc.enlace_ext or '',
+                'publicado': doc.publicado,
+                'fecha_doc': doc.fecha_doc.isoformat() if doc.fecha_doc else None
+            }
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+# ================================================================
 # CONFIGURACIÓN
 # ================================================================
 
@@ -2067,6 +2595,65 @@ def api_estadisticas():
 
 
 # ================================================================
+# API PARA CONTACTOS PENDIENTES
+# ================================================================
+
+@admin_bp.route("/api/contactos-pendientes")
+def api_contactos_pendientes():
+    if "user" not in session:
+        return jsonify({"count": 0}), 401
+    try:
+        from models.mensaje import Mensaje
+        pendientes = Mensaje.query.filter_by(tramite_tipo='consulta', es_admin=False).count()
+        return jsonify({"count": pendientes})
+    except Exception as e:
+        return jsonify({"count": 0, "error": str(e)}), 500
+
+
+# ================================================================
+# RUTA PARA GESTIÓN DE CONTACTOS (ADMIN)
+# ================================================================
+
+@admin_bp.route("/contactos")
+@admin_required
+@permiso_requerido(Permiso.VER_SOLICITUDES)
+def admin_contactos():
+    """Listar todos los contactos/mensajes"""
+    try:
+        from models.mensaje import Mensaje
+        contactos = Mensaje.obtener_todos_contactos()
+        return render_template("admin/contactos.html", contactos=contactos)
+    except Exception as e:
+        flash(f"Error al cargar contactos: {str(e)}", "error")
+        return redirect(url_for('admin.dashboard'))
+
+
+@admin_bp.route("/contactos/<int:contacto_id>/responder", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.EDITAR_SOLICITUDES)
+def admin_contacto_responder(contacto_id):
+    """Responder a un mensaje de contacto"""
+    try:
+        from models.mensaje import Mensaje
+        respuesta = request.form.get('respuesta', '').strip()
+        
+        if not respuesta:
+            flash("❌ La respuesta no puede estar vacía.", "error")
+            return redirect(url_for('admin.admin_contactos'))
+        
+        admin_email = session.get('user')
+        admin_nombre = session.get('user_name', 'Administrador')
+        
+        Mensaje.responder_contacto(contacto_id, admin_email, admin_nombre, respuesta)
+        
+        flash("✅ Respuesta enviada correctamente.", "success")
+    except Exception as e:
+        flash(f"❌ Error al enviar respuesta: {str(e)}", "error")
+    
+    return redirect(url_for('admin.admin_contactos'))
+
+
+# ================================================================
 # HELPER - Registrar acción en bitácora
 # ================================================================
 
@@ -2106,17 +2693,25 @@ def registrar_accion(tipo: str, descripcion: str, admin: str = None):
 
 @admin_bp.context_processor
 def inject_admin_variables():
-    foto_perfil = session.get('foto_perfil', '')
+    user_email = session.get('user', '')
+    foto_perfil = ''
     user_name = session.get('user_name', 'Administrador')
     user_rol = session.get('user_rol', 'admin')
-    user_email = session.get('user', '')
-    
-    # Comentarios pendientes para el badge
+
+    # ✅ Leer foto desde la base de datos, no desde la sesión
+    if user_email:
+        try:
+            usuario = Usuario.query.filter_by(email=user_email).first()
+            if usuario and usuario.foto_perfil:
+                foto_perfil = usuario.foto_perfil
+        except Exception as e:
+            pass
+
     try:
         comentarios_pendientes = ComentarioNoticia.query.filter_by(aprobado=False).count()
     except:
         comentarios_pendientes = 0
-    
+
     return dict(
         ahora=datetime.now(),
         NOMBRES_SERVICIOS=NOMBRES_SERVICIOS,

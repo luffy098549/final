@@ -789,6 +789,288 @@ section.trans-hero::after {
     transform: translateX(4px);
 }
 
+/* ================================================================
+   SECCIÓN DOCUMENTOS PUBLICADOS (NUEVA)
+================================================================ */
+.trans-documentos {
+    padding: 5rem 0;
+    background: var(--trans-cream);
+}
+
+.trans-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 3rem;
+}
+
+.trans-filtro-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.3rem;
+    background: var(--trans-white);
+    border: 1px solid #E5E7EB;
+    border-radius: 3rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--trans-dark);
+    text-decoration: none;
+    transition: all 0.3s var(--trans-ease-bounce);
+    position: relative;
+    overflow: hidden;
+}
+
+.trans-filtro-btn i {
+    font-size: 0.8rem;
+    color: var(--trans-gray);
+    transition: color 0.3s ease;
+}
+
+.trans-filtro-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 120%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(200,150,12,0.15), transparent);
+    transform: skewX(-15deg);
+    transition: left 0.5s ease;
+}
+
+.trans-filtro-btn:hover {
+    background: var(--trans-verde-dark);
+    border-color: var(--trans-verde-dark);
+    color: var(--trans-white);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(45,80,22,0.2);
+}
+
+.trans-filtro-btn:hover i {
+    color: var(--trans-gold-light);
+}
+
+.trans-filtro-btn:hover::before {
+    left: 120%;
+}
+
+.trans-filtro-btn.active {
+    background: var(--trans-verde-dark);
+    border-color: var(--trans-gold);
+    color: var(--trans-white);
+    box-shadow: 0 4px 12px rgba(45,80,22,0.25);
+}
+
+.trans-filtro-btn.active i {
+    color: var(--trans-gold);
+}
+
+.trans-documentos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.8rem;
+}
+
+.trans-doc-card {
+    background: var(--trans-white);
+    border-radius: 1.2rem;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s var(--trans-ease-elastic);
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    animation: trans-card-reveal-sector 0.6s var(--trans-ease-elastic) both;
+}
+
+.trans-doc-card:nth-child(1) { animation-delay: 0.03s; }
+.trans-doc-card:nth-child(2) { animation-delay: 0.06s; }
+.trans-doc-card:nth-child(3) { animation-delay: 0.09s; }
+.trans-doc-card:nth-child(4) { animation-delay: 0.12s; }
+.trans-doc-card:nth-child(5) { animation-delay: 0.15s; }
+.trans-doc-card:nth-child(6) { animation-delay: 0.18s; }
+
+.trans-doc-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 20px 35px rgba(45,80,22,0.12);
+    border-color: transparent;
+}
+
+.trans-doc-band {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--trans-verde-dark), var(--trans-gold), var(--trans-verde-light));
+    background-size: 200% auto;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--trans-ease-bounce);
+}
+
+.trans-doc-card:hover .trans-doc-band {
+    transform: scaleX(1);
+    animation: trans-shimmer 2s linear infinite;
+}
+
+.trans-doc-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.trans-doc-icon {
+    width: 45px;
+    height: 45px;
+    background: var(--trans-verde-xlight);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: var(--trans-verde-dark);
+    flex-shrink: 0;
+    transition: all 0.3s var(--trans-ease-bounce);
+}
+
+.trans-doc-card:hover .trans-doc-icon {
+    background: var(--trans-gold);
+    color: white;
+    transform: rotate(-6deg) scale(1.05);
+}
+
+.trans-doc-title {
+    flex: 1;
+}
+
+.trans-doc-title h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.3rem;
+    color: var(--trans-dark);
+    line-height: 1.4;
+}
+
+.trans-doc-categoria {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--trans-gold);
+    background: rgba(200,150,12,0.1);
+    padding: 0.2rem 0.7rem;
+    border-radius: 2rem;
+}
+
+.trans-doc-categoria i {
+    font-size: 0.65rem;
+}
+
+.trans-doc-descripcion {
+    font-size: 0.85rem;
+    color: var(--trans-gray);
+    line-height: 1.6;
+    margin: 0.8rem 0;
+}
+
+.trans-doc-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.trans-doc-periodo,
+.trans-doc-anio {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--trans-gray);
+}
+
+.trans-doc-periodo i,
+.trans-doc-anio i {
+    font-size: 0.7rem;
+    color: var(--trans-gold);
+}
+
+.trans-doc-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.trans-doc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.2rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s var(--trans-ease-bounce);
+}
+
+.trans-doc-btn-download {
+    background: var(--trans-verde-dark);
+    color: white;
+}
+
+.trans-doc-btn-download:hover {
+    background: var(--trans-gold);
+    transform: translateY(-2px);
+    gap: 0.7rem;
+}
+
+.trans-doc-btn-external {
+    background: #F3F4F6;
+    color: var(--trans-dark);
+}
+
+.trans-doc-btn-external:hover {
+    background: var(--trans-verde-dark);
+    color: white;
+    transform: translateY(-2px);
+    gap: 0.7rem;
+}
+
+.trans-doc-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--trans-white);
+    border-radius: 1.5rem;
+    border: 1px dashed #E5E7EB;
+}
+
+.trans-doc-empty i {
+    font-size: 3.5rem;
+    color: var(--trans-gold-light);
+    margin-bottom: 1rem;
+    animation: trans-float 4s ease-in-out infinite;
+}
+
+.trans-doc-empty p {
+    font-size: 1rem;
+    color: var(--trans-gray);
+    margin-bottom: 0.5rem;
+}
+
+.trans-doc-empty small {
+    font-size: 0.85rem;
+    color: #9CA3AF;
+}
+
 .trans-nota-actualizacion {
     margin-top: 3rem;
     padding: 1rem 1.5rem;
@@ -1168,6 +1450,7 @@ section.trans-hero::after {
 ================================================================ */
 @media (max-width: 1100px) {
     .trans-grid { gap: 1.5rem; }
+    .trans-documentos-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 }
 
 @media (max-width: 900px) {
@@ -1177,6 +1460,8 @@ section.trans-hero::after {
     .trans-oaim-info { grid-template-columns: 1fr; }
     .info-item { justify-content: center; }
     .trans-derechos-grid { grid-template-columns: repeat(2, 1fr); }
+    .trans-filtros { gap: 0.6rem; }
+    .trans-filtro-btn { padding: 0.5rem 1rem; font-size: 0.75rem; }
 }
 
 @media (max-width: 768px) {
@@ -1191,6 +1476,8 @@ section.trans-hero::after {
     .trans-cta-btn-primary, .trans-cta-btn-secondary { width: 100%; max-width: 280px; justify-content: center; }
     .trans-oaim-card { padding: 2rem; }
     .container { padding: 0 1rem; }
+    .trans-documentos-grid { grid-template-columns: 1fr; }
+    .trans-doc-header { flex-direction: column; align-items: flex-start; }
 }
 
 @media (max-width: 480px) {
@@ -1202,6 +1489,8 @@ section.trans-hero::after {
     .trans-card { padding: 1.5rem 1rem; }
     .trans-card-icon { width: 60px; height: 60px; font-size: 1.6rem; }
     .trans-card h3 { font-size: 1rem; }
+    .trans-filtros { gap: 0.5rem; }
+    .trans-filtro-btn { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1210,7 +1499,7 @@ section.trans-hero::after {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-    .trans-card, .trans-welcome-card, .trans-derecho-card, .trans-oaim-card {
+    .trans-card, .trans-welcome-card, .trans-derecho-card, .trans-oaim-card, .trans-doc-card {
         transform: none !important;
     }
     .trans-hero-title, .trans-hero-eyebrow, .trans-hero-subtitle, .trans-hero-stats {
@@ -1290,7 +1579,7 @@ section.trans-hero::after {
         </div>
     </section>
 
-    <!-- SECCIÓN CATEGORÍAS -->
+    <!-- SECCIÓN CATEGORÍAS ESTÁTICAS -->
     <section class="trans-categorias">
         <div class="container">
             <div class="trans-section-header">
@@ -1440,6 +1729,98 @@ section.trans-hero::after {
                     </a>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- NUEVA SECCIÓN: DOCUMENTOS PUBLICADOS DESDE BD -->
+    <section class="trans-documentos">
+        <div class="container">
+            <div class="trans-section-header">
+                <h2>Documentos Publicados</h2>
+                <p>Acceso directo a documentos oficiales · Actualización automática</p>
+                <div class="trans-header-line"></div>
+            </div>
+
+            <!-- Filtros por categoría -->
+            {% if categorias %}
+            <div class="trans-filtros">
+                <a href="{{ url_for('transparencia') }}" class="trans-filtro-btn {% if not categoria_actual %}active{% endif %}">
+                    <i class="fas fa-th-large"></i> Todos
+                </a>
+                {% for cat_key, cat_name in categorias %}
+                <a href="{{ url_for('transparencia', categoria=cat_key) }}" class="trans-filtro-btn {% if categoria_actual == cat_key %}active{% endif %}">
+                    <i class="fas fa-folder-open"></i> {{ cat_name }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Grid de documentos -->
+            {% if documentos and documentos|length > 0 %}
+            <div class="trans-documentos-grid">
+                {% for doc in documentos %}
+                {% if doc.publicado %}
+                <div class="trans-doc-card">
+                    <div class="trans-doc-band"></div>
+                    <div class="trans-doc-header">
+                        <div class="trans-doc-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="trans-doc-title">
+                            <h3>{{ doc.titulo }}</h3>
+                            <span class="trans-doc-categoria">
+                                <i class="fas fa-tag"></i> 
+                                {% for cat_key, cat_name in categorias %}
+                                    {% if cat_key == doc.categoria %}{{ cat_name }}{% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {% if doc.descripcion %}
+                    <p class="trans-doc-descripcion">{{ doc.descripcion|truncate(120) }}</p>
+                    {% endif %}
+                    
+                    <div class="trans-doc-meta">
+                        {% if doc.periodo %}
+                        <span class="trans-doc-periodo">
+                            <i class="fas fa-calendar-alt"></i> {{ doc.periodo }}
+                        </span>
+                        {% elif doc.anio %}
+                        <span class="trans-doc-anio">
+                            <i class="fas fa-calendar"></i> {{ doc.anio }}
+                        </span>
+                        {% endif %}
+                        {% if doc.fecha_doc %}
+                        <span class="trans-doc-periodo">
+                            <i class="fas fa-clock"></i> {{ doc.fecha_doc.strftime('%d/%m/%Y') if doc.fecha_doc else '' }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="trans-doc-actions">
+                        {% if doc.archivo_url %}
+                        <a href="{{ doc.archivo_url }}" class="trans-doc-btn trans-doc-btn-download" target="_blank">
+                            <i class="fas fa-download"></i> Descargar
+                        </a>
+                        {% endif %}
+                        {% if doc.enlace_ext %}
+                        <a href="{{ doc.enlace_ext }}" class="trans-doc-btn trans-doc-btn-external" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Ver enlace
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="trans-doc-empty">
+                <i class="fas fa-folder-open"></i>
+                <p>No hay documentos disponibles en esta categoría</p>
+                <small>Pronto agregaremos más información. Si necesitas algún documento específico, contáctanos a través de la OAIM.</small>
+            </div>
+            {% endif %}
 
             <div class="trans-nota-actualizacion">
                 <i class="fas fa-sync-alt"></i>
@@ -1553,7 +1934,7 @@ section.trans-hero::after {
         });
     }, transObserverOptions);
 
-    document.querySelectorAll('.trans-card, .trans-derecho-card, .trans-welcome-card, .trans-oaim-card').forEach(el => {
+    document.querySelectorAll('.trans-card, .trans-doc-card, .trans-derecho-card, .trans-welcome-card, .trans-oaim-card').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(30px)';
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';

@@ -47,7 +47,14 @@ import cloudinary.uploader
 import cloudinary.api
 
 # ================================================================
-# 5. CREACIÓN DE LA APLICACIÓN
+# 5. IMPORTS DE MODELOS
+# ================================================================
+from models.contenido import Contenido
+from models.transparencia import Transparencia
+from models.menu_item import MenuItem
+
+# ================================================================
+# 6. CREACIÓN DE LA APLICACIÓN
 # ================================================================
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 
@@ -86,7 +93,7 @@ print(f"   SSL Mode: {'✅' if 'sslmode=require' in str(app.config.get('SQLALCHE
 print("=" * 60)
 
 # ================================================================
-# 6. CONFIGURAR CLOUDINARY
+# 7. CONFIGURAR CLOUDINARY
 # ================================================================
 cloudinary.config(
     cloud_name=app.config.get('CLOUDINARY_CLOUD_NAME', ''),
@@ -101,7 +108,7 @@ else:
     print("⚠️ Cloudinary no configurado (faltan credenciales)")
 
 # ================================================================
-# 7. INICIALIZAR BASE DE DATOS Y LOGIN
+# 8. INICIALIZAR BASE DE DATOS Y LOGIN
 # ================================================================
 db.init_app(app)
 login_manager.init_app(app)
@@ -119,7 +126,7 @@ def load_user(user_id):
         return None
 
 # ================================================================
-# 8. CONFIGURACIÓN DE LA APLICACIÓN
+# 9. CONFIGURACIÓN DE LA APLICACIÓN
 # ================================================================
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
@@ -136,7 +143,7 @@ app.register_blueprint(auth)
 app.register_blueprint(admin_bp)
 
 # ================================================================
-# 9. DETECCIÓN DE REDIS
+# 10. DETECCIÓN DE REDIS
 # ================================================================
 REDIS_AVAILABLE = False
 redis_client = None
@@ -155,7 +162,7 @@ except Exception:
     print("⚠️ Redis no disponible, usando caché en memoria")
 
 # ================================================================
-# 10. CACHÉ
+# 11. CACHÉ
 # ================================================================
 _cache_cfg = {
     'CACHE_KEY_PREFIX': 'municipio_',
@@ -183,7 +190,7 @@ except Exception as e:
     print(f"⚠️ No se pudo limpiar caché: {e}")
 
 # ================================================================
-# 11. RATE LIMITING
+# 12. RATE LIMITING
 # ================================================================
 limiter = Limiter(
     app=app,
@@ -195,7 +202,7 @@ limiter = Limiter(
 print("✅ Caché y Rate Limiting configurados")
 
 # ================================================================
-# 12. CONFIGURACIÓN POR DEFECTO
+# 13. CONFIGURACIÓN POR DEFECTO
 # ================================================================
 def init_default_config():
     from models.configuracion import Configuracion
@@ -251,7 +258,7 @@ def init_default_config():
             print(f"✅ Configuración por defecto creada: {clave} = {valor}")
 
 # ================================================================
-# 13. CREAR TABLAS Y USUARIOS POR DEFECTO
+# 14. CREAR TABLAS Y USUARIOS POR DEFECTO
 # ================================================================
 from auth import crear_usuarios_por_defecto
 from models.configuracion import Configuracion
@@ -287,7 +294,7 @@ with app.app_context():
         print(f"⚠️ No se pudo inicializar config: {e}")
 
 # ================================================================
-# 14. CABECERAS DE RENDIMIENTO Y SEGURIDAD
+# 15. CABECERAS DE RENDIMIENTO Y SEGURIDAD
 # ================================================================
 @app.after_request
 def set_performance_headers(response):
@@ -307,7 +314,7 @@ def set_performance_headers(response):
     return response
 
 # ================================================================
-# 15. DECORADOR CACHÉ DE API (SOLO PARA APIS)
+# 16. DECORADOR CACHÉ DE API (SOLO PARA APIS)
 # ================================================================
 def cache_response(timeout=300, key_prefix='api'):
     def decorator(f):
@@ -330,7 +337,7 @@ def cache_response(timeout=300, key_prefix='api'):
     return decorator
 
 # ================================================================
-# 16. FUNCIONES AUXILIARES
+# 17. FUNCIONES AUXILIARES
 # ================================================================
 def _allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -361,7 +368,7 @@ def _icono_doc(filename):
     }.get(ext, 'fa-file')
 
 # ================================================================
-# 17. FUNCIÓN PARA GUARDAR CONTACTOS
+# 18. FUNCIÓN PARA GUARDAR CONTACTOS
 # ================================================================
 def guardar_contacto_en_bd(nombre, email, telefono, asunto, mensaje):
     try:
@@ -392,7 +399,7 @@ def guardar_contacto_en_bd(nombre, email, telefono, asunto, mensaje):
         return False, str(e)
 
 # ================================================================
-# 18. FUNCIONES DE CLOUDINARY (CORREGIDAS)
+# 19. FUNCIONES DE CLOUDINARY (CORREGIDAS)
 # ================================================================
 def subir_foto_cloudinary(archivo, email, folder="fotos_perfil"):
     if not app.config.get('CLOUDINARY_ENABLED'):
@@ -461,7 +468,7 @@ def eliminar_foto_cloudinary(public_id):
         return False
 
 # ================================================================
-# 19. CATÁLOGOS
+# 20. CATÁLOGOS
 # ================================================================
 NOMBRES_SERVICIOS = {
     "funeraria": "Funerarias Municipales",
@@ -493,7 +500,7 @@ SERVICIOS_CITAS = {
 }
 
 # ================================================================
-# 20. CONTEXTO GLOBAL DE TEMPLATES (CON VERIFICACIÓN DE SESIÓN)
+# 21. CONTEXTO GLOBAL DE TEMPLATES (CON VERIFICACIÓN DE SESIÓN Y MENÚ DINÁMICO)
 # ================================================================
 @app.context_processor
 def inject_global_variables():
@@ -527,6 +534,9 @@ def inject_global_variables():
         'animaciones': Configuracion.get('animaciones', True),
     }
     
+    # Obtener menú dinámico
+    menu = MenuItem.obtener_menu_completo()
+    
     return dict(
         now=datetime.now(),
         NOMBRES_SERVICIOS=NOMBRES_SERVICIOS,
@@ -542,11 +552,12 @@ def inject_global_variables():
         redis_available=REDIS_AVAILABLE,
         cache_enabled=True,
         debug_mode=app.debug,
-        config=config
+        config=config,
+        menu=menu  # Menú dinámico para todos los templates
     )
 
 # ================================================================
-# 21. RUTAS PÚBLICAS (CORREGIDO - SIN CACHÉ)
+# 22. RUTAS PÚBLICAS (CORREGIDO - SIN CACHÉ)
 # ================================================================
 @app.route("/")
 def index():
@@ -635,31 +646,84 @@ def detalle_denuncia_publica(denuncia_id):
         return redirect(url_for('mapa_incidencias'))
 
 # ================================================================
-# 22. TRANSPARENCIA - RUTAS (CORREGIDO - SIN CACHÉ)
+# 23. TRANSPARENCIA - RUTA PRINCIPAL CON BASE DE DATOS
 # ================================================================
-_TRANSPARENCIA = {
-    "transparencia": ("/transparencia", "transparencia.html"),
-    "transparencia_estructura": ("/transparencia/estructura", "transparencia_estructura.html"),
-    "transparencia_integrantes": ("/transparencia/integrantes", "transparencia_integrantes.html"),
-    "transparencia_normativas": ("/transparencia/normativas", "transparencia_normativas.html"),
-    "transparencia_proyectos": ("/transparencia/proyectos", "transparencia_proyectos.html"),
-    "transparencia_informes": ("/transparencia/informes", "transparencia_informes.html"),
-    "transparencia_datos": ("/transparencia/datos", "transparencia_datos.html"),
-    "transparencia_atencion": ("/transparencia/atencion", "transparencia_atencion.html"),
-    "transparencia_actas": ("/transparencia/actas", "transparencia_actas.html"),
-    "transparencia_compras": ("/transparencia/compras", "transparencia_compras.html"),
-}
+@app.route("/transparencia")
+def transparencia():
+    """Página principal de transparencia con documentos desde la BD"""
+    try:
+        # Obtener todos los documentos de transparencia
+        documentos = Transparencia.obtener_todos()
+        
+        # Agrupar por categoría
+        documentos_por_categoria = {}
+        for doc in documentos:
+            if doc.publicado:
+                categoria = doc.categoria
+                if categoria not in documentos_por_categoria:
+                    documentos_por_categoria[categoria] = []
+                documentos_por_categoria[categoria].append(doc)
+        
+        # Obtener secciones de contenido adicional
+        secciones = Contenido.obtener_por_seccion('transparencia')
+        
+        # Lista plana de todos los documentos publicados
+        todos_documentos = []
+        for docs in documentos_por_categoria.values():
+            todos_documentos.extend(docs)
 
-def create_transparency_view(template_name):
-    def view():
-        return render_template(template_name)
-    return view
+        return render_template(
+            'transparencia.html',
+            documentos=todos_documentos,
+            documentos_por_categoria=documentos_por_categoria,
+            categorias=Transparencia.CATEGORIAS,
+            secciones=secciones
+        )
+    except Exception as e:
+        print(f"Error en transparencia: {e}")
+        import traceback
+        traceback.print_exc()
+        return render_template('transparencia.html', documentos_por_categoria={}, secciones={})
 
-for route_name, (url_path, template_name) in _TRANSPARENCIA.items():
-    app.add_url_rule(url_path, route_name, create_transparency_view(template_name))
+# Rutas adicionales de transparencia (subpáginas)
+@app.route("/transparencia/estructura")
+def transparencia_estructura():
+    return render_template("transparencia_estructura.html")
+
+@app.route("/transparencia/integrantes")
+def transparencia_integrantes():
+    return render_template("transparencia_integrantes.html")
+
+@app.route("/transparencia/normativas")
+def transparencia_normativas():
+    return render_template("transparencia_normativas.html")
+
+@app.route("/transparencia/proyectos")
+def transparencia_proyectos():
+    return render_template("transparencia_proyectos.html")
+
+@app.route("/transparencia/informes")
+def transparencia_informes():
+    return render_template("transparencia_informes.html")
+
+@app.route("/transparencia/datos")
+def transparencia_datos():
+    return render_template("transparencia_datos.html")
+
+@app.route("/transparencia/atencion")
+def transparencia_atencion():
+    return render_template("transparencia_atencion.html")
+
+@app.route("/transparencia/actas")
+def transparencia_actas():
+    return render_template("transparencia_actas.html")
+
+@app.route("/transparencia/compras")
+def transparencia_compras():
+    return render_template("transparencia_compras.html")
 
 # ================================================================
-# 23. NOTICIAS Y CONTACTO PÚBLICO (CORREGIDO - SIN CACHÉ)
+# 24. NOTICIAS Y CONTACTO PÚBLICO (CORREGIDO - SIN CACHÉ)
 # ================================================================
 
 @app.route("/noticias")
@@ -861,7 +925,7 @@ def uploaded_file(filename):
     return send_from_directory(os.path.join(app.root_path, 'static', 'uploads'), filename)
 
 # ================================================================
-# 24. MI CUENTA - RUTAS DE USUARIO
+# 25. MI CUENTA - RUTAS DE USUARIO
 # ================================================================
 @app.route("/perfil")
 @login_required
@@ -1054,7 +1118,7 @@ def configuracion_cuenta():
     return render_template("usuarios/configuracion.html", usuario=usuario)
 
 # ================================================================
-# 25. MIS TRÁMITES - RUTAS DEL USUARIO
+# 26. MIS TRÁMITES - RUTAS DEL USUARIO
 # ================================================================
 @app.route("/mis-servicios")
 @login_required
@@ -1316,7 +1380,7 @@ def mis_citas():
     return render_template("citas/mis_citas.html", citas=citas, servicios=SERVICIOS_CITAS)
 
 # ================================================================
-# 26. RUTAS DINÁMICAS PARA FORMULARIOS
+# 27. RUTAS DINÁMICAS PARA FORMULARIOS
 # ================================================================
 @app.route('/solicitar/<tipo>')
 @login_required
@@ -1353,7 +1417,7 @@ def consultar(tipo):
                          nombre_consulta=NOMBRES_CONSULTAS[tipo])
 
 # ================================================================
-# 27. PROCESAMIENTO DE FORMULARIOS
+# 28. PROCESAMIENTO DE FORMULARIOS
 # ================================================================
 @app.route("/procesar-solicitud", methods=["POST"])
 @login_required
@@ -1486,7 +1550,7 @@ def procesar_consulta():
     return redirect(url_for('servicios'))
 
 # ================================================================
-# 27.5 SOLICITAR CITA - CORREGIDA
+# 28.5 SOLICITAR CITA - CORREGIDA
 # ================================================================
 @app.route("/solicitar-cita", methods=["GET", "POST"])
 @login_required
@@ -1608,7 +1672,7 @@ def cancelar_cita(cita_id):
     return redirect(url_for("mis_citas"))
 
 # ================================================================
-# 28. APIs (CON CACHÉ - ESTÁ BIEN PORQUE SON DATOS PÚBLICOS)
+# 29. APIs (CON CACHÉ - ESTÁ BIEN PORQUE SON DATOS PÚBLICOS)
 # ================================================================
 @app.route("/api/horarios-disponibles")
 @login_required
@@ -1915,7 +1979,7 @@ def api_usuario_responder_mensaje(folio):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # ================================================================
-# 29. ENCUESTAS
+# 30. ENCUESTAS
 # ================================================================
 @app.route("/tramite/<folio>/encuesta", methods=["GET", "POST"])
 @login_required
@@ -2012,7 +2076,7 @@ def encuesta_tramite(folio):
                           folio=folio)
 
 # ================================================================
-# 30. ADMIN - ESTADÍSTICAS DE ENCUESTAS
+# 31. ADMIN - ESTADÍSTICAS DE ENCUESTAS
 # ================================================================
 @app.route("/admin/encuestas")
 @admin_required
@@ -2022,7 +2086,7 @@ def admin_encuestas():
     return render_template("admin/encuestas.html", stats=stats)
 
 # ================================================================
-# 31. ADMIN - GESTIÓN DE CONTACTOS
+# 32. ADMIN - GESTIÓN DE CONTACTOS
 # ================================================================
 @app.route("/admin/contactos")
 @admin_required
@@ -2089,7 +2153,7 @@ def api_contactos_pendientes():
         return jsonify({'count': 0})
 
 # ================================================================
-# 32. ADMIN - OTRAS RUTAS
+# 33. ADMIN - OTRAS RUTAS
 # ================================================================
 @app.route("/admin/dashboard")
 @admin_required
@@ -2116,7 +2180,7 @@ def api_notificaciones_admin():
         return jsonify({'count': 0, 'notifications': []})
 
 # ================================================================
-# 33. ERROR HANDLERS
+# 34. ERROR HANDLERS
 # ================================================================
 @app.errorhandler(404)
 def page_not_found(e):
@@ -2134,7 +2198,7 @@ def ratelimit_handler(e):
     return redirect(request.referrer or url_for('index'))
 
 # ================================================================
-# 34. ARRANQUE
+# 35. ARRANQUE
 # ================================================================
 if __name__ == "__main__":
     # Crear directorios necesarios
@@ -2169,7 +2233,7 @@ if __name__ == "__main__":
     print("=" * 60)
     print("📌 RUTAS PRINCIPALES:")
     print("   /                 → Inicio")
-    print("   /transparencia    → Transparencia")
+    print("   /transparencia    → Transparencia (con BD)")
     print("   /contacto         → Formulario de contacto")
     print("   /mis-servicios    → Mis servicios solicitados")
     print("   /mis-tramites     → Mis trámites (incluye contactos)")
@@ -2188,8 +2252,11 @@ if __name__ == "__main__":
     print("   /admin/mapa                → Mapa de incidencias (admin)")
     print("   /admin/noticias            → Gestión de noticias")
     print("   /admin/logs                → Dashboard de logs")
+    print("   /admin/contenido           → Gestión de contenido dinámico")
+    print("   /admin/transparencia       → Gestión de transparencia")
+    print("   /admin/menu                → Gestión de menú")
     print("=" * 60)
-    print("🌐 Servidor en: http://localhost:5000")
+    print("🌐 Servidor encendido")
     print("=" * 60)
     
     # Obtener puerto desde variable de entorno (para producción)
