@@ -75,6 +75,7 @@
                 <th>Usuario</th>
                 <th>Servicio</th>
                 <th>Fecha/Hora</th>
+                <th>Motivo</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>
@@ -104,9 +105,12 @@
                     <div><i class="fas fa-clock"></i> {{ cita.hora }}</div>
                 </td>
                 <td>
-                    <span class="badge badge-{{ cita.estado }}">{{ cita.estado|title }}</span>
+                    <div style="font-size:.85rem;max-width:200px">{{ cita.motivo or '—' }}</div>
                 </td>
                 <td>
+                    <span class="badge badge-{{ cita.estado }}">{{ cita.estado|title }}</span>
+                </td>
+                <tr>
                     <button class="btn-icon" onclick="cambiarEstado('{{ cita.id }}')" title="Cambiar estado">
                         <i class="fas fa-edit"></i>
                     </button>
