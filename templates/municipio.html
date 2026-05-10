@@ -4,6 +4,33 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/municipio.css') }}">
+<style>
+    /* ARREGLO DEL STICKY NAV - Evita que tape el contenido */
+    .muni-sticky-nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    
+    /* Cuando el header es fijo, el sticky nav necesita un top diferente */
+    .main-header.sticky-header ~ .muni-sticky-nav {
+        top: 70px; /* Ajusta según la altura de tu header fijo */
+    }
+    
+    /* Scroll suave para toda la página */
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 100px; /* IMPORTANTE: Evita que el sticky nav tape las secciones */
+    }
+    
+    /* Asegura que las secciones no queden tapadas */
+    section[id] {
+        scroll-margin-top: 90px;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -19,6 +46,7 @@
             </h1>
             <div class="muni-hero-line"></div>
             <p class="muni-hero-subtitle">Un distrito con historia, tradición y futuro en la provincia de La Vega</p>
+            <!-- STATS SOLO AQUÍ (SIN REDUNDANCIA) -->
             <div class="muni-hero-stats">
                 <div class="muni-hero-stat">12 Sectores</div>
                 <div class="muni-hero-stat">8,547 Habitantes</div>
@@ -53,20 +81,7 @@
             <div class="muni-distrito-texto">
                 <p class="muni-distrito-intro">El distrito de Cutupú está conformado por <strong>12 sectores</strong> que forman nuestra comunidad. Un distrito municipal con una rica historia en la provincia de La Vega, hogar de cientos de familias trabajadoras que día a día contribuyen al desarrollo de nuestra comunidad.</p>
                 <p>El ayuntamiento de Cutupú es una institución de gobierno local encargada de administrar y atender las necesidades de nuestro distrito. Su función principal es resolver problemáticas como la limpieza y recogida de basura, mantenimiento de calles y canaletas, cuidado de cementerios, y la construcción y mantenimiento de obras públicas.</p>
-                <div class="muni-distrito-stats">
-                    <div class="muni-stat">
-                        <span class="muni-stat-number">12</span>
-                        <span class="muni-stat-label">Sectores</span>
-                    </div>
-                    <div class="muni-stat">
-                        <span class="muni-stat-number">8,547</span>
-                        <span class="muni-stat-label">Habitantes</span>
-                    </div>
-                    <div class="muni-stat">
-                        <span class="muni-stat-number">17</span>
-                        <span class="muni-stat-label">Departamentos</span>
-                    </div>
-                </div>
+                <!-- Stats eliminados aquí por REDUNDANCIA -->
             </div>
             <div class="muni-distrito-imagen">
                 <img src="{{ url_for('static', filename='img/distrito.jpeg') }}" alt="Villa Cutupú" loading="lazy">
@@ -105,6 +120,8 @@
         <div class="muni-section-eyebrow">Nuestro Gobierno Local</div>
         <h2 class="muni-section-title">Autoridades <span class="muni-title-accent">Municipales</span></h2>
         <p class="muni-autoridades-subtitle">Período constitucional 2024 - 2028</p>
+        
+        <!-- Alcalde -->
         <div class="muni-alcalde-card">
             <div class="muni-alcalde-avatar">
                 <span>RT</span>
@@ -116,13 +133,45 @@
                 <p>Responsable de mantener el distrito limpio, organizado y en condiciones saludables para todos los habitantes.</p>
             </div>
         </div>
+        
+        <!-- Vocales -->
         <h3 class="muni-vocales-titulo">Vocales Municipales</h3>
         <div class="muni-vocales-grid">
-            <div class="muni-vocal-card"><div class="muni-vocal-avatar">WM</div><div class="muni-vocal-info"><h4>William Mata</h4><span>Vocal Municipal</span></div></div>
-            <div class="muni-vocal-card"><div class="muni-vocal-avatar">YB</div><div class="muni-vocal-info"><h4>Yumiri Bueno</h4><span>Vocal Municipal</span></div></div>
-            <div class="muni-vocal-card"><div class="muni-vocal-avatar">XR</div><div class="muni-vocal-info"><h4>Xiomara Romano</h4><span>Vocal Municipal</span></div></div>
-            <div class="muni-vocal-card"><div class="muni-vocal-avatar">FP</div><div class="muni-vocal-info"><h4>Francisco Peña</h4><span>Vocal Municipal</span></div></div>
-            <div class="muni-vocal-card"><div class="muni-vocal-avatar">CS</div><div class="muni-vocal-info"><h4>Colinson Sevalle</h4><span>Vocal Municipal</span></div></div>
+            <div class="muni-vocal-card">
+                <div class="muni-vocal-avatar">WM</div>
+                <div class="muni-vocal-info">
+                    <h4>William Mata</h4>
+                    <span>Vocal Municipal</span>
+                </div>
+            </div>
+            <div class="muni-vocal-card">
+                <div class="muni-vocal-avatar">YB</div>
+                <div class="muni-vocal-info">
+                    <h4>Yumiri Bueno</h4>
+                    <span>Vocal Municipal</span>
+                </div>
+            </div>
+            <div class="muni-vocal-card">
+                <div class="muni-vocal-avatar">XR</div>
+                <div class="muni-vocal-info">
+                    <h4>Xiomara Romano</h4>
+                    <span>Vocal Municipal</span>
+                </div>
+            </div>
+            <div class="muni-vocal-card">
+                <div class="muni-vocal-avatar">FP</div>
+                <div class="muni-vocal-info">
+                    <h4>Francisco Peña</h4>
+                    <span>Vocal Municipal</span>
+                </div>
+            </div>
+            <div class="muni-vocal-card">
+                <div class="muni-vocal-avatar">CS</div>
+                <div class="muni-vocal-info">
+                    <h4>Colinson Sevalle</h4>
+                    <span>Vocal Municipal</span>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -131,7 +180,7 @@
 <section id="departamentos" class="muni-deptos-section">
     <div class="container">
         <div class="muni-section-eyebrow">Estructura Municipal</div>
-        <h2 class="muni-section-title">17 <span class="muni-title-accent">Departamentos</span></h2>
+        <h2 class="muni-section-title"><span class="muni-title-accent">17 Departamentos</span></h2>
         <p class="muni-deptos-subtitle">El Ayuntamiento de Cutupú cuenta con 17 departamentos para brindar servicios a la comunidad</p>
         <div class="muni-deptos-grid">
             <div class="muni-depto-card"><i class="fas fa-building"></i><h4>Oficina Administrativa</h4></div>
@@ -185,56 +234,83 @@
 
 <script>
 (function() {
+    // ========== STICKY NAV ARREGLADO ==========
     const stickyNav = document.getElementById('stickyNav');
     const header = document.querySelector('.main-header');
-    let headerHeight = header ? header.offsetHeight : 80;
-    let stickyOffset = headerHeight;
-
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > stickyOffset) {
-            stickyNav.classList.add('sticky-active');
+    
+    function handleStickyNav() {
+        if (!stickyNav) return;
+        
+        if (header && window.getComputedStyle(header).position === 'sticky') {
+            const headerHeight = header.offsetHeight;
+            stickyNav.style.top = headerHeight + 'px';
         } else {
-            stickyNav.classList.remove('sticky-active');
+            stickyNav.style.top = '0';
         }
-    });
-
-    const sections = document.querySelectorAll('section[id]');
+    }
+    
+    // Inicializar
+    handleStickyNav();
+    
+    // Escuchar scroll y resize
+    window.addEventListener('scroll', handleStickyNav);
+    window.addEventListener('resize', handleStickyNav);
+    
+    // ========== SCROLL SUAVE MEJORADO ==========
     const navLinks = document.querySelectorAll('.muni-sticky-nav-link');
-
-    const observerOptions = { rootMargin: `-${headerHeight + 80}px 0px -40% 0px`, threshold: 0 };
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.getAttribute('id');
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('data-section') === id) link.classList.add('active');
-                });
-            }
-        });
-    }, observerOptions);
-    sections.forEach(section => observer.observe(section));
-
+    
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const targetId = link.getAttribute('href').substring(1);
             const target = document.getElementById(targetId);
+            
             if (target) {
-                const offset = headerHeight + 60;
+                const headerHeight = header ? header.offsetHeight : 80;
+                const stickyNavHeight = stickyNav ? stickyNav.offsetHeight : 60;
+                const totalOffset = headerHeight + stickyNavHeight + 20;
+                
                 const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
-                window.scrollTo({ top: elementPosition - offset, behavior: 'smooth' });
+                const offsetPosition = elementPosition - totalOffset;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
             }
         });
     });
-
-    window.addEventListener('resize', () => {
-        headerHeight = header ? header.offsetHeight : 80;
-        stickyOffset = headerHeight;
-        observerOptions.rootMargin = `-${headerHeight + 80}px 0px -40% 0px`;
-        observer.disconnect();
-        sections.forEach(section => observer.observe(section));
-    });
+    
+    // ========== ACTIVE SECTION ON SCROLL ==========
+    const sections = document.querySelectorAll('section[id]');
+    
+    function setActiveSection() {
+        const headerHeight = header ? header.offsetHeight : 80;
+        const stickyNavHeight = stickyNav ? stickyNav.offsetHeight : 60;
+        const scrollPosition = window.scrollY + headerHeight + stickyNavHeight + 50;
+        
+        let currentSection = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionBottom = sectionTop + section.offsetHeight;
+            
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                currentSection = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-section') === currentSection) {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    window.addEventListener('scroll', setActiveSection);
+    window.addEventListener('resize', setActiveSection);
+    setActiveSection();
 })();
 </script>
 

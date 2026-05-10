@@ -22,10 +22,8 @@
                 Tramites, solicitudes y denuncias disponibles para los ciudadanos de Villa Cutupu.<br>
                 Rapido, transparente y a tu alcance.
             </p>
-            <div class="serv-hero-stats">
-                <div class="serv-hero-stat">11 Servicios</div>
-                <div class="serv-hero-stat">3 Categorias</div>
-                <div class="serv-hero-stat">24h Respuesta</div>
+            <div class="serv-hero-stats" id="heroStats">
+                <!-- Stats loaded dynamically -->
             </div>
         </div>
     </div>
@@ -44,190 +42,13 @@
             <button class="serv-filtro-btn" data-filtro="consulta">Consultas</button>
         </div>
         <div class="serv-contador">
-            <span id="contador">11</span> servicios disponibles
+            <span id="contador">0</span> servicios disponibles
         </div>
     </div>
 </div>
 
-<!-- GRID DE SERVICIOS -->
-<div class="serv-grid-premium" id="serviciosGrid">
-    
-    <!-- CATEGORIA: SOLICITUDES -->
-    <div class="serv-categoria-separador">
-        <span class="serv-separador-linea"></span>
-        <span class="serv-separador-label solicitud-label">SOLICITUDES</span>
-        <span class="serv-separador-linea"></span>
-    </div>
-
-    <!-- Funerarias -->
-    <div class="serv-card-premium" data-categoria="solicitud">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">01</div>
-        <div class="serv-card-icon solicitud-icon">
-            <i class="fas fa-church"></i>
-        </div>
-        <h3>Funerarias Municipales</h3>
-        <p>Apoyo y facilidades para la realizacion de servicios funerarios dignos y accesibles.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/solicitar/funeraria" class="serv-card-btn solicitud-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">Presencial</span>
-    </div>
-
-    <!-- Uso de Suelo -->
-    <div class="serv-card-premium" data-categoria="solicitud">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">02</div>
-        <div class="serv-card-icon solicitud-icon">
-            <i class="fas fa-file-alt"></i>
-        </div>
-        <h3>Certificado de Uso de Suelo</h3>
-        <p>Documento oficial que indica el uso permitido de un terreno o inmueble.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/solicitar/uso-suelo" class="serv-card-btn solicitud-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">3-5 dias</span>
-    </div>
-
-    <!-- OAI/M -->
-    <div class="serv-card-premium" data-categoria="solicitud">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">03</div>
-        <div class="serv-card-icon solicitud-icon">
-            <i class="fas fa-info-circle"></i>
-        </div>
-        <h3>Acceso a Informacion (OAI/M)</h3>
-        <p>Solicitud de informacion publica conforme a la ley de transparencia.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/solicitar/oaim" class="serv-card-btn solicitud-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">15 dias habiles</span>
-    </div>
-
-    <!-- Planeamiento -->
-    <div class="serv-card-premium" data-categoria="solicitud">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">04</div>
-        <div class="serv-card-icon solicitud-icon">
-            <i class="fas fa-draw-polygon"></i>
-        </div>
-        <h3>Planeamiento Urbano</h3>
-        <p>Asesoria para proyectos urbanisticos y cumplimiento de normativas municipales.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/solicitar/planeamiento" class="serv-card-btn solicitud-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">Cita previa</span>
-    </div>
-
-    <!-- Ornato -->
-    <div class="serv-card-premium" data-categoria="solicitud">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">05</div>
-        <div class="serv-card-icon solicitud-icon">
-            <i class="fas fa-tree"></i>
-        </div>
-        <h3>Ornato y Prestamos de Areas</h3>
-        <p>Solicitud de uso de plazas, parques y salones comunales para eventos.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/solicitar/ornato" class="serv-card-btn solicitud-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">5 dias habiles</span>
-    </div>
-
-    <!-- Catastro -->
-    <div class="serv-card-premium" data-categoria="solicitud">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">06</div>
-        <div class="serv-card-icon solicitud-icon">
-            <i class="fas fa-map"></i>
-        </div>
-        <h3>Catastro Municipal</h3>
-        <p>Tramites de nomenclatura, deslindes y certificaciones de avaluo.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/solicitar/catastro" class="serv-card-btn solicitud-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">7 dias habiles</span>
-    </div>
-
-    <!-- Aseo Comercial -->
-    <div class="serv-card-premium" data-categoria="solicitud">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">07</div>
-        <div class="serv-card-icon solicitud-icon">
-            <i class="fas fa-truck"></i>
-        </div>
-        <h3>Gestion Comercial de Aseo</h3>
-        <p>Altas, bajas o modificaciones del servicio de recoleccion para comercios.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/solicitar/aseo-comercial" class="serv-card-btn solicitud-btn">Gestionar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">En linea</span>
-    </div>
-
-    <!-- CATEGORIA: DENUNCIAS -->
-    <div class="serv-categoria-separador">
-        <span class="serv-separador-linea"></span>
-        <span class="serv-separador-label denuncia-label">DENUNCIAS</span>
-        <span class="serv-separador-linea"></span>
-    </div>
-
-    <!-- Policia -->
-    <div class="serv-card-premium" data-categoria="denuncia">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">08</div>
-        <div class="serv-card-icon denuncia-icon">
-            <i class="fas fa-shield-alt"></i>
-        </div>
-        <h3>Policia Municipal</h3>
-        <p>Reportes de orden publico, ruidos molestos, ocupacion de aceras y ventas informales.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/denunciar/policia" class="serv-card-btn denuncia-btn">Denunciar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">Urgente</span>
-    </div>
-
-    <!-- Limpieza -->
-    <div class="serv-card-premium" data-categoria="denuncia">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">09</div>
-        <div class="serv-card-icon denuncia-icon">
-            <i class="fas fa-broom"></i>
-        </div>
-        <h3>Limpieza y Cuidado de la Via Publica</h3>
-        <p>Reportes de basura acumulada, calles sucias y espacios descuidados.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/denunciar/limpieza" class="serv-card-btn denuncia-btn">Reportar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">24-48 h</span>
-    </div>
-
-    <!-- Basura -->
-    <div class="serv-card-premium" data-categoria="denuncia">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">10</div>
-        <div class="serv-card-icon denuncia-icon">
-            <i class="fas fa-trash-alt"></i>
-        </div>
-        <h3>Recogida de Basura</h3>
-        <p>Denuncias por falta de recoleccion, horarios incumplidos e irregularidades.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/denunciar/basura" class="serv-card-btn denuncia-btn">Denunciar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">48 h</span>
-    </div>
-
-    <!-- CATEGORIA: CONSULTAS -->
-    <div class="serv-categoria-separador">
-        <span class="serv-separador-linea"></span>
-        <span class="serv-separador-label consulta-label">CONSULTAS</span>
-        <span class="serv-separador-linea"></span>
-    </div>
-
-    <!-- POT -->
-    <div class="serv-card-premium" data-categoria="consulta">
-        <div class="serv-card-band"></div>
-        <div class="serv-card-badge-number">11</div>
-        <div class="serv-card-icon consulta-icon">
-            <i class="fas fa-city"></i>
-        </div>
-        <h3>Plan de Ordenamiento Territorial</h3>
-        <p>Consulta y asesoria sobre el plan regulador, zonificacion y desarrollo urbano.</p>
-        <div class="serv-card-divider"></div>
-        <a href="/consultar/pot" class="serv-card-btn consulta-btn">Consultar <i class="fas fa-arrow-right"></i></a>
-        <span class="serv-card-meta">En linea</span>
-    </div>
-
-</div>
+<!-- GRID DE SERVICIOS - Se genera dinámicamente -->
+<div class="serv-grid-premium" id="serviciosGrid"></div>
 
 <!-- SERVICIOS SOCIALES -->
 <section class="serv-sociales-section">
@@ -378,11 +199,120 @@
 
 <script>
 (function() {
+    // ============================================
+    // DATA CENTRALIZATION - Cambia los servicios aquí
+    // ============================================
+    const SERVICIOS_DATA = {
+        totalServicios: 11,
+        categorias: {
+            solicitud: "SOLICITUDES",
+            denuncia: "DENUNCIAS", 
+            consulta: "CONSULTAS"
+        },
+        servicios: [
+            // Solicitudes (01-07)
+            { id: 1, categoria: "solicitud", numero: "01", icono: "fa-church", titulo: "Funerarias Municipales", descripcion: "Apoyo y facilidades para la realizacion de servicios funerarios dignos y accesibles.", link: "/solicitar/funeraria", meta: "Presencial", botonTexto: "Solicitar" },
+            { id: 2, categoria: "solicitud", numero: "02", icono: "fa-file-alt", titulo: "Certificado de Uso de Suelo", descripcion: "Documento oficial que indica el uso permitido de un terreno o inmueble.", link: "/solicitar/uso-suelo", meta: "3-5 dias", botonTexto: "Solicitar" },
+            { id: 3, categoria: "solicitud", numero: "03", icono: "fa-info-circle", titulo: "Acceso a Informacion (OAI/M)", descripcion: "Solicitud de informacion publica conforme a la ley de transparencia.", link: "/solicitar/oaim", meta: "15 dias habiles", botonTexto: "Solicitar" },
+            { id: 4, categoria: "solicitud", numero: "04", icono: "fa-draw-polygon", titulo: "Planeamiento Urbano", descripcion: "Asesoria para proyectos urbanisticos y cumplimiento de normativas municipales.", link: "/solicitar/planeamiento", meta: "Cita previa", botonTexto: "Solicitar" },
+            { id: 5, categoria: "solicitud", numero: "05", icono: "fa-tree", titulo: "Ornato y Prestamos de Areas", descripcion: "Solicitud de uso de plazas, parques y salones comunales para eventos.", link: "/solicitar/ornato", meta: "5 dias habiles", botonTexto: "Solicitar" },
+            { id: 6, categoria: "solicitud", numero: "06", icono: "fa-map", titulo: "Catastro Municipal", descripcion: "Tramites de nomenclatura, deslindes y certificaciones de avaluo.", link: "/solicitar/catastro", meta: "7 dias habiles", botonTexto: "Solicitar" },
+            { id: 7, categoria: "solicitud", numero: "07", icono: "fa-truck", titulo: "Gestion Comercial de Aseo", descripcion: "Altas, bajas o modificaciones del servicio de recoleccion para comercios.", link: "/solicitar/aseo-comercial", meta: "En linea", botonTexto: "Gestionar" },
+            // Denuncias (08-10)
+            { id: 8, categoria: "denuncia", numero: "08", icono: "fa-shield-alt", titulo: "Policia Municipal", descripcion: "Reportes de orden publico, ruidos molestos, ocupacion de aceras y ventas informales.", link: "/denunciar/policia", meta: "Urgente", botonTexto: "Denunciar" },
+            { id: 9, categoria: "denuncia", numero: "09", icono: "fa-broom", titulo: "Limpieza y Cuidado de la Via Publica", descripcion: "Reportes de basura acumulada, calles sucias y espacios descuidados.", link: "/denunciar/limpieza", meta: "24-48 h", botonTexto: "Reportar" },
+            { id: 10, categoria: "denuncia", numero: "10", icono: "fa-trash-alt", titulo: "Recogida de Basura", descripcion: "Denuncias por falta de recoleccion, horarios incumplidos e irregularidades.", link: "/denunciar/basura", meta: "48 h", botonTexto: "Denunciar" },
+            // Consultas (11)
+            { id: 11, categoria: "consulta", numero: "11", icono: "fa-city", titulo: "Plan de Ordenamiento Territorial", descripcion: "Consulta y asesoria sobre el plan regulador, zonificacion y desarrollo urbano.", link: "/consultar/pot", meta: "En linea", botonTexto: "Consultar" }
+        ]
+    };
+
+    // Mapeo de iconos adicionales por categoria
+    const categoriaIconos = {
+        solicitud: "solicitud-icon",
+        denuncia: "denuncia-icon",
+        consulta: "consulta-icon"
+    };
+
+    const categoriaClasesBtn = {
+        solicitud: "solicitud-btn",
+        denuncia: "denuncia-btn",
+        consulta: "consulta-btn"
+    };
+
+    // 1. Actualizar Hero Stats
+    const heroStats = document.getElementById('heroStats');
+    if (heroStats) {
+        heroStats.innerHTML = `
+            <div class="serv-hero-stat">${SERVICIOS_DATA.totalServicios} Servicios</div>
+            <div class="serv-hero-stat">3 Categorias</div>
+            <div class="serv-hero-stat">24h Respuesta</div>
+        `;
+    }
+
+    // 2. Generar todo el grid de servicios dinámicamente
+    const serviciosGrid = document.getElementById('serviciosGrid');
+    if (serviciosGrid) {
+        let html = '';
+        
+        // Agrupar servicios por categoria
+        const grupos = {
+            solicitud: [],
+            denuncia: [],
+            consulta: []
+        };
+        
+        SERVICIOS_DATA.servicios.forEach(servicio => {
+            grupos[servicio.categoria].push(servicio);
+        });
+        
+        // Generar HTML por categoria
+        for (const [cat, nombreCat] of Object.entries(SERVICIOS_DATA.categorias)) {
+            if (grupos[cat].length > 0) {
+                // Separador de categoria
+                const labelClass = `${cat}-label`;
+                html += `
+                    <div class="serv-categoria-separador">
+                        <span class="serv-separador-linea"></span>
+                        <span class="serv-separador-label ${labelClass}">${nombreCat}</span>
+                        <span class="serv-separador-linea"></span>
+                    </div>
+                `;
+                
+                // Tarjetas de la categoria
+                grupos[cat].forEach(serv => {
+                    html += `
+                        <div class="serv-card-premium" data-categoria="${serv.categoria}">
+                            <div class="serv-card-band"></div>
+                            <div class="serv-card-badge-number">${serv.numero}</div>
+                            <div class="serv-card-icon ${categoriaIconos[serv.categoria]}">
+                                <i class="fas ${serv.icono}"></i>
+                            </div>
+                            <h3>${serv.titulo}</h3>
+                            <p>${serv.descripcion}</p>
+                            <div class="serv-card-divider"></div>
+                            <a href="${serv.link}" class="serv-card-btn ${categoriaClasesBtn[serv.categoria]}">${serv.botonTexto} <i class="fas fa-arrow-right"></i></a>
+                            <span class="serv-card-meta">${serv.meta}</span>
+                        </div>
+                    `;
+                });
+            }
+        }
+        
+        serviciosGrid.innerHTML = html;
+    }
+
+    // 3. Filtros y contador
     const filtroBtns = document.querySelectorAll('.serv-filtro-btn');
-    const cards = document.querySelectorAll('.serv-card-premium');
-    const contador = document.getElementById('contador');
+    const contadorSpan = document.getElementById('contador');
+    let cards = []; // Se actualiza despues de generar el HTML
+    
+    function actualizarCardsReferencia() {
+        cards = document.querySelectorAll('.serv-card-premium');
+    }
     
     function actualizarFiltros(filtro) {
+        actualizarCardsReferencia();
         let count = 0;
         cards.forEach(card => {
             const categoria = card.getAttribute('data-categoria');
@@ -393,8 +323,14 @@
                 card.classList.add('hidden');
             }
         });
-        if (contador) contador.textContent = count;
+        if (contadorSpan) contadorSpan.textContent = count;
     }
+    
+    // Pequeño delay para asegurar que las cards estan en el DOM
+    setTimeout(() => {
+        actualizarCardsReferencia();
+        actualizarFiltros('todos');
+    }, 50);
     
     filtroBtns.forEach(btn => {
         btn.addEventListener('click', () => {
