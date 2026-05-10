@@ -42,6 +42,9 @@ class Usuario(db.Model, UserMixin):
     foto_perfil_url = db.Column(db.String(500), nullable=True)  # cloudinary
     foto_perfil_public_id = db.Column(db.String(200), nullable=True)
     
+    # Google OAuth
+    google_id = db.Column(db.String(100), nullable=True, unique=True)
+    
     activo = db.Column(db.Boolean, default=True)
     notas_admin = db.Column(db.Text)
     
@@ -161,6 +164,7 @@ class Usuario(db.Model, UserMixin):
             'activo': self.activo,
             'foto_perfil': self.obtener_foto_perfil(),
             'foto_perfil_url': self.foto_perfil_url,
+            'google_id': self.google_id,
             'es_admin': self.es_admin(),
             'fecha_registro': self.fecha_registro.isoformat() if self.fecha_registro else None,
             'ultimo_acceso': self.ultimo_acceso.isoformat() if self.ultimo_acceso else None,
@@ -185,6 +189,10 @@ class Usuario(db.Model, UserMixin):
     @staticmethod
     def obtener_por_id(user_id):
         return Usuario.query.get(user_id)
+    
+    @staticmethod
+    def obtener_por_google_id(google_id):
+        return Usuario.query.filter_by(google_id=google_id).first()
     
     # ===============================
     # REPRESENTACIÓN (🔥 CLAVE)
