@@ -9,6 +9,7 @@ from models.usuario import Usuario
 from extensions import db
 import os
 import re
+from werkzeug.utils import secure_filename
 
 auth = Blueprint('auth', __name__)
 
@@ -398,6 +399,163 @@ def cambiar_password():
 
 
 # ================================================================
+# DECORADORES
+# ================================================================
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not esta_logueado():
+            flash("🔐 Necesitas iniciar sesión.", "warning")
+            return redirect(url_for("auth.login", next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not esta_logueado():
+            flash("🔐 Necesitas iniciar sesión.", "warning")
+            return redirect(url_for("auth.login", next=request.url))
+        if not es_admin():
+            flash("⛔ No tienes permisos de administrador.", "error")
+            return redirect(url_for("index"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+# ================================================================
+# SUBIR FOTO DE PERFIL
+# ================================================================
+
+# Configuración para archivos
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@auth.route('/subir-foto-perfil', methods=['POST'])
+@login_required
+def subir_foto_perfil():
+    if 'foto_perfil' not in request.files:
+        flash('No se seleccionó ningún archivo', 'error')
+        return redirect(request.referrer or url_for('mi_cuenta'))
+    
+    file = request.files['foto_perfil']
+    
+    if file.filename == '':
+        flash('No se seleccionó ningún archivo', 'error')
+        return redirect(request.referrer or url_for('mi_cuenta'))
+    
+    if file and allowed_file(file.filename):
+        # Crear nombre seguro
+        email = session['user']
+        extension = file.filename.rsplit('.', 1)[1].lower()
+        filename = secure_filename(f"{email.replace('@', '_').replace('.', '_')}_{int(datetime.now().timestamp())}.{extension}")
+        
+        # Crear directorio si no existe
+        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'perfiles')
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        # Guardar archivo
+        filepath = os.path.join(upload_folder, filename)
+        file.save(filepath)
+        
+        # Actualizar usuario
+        usuario = Usuario.query.filter_by(email=email).first()
+        if usuario:
+            # Eliminar foto anterior si existe
+            if usuario.foto_perfil and '/static/uploads/perfiles/' in usuario.foto_perfil:
+                old_file = os.path.join(current_app.root_path, usuario.foto_perfil.lstrip('/'))
+                if os.path.exists(old_file):
+                    try:
+                        os.remove(old_file)
+                    except:
+                        pass
+            
+            # Guardar nueva foto
+            foto_url = f'/static/uploads/perfiles/{filename}'
+            usuario.foto_perfil = foto_url
+            usuario.foto_perfil_url = foto_url
+            db.session.commit()
+            
+            # Actualizar sesión
+            session['foto_perfil'] = foto_url
+            
+            flash('✅ Foto de perfil actualizada correctamente', 'success')
+        else:
+            flash('❌ Error al actualizar la foto', 'error')
+    else:
+        flash('❌ Formato no permitido. Use PNG, JPG, JPEG, WEBP o GIF', 'error')
+    
+    return redirect(request.referrer or url_for('mi_cuenta'))
+
+
+@auth.route('/eliminar-foto-perfil', methods=['POST'])
+@login_required
+def eliminar_foto_perfil():
+    email = session['user']
+    usuario = Usuario.query.filter_by(email=email).first()
+    
+    if usuario and usuario.foto_perfil:
+        # Eliminar archivo físico
+        if usuario.foto_perfil and '/static/uploads/perfiles/' in usuario.foto_perfil:
+            file_path = os.path.join(current_app.root_path, usuario.foto_perfil.lstrip('/'))
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except:
+                    pass
+        
+        # Limpiar base de datos
+        usuario.foto_perfil = None
+        usuario.foto_perfil_url = None
+        db.session.commit()
+        
+        # Limpiar sesión
+        session['foto_perfil'] = None
+        
+        flash('✅ Foto de perfil eliminada correctamente', 'success')
+    else:
+        flash('❌ No hay foto de perfil para eliminar', 'error')
+    
+    return redirect(request.referrer or url_for('mi_cuenta'))
+
+
+@auth.route('/editar-perfil', methods=['POST'])
+@login_required
+def editar_perfil():
+    email = session['user']
+    usuario = Usuario.query.filter_by(email=email).first()
+    
+    if not usuario:
+        flash('❌ Usuario no encontrado', 'error')
+        return redirect(url_for('mi_cuenta'))
+    
+    # Actualizar campos
+    usuario.nombre = request.form.get('nombre', usuario.nombre)
+    usuario.apellidos = request.form.get('apellidos', usuario.apellidos)
+    usuario.telefono = request.form.get('telefono', usuario.telefono)
+    usuario.direccion = request.form.get('direccion', usuario.direccion)
+    
+    # Actualizar nombre completo
+    if usuario.nombre and usuario.apellidos:
+        usuario.nombre_completo = f"{usuario.nombre} {usuario.apellidos}".strip()
+    elif usuario.nombre:
+        usuario.nombre_completo = usuario.nombre
+    else:
+        usuario.nombre_completo = usuario.email.split('@')[0]
+    
+    db.session.commit()
+    
+    # Actualizar sesión
+    session['user_name'] = usuario.nombre_completo
+    
+    flash('✅ Perfil actualizado correctamente', 'success')
+    return redirect(url_for('mi_cuenta'))
+
+
+# ================================================================
 # CREAR USUARIOS POR DEFECTO (INCLUYE CÉDULA)
 # ================================================================
 def crear_usuarios_por_defecto():
@@ -447,32 +605,6 @@ def crear_usuarios_por_defecto():
 
     db.session.commit()
     print("✅ Usuarios por defecto verificados")
-
-
-# ================================================================
-# DECORADORES
-# ================================================================
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not esta_logueado():
-            flash("🔐 Necesitas iniciar sesión.", "warning")
-            return redirect(url_for("auth.login", next=request.url))
-        return f(*args, **kwargs)
-    return decorated_function
-
-
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not esta_logueado():
-            flash("🔐 Necesitas iniciar sesión.", "warning")
-            return redirect(url_for("auth.login", next=request.url))
-        if not es_admin():
-            flash("⛔ No tienes permisos de administrador.", "error")
-            return redirect(url_for("index"))
-        return f(*args, **kwargs)
-    return decorated_function
 
 
 # ================================================================
