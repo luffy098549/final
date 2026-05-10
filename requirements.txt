@@ -23,4 +23,8 @@ colorama==0.4.6
 MarkupSafe==3.0.2
 
 cloudinary==1.36.0
-flask-dance[sqla]
+Flask-Dance==7.1.0
+SQLAlchemy-Utils==0.41.2
+requests==2.32.3
+requests-oauthlib==2.0.0
+oauthlib==3.2.2
