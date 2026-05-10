@@ -3,15 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso con Google - Junta Distrital Villa Cutupú</title>
+    <title>Acceso - Junta Distrital Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Estilos adicionales para el botón de Google y layout simplificado */
+        /* Estilos completos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .main-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .main-header .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 60px;
+        }
+
+        .main-nav ul {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .main-nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 2px solid #1a3b2e;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            color: #1a3b2e !important;
+        }
+
+        .btn-registro {
+            background: #1a3b2e;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            color: white !important;
+        }
+
+        /* Login Container */
+        .login-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #1a3b2e, #2e7d5e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+        }
+
+        .login-header h2 {
+            font-size: 1.8rem;
+            color: #1a3b2e;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: #666;
+        }
+
+        /* Formulario tradicional */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2e7d5e;
+            box-shadow: 0 0 0 4px rgba(46, 125, 94, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: #1a3b2e;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: #2e7d5e;
+            transform: translateY(-2px);
+        }
+
+        /* Botón Google */
         .google-btn {
             display: flex;
             align-items: center;
@@ -23,64 +177,184 @@
             color: #3c4043;
             font-size: 1rem;
             font-weight: 500;
-            font-family: 'Plus Jakarta Sans', sans-serif;
             border: 1px solid #dadce0;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             text-decoration: none;
         }
+
         .google-btn:hover {
             background-color: #f8f9fa;
             border-color: #d2d5d9;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             transform: translateY(-1px);
         }
+
         .google-icon {
             width: 20px;
             height: 20px;
         }
+
         .divider {
             display: flex;
             align-items: center;
             text-align: center;
-            margin: 24px 0 16px;
+            margin: 24px 0;
             color: #6c757d;
             font-size: 0.85rem;
         }
+
         .divider::before,
         .divider::after {
             content: '';
             flex: 1;
             border-bottom: 1px solid #e0e4e8;
         }
+
         .divider span {
             margin: 0 12px;
         }
-        .info-highlight {
+
+        /* Info panel */
+        .login-info {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        .login-info h3 {
+            color: #1a3b2e;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-list li {
+            padding: 0.8rem 0;
+            color: #555;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-note {
             background: #eef2fa;
-            border-left: 4px solid #1a73e8;
-            padding: 12px 16px;
+            padding: 1rem;
             border-radius: 12px;
-            margin-top: 20px;
+            margin: 1.5rem 0;
             font-size: 0.85rem;
         }
+
         .btn-micuenta {
             display: inline-block;
-            background: #1a73e8;
+            background: #1a3b2e;
             color: white;
-            padding: 8px 18px;
+            padding: 0.8rem 1.5rem;
             border-radius: 40px;
-            font-weight: 500;
             text-decoration: none;
-            transition: background 0.2s;
+            margin-top: 1rem;
         }
-        .btn-micuenta:hover {
-            background: #0d5bbf;
+
+        /* Flash messages */
+        .flash-messages {
+            margin-bottom: 1.5rem;
         }
-        .login-footer {
-            margin-top: 24px;
+
+        .alert {
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        /* Enlace olvidé contraseña */
+        .forgot-password {
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+
+        .forgot-password a {
+            color: #2e7d5e;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .register-link a {
+            color: #1a3b2e;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+        }
+
+        footer .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-info h3, .footer-links h3, .footer-contact h3 {
+            color: #2e7d5e;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info a, .footer-links a, .footer-contact a {
+            color: #ccc;
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                grid-template-columns: 1fr;
+            }
+            .main-nav ul {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -117,62 +391,74 @@
 </header>
 
 <main>
-    <section class="page-header">
-        <h1>Acceso Ciudadano</h1>
-        <p>Inicie sesión con su cuenta de Google para dar seguimiento a sus solicitudes y denuncias</p>
-    </section>
-
     <div class="login-container">
+        <!-- Columna Izquierda: Formulario tradicional -->
         <div class="login-box">
             <div class="login-header">
                 <div class="login-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                     </svg>
                 </div>
-                <h2>Bienvenido de nuevo</h2>
-                <p>Accede con tu cuenta institucional o personal de Google</p>
+                <h2>Iniciar sesión</h2>
+                <p>Con tu email y contraseña</p>
             </div>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             <div class="flash-messages">
                 {% for category, message in messages %}
-                    <p class="{{ category }}">{{ message }}</p>
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
                 {% endfor %}
             </div>
             {% endif %}
             {% endwith %}
 
-            <!-- ÚNICO BOTÓN: INICIAR SESIÓN CON GOOGLE - RUTA CORREGIDA -->
-            <div style="margin: 16px 0 8px;">
-                <a href="{{ url_for('google.login') }}" class="google-btn">
-                    <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-                        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
-                        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
-                        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
-                        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
-                    </svg>
-                    Iniciar sesión con Google
-                </a>
-            </div>
-
-            <div class="divider">
-                <span>Acceso seguro</span>
-            </div>
-
-            <div class="login-footer">
-                <p class="help-text" style="text-align:center; font-size:0.85rem;">
-                    Al usar Google protegemos tus datos personales.<br>
-                    Solo necesitas tu cuenta de Gmail para acceder.
-                </p>
-                <div class="info-highlight">
-                    <strong>🔐 ¿Problemas de acceso?</strong> Si encuentras dificultades con tu cuenta de Google, contacta al soporte municipal:  
-                    <a href="mailto:soporte@cutupu.gob.do">soporte@cutupu.gob.do</a> o llama al <a href="tel:+18096917111">(809) 691-7111</a>.
+            <!-- FORMULARIO TRADICIONAL PARA ADMINISTRADORES -->
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+                
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Correo electrónico</label>
+                    <input type="email" name="email" placeholder="ejemplo@correo.com" required>
                 </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Contraseña</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="{{ url_for('auth.recuperar_password') }}">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+                </button>
+            </form>
+
+            <div class="register-link">
+                <p>¿No tienes cuenta? <a href="{{ url_for('auth.registro') }}">Regístrate aquí</a></p>
             </div>
+
+            <!-- DIVISOR -->
+            <div class="divider">
+                <span>O continuar con</span>
+            </div>
+
+            <!-- BOTÓN DE GOOGLE -->
+            <a href="{{ url_for('google.login') }}" class="google-btn">
+                <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                    <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                    <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                    <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                    <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+                </svg>
+                Iniciar sesión con Google
+            </a>
         </div>
 
+        <!-- Columna Derecha: Información -->
         <div class="login-info">
             <h3>Beneficios de tu cuenta</h3>
             <ul class="info-list">
@@ -182,7 +468,7 @@
                 <li>✓ Historial completo de trámites</li>
             </ul>
             <div class="info-note">
-                <strong>Nota:</strong> Tus datos personales están protegidos bajo la Ley de Protección de Datos. Solo se utilizarán para trámites municipales oficiales.
+                <strong>📌 Nota:</strong> Tus datos personales están protegidos bajo la Ley de Protección de Datos. Solo se utilizarán para trámites municipales oficiales.
             </div>
             <div style="margin-top: 20px; text-align: center;">
                 <p style="font-size:0.9rem;">¿Ya tienes sesión activa?</p>
@@ -200,10 +486,6 @@
                 <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
                 <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
                 <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                <div class="social-links">
-                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
-                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
-                </div>
             </div>
             <div class="footer-links">
                 <h3>Enlaces rápidos</h3>
@@ -217,10 +499,9 @@
                 </ul>
             </div>
             <div class="footer-contact">
-                <h3>Contacto</h3>
-                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <h3>Horario</h3>
                 <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
+                <p>📍 Villa Cutupú, La Vega</p>
             </div>
         </div>
         <div class="footer-bottom">
@@ -229,6 +510,6 @@
     </div>
 </footer>
 
-<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>
 </html>
