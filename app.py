@@ -140,6 +140,8 @@ DOCS_MAX_SIZE_MB = 10
 
 # Registrar blueprints
 app.register_blueprint(auth)
+from auth import google_bp
+app.register_blueprint(google_bp, url_prefix='/login')
 app.register_blueprint(admin_bp)
 
 # ================================================================

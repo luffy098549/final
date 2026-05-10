@@ -6,7 +6,6 @@
     <title>Registro - Junta Distrital Villa Cutupú</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/registro.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -231,7 +230,7 @@
             font-size: 0.8rem;
         }
 
-        /* ===== TÉRMINOS Y CONDICIONES - VERSIÓN VISIBLE ===== */
+        /* ===== TÉRMINOS Y CONDICIONES ===== */
         .terms-group {
             background: #f9f9f9;
             padding: 1.5rem;
@@ -315,6 +314,67 @@
             box-shadow: 0 4px 12px rgba(46, 125, 94, 0.3);
         }
 
+        .btn-google {
+            width: 100%;
+            padding: 1rem;
+            background: white;
+            color: #333;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            text-decoration: none;
+        }
+
+        .btn-google:hover {
+            background: #f8f9fa;
+            border-color: #1a3b2e;
+            transform: translateY(-2px);
+        }
+
+        .btn-google i {
+            color: #DB4437;
+            font-size: 1.2rem;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
         /* ===== HEADER ===== */
         .main-header {
             background: white;
@@ -364,6 +424,58 @@
             padding: 0.5rem 1.2rem;
             border-radius: 8px;
             color: white !important;
+        }
+
+        /* ===== FLASH MESSAGES ===== */
+        .flash-messages {
+            max-width: 800px;
+            margin: 1rem auto 0;
+            padding: 0 20px;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
 
         /* ===== FOOTER ===== */
@@ -432,7 +544,7 @@
 <header class="main-header">
     <div class="container">
         <div class="logo">
-            <a href="/">
+            <a href="{{ url_for('index') }}">
                 <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}" 
                      alt="Logo Junta Distrital Villa Cutupú"
                      class="header-logo">
@@ -441,23 +553,37 @@
 
         <nav class="main-nav">
             <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/municipio">Municipio</a></li>
-                <li><a href="/servicios">Servicios</a></li>
-                <li><a href="/transparencia">Transparencia</a></li>
-                <li><a href="/noticias">Noticias</a></li>
-                <li><a href="/contacto">Contacto</a></li>
-                {% if logged %}
-                    <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
-                    <li><a href="/logout" class="btn-logout">Salir</a></li>
+                <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                <li><a href="{{ url_for('municipio') }}">Municipio</a></li>
+                <li><a href="{{ url_for('servicios') }}">Servicios</a></li>
+                <li><a href="{{ url_for('transparencia') }}">Transparencia</a></li>
+                <li><a href="{{ url_for('noticias') }}">Noticias</a></li>
+                <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                {% if session.get('user') %}
+                    <li><a href="{{ url_for('mi_cuenta') }}" class="btn-login">Mi Cuenta</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}" class="btn-logout">Salir</a></li>
                 {% else %}
-                    <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
-                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                    <li><a href="{{ url_for('auth.login') }}" class="btn-login">Iniciar sesión</a></li>
+                    <li><a href="{{ url_for('auth.registro') }}" class="btn-registro">Registrarse</a></li>
                 {% endif %}
             </ul>
         </nav>
     </div>
 </header>
+
+<!-- Flash Messages -->
+<div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <i class="fas {% if category == 'success' %}fa-check-circle{% elif category == 'error' %}fa-exclamation-circle{% elif category == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
 
 <main>
     <div class="registro-container">
@@ -479,51 +605,49 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="nombre"><i class="fas fa-user"></i> Nombres *</label>
-                                <input type="text" id="nombre" name="nombre" placeholder="Ej: Juan Carlos" required>
+                                <input type="text" id="nombre" name="nombre" placeholder="Ej: Juan Carlos" 
+                                       value="{{ request.form.nombre if request.form else '' }}" required>
                             </div>
                             <div class="form-group">
                                 <label for="apellidos"><i class="fas fa-user"></i> Apellidos *</label>
-                                <input type="text" id="apellidos" name="apellidos" placeholder="Ej: Pérez Rodríguez" required>
+                                <input type="text" id="apellidos" name="apellidos" placeholder="Ej: Pérez Rodríguez" 
+                                       value="{{ request.form.apellidos if request.form else '' }}" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="cedula"><i class="fas fa-id-card"></i> Cédula * (11 números)</label>
-                                <input type="text" id="cedula" name="cedula" placeholder="40212345678" maxlength="11" required
-                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                <small style="color: #666;">Solo números, sin guiones</small>
+                                <label for="cedula"><i class="fas fa-id-card"></i> Cédula *</label>
+                                <input type="text" id="cedula" name="cedula" placeholder="001-1234567-8" 
+                                       value="{{ request.form.cedula if request.form else '' }}" required>
+                                <small style="color: #666;">Formato: XXX-XXXXXXX-X</small>
                             </div>
                             <div class="form-group">
-                                <label for="fecha_nacimiento"><i class="fas fa-calendar"></i> Fecha de nacimiento *</label>
-                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+                                <label for="telefono"><i class="fas fa-phone"></i> Teléfono *</label>
+                                <input type="tel" id="telefono" name="telefono" class="input-tel" 
+                                       placeholder="809-555-1234" 
+                                       value="{{ request.form.telefono if request.form else '' }}" required>
+                                <small style="color: #666;">Formato: XXX-XXX-XXXX</small>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección</label>
-                            <textarea id="direccion" name="direccion" rows="2" placeholder="Calle, número, sector..."></textarea>
+                            <textarea id="direccion" name="direccion" rows="2" 
+                                      placeholder="Calle, número, sector...">{{ request.form.direccion if request.form else '' }}</textarea>
                         </div>
                     </div>
 
                     <!-- SECCIÓN 2: CONTACTO -->
                     <div class="form-section">
                         <div class="section-title">
-                            <i class="fas fa-phone"></i> Contacto
+                            <i class="fas fa-envelope"></i> Contacto
                         </div>
 
                         <div class="form-group">
                             <label for="email"><i class="fas fa-envelope"></i> Correo electrónico *</label>
-                            <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="telefono"><i class="fas fa-phone"></i> Teléfono * (10 números)</label>
-                            <input type="tel" id="telefono" name="telefono" class="input-tel" 
-                                   placeholder="8095551234" maxlength="10" required
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                            <div id="telefono-feedback" class="input-feedback"></div>
-                            <small style="color: #666;">Ingresa tu número completo: código de área + 7 dígitos</small>
+                            <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" 
+                                   value="{{ request.form.email if request.form else '' }}" required>
                         </div>
                     </div>
 
@@ -542,11 +666,10 @@
                                         <div class="strength-progress" style="width: 0%;"></div>
                                     </div>
                                     <ul class="strength-requirements">
-                                        <li id="req-length"><i class="far fa-circle"></i> Mínimo 6 caracteres</li>
-                                        <li id="req-lower"><i class="far fa-circle"></i> Una minúscula</li>
+                                        <li id="req-min"><i class="far fa-circle"></i> Mínimo 6 caracteres</li>
+                                        <li id="req-length"><i class="far fa-circle"></i> Mínimo 8 caracteres</li>
                                         <li id="req-upper"><i class="far fa-circle"></i> Una mayúscula</li>
                                         <li id="req-number"><i class="far fa-circle"></i> Un número</li>
-                                        <li id="req-special"><i class="far fa-circle"></i> Un carácter especial</li>
                                     </ul>
                                 </div>
                             </div>
@@ -559,7 +682,7 @@
                         </div>
                     </div>
 
-                    <!-- SECCIÓN 4: TÉRMINOS Y CONDICIONES - VERSIÓN VISIBLE -->
+                    <!-- SECCIÓN 4: TÉRMINOS Y CONDICIONES -->
                     <div class="form-section">
                         <div class="section-title">
                             <i class="fas fa-file-contract"></i> Términos y Condiciones
@@ -576,7 +699,6 @@
                         </div>
 
                         <div class="terms-group">
-                            <!-- CASILLA 1: Términos -->
                             <div class="checkbox-item">
                                 <input type="checkbox" id="terminos" name="terminos" required>
                                 <label for="terminos">
@@ -584,7 +706,6 @@
                                 </label>
                             </div>
 
-                            <!-- CASILLA 2: Privacidad -->
                             <div class="checkbox-item">
                                 <input type="checkbox" id="privacidad" name="privacidad" required>
                                 <label for="privacidad">
@@ -592,7 +713,6 @@
                                 </label>
                             </div>
 
-                            <!-- CASILLA 3: Mayor de edad -->
                             <div class="checkbox-item">
                                 <input type="checkbox" id="mayor_edad" name="mayor_edad" required>
                                 <label for="mayor_edad">
@@ -607,8 +727,16 @@
                     </button>
                 </form>
 
-                <div style="margin-top: 2rem; text-align: center; padding-top: 2rem; border-top: 1px solid #e0e0e0;">
-                    <p>¿Ya tienes cuenta? <a href="/login" style="color: #1a3b2e; font-weight: 600;">Inicia sesión aquí</a></p>
+                <div class="divider">
+                    <span>o regístrate con</span>
+                </div>
+
+                <a href="{{ url_for('google.login') }}" class="btn-google">
+                    <i class="fab fa-google"></i> Registrarse con Google
+                </a>
+
+                <div style="margin-top: 2rem; text-align: center;">
+                    <p>¿Ya tienes cuenta? <a href="{{ url_for('auth.login') }}" style="color: #1a3b2e; font-weight: 600;">Inicia sesión aquí</a></p>
                 </div>
             </div>
         </div>
@@ -626,8 +754,8 @@
             </div>
             <div class="footer-social">
                 <h3>Síguenos</h3>
-                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank">Facebook</a>
-                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank">Instagram</a>
+                <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+                <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
             </div>
             <div class="footer-horario">
                 <h3>Horario de Oficina</h3>
@@ -642,55 +770,187 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Validación de teléfono
-    const telefono = document.getElementById("telefono");
-    if (telefono) {
-        telefono.addEventListener("input", function () {
-            const feedback = document.getElementById("telefono-feedback");
-            if (this.value.length === 10) {
-                feedback.innerHTML = "✓ Número válido";
-                feedback.style.color = "#28a745";
-            } else if (this.value.length > 0) {
-                const faltan = 10 - this.value.length;
-                feedback.innerHTML = `❌ Faltan ${faltan} dígito${faltan !== 1 ? 's' : ''}`;
-                feedback.style.color = "#dc3545";
-            } else {
-                feedback.innerHTML = "";
+    // Validación de cédula (formato XXX-XXXXXXX-X)
+    const cedula = document.getElementById("cedula");
+    if (cedula) {
+        cedula.addEventListener("input", function(e) {
+            let value = this.value.replace(/[^0-9]/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length >= 3) {
+                value = value.slice(0, 3) + '-' + value.slice(3);
             }
+            if (value.length >= 11) {
+                value = value.slice(0, 11) + '-' + value.slice(11);
+            }
+            this.value = value;
         });
     }
 
-    // Validación de contraseñas
+    // Validación de teléfono (formato XXX-XXX-XXXX)
+    const telefono = document.getElementById("telefono");
+    if (telefono) {
+        telefono.addEventListener("input", function(e) {
+            let value = this.value.replace(/[^0-9]/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            
+            if (value.length >= 3) {
+                value = value.slice(0, 3) + '-' + value.slice(3);
+            }
+            if (value.length >= 7) {
+                value = value.slice(0, 7) + '-' + value.slice(7);
+            }
+            this.value = value;
+        });
+    }
+
+    // Fortaleza de contraseña
     const password = document.getElementById('password');
     const confirmar = document.getElementById('confirmar_password');
     const passwordFeedback = document.getElementById('password-feedback');
     
-    if (confirmar) {
-        confirmar.addEventListener('input', function() {
-            if (password.value !== this.value) {
+    function checkPasswordStrength() {
+        const pwd = password.value;
+        let strength = 0;
+        
+        const reqMin = document.getElementById('req-min');
+        const reqLength = document.getElementById('req-length');
+        const reqUpper = document.getElementById('req-upper');
+        const reqNumber = document.getElementById('req-number');
+        
+        // Mínimo 6 caracteres
+        if (pwd.length >= 6) {
+            reqMin.innerHTML = '<i class="fas fa-check-circle"></i> Mínimo 6 caracteres';
+            reqMin.classList.add('valid');
+            strength++;
+        } else {
+            reqMin.innerHTML = '<i class="far fa-circle"></i> Mínimo 6 caracteres';
+            reqMin.classList.remove('valid');
+        }
+        
+        // Mínimo 8 caracteres
+        if (pwd.length >= 8) {
+            reqLength.innerHTML = '<i class="fas fa-check-circle"></i> Mínimo 8 caracteres';
+            reqLength.classList.add('valid');
+            strength++;
+        } else {
+            reqLength.innerHTML = '<i class="far fa-circle"></i> Mínimo 8 caracteres';
+            reqLength.classList.remove('valid');
+        }
+        
+        // Una mayúscula
+        if (/[A-Z]/.test(pwd)) {
+            reqUpper.innerHTML = '<i class="fas fa-check-circle"></i> Una mayúscula';
+            reqUpper.classList.add('valid');
+            strength++;
+        } else {
+            reqUpper.innerHTML = '<i class="far fa-circle"></i> Una mayúscula';
+            reqUpper.classList.remove('valid');
+        }
+        
+        // Un número
+        if (/[0-9]/.test(pwd)) {
+            reqNumber.innerHTML = '<i class="fas fa-check-circle"></i> Un número';
+            reqNumber.classList.add('valid');
+            strength++;
+        } else {
+            reqNumber.innerHTML = '<i class="far fa-circle"></i> Un número';
+            reqNumber.classList.remove('valid');
+        }
+        
+        // Actualizar barra de fortaleza
+        const strengthBar = document.querySelector('.strength-progress');
+        const width = (strength / 4) * 100;
+        strengthBar.style.width = width + '%';
+        
+        if (strength <= 1) {
+            strengthBar.style.background = '#dc3545';
+        } else if (strength <= 2) {
+            strengthBar.style.background = '#ffc107';
+        } else if (strength <= 3) {
+            strengthBar.style.background = '#17a2b8';
+        } else {
+            strengthBar.style.background = '#28a745';
+        }
+    }
+    
+    if (password) {
+        password.addEventListener('input', checkPasswordStrength);
+        password.addEventListener('input', checkPasswordMatch);
+    }
+    
+    function checkPasswordMatch() {
+        if (confirmar.value.length > 0) {
+            if (password.value !== confirmar.value) {
                 passwordFeedback.innerHTML = '❌ Las contraseñas no coinciden';
                 passwordFeedback.style.color = '#dc3545';
-            } else if (this.value.length > 0) {
+                return false;
+            } else {
                 passwordFeedback.innerHTML = '✓ Coinciden';
                 passwordFeedback.style.color = '#28a745';
-            } else {
-                passwordFeedback.innerHTML = '';
+                return true;
             }
-        });
+        } else {
+            passwordFeedback.innerHTML = '';
+        }
+        return true;
+    }
+    
+    if (confirmar) {
+        confirmar.addEventListener('input', checkPasswordMatch);
     }
 
     // Validación del formulario antes de enviar
     const form = document.getElementById('registroForm');
     if (form) {
         form.addEventListener('submit', function(e) {
-            const tel = document.getElementById('telefono');
-            if (tel && tel.value.length !== 10) {
+            // Validar cédula
+            const cedula = document.getElementById('cedula');
+            const cedulaRegex = /^\d{3}-\d{7}-\d{1}$/;
+            if (!cedulaRegex.test(cedula.value)) {
                 e.preventDefault();
-                alert('El teléfono debe tener 10 dígitos (ej: 8095551234)');
-                tel.focus();
+                alert('La cédula debe tener el formato: XXX-XXXXXXX-X');
+                cedula.focus();
                 return false;
             }
             
+            // Validar teléfono
+            const telefono = document.getElementById('telefono');
+            const telefonoRegex = /^\d{3}-\d{3}-\d{4}$/;
+            if (!telefonoRegex.test(telefono.value)) {
+                e.preventDefault();
+                alert('El teléfono debe tener el formato: XXX-XXX-XXXX');
+                telefono.focus();
+                return false;
+            }
+            
+            // Validar email
+            const email = document.getElementById('email');
+            if (email.value && !email.value.includes('@')) {
+                e.preventDefault();
+                alert('Ingresa un email válido');
+                email.focus();
+                return false;
+            }
+            
+            // Validar contraseña
+            const password = document.getElementById('password');
+            if (password.value.length < 6) {
+                e.preventDefault();
+                alert('La contraseña debe tener al menos 6 caracteres');
+                password.focus();
+                return false;
+            }
+            
+            // Validar que las contraseñas coincidan
+            if (password.value !== confirmar.value) {
+                e.preventDefault();
+                alert('Las contraseñas no coinciden');
+                confirmar.focus();
+                return false;
+            }
+            
+            // Validar términos
             const terminos = document.getElementById('terminos');
             const privacidad = document.getElementById('privacidad');
             const mayorEdad = document.getElementById('mayor_edad');
