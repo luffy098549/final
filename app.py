@@ -991,7 +991,8 @@ def mi_cuenta():
         "notas_admin": getattr(usuario, 'notas_admin', '') or ""
     }
     
-    return render_template("usuarios/mi_cuenta.html", usuario=usuario_dict)
+    # 🔥 CORRECCIÓN CRÍTICA: Pasar is_admin al template
+    return render_template("usuarios/mi_cuenta.html", usuario=usuario_dict, is_admin=es_admin)
 
 @app.route("/subir-foto-perfil", methods=["POST"])
 @login_required
@@ -1390,6 +1391,7 @@ def mis_citas():
     citas.sort(key=lambda x: (x.fecha or ''), reverse=True)
 
     return render_template("citas/mis_citas.html", citas=citas, servicios=SERVICIOS_CITAS)
+
 # ================================================================
 # 27. RUTAS DINÁMICAS PARA FORMULARIOS
 # ================================================================
