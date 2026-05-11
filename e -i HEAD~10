@@ -1,0 +1,17 @@
+[33mcommit ffc8569443ced36cc1bb7642114f715e7445cbc1[m
+Author: sebastian <duransebastian623@gmail.com>
+Date:   Mon May 11 08:24:29 2026 -0400
+
+    Subir aplicación completa - Junta Distrital Villa Cutupú
+
+.env
+.gitignore
+__pycache__/app.cpython-313.pyc
+__pycache__/auth.cpython-313.pyc
+app.py
+instance/local_dev.db
+migrations/versions/59edaf49ab79_agregar_campo_google_id_a_usuario.py
+migrations/versions/__pycache__/59edaf49ab79_agregar_campo_google_id_a_usuario.cpython-313.pyc
+models/__pycache__/usuario.cpython-313.pyc
+templates/registro_completo.html
+templates/usuarios/mi_cuenta.html
