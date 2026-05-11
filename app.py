@@ -927,7 +927,7 @@ def uploaded_file(filename):
     return send_from_directory(os.path.join(app.root_path, 'static', 'uploads'), filename)
 
 # ================================================================
-# 25. MI CUENTA - RUTAS DE USUARIO
+# 25. MI CUENTA - RUTAS DE USUARIO (CORREGIDO)
 # ================================================================
 @app.route("/perfil")
 @login_required
@@ -950,6 +950,14 @@ def mi_cuenta():
         flash("Usuario no encontrado.", "error")
         session.clear()
         return redirect(url_for("index"))
+    
+    # ✅ Calcular is_admin correctamente desde la BD
+    es_admin = usuario.rol in ['super_admin', 'admin', 'moderador'] or usuario.tipo == 'admin'
+    
+    # ✅ Actualizar sesión para que el context_processor lo refleje
+    session['is_admin'] = es_admin
+    if es_admin:
+        session['user_tipo'] = 'admin'
     
     try:
         from models import Solicitud, Denuncia
@@ -979,7 +987,8 @@ def mi_cuenta():
         "cedula": usuario.cedula or "",
         "direccion": usuario.direccion or "",
         "solicitudes_count": solicitudes_count,
-        "denuncias_count": denuncias_count
+        "denuncias_count": denuncias_count,
+        "notas_admin": getattr(usuario, 'notas_admin', '') or ""
     }
     
     return render_template("usuarios/mi_cuenta.html", usuario=usuario_dict)

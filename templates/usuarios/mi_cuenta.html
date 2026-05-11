@@ -920,6 +920,108 @@
                 </div>
             </main>
         </div>
+
+        {% else %}
+        <!-- VISTA ADMINISTRADOR -->
+        <div class="perfil-layout">
+            <aside class="perfil-sidebar">
+                <div class="pcard">
+                    <div class="pcard-header">
+                        <div class="pcard-icon pi-green"><i class="fas fa-shield-alt"></i></div>
+                        <span class="pcard-title">Panel de administrador</span>
+                    </div>
+                    <div class="pcard-body-sm">
+                        <nav class="qnav">
+                            <a href="{{ url_for('admin.dashboard') }}" class="qnav-item">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                            <a href="{{ url_for('admin.listar_solicitudes') }}" class="qnav-item">
+                                <i class="fas fa-file-alt"></i> Solicitudes
+                            </a>
+                            <a href="{{ url_for('admin.listar_denuncias') }}" class="qnav-item">
+                                <i class="fas fa-flag"></i> Denuncias
+                            </a>
+                            <a href="{{ url_for('admin.listar_usuarios') }}" class="qnav-item">
+                                <i class="fas fa-users"></i> Usuarios
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="perfil-main">
+                <div class="pcard">
+                    <div class="pcard-header">
+                        <div class="pcard-icon pi-green"><i class="fas fa-user-edit"></i></div>
+                        <span class="pcard-title">Datos personales</span>
+                    </div>
+                    <div class="pcard-body">
+                        <form action="{{ url_for('editar_perfil') }}" method="POST">
+                            <div class="form-grid">
+                                <div class="fgroup">
+                                    <label class="flabel">Nombre(s)</label>
+                                    <input type="text" name="nombre" class="finput" value="{{ usuario.nombre }}">
+                                </div>
+                                <div class="fgroup">
+                                    <label class="flabel">Apellidos</label>
+                                    <input type="text" name="apellidos" class="finput" value="{{ usuario.apellidos }}">
+                                </div>
+                                <div class="fgroup">
+                                    <label class="flabel">Correo</label>
+                                    <input type="email" class="finput" value="{{ usuario.email }}" readonly>
+                                </div>
+                                <div class="fgroup">
+                                    <label class="flabel">Teléfono</label>
+                                    <input type="text" name="telefono" class="finput" value="{{ usuario.telefono }}">
+                                </div>
+                                <div class="fgroup full">
+                                    <label class="flabel">Dirección</label>
+                                    <input type="text" name="direccion" class="finput" value="{{ usuario.direccion }}">
+                                </div>
+                            </div>
+                            <div class="btn-row">
+                                <a href="{{ url_for('admin.dashboard') }}" class="btn-primary btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;">
+                                    <i class="fas fa-arrow-left"></i> Volver al panel
+                                </a>
+                                <button type="submit" class="btn-primary btn-sm">
+                                    <i class="fas fa-save"></i> Guardar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="pcard">
+                    <div class="pcard-header">
+                        <div class="pcard-icon pi-red"><i class="fas fa-lock"></i></div>
+                        <span class="pcard-title">Cambiar contraseña</span>
+                    </div>
+                    <div class="pcard-body">
+                        <form action="{{ url_for('auth.cambiar_password') }}" method="POST">
+                            <div class="form-grid">
+                                <div class="fgroup full">
+                                    <label class="flabel">Contraseña actual</label>
+                                    <input type="password" name="password_actual" class="finput" required>
+                                </div>
+                                <div class="fgroup">
+                                    <label class="flabel">Nueva contraseña</label>
+                                    <input type="password" name="password_nueva" class="finput" required>
+                                </div>
+                                <div class="fgroup">
+                                    <label class="flabel">Confirmar</label>
+                                    <input type="password" name="password_confirmar" class="finput" required>
+                                </div>
+                            </div>
+                            <div class="btn-row">
+                                <button type="submit" class="btn-primary btn-sm">
+                                    <i class="fas fa-key"></i> Actualizar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
         {% endif %}
 
     </div>
