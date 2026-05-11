@@ -831,13 +831,13 @@
                     </div>
                     <div class="pcard-body-sm">
                         <nav class="qnav">
-                            <a href="{{ url_for('mis_tramites') }}" class="qnav-item">
+                            <a href="/mis-tramites" class="qnav-item">
                                 <i class="fas fa-folder-open"></i> Mis trámites
                             </a>
-                            <a href="{{ url_for('servicios') }}" class="qnav-item">
+                            <a href="/servicios" class="qnav-item">
                                 <i class="fas fa-file-alt"></i> Solicitar servicio
                             </a>
-                            <a href="{{ url_for('servicios') }}" class="qnav-item">
+                            <a href="/servicios" class="qnav-item">
                                 <i class="fas fa-flag"></i> Hacer denuncia
                             </a>
                         </nav>
@@ -855,7 +855,7 @@
                         <span class="pcard-title">Datos personales</span>
                     </div>
                     <div class="pcard-body">
-                        <form action="{{ url_for('editar_perfil') }}" method="POST">
+                        <form action="/editar-perfil" method="POST">
                             <div class="form-grid">
                                 <div class="fgroup">
                                     <label class="flabel">Nombre(s)</label>
@@ -895,7 +895,7 @@
                         <span class="pcard-title">Seguridad</span>
                     </div>
                     <div class="pcard-body">
-                        <form action="{{ url_for('auth.cambiar_password') }}" method="POST">
+                        <form action="/cambiar-password" method="POST">
                             <div class="form-grid">
                                 <div class="fgroup full">
                                     <label class="flabel">Contraseña actual</label>
@@ -932,17 +932,32 @@
                     </div>
                     <div class="pcard-body-sm">
                         <nav class="qnav">
-                            <a href="{{ url_for('admin.dashboard') }}" class="qnav-item">
+                            <a href="/admin/dashboard" class="qnav-item">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
-                            <a href="{{ url_for('admin.listar_solicitudes') }}" class="qnav-item">
+                            <a href="/admin/solicitudes" class="qnav-item">
                                 <i class="fas fa-file-alt"></i> Solicitudes
                             </a>
-                            <a href="{{ url_for('admin.listar_denuncias') }}" class="qnav-item">
+                            <a href="/admin/denuncias" class="qnav-item">
                                 <i class="fas fa-flag"></i> Denuncias
                             </a>
-                            <a href="{{ url_for('admin.listar_usuarios') }}" class="qnav-item">
+                            <a href="/admin/usuarios" class="qnav-item">
                                 <i class="fas fa-users"></i> Usuarios
+                            </a>
+                            <a href="/admin/noticias" class="qnav-item">
+                                <i class="fas fa-newspaper"></i> Noticias
+                            </a>
+                            <a href="/admin/transparencia" class="qnav-item">
+                                <i class="fas fa-file-contract"></i> Transparencia
+                            </a>
+                            <a href="/admin/contenido" class="qnav-item">
+                                <i class="fas fa-edit"></i> Contenido
+                            </a>
+                            <a href="/admin/menu" class="qnav-item">
+                                <i class="fas fa-bars"></i> Menú
+                            </a>
+                            <a href="/admin/configuracion" class="qnav-item">
+                                <i class="fas fa-cog"></i> Configuración
                             </a>
                         </nav>
                     </div>
@@ -956,7 +971,7 @@
                         <span class="pcard-title">Datos personales</span>
                     </div>
                     <div class="pcard-body">
-                        <form action="{{ url_for('editar_perfil') }}" method="POST">
+                        <form action="/editar-perfil" method="POST">
                             <div class="form-grid">
                                 <div class="fgroup">
                                     <label class="flabel">Nombre(s)</label>
@@ -980,7 +995,7 @@
                                 </div>
                             </div>
                             <div class="btn-row">
-                                <a href="{{ url_for('admin.dashboard') }}" class="btn-primary btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;">
+                                <a href="/admin/dashboard" class="btn-primary btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;">
                                     <i class="fas fa-arrow-left"></i> Volver al panel
                                 </a>
                                 <button type="submit" class="btn-primary btn-sm">
@@ -997,7 +1012,7 @@
                         <span class="pcard-title">Cambiar contraseña</span>
                     </div>
                     <div class="pcard-body">
-                        <form action="{{ url_for('auth.cambiar_password') }}" method="POST">
+                        <form action="/cambiar-password" method="POST">
                             <div class="form-grid">
                                 <div class="fgroup full">
                                     <label class="flabel">Contraseña actual</label>
