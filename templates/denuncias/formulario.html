@@ -90,7 +90,7 @@
           <input type="text" class="form-input form-input--disabled" value="{{ nombre_denuncia }}" disabled>
         </div>
 
-        <!-- Ubicación -->
+        <!-- Ubicación con mapa -->
         <div class="form-group">
           <label class="form-label">
             Ubicación del incidente
@@ -102,11 +102,41 @@
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
               </svg>
             </span>
-            <input type="text" class="form-input" name="ubicacion" required
+            <input type="text" class="form-input" name="ubicacion" id="ubicacionInput" required
                    style="padding-left: 2.4rem;"
-                   placeholder="Ej: Calle Principal #45, frente a la farmacia">
+                   placeholder="Ej: Calle Principal #45, frente a la farmacia"
+                   autocomplete="off">
           </div>
           <span class="form-hint">Indique la dirección exacta o un punto de referencia claro.</span>
+
+          <!-- Campos ocultos para coordenadas -->
+          <input type="hidden" name="lat" id="latInput">
+          <input type="hidden" name="lng" id="lngInput">
+
+          <!-- Botón buscar en mapa -->
+          <button type="button" id="btnBuscarMapa" onclick="buscarEnMapa()"
+                  style="margin-top:.6rem;display:inline-flex;align-items:center;gap:.4rem;
+                         background:#1a3b2e;color:white;border:none;padding:.5rem 1.1rem;
+                         border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            Ubicar en mapa
+          </button>
+
+          <!-- Mini mapa de preview -->
+          <div id="mapaPreviewWrapper" style="display:none;margin-top:.8rem;">
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+            <div id="mapaPreview" style="height:220px;border-radius:10px;border:1.5px solid #d1fae5;overflow:hidden;"></div>
+            <div id="coordsConfirm" style="margin-top:.4rem;font-size:.78rem;color:#1a4d2e;background:#eafaf1;
+                                            padding:.4rem .8rem;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
+              <span id="coordsLabel">📍 Sin coordenadas</span>
+              <button type="button" onclick="limpiarUbicacion()"
+                      style="background:none;border:none;color:#922B21;cursor:pointer;font-size:.78rem;font-weight:600;">
+                ✕ Quitar pin
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Descripción -->
@@ -211,16 +241,6 @@
   color: #1a4f75;
   border-color: rgba(43,106,158,0.15);
 }
-
-.form-list {
-  margin: 0;
-  padding-left: 1.2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.form-list li { font-size: 0.9rem; }
 
 .form-body {
   padding: var(--space-5);
@@ -349,4 +369,120 @@
   .btn-form { width: 100%; justify-content: center; }
 }
 </style>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+let mapaPreview = null;
+let pinMarker = null;
+
+async function buscarEnMapa() {
+  const direccion = document.getElementById('ubicacionInput').value.trim();
+  if (!direccion) {
+    alert('⚠️ Escribe una dirección primero.');
+    return;
+  }
+
+  const btn = document.getElementById('btnBuscarMapa');
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Buscando...';
+  btn.disabled = true;
+
+  try {
+    // Geocodificar con Nominatim
+    const query = encodeURIComponent(direccion + ', República Dominicana');
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`, {
+      headers: { 'Accept-Language': 'es' }
+    });
+    const data = await res.json();
+
+    const wrapper = document.getElementById('mapaPreviewWrapper');
+    wrapper.style.display = 'block';
+
+    let lat, lng, label;
+
+    if (data && data.length > 0) {
+      lat = parseFloat(data[0].lat);
+      lng = parseFloat(data[0].lon);
+      label = data[0].display_name;
+    } else {
+      // Fallback: centrar en Cutupú para que el usuario coloque el pin manualmente
+      lat = 19.3169;
+      lng = -70.5418;
+      label = 'No encontrado — haz clic en el mapa para colocar el pin manualmente';
+    }
+
+    mostrarMiniMapa(lat, lng, label);
+
+  } catch (e) {
+    console.error(e);
+    // Fallback offline
+    const wrapper = document.getElementById('mapaPreviewWrapper');
+    wrapper.style.display = 'block';
+    mostrarMiniMapa(19.3169, -70.5418, 'Haz clic en el mapa para indicar la ubicación');
+  } finally {
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Ubicar en mapa';
+    btn.disabled = false;
+  }
+}
+
+function mostrarMiniMapa(lat, lng, label) {
+  if (!mapaPreview) {
+    mapaPreview = L.map('mapaPreview').setView([lat, lng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(mapaPreview);
+
+    // Permitir clic para reubicar el pin
+    mapaPreview.on('click', function(e) {
+      colocarPin(e.latlng.lat, e.latlng.lng, 'Ubicación seleccionada manualmente');
+    });
+  } else {
+    mapaPreview.setView([lat, lng], 16);
+  }
+
+  colocarPin(lat, lng, label);
+}
+
+function colocarPin(lat, lng, label) {
+  if (pinMarker) mapaPreview.removeLayer(pinMarker);
+
+  const icono = L.divIcon({
+    className: '',
+    html: `<div style="
+      width:28px;height:28px;background:#C0392B;border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);border:3px solid white;
+      box-shadow:0 2px 8px rgba(192,57,43,0.5);">
+    </div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -28]
+  });
+
+  pinMarker = L.marker([lat, lng], { icon: icono, draggable: true }).addTo(mapaPreview);
+
+  // Actualizar coordenadas al arrastrar el pin
+  pinMarker.on('dragend', function(e) {
+    const pos = e.target.getLatLng();
+    guardarCoordenadas(pos.lat, pos.lng);
+  });
+
+  guardarCoordenadas(lat, lng);
+  pinMarker.bindPopup(`<strong>📍 Ubicación del incidente</strong><br><small>${label.substring(0, 80)}</small>`).openPopup();
+}
+
+function guardarCoordenadas(lat, lng) {
+  document.getElementById('latInput').value = lat.toFixed(7);
+  document.getElementById('lngInput').value = lng.toFixed(7);
+  document.getElementById('coordsLabel').textContent =
+    `📍 Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)} — Pin arrastrable para ajustar`;
+}
+
+function limpiarUbicacion() {
+  if (pinMarker && mapaPreview) mapaPreview.removeLayer(pinMarker);
+  pinMarker = null;
+  document.getElementById('latInput').value = '';
+  document.getElementById('lngInput').value = '';
+  document.getElementById('coordsLabel').textContent = '📍 Sin coordenadas';
+  document.getElementById('mapaPreviewWrapper').style.display = 'none';
+}
+</script>
 {% endblock %}

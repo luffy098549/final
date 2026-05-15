@@ -1,0 +1,23 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h3>{{ titulo }}</h3>
+            <p>Generado el {{ fecha_generacion.strftime('%d/%m/%Y %H:%M') }} - {{ total_registros }} registros</p>
+        </div>
+        <div class="card-body">
+            {% if grafico_estados %}
+            <div class="text-center mb-4">
+                <img src="{{ grafico_estados }}" alt="Gráfico de estados" class="img-fluid">
+            </div>
+            {% endif %}
+            {{ tabla_html|safe }}
+        </div>
+        <div class="card-footer">
+            <a href="{{ url_for('admin.crear_reporte') }}" class="btn btn-secondary">← Nuevo reporte</a>
+            <button onclick="window.print()" class="btn btn-primary">Imprimir / Guardar como PDF</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

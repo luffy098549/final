@@ -8,7 +8,7 @@
     <meta name="description" content="Panel administrativo - Junta Distrital Villa Cutupú">
     <title>{% block title %}Panel Admin - Villa Cutupú{% endblock %}</title>
     
-    <!-- Bootstrap CSS (AGREGADO) -->
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     
     <!-- Fonts & Icons -->
@@ -42,7 +42,6 @@
             
             <div class="admin-user-profile">
                 <div class="profile-avatar {% if session.get('user_rol') == 'super_admin' %}avatar-super{% endif %}">
-                    <!-- BLOQUE 1 CORREGIDO: SIDEBAR -->
                     {% if foto_perfil %}
                         <img src="{{ foto_perfil }}" alt="Foto de perfil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
                     {% else %}
@@ -71,7 +70,6 @@
             <nav class="admin-sidebar-nav">
                 <!-- MENÚ DINÁMICO DESDE BASE DE DATOS -->
                 {% if admin_menu and admin_menu|length > 0 %}
-                    <!-- Agrupar ítems por sección -->
                     {% set secciones = {} %}
                     {% for item in admin_menu if item.activo %}
                         {% set seccion = item.seccion if item.seccion else 'PRINCIPAL' %}
@@ -81,7 +79,6 @@
                         {% set _ = secciones[seccion].append(item) %}
                     {% endfor %}
                     
-                    <!-- Renderizar secciones -->
                     {% for seccion_nombre, items_seccion in secciones.items() %}
                         <div class="nav-section">{{ seccion_nombre|upper }}</div>
                         <ul>
@@ -109,7 +106,7 @@
                     {% endfor %}
                     
                 {% else %}
-                    <!-- FALLBACK: Menú hardcodeado original -->
+                    <!-- FALLBACK: Menú hardcodeado original con el nuevo enlace a Reportes Avanzados -->
                     <div class="nav-section">PRINCIPAL</div>
                     <ul>
                         <li>
@@ -164,9 +161,10 @@
                     
                     <div class="nav-section">HERRAMIENTAS</div>
                     <ul>
+                        <!-- ✅ Enlace CORREGIDO: ahora apunta a reportes avanzados (admin.crear_reporte) -->
                         <li>
-                            <a href="{{ url_for('admin.reportes') }}" class="{{ 'active' if request.endpoint == 'admin.reportes' else '' }}">
-                                <i class="fas fa-chart-bar"></i>
+                            <a href="{{ url_for('admin.crear_reporte') }}" class="{{ 'active' if request.endpoint == 'admin.crear_reporte' else '' }}">
+                                <i class="fas fa-chart-line"></i>
                                 <span>Reportes</span>
                             </a>
                         </li>
@@ -213,21 +211,18 @@
                                 <span>Encuestas</span>
                             </a>
                         </li>
-                        <!-- Menú de Transparencia (Admin) -->
                         <li>
                             <a href="{{ url_for('admin.admin_transparencia') }}" class="{{ 'active' if request.endpoint == 'admin.admin_transparencia' else '' }}">
                                 <i class="fas fa-file-alt"></i>
                                 <span>Transparencia</span>
                             </a>
                         </li>
-                        <!-- Menú de Contenido Dinámico -->
                         <li>
-                        <a href="{{ url_for('admin.admin_contenidos') }}" class="{{ 'active' if request.endpoint == 'admin.admin_contenido' else '' }}">
+                            <a href="{{ url_for('admin.admin_contenidos') }}" class="{{ 'active' if request.endpoint == 'admin.admin_contenido' else '' }}">
                                 <i class="fas fa-edit"></i>
                                 <span>Contenido</span>
                             </a>
                         </li>
-                        <!-- Menú de Gestión de Menú -->
                         <li>
                             <a href="{{ url_for('admin.admin_menu') }}" class="{{ 'active' if request.endpoint == 'admin.admin_menu' else '' }}">
                                 <i class="fas fa-bars"></i>
@@ -264,7 +259,6 @@
         
         <!-- Contenido principal -->
         <main class="admin-content" id="mainContent">
-            <!-- Header -->
             <header class="admin-header">
                 <div class="header-left">
                     <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -274,13 +268,11 @@
                 </div>
                 
                 <div class="header-right">
-                    <!-- Buscador rápido -->
                     <div class="header-search">
                         <i class="fas fa-search"></i>
                         <input type="text" placeholder="Buscar... (Ctrl+K)" id="globalSearch">
                     </div>
                     
-                    <!-- Notificaciones -->
                     <div class="header-notifications">
                         <button class="notifications-btn" id="notificationsBtn">
                             <i class="far fa-bell"></i>
@@ -300,11 +292,9 @@
                         </div>
                     </div>
                     
-                    <!-- Perfil rápido -->
                     <div class="header-profile">
                         <button class="profile-btn" id="profileBtn">
                             <div class="profile-avatar-small">
-                                <!-- BLOQUE 2 CORREGIDO: HEADER BOTÓN PERFIL -->
                                 {% if foto_perfil %}
                                     <img src="{{ foto_perfil }}" alt="Foto" style="width:100%;height:100%;object-fit:cover;">
                                 {% else %}
@@ -316,7 +306,6 @@
                         <div class="profile-dropdown" id="profileDropdown">
                             <div class="profile-header">
                                 <div class="profile-avatar-medium">
-                                    <!-- BLOQUE 3 CORREGIDO: DROPDOWN PERFIL -->
                                     {% if foto_perfil %}
                                         <img src="{{ foto_perfil }}" alt="Foto" style="width:100%;height:100%;object-fit:cover;">
                                     {% else %}
@@ -339,14 +328,12 @@
                 </div>
             </header>
             
-            <!-- Breadcrumbs -->
             <div class="admin-breadcrumbs">
                 {% block breadcrumbs %}
                 <a href="{{ url_for('admin.dashboard') }}">Inicio</a>
                 {% endblock %}
             </div>
             
-            <!-- Flash messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     <div class="flash-messages">
@@ -361,12 +348,10 @@
                 {% endif %}
             {% endwith %}
             
-            <!-- Contenido -->
             <div class="admin-content-inner">
                 {% block content %}{% endblock %}
             </div>
             
-            <!-- Footer -->
             <footer class="admin-footer">
                 <div class="footer-left">
                     <p>&copy; 2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
@@ -386,9 +371,7 @@
                 <input type="text" placeholder="Buscar solicitudes, denuncias, usuarios, citas, plantillas..." id="searchInput">
                 <button class="close-modal" onclick="closeSearchModal()"><i class="fas fa-times"></i></button>
             </div>
-            <div class="search-modal-results" id="searchResults">
-                <!-- Resultados dinámicos -->
-            </div>
+            <div class="search-modal-results" id="searchResults"></div>
             <div class="search-modal-footer">
                 <span><kbd>↑</kbd> <kbd>↓</kbd> navegar</span>
                 <span><kbd>Enter</kbd> seleccionar</span>
@@ -397,12 +380,8 @@
         </div>
     </div>
     
-    <!-- Scripts base -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    <!-- Bootstrap JS (AGREGADO - DEBE IR ANTES DE block scripts) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin-dashboard.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin-tables.js') }}"></script>
@@ -410,34 +389,28 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log("🔵 DOM cargado - Inicializando panel admin");
-            
             initAdminInterface();
             setupGlobalSearch();
             
-            // Cargar contadores
             loadCitasPendientes();
             loadSolicitudesPendientes();
             loadDenunciasPendientes();
             loadContactosPendientes();
             cargarNotificaciones();
 
-            // Recargar cada 30 segundos
             setInterval(loadSolicitudesPendientes, 30000);
             setInterval(loadDenunciasPendientes, 30000);
             setInterval(loadCitasPendientes, 30000);
             setInterval(loadContactosPendientes, 30000);
             setInterval(cargarNotificaciones, 30000);
 
-            // Marcar todas al hacer clic
             const marcarTodasBtn = document.getElementById('marcarTodasBtn');
             if (marcarTodasBtn) {
                 marcarTodasBtn.addEventListener('click', marcarTodas);
             }
         });
 
-        // ─── Solicitudes pendientes ────────────────────────────────────────────────────
         function loadSolicitudesPendientes() {
-            console.log("🔄 Cargando solicitudes pendientes...");
             fetch('/admin/api/solicitudes-pendientes')
                 .then(r => r.json())
                 .then(data => {
@@ -451,12 +424,10 @@
                         }
                     }
                 })
-                .catch(e => console.error('❌ Error loading solicitudes:', e));
+                .catch(e => console.error('Error loading solicitudes:', e));
         }
 
-        // ─── Denuncias pendientes ────────────────────────────────────────────────────
         function loadDenunciasPendientes() {
-            console.log("🔄 Cargando denuncias pendientes...");
             fetch('/admin/api/denuncias-pendientes')
                 .then(r => r.json())
                 .then(data => {
@@ -470,12 +441,10 @@
                         }
                     }
                 })
-                .catch(e => console.error('❌ Error loading denuncias:', e));
+                .catch(e => console.error('Error loading denuncias:', e));
         }
 
-        // ─── Citas pendientes ───────────────────────────────────────────────────────
         function loadCitasPendientes() {
-            console.log("🔄 Cargando citas pendientes...");
             fetch('/admin/api/citas-pendientes')
                 .then(r => r.json())
                 .then(data => {
@@ -489,12 +458,10 @@
                         }
                     }
                 })
-                .catch(error => console.error('❌ Error loading citas:', error));
+                .catch(error => console.error('Error loading citas:', error));
         }
 
-        // ─── Contactos pendientes ────────────────────────────────────────────────────
         function loadContactosPendientes() {
-            console.log("🔄 Cargando contactos pendientes...");
             fetch('/admin/api/contactos-pendientes')
                 .then(r => r.json())
                 .then(data => {
@@ -508,12 +475,10 @@
                         }
                     }
                 })
-                .catch(e => console.error('❌ Error loading contactos:', e));
+                .catch(e => console.error('Error loading contactos:', e));
         }
 
-        // ─── Notificaciones ─────────────────────────────────────────────────────────
         function cargarNotificaciones() {
-            console.log("🔄 Cargando notificaciones...");
             fetch('/api/notificaciones')
                 .then(res => res.json())
                 .then(data => {
@@ -522,71 +487,45 @@
                     const marcarBtn = document.getElementById('marcarTodasBtn');
 
                     if (badge) {
-                        if (data.total_no_leidas > 0) {
-                            badge.textContent = data.total_no_leidas;
-                            badge.style.display = 'inline-flex';
-                        } else {
-                            badge.style.display = 'none';
-                        }
+                        badge.textContent = data.total_no_leidas;
+                        badge.style.display = data.total_no_leidas > 0 ? 'inline-flex' : 'none';
                     }
+                    if (marcarBtn) marcarBtn.style.display = data.total_no_leidas > 0 ? 'inline-block' : 'none';
 
-                    if (marcarBtn) {
-                        marcarBtn.style.display = data.total_no_leidas > 0 ? 'inline-block' : 'none';
-                    }
-
-                    if (list) {
-                        if (data.todas && data.todas.length > 0) {
-                            list.innerHTML = data.todas.map(notif => {
-                                const iconClass = notif.tipo === 'solicitud'
-                                    ? 'fa-file-alt'
-                                    : notif.tipo === 'denuncia'
-                                        ? 'fa-exclamation-triangle'
-                                        : 'fa-calendar-check';
-
-                                const fechaStr = new Date(notif.fecha_creacion).toLocaleString('es-DO', {
-                                    day: '2-digit', month: '2-digit', year: 'numeric',
-                                    hour: '2-digit', minute: '2-digit'
-                                });
-
-                                return `
-                                    <div class="notification-item ${notif.leido ? '' : 'unread'}" data-id="${notif.id}">
-                                        <i class="fas ${iconClass}"></i>
-                                        <div class="notification-content">
-                                            <p>${notif.titulo}</p>
-                                            <small>${notif.mensaje.substring(0, 80)}${notif.mensaje.length > 80 ? '...' : ''}</small>
-                                            <span class="notification-time">${fechaStr}</span>
-                                        </div>
-                                        ${!notif.leido
-                                            ? `<button class="marcar-leida" title="Marcar como leída" onclick="marcarLeida(${notif.id})">
-                                                <i class="fas fa-check"></i>
-                                               </button>`
-                                            : ''}
+                    if (list && data.todas && data.todas.length) {
+                        list.innerHTML = data.todas.map(notif => {
+                            const iconClass = notif.tipo === 'solicitud' ? 'fa-file-alt' : (notif.tipo === 'denuncia' ? 'fa-exclamation-triangle' : 'fa-calendar-check');
+                            const fechaStr = new Date(notif.fecha_creacion).toLocaleString('es-DO', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+                            return `
+                                <div class="notification-item ${notif.leido ? '' : 'unread'}" data-id="${notif.id}">
+                                    <i class="fas ${iconClass}"></i>
+                                    <div class="notification-content">
+                                        <p>${notif.titulo}</p>
+                                        <small>${notif.mensaje.substring(0, 80)}${notif.mensaje.length > 80 ? '...' : ''}</small>
+                                        <span class="notification-time">${fechaStr}</span>
                                     </div>
-                                `;
-                            }).join('');
-                        } else {
-                            list.innerHTML = '<div class="empty-notifications">No hay notificaciones</div>';
-                        }
+                                    ${!notif.leido ? `<button class="marcar-leida" title="Marcar como leída" onclick="marcarLeida(${notif.id})"><i class="fas fa-check"></i></button>` : ''}
+                                </div>`;
+                        }).join('');
+                    } else if (list) {
+                        list.innerHTML = '<div class="empty-notifications">No hay notificaciones</div>';
                     }
                 })
-                .catch(err => console.error('❌ Error cargando notificaciones:', err));
+                .catch(err => console.error('Error cargando notificaciones:', err));
         }
 
         function marcarLeida(id) {
-            console.log(`📌 Marcando notificación ${id} como leída`);
             fetch(`/api/notificaciones/marcar-leida/${id}`, { method: 'POST' })
                 .then(() => cargarNotificaciones())
-                .catch(err => console.error('Error marcando notificación:', err));
+                .catch(err => console.error('Error:', err));
         }
 
         function marcarTodas() {
-            console.log(`📌 Marcando todas las notificaciones como leídas`);
             fetch('/api/notificaciones/marcar-todas', { method: 'POST' })
                 .then(() => cargarNotificaciones())
-                .catch(err => console.error('Error marcando todas:', err));
+                .catch(err => console.error('Error:', err));
         }
 
-        // ─── Búsqueda global ────────────────────────────────────────────────────────
         function setupGlobalSearch() {
             const searchInput = document.getElementById('globalSearch');
             if (searchInput) {

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }} - {{ nombre_municipio }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @media print {
+            body {
+                margin: 0;
+                padding: 0.5cm;
+            }
+            .no-print {
+                display: none;
+            }
+            .table {
+                font-size: 11pt;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+        body {
+            background: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .reporte-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .reporte-header {
+            border-bottom: 3px solid #2d6a4f;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            max-height: 80px;
+        }
+        .titulo-reporte {
+            color: #2d6a4f;
+            font-weight: bold;
+        }
+        .info-reporte {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .table thead th {
+            background-color: #2d6a4f;
+            color: white;
+            border-color: #1b4332;
+            vertical-align: middle;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(45,106,79,0.05);
+        }
+        .table-bordered {
+            border: 1px solid #dee2e6;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 11px;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+            padding-top: 15px;
+        }
+        .btn-imprimir {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="reporte-container">
+        <div class="reporte-header">
+            <div>
+                <img src="{{ logo_url }}" alt="Logo" class="logo" onerror="this.style.display='none'">
+            </div>
+            <div class="text-end">
+                <h2 class="titulo-reporte">{{ nombre_municipio }}</h2>
+                <p class="mb-0">Sistema Municipal de Trámites</p>
+            </div>
+        </div>
+        
+        <div class="text-center mb-4">
+            <h3>{{ titulo }}</h3>
+        </div>
+        
+        <div class="info-reporte d-flex justify-content-between">
+            <span><strong>Generado por:</strong> {{ usuario_genero }}</span>
+            <span><strong>Fecha:</strong> {{ fecha_generacion.strftime('%d/%m/%Y %H:%M:%S') }}</span>
+            <span><strong>Total registros:</strong> {{ total_registros }}</span>
+        </div>
+        
+        {{ tabla_html|safe }}
+        
+        <div class="footer">
+            <p>{{ nombre_municipio }} - Todos los derechos reservados &copy; {{ now.year }}</p>
+            <p>Este reporte es generado automáticamente a partir de los datos del sistema.</p>
+        </div>
+    </div>
+    
+    <!-- Botones flotantes (no se imprimen) -->
+    <div class="no-print btn-imprimir">
+        <button class="btn btn-success" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir / Guardar PDF
+        </button>
+        <a href="{{ url_for('admin.crear_reporte') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Nuevo reporte
+        </a>
+        <!-- Nuevo botón Guardar reporte -->
+        <button class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#modalGuardarReporte">
+            <i class="fas fa-save"></i> Guardar este reporte
+        </button>
+    </div>
+
+    <!-- Modal para guardar reporte -->
+    <div class="modal fade" id="modalGuardarReporte" tabindex="-1" aria-labelledby="modalGuardarReporteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalGuardarReporteLabel">Guardar reporte</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="nombre_reporte" class="form-label">Nombre del reporte</label>
+                    <input type="text" id="nombre_reporte" class="form-control" placeholder="Ej: Denuncias enero 2025">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmarGuardar">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS + Popper (necesario para modales) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Funcionalidad para guardar reporte vía API
+        document.getElementById('btnConfirmarGuardar').addEventListener('click', function() {
+            const nombre = document.getElementById('nombre_reporte').value.trim();
+            if (!nombre) {
+                alert('Escribe un nombre para el reporte');
+                return;
+            }
+
+            // Datos que vienen desde el backend (asegurar que existan en el contexto)
+            const datos = {{ datos_json|safe }};
+            const columnas = {{ columnas_seleccionadas|tojson }};
+            const filtros = {{ filtros_usados|tojson }};
+            const tipoReporte = "{{ tipo_reporte }}";
+
+            fetch('/admin/reportes/guardar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    tipo_reporte: tipoReporte,
+                    datos: datos,
+                    columnas: columnas,
+                    filtros: filtros
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Reporte guardado correctamente');
+                    // Opcional: recargar o cerrar modal y limpiar campo
+                    document.getElementById('nombre_reporte').value = '';
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalGuardarReporte'));
+                    if (modal) modal.hide();
+                    // Si se desea recargar para mostrar lista actualizada, descomentar:
+                    // location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'No se pudo guardar el reporte'));
+                }
+            })
+            .catch(error => {
+                console.error('Error al guardar:', error);
+                alert('Ocurrió un error de red. Intente nuevamente.');
+            });
+        });
+
+        // Impresión automática si viene con parámetro print=1
+        window.onload = function() {
+            if (window.location.search.includes('print=1')) {
+                setTimeout(() => window.print(), 500);
+            }
+        }
+    </script>
+</body>
+</html>

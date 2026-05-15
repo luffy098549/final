@@ -1,4 +1,6 @@
-# admin.py - VERSIÓN COMPLETA CON RUTAS DE NOTICIAS, LOGS, CONTENIDO, TRANSPARENCIA Y MENÚ
+# admin.py - VERSIÓN COMPLETA CON TODAS LAS RUTAS Y PERSONALIZACIÓN DE REPORTES
+# (incluye logo por defecto y nombre del municipio)
+
 """
 Blueprint de administración profesional.
 Maneja todas las funciones exclusivas de administradores.
@@ -36,6 +38,15 @@ from models.log_actividad import LogActividad, registrar_log
 from models.contenido import Contenido
 from models.transparencia import Transparencia
 from models.menu_item import MenuItem
+
+# Importar para reportes avanzados
+import pandas as pd
+from models.reporte_guardado import ReporteGuardado
+# ReportePlantilla es opcional, lo importamos con try/except
+try:
+    from models.plantilla_reporte import ReportePlantilla
+except ImportError:
+    ReportePlantilla = None
 
 # Intentar importar nombres desde app.py
 try:
@@ -75,7 +86,7 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 
 # ================================================================
-# FUNCIONES DE NOTIFICACIONES
+# FUNCIONES DE NOTIFICACIONES (sin cambios)
 # ================================================================
 
 from models.notificacion import Notificacion
@@ -159,7 +170,7 @@ def enviar_notificacion_cita(cita, estado_anterior, notas=None):
 
 
 # ================================================================
-# FUNCIONES AUXILIARES
+# FUNCIONES AUXILIARES (sin cambios)
 # ================================================================
 
 def _cargar_usuarios_dict():
@@ -224,12 +235,7 @@ def _guardar_usuarios_db(usuarios_dict):
     db.session.commit()
 
 
-# ================================================================
-# FUNCIÓN AUXILIAR PARA FORMATEAR FECHAS
-# ================================================================
-
 def formatear_fecha_para_template(fecha):
-    """Convierte una fecha (datetime o string) a string formateado YYYY-MM-DD"""
     if not fecha:
         return ""
     if isinstance(fecha, datetime):
@@ -240,14 +246,12 @@ def formatear_fecha_para_template(fecha):
 
 
 def agregar_fecha_formateada(objeto):
-    """Agrega el atributo fecha_str a un objeto si tiene fecha_creacion"""
     if hasattr(objeto, 'fecha_creacion'):
         objeto.fecha_str = formatear_fecha_para_template(objeto.fecha_creacion)
     return objeto
 
 
 def sanitizar_comentarios_admin(denuncia):
-    """Sanitiza los comentarios_admin para que todas las fechas sean strings"""
     comentarios = denuncia.comentarios_admin or []
     for c in comentarios:
         if isinstance(c.get('fecha'), datetime):
@@ -286,7 +290,7 @@ def admin_required(f):
 
 
 # ================================================================
-# DASHBOARD PRINCIPAL
+# DASHBOARD PRINCIPAL (sin cambios)
 # ================================================================
 
 @admin_bp.route("/")
@@ -294,7 +298,6 @@ def admin_required(f):
 @admin_required
 @moderador_o_superior
 def dashboard():
-    """Dashboard principal con estadísticas y resumen."""
     try:
         solicitudes = Solicitud.query.all()
         denuncias = Denuncia.query.all()
@@ -440,7 +443,7 @@ def dashboard():
 
 
 # ================================================================
-# GESTIÓN DE SOLICITUDES
+# GESTIÓN DE SOLICITUDES (sin cambios)
 # ================================================================
 
 @admin_bp.route("/solicitudes")
@@ -489,7 +492,6 @@ def listar_solicitudes():
 @admin_required
 @permiso_requerido(Permiso.VER_SOLICITUDES)
 def detalle_solicitud(solicitud_id):
-    """Ver detalle de una solicitud específica"""
     try:
         solicitud = Solicitud.query.get(solicitud_id)
         if not solicitud:
@@ -573,7 +575,7 @@ def eliminar_solicitud(solicitud_id):
 
 
 # ================================================================
-# GESTIÓN DE DENUNCIAS (CORREGIDO)
+# GESTIÓN DE DENUNCIAS (sin cambios)
 # ================================================================
 
 @admin_bp.route("/denuncias")
@@ -582,7 +584,6 @@ def eliminar_solicitud(solicitud_id):
 def listar_denuncias():
     try:
         denuncias = Denuncia.query.all()
-        # Sanitizar comentarios de todas las denuncias para evitar errores en el template
         for d in denuncias:
             sanitizar_comentarios_admin(d)
     except:
@@ -634,14 +635,12 @@ def listar_denuncias():
 @admin_required
 @permiso_requerido(Permiso.VER_DENUNCIAS)
 def detalle_denuncia(denuncia_id):
-    """Ver detalle de una denuncia específica"""
     try:
         denuncia = Denuncia.query.get(denuncia_id)
         if not denuncia:
             flash("Denuncia no encontrada.", "error")
             return redirect(url_for("admin.listar_denuncias"))
         
-        # ✅ SANITIZAR comentarios_admin para que todas las fechas sean strings
         denuncia = sanitizar_comentarios_admin(denuncia)
         
         categorias = {
@@ -690,17 +689,16 @@ def actualizar_denuncia(denuncia_id):
             denuncia.estado = nuevo_estado
             denuncia.fecha_actualizacion = datetime.utcnow()
             
-            # ✅ CORRECCIÓN: Usar flag_modified para que SQLAlchemy detecte cambios en JSON
             if comentario:
                 from sqlalchemy.orm.attributes import flag_modified
                 comentarios_actuales = list(denuncia.comentarios_admin or [])
                 comentarios_actuales.append({
-                    'fecha': datetime.now().isoformat(),  # Siempre string, no datetime
+                    'fecha': datetime.now().isoformat(),
                     'admin': admin_email,
                     'comentario': comentario
                 })
                 denuncia.comentarios_admin = comentarios_actuales
-                flag_modified(denuncia, 'comentarios_admin')  # Fuerza a SQLAlchemy a detectar el cambio
+                flag_modified(denuncia, 'comentarios_admin')
             
             db.session.commit()
             
@@ -740,7 +738,7 @@ def eliminar_denuncia(denuncia_id):
 
 
 # ================================================================
-# GESTIÓN DE USUARIOS
+# GESTIÓN DE USUARIOS (sin cambios)
 # ================================================================
 
 @admin_bp.route("/usuarios")
@@ -907,10 +905,6 @@ def cambiar_password_usuario(email):
     return redirect(url_for("admin.detalle_usuario", email=email))
 
 
-# ================================================================
-# CREAR ADMIN
-# ================================================================
-
 @admin_bp.route("/usuarios/crear-admin", methods=["GET", "POST"])
 @admin_required
 @solo_super_admin
@@ -994,7 +988,7 @@ def toggle_usuario_activo(email):
 
 
 # ================================================================
-# REPORTES Y ESTADÍSTICAS
+# REPORTES Y ESTADÍSTICAS (sin cambios)
 # ================================================================
 
 @admin_bp.route("/reportes")
@@ -1021,7 +1015,7 @@ def reportes():
 
 
 # ================================================================
-# CITAS
+# CITAS (sin cambios)
 # ================================================================
 
 @admin_bp.route("/citas")
@@ -1031,7 +1025,6 @@ def admin_citas():
         from models.cita import Cita
         citas = Cita.query.all()
         
-        # ✅ CORRECCIÓN: Manejar correctamente fechas que pueden ser datetime.date o string
         def get_fecha(c):
             if c.fecha:
                 if hasattr(c.fecha, 'strftime'):
@@ -1091,7 +1084,7 @@ def admin_cambiar_estado_cita(cita_id):
 
 
 # ================================================================
-# PLANTILLAS
+# PLANTILLAS (sin cambios)
 # ================================================================
 
 @admin_bp.route("/plantillas")
@@ -1184,7 +1177,7 @@ def admin_eliminar_plantilla(plantilla_id):
 
 
 # ================================================================
-# MAPA DE INCIDENCIAS
+# MAPA DE INCIDENCIAS (sin cambios)
 # ================================================================
 
 @admin_bp.route("/mapa")
@@ -1210,7 +1203,7 @@ def admin_mapa_incidencias():
 
 
 # ================================================================
-# ENCUESTAS
+# ENCUESTAS (sin cambios)
 # ================================================================
 
 @admin_bp.route("/encuestas")
@@ -1226,13 +1219,12 @@ def admin_encuestas():
 
 
 # ================================================================
-# NOTICIAS - ADMINISTRACIÓN
+# NOTICIAS - ADMINISTRACIÓN (sin cambios)
 # ================================================================
 
 @admin_bp.route("/noticias")
 @admin_required
 def admin_noticias():
-    """Lista todas las noticias con filtros"""
     pagina = request.args.get('pagina', 1, type=int)
     estado = request.args.get('estado', '')
     categoria_id = request.args.get('categoria', type=int)
@@ -1262,7 +1254,6 @@ def admin_noticias():
 @admin_bp.route("/noticias/nueva", methods=["GET", "POST"])
 @admin_required
 def admin_noticia_nueva():
-    """Crear nueva noticia"""
     if request.method == "POST":
         titulo = request.form.get('titulo', '').strip()
         contenido = request.form.get('contenido', '').strip()
@@ -1319,7 +1310,6 @@ def admin_noticia_nueva():
 @admin_bp.route("/noticias/<int:noticia_id>/editar", methods=["GET", "POST"])
 @admin_required
 def admin_noticia_editar(noticia_id):
-    """Editar noticia existente"""
     noticia = Noticia.query.get_or_404(noticia_id)
     
     if request.method == "POST":
@@ -1352,7 +1342,6 @@ def admin_noticia_editar(noticia_id):
 @admin_bp.route("/noticias/<int:noticia_id>/eliminar", methods=["POST"])
 @admin_required
 def admin_noticia_eliminar(noticia_id):
-    """Eliminar noticia"""
     noticia = Noticia.query.get_or_404(noticia_id)
     titulo = noticia.titulo
     
@@ -1373,7 +1362,6 @@ def admin_noticia_eliminar(noticia_id):
 @admin_bp.route("/noticias/<int:noticia_id>/publicar", methods=["POST"])
 @admin_required
 def admin_noticia_publicar(noticia_id):
-    """Publicar noticia"""
     noticia = Noticia.query.get_or_404(noticia_id)
     noticia.publicar()
     
@@ -1391,7 +1379,6 @@ def admin_noticia_publicar(noticia_id):
 @admin_bp.route("/noticias/<int:noticia_id>/archivar", methods=["POST"])
 @admin_required
 def admin_noticia_archivar(noticia_id):
-    """Archivar noticia"""
     noticia = Noticia.query.get_or_404(noticia_id)
     noticia.archivar()
     
@@ -1407,13 +1394,12 @@ def admin_noticia_archivar(noticia_id):
 
 
 # ================================================================
-# COMENTARIOS - ADMINISTRACIÓN
+# COMENTARIOS - ADMINISTRACIÓN (sin cambios)
 # ================================================================
 
 @admin_bp.route("/noticias/comentarios")
 @admin_required
 def admin_comentarios():
-    """Lista comentarios pendientes de aprobación"""
     pagina = request.args.get('pagina', 1, type=int)
     comentarios = ComentarioNoticia.query.filter_by(aprobado=False).order_by(
         ComentarioNoticia.fecha_creacion.desc()
@@ -1425,7 +1411,6 @@ def admin_comentarios():
 @admin_bp.route("/noticias/comentarios/<int:comentario_id>/aprobar", methods=["POST"])
 @admin_required
 def admin_comentario_aprobar(comentario_id):
-    """Aprobar comentario"""
     comentario = ComentarioNoticia.query.get_or_404(comentario_id)
     comentario.aprobado = True
     db.session.commit()
@@ -1444,7 +1429,6 @@ def admin_comentario_aprobar(comentario_id):
 @admin_bp.route("/noticias/comentarios/<int:comentario_id>/rechazar", methods=["POST"])
 @admin_required
 def admin_comentario_rechazar(comentario_id):
-    """Rechazar/eliminar comentario"""
     comentario = ComentarioNoticia.query.get_or_404(comentario_id)
     autor_nombre = comentario.autor_nombre
     
@@ -1463,17 +1447,15 @@ def admin_comentario_rechazar(comentario_id):
 
 
 # ================================================================
-# LOGS - ADMINISTRACIÓN
+# LOGS - ADMINISTRACIÓN (sin cambios)
 # ================================================================
 
 @admin_bp.route("/logs")
 @admin_required
 @permiso_requerido(Permiso.VER_BITACORA)
 def admin_logs():
-    """Dashboard de logs con filtros y estadísticas"""
     pagina = request.args.get('pagina', 1, type=int)
     
-    # Construir filtros
     filtros = {}
     if request.args.get('modulo'):
         filtros['modulo'] = request.args.get('modulo')
@@ -1492,13 +1474,9 @@ def admin_logs():
         except:
             pass
     
-    # Obtener logs paginados
     logs = LogActividad.listar(pagina=pagina, por_pagina=50, filtros=filtros)
-    
-    # Obtener estadísticas
     estadisticas = LogActividad.obtener_estadisticas(dias=7)
     
-    # Obtener listas para filtros
     modulos_disponibles = db.session.query(LogActividad.modulo).filter(
         LogActividad.modulo.isnot(None)
     ).distinct().all()
@@ -1520,10 +1498,8 @@ def admin_logs():
 @admin_required
 @permiso_requerido(Permiso.EXPORTAR_DATOS)
 def admin_logs_exportar():
-    """Exportar logs a Excel"""
     formato = request.args.get('formato', 'excel')
     
-    # Construir filtros igual que en admin_logs
     filtros = {}
     if request.args.get('modulo'):
         filtros['modulo'] = request.args.get('modulo')
@@ -1554,7 +1530,6 @@ def admin_logs_exportar():
             ws = wb.active
             ws.title = "Logs de Actividad"
             
-            # Encabezados
             headers = ['Fecha', 'Usuario', 'Email', 'Acción', 'Módulo', 'Nivel', 'Descripción', 'IP']
             for col, header in enumerate(headers, 1):
                 cell = ws.cell(row=1, column=col, value=header)
@@ -1562,7 +1537,6 @@ def admin_logs_exportar():
                 cell.fill = PatternFill(start_color="2D5016", end_color="2D5016", fill_type="solid")
                 cell.alignment = Alignment(horizontal="center")
             
-            # Datos
             for row, log in enumerate(logs_data, 2):
                 ws.cell(row=row, column=1, value=log.get('fecha_formateada', ''))
                 ws.cell(row=row, column=2, value=log.get('usuario_nombre', ''))
@@ -1573,7 +1547,6 @@ def admin_logs_exportar():
                 ws.cell(row=row, column=7, value=log.get('descripcion', '')[:200])
                 ws.cell(row=row, column=8, value=log.get('ip_address', ''))
             
-            # Ajustar anchos
             for col in range(1, 9):
                 ws.column_dimensions[openpyxl.utils.get_column_letter(col)].width = 20
             
@@ -1601,7 +1574,7 @@ def admin_logs_exportar():
 
 
 # ================================================================
-# BITÁCORA (LEGACY)
+# BITÁCORA (LEGACY) (sin cambios)
 # ================================================================
 
 @admin_bp.route("/bitacora")
@@ -1637,7 +1610,7 @@ def bitacora():
 
 
 # ================================================================
-# GESTIÓN DE MENSAJES EN TRÁMITES
+# GESTIÓN DE MENSAJES EN TRÁMITES (sin cambios)
 # ================================================================
 
 from models.mensaje import Mensaje
@@ -1734,14 +1707,13 @@ def api_responder_mensaje_admin(folio):
 
 
 # ================================================================
-# GESTIÓN DE CONTENIDO (PÁGINAS ESTÁTICAS) - CORREGIDO
+# GESTIÓN DE CONTENIDO (PÁGINAS ESTÁTICAS) (sin cambios)
 # ================================================================
 
 @admin_bp.route("/contenidos")
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_contenidos():
-    """Listar todos los contenidos/páginas estáticas"""
     contenidos = Contenido.query.order_by(Contenido.id).all()
     return render_template("admin/contenidos.html", contenidos=contenidos)
 
@@ -1750,7 +1722,6 @@ def admin_contenidos():
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_contenido_crear():
-    """Crear nuevo contenido/página estática"""
     try:
         slug = request.form.get('slug', '').strip()
         titulo = request.form.get('titulo', '').strip()
@@ -1763,7 +1734,6 @@ def admin_contenido_crear():
             flash("❌ Slug y título son obligatorios.", "error")
             return redirect(url_for('admin.admin_contenidos'))
         
-        # Verificar slug único
         if Contenido.query.filter_by(slug=slug).first():
             flash(f"❌ Ya existe un contenido con el slug '{slug}'.", "error")
             return redirect(url_for('admin.admin_contenidos'))
@@ -1796,11 +1766,8 @@ def admin_contenido_crear():
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_contenido_editar(id):
-    """Editar contenido/página estática"""
     try:
         contenido_obj = Contenido.query.get_or_404(id)
-        
-        titulo_anterior = contenido_obj.titulo
         
         contenido_obj.slug = request.form.get('slug', '').strip()
         contenido_obj.titulo = request.form.get('titulo', '').strip()
@@ -1828,7 +1795,6 @@ def admin_contenido_editar(id):
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_contenido_eliminar(id):
-    """Eliminar contenido/página estática"""
     try:
         contenido_obj = Contenido.query.get_or_404(id)
         titulo = contenido_obj.titulo
@@ -1850,18 +1816,14 @@ def admin_contenido_eliminar(id):
 
 
 # ================================================================
-# GESTIÓN DE TRANSPARENCIA (DOCUMENTOS PÚBLICOS)
+# GESTIÓN DE TRANSPARENCIA (DOCUMENTOS PÚBLICOS) (sin cambios)
 # ================================================================
 
 @admin_bp.route("/transparencia")
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_transparencia():
-    """Listar todos los documentos de transparencia"""
-    try:
-        documentos = Transparencia.query.order_by(Transparencia.id).all()
-    except:
-        documentos = Transparencia.query.all()
+    documentos = Transparencia.query.order_by(Transparencia.id).all()
     return render_template("admin/transparencia.html", documentos=documentos, categorias=Transparencia.CATEGORIAS)
 
 
@@ -1869,7 +1831,6 @@ def admin_transparencia():
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_transparencia_crear():
-    """Crear nuevo documento de transparencia"""
     try:
         titulo = request.form.get('titulo', '').strip()
         descripcion = request.form.get('descripcion', '')
@@ -1923,7 +1884,6 @@ def admin_transparencia_crear():
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_transparencia_editar(id):
-    """Editar documento de transparencia"""
     try:
         documento = Transparencia.query.get_or_404(id)
         
@@ -1962,7 +1922,6 @@ def admin_transparencia_editar(id):
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_transparencia_toggle(id):
-    """Alternar estado publicado de un documento de transparencia"""
     try:
         documento = Transparencia.query.get_or_404(id)
         documento.publicado = not documento.publicado
@@ -1986,7 +1945,6 @@ def admin_transparencia_toggle(id):
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_transparencia_eliminar(id):
-    """Eliminar documento de transparencia"""
     try:
         documento = Transparencia.query.get_or_404(id)
         titulo = documento.titulo
@@ -2008,14 +1966,13 @@ def admin_transparencia_eliminar(id):
 
 
 # ================================================================
-# GESTIÓN DE MENÚ (NAVEGACIÓN DINÁMICA)
+# GESTIÓN DE MENÚ (NAVEGACIÓN DINÁMICA) (sin cambios)
 # ================================================================
 
 @admin_bp.route("/menu")
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_menu():
-    """Listar todos los ítems del menú"""
     items = MenuItem.query.order_by(MenuItem.orden).all()
     return render_template("admin/menu.html", items=items)
 
@@ -2024,7 +1981,6 @@ def admin_menu():
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_menu_crear():
-    """Crear nuevo ítem de menú"""
     try:
         titulo = request.form.get('titulo', '').strip()
         url = request.form.get('url', '').strip()
@@ -2040,7 +1996,6 @@ def admin_menu_crear():
             flash("❌ El título es obligatorio.", "error")
             return redirect(url_for('admin.admin_menu'))
         
-        # Si no hay URL, usar '#' como placeholder
         if not url:
             url = '#'
         
@@ -2075,7 +2030,6 @@ def admin_menu_crear():
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_menu_editar(id):
-    """Editar ítem de menú"""
     try:
         item = MenuItem.query.get_or_404(id)
         
@@ -2108,7 +2062,6 @@ def admin_menu_editar(id):
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_menu_toggle(id):
-    """Alternar estado activo de un ítem de menú"""
     try:
         item = MenuItem.query.get_or_404(id)
         item.activo = not item.activo
@@ -2132,12 +2085,10 @@ def admin_menu_toggle(id):
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_menu_eliminar(id):
-    """Eliminar ítem de menú"""
     try:
         item = MenuItem.query.get_or_404(id)
         titulo = item.titulo
         
-        # Verificar si tiene hijos
         hijos = MenuItem.query.filter_by(parent_id=id).count()
         if hijos > 0:
             flash(f"❌ No se puede eliminar '{titulo}' porque tiene {hijos} subítems asociados.", "error")
@@ -2163,7 +2114,6 @@ def admin_menu_eliminar(id):
 @admin_required
 @permiso_requerido(Permiso.EDITAR_CONFIG)
 def admin_menu_reordenar():
-    """Actualizar el orden de los ítems del menú vía AJAX"""
     try:
         data = request.get_json()
         
@@ -2205,7 +2155,6 @@ def admin_menu_reordenar():
 @admin_bp.route("/api/menu-item/<int:id>")
 @admin_required
 def api_menu_item(id):
-    """API para obtener datos de un ítem de menú"""
     try:
         item = MenuItem.query.get_or_404(id)
         return jsonify({
@@ -2228,13 +2177,12 @@ def api_menu_item(id):
 
 
 # ================================================================
-# API PARA TRANSPARENCIA (OBTENER DOCUMENTO)
+# API PARA TRANSPARENCIA (OBTENER DOCUMENTO) (sin cambios)
 # ================================================================
 
 @admin_bp.route("/api/transparencia/<int:id>")
 @admin_required
 def api_transparencia_item(id):
-    """API para obtener datos de un documento de transparencia"""
     try:
         doc = Transparencia.query.get_or_404(id)
         return jsonify({
@@ -2257,7 +2205,7 @@ def api_transparencia_item(id):
 
 
 # ================================================================
-# CONFIGURACIÓN
+# CONFIGURACIÓN (sin cambios)
 # ================================================================
 
 @admin_bp.route("/configuracion", methods=["GET"])
@@ -2282,8 +2230,9 @@ def guardar_configuracion():
     flash('✅ Configuración actualizada correctamente', 'success')
     return redirect(url_for('admin.configuracion'))
 
+
 # ================================================================
-# API DE CONFIGURACIÓN
+# API DE CONFIGURACIÓN (sin cambios)
 # ================================================================
 
 @admin_bp.route("/api/config/sistema-info", methods=["GET"])
@@ -2468,7 +2417,7 @@ def api_mantenimiento():
 
 
 # ================================================================
-# API PARA ADMIN (ENDPOINTS SIN @admin_required PARA AJAX)
+# API PARA ADMIN (ENDPOINTS SIN @admin_required PARA AJAX) (sin cambios)
 # ================================================================
 
 @admin_bp.route("/api/citas-pendientes")
@@ -2506,7 +2455,7 @@ def api_denuncias_pendientes():
 
 
 # ================================================================
-# API PARA DENUNCIAS EN MAPA (GEOJSON)
+# API PARA DENUNCIAS EN MAPA (GEOJSON) (sin cambios)
 # ================================================================
 
 @admin_bp.route("/api/denuncias/geojson")
@@ -2601,7 +2550,7 @@ def api_estadisticas():
 
 
 # ================================================================
-# API PARA CONTACTOS PENDIENTES
+# API PARA CONTACTOS PENDIENTES (sin cambios)
 # ================================================================
 
 @admin_bp.route("/api/contactos-pendientes")
@@ -2617,14 +2566,13 @@ def api_contactos_pendientes():
 
 
 # ================================================================
-# RUTA PARA GESTIÓN DE CONTACTOS (ADMIN)
+# RUTA PARA GESTIÓN DE CONTACTOS (ADMIN) (sin cambios)
 # ================================================================
 
 @admin_bp.route("/contactos")
 @admin_required
 @permiso_requerido(Permiso.VER_SOLICITUDES)
 def admin_contactos():
-    """Listar todos los contactos/mensajes"""
     try:
         from models.mensaje import Mensaje
         contactos = Mensaje.obtener_todos_contactos()
@@ -2638,7 +2586,6 @@ def admin_contactos():
 @admin_required
 @permiso_requerido(Permiso.EDITAR_SOLICITUDES)
 def admin_contacto_responder(contacto_id):
-    """Responder a un mensaje de contacto"""
     try:
         from models.mensaje import Mensaje
         respuesta = request.form.get('respuesta', '').strip()
@@ -2660,11 +2607,476 @@ def admin_contacto_responder(contacto_id):
 
 
 # ================================================================
+# REPORTES AVANZADOS CON PERSONALIZACIÓN VISUAL (con logo por defecto)
+# ================================================================
+
+from utils.reportes_utils import (
+    dataframe_desde_solicitudes, dataframe_desde_denuncias,
+    dataframe_desde_usuarios, dataframe_desde_citas,
+    dataframe_desde_contactos, generar_grafico_barras,
+    generar_tabla_html_profesional, exportar_excel_profesional,
+    generar_pdf_desde_html
+)
+
+@admin_bp.route("/reportes/crear", methods=["GET", "POST"])
+@admin_required
+@permiso_requerido(Permiso.VER_BITACORA)
+def crear_reporte():
+    if request.method == "POST":
+        # ========== PARÁMETROS BÁSICOS ==========
+        tipo = request.form.get("tipo_reporte")
+        fecha_desde = request.form.get("fecha_desde")
+        fecha_hasta = request.form.get("fecha_hasta")
+        estados = request.form.getlist("estados")
+        servicios_tipos = request.form.getlist("servicios_tipos")
+        columnas_seleccionadas = request.form.getlist("columnas")
+        formato = request.form.get("formato", "html")
+        
+        # ========== ESTILOS PERSONALIZADOS (capturados desde el formulario) ==========
+        estilos = {
+            'titulo_personalizado': request.form.get('titulo_personalizado', ''),
+            'color_encabezado': request.form.get('color_encabezado', '#2D5016'),
+            'color_texto_encabezado': request.form.get('color_texto_encabezado', '#FFFFFF'),
+            'color_fila_par': request.form.get('color_fila_par', '#F8F9FA'),
+            'color_fila_impar': request.form.get('color_fila_impar', '#FFFFFF'),
+            'fuente': request.form.get('fuente', 'Arial, sans-serif'),
+            'tamano_fuente': int(request.form.get('tamano_fuente', 14)),
+            'formato_fecha': request.form.get('formato_fecha', '%d/%m/%Y %H:%M'),
+            'logo_url': request.form.get('logo_url', ''),
+            'pie_pagina': request.form.get('pie_pagina', ''),
+            'mostrar_bordes': request.form.get('mostrar_bordes') == 'on',
+            'mostrar_logo': request.form.get('mostrar_logo') == 'on'
+        }
+        if not estilos['titulo_personalizado']:
+            estilos['titulo_personalizado'] = f"Reporte de {tipo.replace('_', ' ').title()}"
+        
+        # ========== CONSTRUIR FILTROS ==========
+        filtros = {}
+        if fecha_desde:
+            filtros['fecha_desde'] = datetime.strptime(fecha_desde, '%Y-%m-%d')
+        if fecha_hasta:
+            filtros['fecha_hasta'] = datetime.strptime(fecha_hasta, '%Y-%m-%d')
+        if estados:
+            filtros['estados'] = estados
+        if servicios_tipos:
+            filtros['servicios_tipos'] = servicios_tipos
+        
+        # ========== OBTENER DATOS SEGÚN TIPO ==========
+        datos = None
+        df = None
+        if tipo == 'solicitudes':
+            query = Solicitud.query
+            if fecha_desde:
+                query = query.filter(Solicitud.fecha_creacion >= filtros['fecha_desde'])
+            if fecha_hasta:
+                query = query.filter(Solicitud.fecha_creacion <= filtros['fecha_hasta'])
+            if estados:
+                query = query.filter(Solicitud.estado.in_(estados))
+            if servicios_tipos:
+                query = query.filter(Solicitud.servicio_id.in_(servicios_tipos))
+            datos = query.all()
+            df = dataframe_desde_solicitudes(datos, columnas_seleccionadas)
+        elif tipo == 'denuncias':
+            query = Denuncia.query
+            if fecha_desde:
+                query = query.filter(Denuncia.fecha_creacion >= filtros['fecha_desde'])
+            if fecha_hasta:
+                query = query.filter(Denuncia.fecha_creacion <= filtros['fecha_hasta'])
+            if estados:
+                query = query.filter(Denuncia.estado.in_(estados))
+            if servicios_tipos:
+                query = query.filter(Denuncia.tipo.in_(servicios_tipos))
+            datos = query.all()
+            df = dataframe_desde_denuncias(datos, columnas_seleccionadas)
+        elif tipo == 'usuarios':
+            query = Usuario.query
+            if fecha_desde:
+                query = query.filter(Usuario.fecha_registro >= filtros['fecha_desde'])
+            if fecha_hasta:
+                query = query.filter(Usuario.fecha_registro <= filtros['fecha_hasta'])
+            if estados:
+                if 'activo' in estados and 'inactivo' not in estados:
+                    query = query.filter(Usuario.activo == True)
+                elif 'inactivo' in estados and 'activo' not in estados:
+                    query = query.filter(Usuario.activo == False)
+            if servicios_tipos:
+                query = query.filter(Usuario.tipo.in_(servicios_tipos))
+            datos = query.all()
+            df = dataframe_desde_usuarios(datos, columnas_seleccionadas)
+        elif tipo == 'citas':
+            from models.cita import Cita
+            query = Cita.query
+            if fecha_desde:
+                query = query.filter(Cita.fecha_creacion >= filtros['fecha_desde'])
+            if fecha_hasta:
+                query = query.filter(Cita.fecha_creacion <= filtros['fecha_hasta'])
+            if estados:
+                query = query.filter(Cita.estado.in_(estados))
+            if servicios_tipos:
+                query = query.filter(Cita.servicio.in_(servicios_tipos))
+            datos = query.all()
+            df = dataframe_desde_citas(datos, columnas_seleccionadas)
+        elif tipo == 'contactos':
+            from models.mensaje import Mensaje
+            query = Mensaje.query.filter_by(tramite_tipo='consulta', es_admin=False)
+            if fecha_desde:
+                query = query.filter(Mensaje.fecha_creacion >= filtros['fecha_desde'])
+            if fecha_hasta:
+                query = query.filter(Mensaje.fecha_creacion <= filtros['fecha_hasta'])
+            if estados:
+                if 'respondido' in estados:
+                    query = query.filter(Mensaje.tramite_folio.in_(
+                        db.session.query(Mensaje.tramite_folio).filter(Mensaje.es_admin==True)
+                    ))
+                elif 'pendiente' in estados:
+                    query = query.filter(~Mensaje.tramite_folio.in_(
+                        db.session.query(Mensaje.tramite_folio).filter(Mensaje.es_admin==True)
+                    ))
+            datos = query.all()
+            df = dataframe_desde_contactos(datos, columnas_seleccionadas)
+        
+        if df is None or df.empty:
+            flash("No hay datos con los filtros seleccionados.", "warning")
+            return redirect(url_for('admin.crear_reporte'))
+        
+        # ========== PARA VISTA PREVIA HTML ==========
+        if formato == 'html':
+            # Guardar todo en sesión temporal para la vista
+            session['reporte_temporal'] = {
+                'tipo': tipo,
+                'filtros': filtros,
+                'columnas': columnas_seleccionadas,
+                'estilos': estilos,
+                'datos_json': df.to_dict(orient='records')
+            }
+            return redirect(url_for('admin.mostrar_reporte_generado'))
+        
+        # ========== EXPORTAR A EXCEL ==========
+        elif formato == 'excel':
+            titulo_excel = estilos['titulo_personalizado'][:31]
+            excel_file = exportar_excel_profesional(df, titulo_excel, estilos)
+            return send_file(
+                excel_file,
+                mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                as_attachment=True,
+                download_name=f"{tipo}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            )
+        
+        # ========== EXPORTAR A PDF ==========
+        elif formato == 'pdf':
+            tabla_html = generar_tabla_html_profesional(df, estilos['titulo_personalizado'], estilos)
+            context = {
+                'titulo': estilos['titulo_personalizado'],
+                'fecha_generacion': datetime.now(),
+                'total_registros': len(datos),
+                'tabla_html': tabla_html,
+                'estilos': estilos,
+                'nombre_municipio': cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
+                'usuario_genero': session.get('user_name', 'Administrador'),
+                'logo_url': estilos.get('logo_url') or url_for('static', filename='img/Adobe%20Express%20-%20file.png')
+            }
+            pdf_io = generar_pdf_desde_html('admin/reporte_pdf.html', context, None)
+            return send_file(
+                pdf_io,
+                mimetype='application/pdf',
+                as_attachment=True,
+                download_name=f"{tipo}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            )
+    
+    # GET: mostrar formulario con listas desplegables
+    servicios_disponibles = [{'id': k, 'nombre': v} for k, v in NOMBRES_SERVICIOS.items()]
+    tipos_denuncia = [{'id': k, 'nombre': v} for k, v in NOMBRES_DENUNCIAS.items()]
+    estados_solicitud = ['pendiente', 'en_proceso', 'completado', 'cancelado']
+    estados_denuncia = ['pendiente', 'en_investigacion', 'resuelto', 'rechazado']
+    tipos_usuario = ['ciudadano', 'admin']
+    servicios_citas = [{'id': k, 'nombre': v} for k, v in SERVICIOS_CITAS.items()]
+    estados_citas = ['pendiente', 'confirmada', 'cancelada', 'completada']
+    
+    plantillas = []
+    if ReportePlantilla is not None:
+        try:
+            plantillas = ReportePlantilla.query.filter_by(created_by=session.get('user')).all()
+        except:
+            plantillas = []
+    
+    return render_template("admin/crear_reporte.html",
+                         servicios=servicios_disponibles,
+                         tipos_denuncia=tipos_denuncia,
+                         estados_solicitud=estados_solicitud,
+                         estados_denuncia=estados_denuncia,
+                         tipos_usuario=tipos_usuario,
+                         servicios_citas=servicios_citas,
+                         estados_citas=estados_citas,
+                         plantillas=plantillas)
+
+
+@admin_bp.route("/reportes/mostrar")
+@admin_required
+def mostrar_reporte_generado():
+    """Vista previa del reporte generado, con opción de guardar"""
+    reporte_temp = session.get('reporte_temporal')
+    if not reporte_temp:
+        flash("No hay reporte generado. Por favor, genere uno primero.", "warning")
+        return redirect(url_for('admin.crear_reporte'))
+    
+    tipo = reporte_temp['tipo']
+    estilos = reporte_temp['estilos']
+    columnas = reporte_temp['columnas']
+    datos = reporte_temp['datos_json']
+    filtros = reporte_temp.get('filtros', {})
+    
+    df = pd.DataFrame(datos)
+    if columnas:
+        df = df[[c for c in columnas if c in df.columns]]
+    
+    tabla_html = generar_tabla_html_profesional(df, estilos['titulo_personalizado'], estilos)
+    
+    # Logo por defecto si no se ha proporcionado uno
+    logo_url = estilos.get('logo_url', '') or url_for('static', filename='img/Adobe Express - file.png')
+    
+    return render_template("admin/reporte_generado.html",
+                         titulo=estilos['titulo_personalizado'],
+                         fecha_generacion=datetime.now(),
+                         total_registros=len(datos),
+                         tabla_html=tabla_html,
+                         estilos=estilos,
+                         tipo_reporte=tipo,
+                         datos_json=json.dumps(datos, default=str),
+                         columnas_seleccionadas=columnas,
+                         filtros_usados=filtros,
+                         logo_url=logo_url,
+                         nombre_municipio=cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
+                         usuario_genero=session.get('user_name', 'Administrador'))
+
+
+@admin_bp.route("/reportes/generar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.VER_BITACORA)
+def generar_reporte():
+    """Genera reporte con columnas seleccionadas y filtros (respuesta JSON para AJAX)"""
+    # Esta ruta se usa cuando se llama desde el formulario con AJAX.
+    # Como ahora usamos /reportes/crear con redirección a /mostrar, esta ruta puede mantenerse
+    # para compatibilidad, pero ya no es necesaria. Se deja por si existe código JS que la use.
+    tipo = request.form.get("tipo_reporte")
+    fecha_desde = request.form.get("fecha_desde")
+    fecha_hasta = request.form.get("fecha_hasta")
+    estados = request.form.getlist("estados")
+    servicios_tipos = request.form.getlist("servicios_tipos")
+    columnas = request.form.getlist("columnas")
+    
+    # Simplemente redirigimos a crear_reporte con los datos para no duplicar lógica
+    # (opcional: procesar y devolver JSON)
+    return redirect(url_for('admin.crear_reporte'))
+
+
+@admin_bp.route("/reportes/guardar", methods=["POST"])
+@admin_required
+def guardar_reporte():
+    """Guarda un reporte generado (incluyendo estilos) en la base de datos"""
+    try:
+        data = request.get_json()
+        nombre = data.get('nombre', '').strip()
+        tipo_reporte = data.get('tipo_reporte')
+        datos = data.get('datos', [])
+        columnas = data.get('columnas', [])
+        filtros = data.get('filtros', {})
+        estilos = data.get('estilos', {})
+        
+        if not nombre:
+            return jsonify({'success': False, 'error': 'El nombre del reporte es obligatorio'}), 400
+        
+        reporte = ReporteGuardado(
+            nombre=nombre,
+            tipo_reporte=tipo_reporte,
+            generado_por=session.get('user')
+        )
+        reporte.set_datos(datos)
+        reporte.set_columnas(columnas)
+        reporte.set_filtros(filtros)
+        reporte.set_estilos(estilos)
+        
+        db.session.add(reporte)
+        db.session.commit()
+        
+        registrar_accion('guardar_reporte', f"Guardó reporte '{nombre}' con {len(datos)} registros")
+        return jsonify({'success': True, 'id': reporte.id})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@admin_bp.route("/reportes/guardados")
+@admin_required
+def reportes_guardados():
+    """Lista todos los reportes guardados por el administrador"""
+    reportes = ReporteGuardado.query.order_by(ReporteGuardado.fecha_generacion.desc()).all()
+    return render_template("admin/reportes_guardados.html", reportes=reportes)
+
+
+@admin_bp.route("/reportes/ver/<int:reporte_id>")
+@admin_required
+def ver_reporte_guardado(reporte_id):
+    reporte = ReporteGuardado.query.get_or_404(reporte_id)
+    datos = reporte.get_datos()
+    columnas = reporte.get_columnas()
+    estilos = reporte.get_estilos()
+    
+    if not estilos:
+        estilos = {
+            'titulo_personalizado': reporte.nombre,
+            'color_encabezado': '#2D5016',
+            'color_texto_encabezado': '#FFFFFF',
+            'color_fila_par': '#F8F9FA',
+            'color_fila_impar': '#FFFFFF',
+            'fuente': 'Arial, sans-serif',
+            'tamano_fuente': 14,
+            'formato_fecha': '%d/%m/%Y %H:%M',
+            'mostrar_bordes': True,
+            'mostrar_logo': True,
+            'logo_url': ''
+        }
+    
+    if datos:
+        df = pd.DataFrame(datos)
+        if columnas:
+            df = df[[c for c in columnas if c in df.columns]]
+        tabla_html = generar_tabla_html_profesional(df, estilos.get('titulo_personalizado', reporte.nombre), estilos)
+    else:
+        tabla_html = "<div class='alert alert-warning'>El reporte no contiene datos.</div>"
+    
+    # Logo por defecto si no se guardó ninguno
+    logo_url = estilos.get('logo_url', '') or url_for('static', filename='img/Adobe Express - file.png')
+    
+    return render_template("admin/reporte_generado.html",
+                         titulo=estilos.get('titulo_personalizado', reporte.nombre),
+                         fecha_generacion=reporte.fecha_generacion,
+                         total_registros=reporte.total_registros,
+                         tabla_html=tabla_html,
+                         estilos=estilos,
+                         tipo_reporte=reporte.tipo_reporte,
+                         datos_json=json.dumps(datos, default=str),
+                         columnas_seleccionadas=columnas,
+                         filtros_usados=reporte.get_filtros(),
+                         logo_url=logo_url,
+                         nombre_municipio=cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
+                         usuario_genero=reporte.generado_por,
+                         es_guardado=True)
+
+
+@admin_bp.route("/reportes/eliminar/<int:reporte_id>", methods=["POST"])
+@admin_required
+def eliminar_reporte_guardado(reporte_id):
+    """Elimina un reporte previamente guardado."""
+    try:
+        reporte = ReporteGuardado.query.get_or_404(reporte_id)
+        db.session.delete(reporte)
+        db.session.commit()
+        registrar_accion('eliminar_reporte', f"Eliminó el reporte '{reporte.nombre}'")
+        return jsonify({'success': True, 'message': 'Reporte eliminado correctamente'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@admin_bp.route("/reportes/guardar-plantilla", methods=["POST"])
+@admin_required
+def guardar_plantilla_reporte():
+    if ReportePlantilla is None:
+        return jsonify({'success': False, 'error': 'Módulo de plantillas no disponible'}), 500
+    data = request.get_json()
+    nombre = data.get('nombre')
+    tipo_reporte = data.get('tipo_reporte')
+    filtros = data.get('filtros', {})
+    columnas = data.get('columnas', [])
+    
+    if not nombre or not tipo_reporte:
+        return jsonify({'success': False, 'error': 'Faltan datos'}), 400
+    
+    plantilla = ReportePlantilla(
+        nombre=nombre,
+        tipo_reporte=tipo_reporte,
+        created_by=session.get('user')
+    )
+    plantilla.set_filtros(filtros)
+    plantilla.set_columnas(columnas)
+    db.session.add(plantilla)
+    db.session.commit()
+    
+    return jsonify({'success': True, 'id': plantilla.id})
+
+
+@admin_bp.route("/reportes/cargar-plantilla/<int:id>")
+@admin_required
+def cargar_plantilla_reporte(id):
+    if ReportePlantilla is None:
+        return jsonify({'error': 'Módulo de plantillas no disponible'}), 500
+    plantilla = ReportePlantilla.query.get_or_404(id)
+    if plantilla.created_by != session.get('user') and session.get('user_rol') != 'super_admin':
+        return jsonify({'error': 'No autorizado'}), 403
+    return jsonify({
+        'success': True,
+        'tipo_reporte': plantilla.tipo_reporte,
+        'filtros': plantilla.get_filtros(),
+        'columnas': plantilla.get_columnas()
+    })
+
+
+# ================================================================
+# VISTA UNIFICADA: TODOS LOS TRÁMITES (SOLICITUDES + DENUNCIAS)
+# ================================================================
+
+@admin_bp.route("/todos-tramites")
+@admin_required
+def todos_tramites():
+    """Muestra todas las solicitudes y denuncias en una sola tabla (sin filtros)."""
+    try:
+        solicitudes = Solicitud.query.all()
+        denuncias = Denuncia.query.all()
+        
+        tramites = []
+        
+        for s in solicitudes:
+            tramites.append({
+                'tipo': 'Solicitud',
+                'folio': s.folio,
+                'nombre': NOMBRES_SERVICIOS.get(str(s.servicio_id), s.servicio_id),
+                'usuario': s.usuario_nombre or s.usuario_email,
+                'estado': s.estado,
+                'fecha': s.fecha_creacion.strftime('%Y-%m-%d %H:%M') if s.fecha_creacion else '',
+                'url': url_for('admin.detalle_solicitud', solicitud_id=s.id)
+            })
+        
+        for d in denuncias:
+            tramites.append({
+                'tipo': 'Denuncia',
+                'folio': d.folio,
+                'nombre': NOMBRES_DENUNCIAS.get(d.tipo, d.tipo),
+                'usuario': d.usuario_nombre or d.usuario_email,
+                'estado': d.estado,
+                'fecha': d.fecha_creacion.strftime('%Y-%m-%d %H:%M') if d.fecha_creacion else '',
+                'url': url_for('admin.detalle_denuncia', denuncia_id=d.id)
+            })
+        
+        tramites.sort(key=lambda x: x['fecha'], reverse=True)
+        
+        stats = {
+            'total': len(tramites),
+            'solicitudes': len(solicitudes),
+            'denuncias': len(denuncias),
+            'pendientes': sum(1 for t in tramites if t['estado'] in ['pendiente', 'en_proceso', 'en_investigacion'])
+        }
+        
+        return render_template("admin/todos_tramites.html", tramites=tramites, stats=stats)
+    except Exception as e:
+        flash(f"Error al cargar trámites: {str(e)}", "error")
+        return redirect(url_for('admin.dashboard'))
+
+
+# ================================================================
 # HELPER - Registrar acción en bitácora
 # ================================================================
 
 def registrar_accion(tipo: str, descripcion: str, admin: str = None):
-    """Registra una acción en la bitácora de administración"""
     acciones_file = "data/admin_actions.json"
     acciones = []
 
@@ -2704,7 +3116,6 @@ def inject_admin_variables():
     user_name = session.get('user_name', 'Administrador')
     user_rol = session.get('user_rol', 'admin')
 
-    # ✅ Leer foto desde la base de datos, no desde la sesión
     if user_email:
         try:
             usuario = Usuario.query.filter_by(email=user_email).first()

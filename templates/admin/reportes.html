@@ -1,0 +1,146 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Reporte: {{ titulo }} - Villa Cutupú{% endblock %}
+
+{% block page_title %}Reporte: {{ titulo }}{% endblock %}
+
+{% block extra_css %}
+<style media="print">
+    body { background: white; }
+    .no-print { display: none !important; }
+    .print-container { margin: 0; padding: 0; }
+    .card { box-shadow: none; border: 1px solid #ddd; }
+    .btn-print, .btn-excel { display: none; }
+    .admin-header, .sidebar, .breadcrumbs, .page-header-actions { display: none; }
+    .report-header { margin-top: 0; }
+    @page { size: landscape; margin: 1.5cm; }
+    .report-table { font-size: 10pt; }
+</style>
+<style>
+    .report-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #2c7a3b;
+    }
+    .report-logo img {
+        max-height: 70px;
+        max-width: 200px;
+    }
+    .report-title h1 {
+        font-size: 1.8rem;
+        margin: 0;
+        color: #2d3748;
+    }
+    .report-title p {
+        margin: 0.25rem 0 0;
+        color: #4a5568;
+    }
+    .report-meta {
+        text-align: right;
+        font-size: 0.85rem;
+        color: #4a5568;
+    }
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        font-size: 0.85rem;
+    }
+    .report-table th {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        text-align: left;
+        font-weight: 600;
+    }
+    .report-table td {
+        border: 1px solid #dee2e6;
+        padding: 8px 10px;
+    }
+    .report-table tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    .footer {
+        margin-top: 2rem;
+        font-size: 0.75rem;
+        text-align: center;
+        color: #6c757d;
+        border-top: 1px solid #dee2e6;
+        padding-top: 1rem;
+    }
+    .btn-print, .btn-excel {
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+    .btn-print { background: #2d3748; color: white; border: none; }
+    .btn-excel { background: #1f7b4d; color: white; border: none; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Inicio</a>
+<span class="separator">›</span>
+<a href="{{ url_for('admin.crear_reporte') }}">Reportes</a>
+<span class="separator">›</span>
+<span>{{ titulo }}</span>
+{% endblock %}
+
+{% block content %}
+
+<div class="report-header no-print">
+    <div class="report-actions">
+        <button class="btn-print" onclick="window.print();"><i class="fas fa-print"></i> Imprimir / Guardar PDF</button>
+        <button class="btn-excel" onclick="exportarExcel()"><i class="fas fa-file-excel"></i> Exportar a Excel</button>
+    </div>
+</div>
+
+<div class="print-container">
+    <!-- Encabezado del reporte (visible en impresión) -->
+    <div class="report-header">
+        <div class="report-logo">
+            {% if logo_url %}
+                <img src="{{ logo_url }}" alt="Logo municipio">
+            {% else %}
+                <h3>Villa Cutupú</h3>
+            {% endif %}
+        </div>
+        <div class="report-title">
+            <h1>{{ titulo }}</h1>
+            <p>Sistema de Gestión Municipal</p>
+        </div>
+        <div class="report-meta">
+            <div>Generado: {{ fecha_generacion.strftime('%d/%m/%Y %H:%M') }}</div>
+            <div>Por: {{ usuario_genero }}</div>
+            <div>Registros: {{ total_registros }}</div>
+        </div>
+    </div>
+
+    <!-- Tabla de datos -->
+    <div class="report-data">
+        {{ tabla_html | safe }}
+    </div>
+
+    <!-- Pie de página -->
+    <div class="footer">
+        {{ nombre_municipio }} - Junta Distrital - Todos los derechos reservados.<br>
+        Documento generado electrónicamente. Si tiene dudas, contacte al área de transparencia.
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function exportarExcel() {
+    // Simplemente reenvía el formulario original con formato=excel
+    // Necesitas tener acceso a los valores originales del reporte, podrías almacenarlos en inputs ocultos o hacer una petición POST.
+    // Alternativa: enviar una petición AJAX con los mismos filtros.
+    alert("La exportación a Excel se realiza desde el formulario de creación. Haz clic en 'Generar' y elige Excel.");
+}
+</script>
+{% endblock %}

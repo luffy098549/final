@@ -1,0 +1,261 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-chart-line"></i> Generar Reporte Personalizado</h1>
+        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalGuardarPlantilla">
+            <i class="fas fa-save"></i> Guardar como plantilla
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Filtros y datos</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.crear_reporte') }}" id="formReporte">
+                        <div class="mb-3">
+                            <label>Tipo de reporte *</label>
+                            <select name="tipo_reporte" id="tipo_reporte" class="form-select" required>
+                                <option value="solicitudes">Solicitudes de servicio</option>
+                                <option value="denuncias">Denuncias ciudadanas</option>
+                                <option value="usuarios">Usuarios registrados</option>
+                                <option value="citas">Citas agendadas</option>
+                                <option value="contactos">Mensajes de contacto</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Rango de fechas</label>
+                            <div class="row">
+                                <div class="col"><input type="date" name="fecha_desde" class="form-control" placeholder="Desde"></div>
+                                <div class="col"><input type="date" name="fecha_hasta" class="form-control" placeholder="Hasta"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3" id="div_estados">
+                            <label>Estado(s)</label>
+                            <div class="border p-2 rounded" id="estados_checkboxes"></div>
+                        </div>
+                        <div class="mb-3" id="div_servicios">
+                            <label>Servicios / Tipos</label>
+                            <div class="border p-2 rounded" id="servicios_checkboxes"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label>Columnas a mostrar</label>
+                            <div class="border p-2 rounded" id="columnas_container" style="max-height: 200px; overflow-y: auto;"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label>Formato de salida</label>
+                            <select name="formato" class="form-select">
+                                <option value="html">Vista previa HTML</option>
+                                <option value="excel">Exportar a Excel</option>
+                                <option value="pdf">Exportar a PDF</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100"><i class="fas fa-play"></i> Generar reporte</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">🎨 Personalización visual</h5>
+                </div>
+                <div class="card-body">
+                    <div id="formEstilos" class="row g-3">
+                        <div class="col-md-6">
+                            <label>Título personalizado</label>
+                            <input type="text" name="titulo_personalizado" class="form-control" placeholder="Dejar vacío para usar el título por defecto">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Color encabezado</label>
+                            <input type="color" name="color_encabezado" class="form-control form-control-color" value="#2D5016">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Color texto encabezado</label>
+                            <input type="color" name="color_texto_encabezado" class="form-control form-control-color" value="#FFFFFF">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Color fila par</label>
+                            <input type="color" name="color_fila_par" class="form-control form-control-color" value="#F8F9FA">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Color fila impar</label>
+                            <input type="color" name="color_fila_impar" class="form-control form-control-color" value="#FFFFFF">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Tipo de fuente</label>
+                            <select name="fuente" class="form-select">
+                                <option value="Arial, sans-serif">Arial</option>
+                                <option value="'Times New Roman', serif">Times New Roman</option>
+                                <option value="Verdana, sans-serif">Verdana</option>
+                                <option value="'Courier New', monospace">Courier New</option>
+                                <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Tamaño fuente (px)</label>
+                            <input type="number" name="tamano_fuente" class="form-control" value="14" min="8" max="24">
+                        </div>
+                        <div class="col-md-5">
+                            <label>Formato de fecha</label>
+                            <input type="text" name="formato_fecha" class="form-control" value="%d/%m/%Y %H:%M" placeholder="Ej: %d/%m/%Y">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Logo (URL)</label>
+                            <input type="text" name="logo_url" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-8">
+                            <label>Pie de página</label>
+                            <input type="text" name="pie_pagina" class="form-control" placeholder="Texto que aparecerá al final">
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="mostrar_bordes" id="mostrar_bordes" checked>
+                                <label class="form-check-label" for="mostrar_bordes">Mostrar bordes en la tabla</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="mostrar_logo" id="mostrar_logo" checked>
+                                <label class="form-check-label" for="mostrar_logo">Mostrar logo en el encabezado</label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <button type="button" class="btn btn-primary" id="btnAplicarEstilos"><i class="fas fa-palette"></i> Aplicar estilos al formulario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal guardar plantilla -->
+<div class="modal fade" id="modalGuardarPlantilla" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Guardar como plantilla</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body"><input type="text" id="nombre_plantilla" class="form-control" placeholder="Nombre de la plantilla"></div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="btnGuardarPlantilla">Guardar</button></div>
+    </div></div>
+</div>
+
+<script>
+    // Datos dinámicos desde el backend
+    const servicios = {{ servicios|tojson }};
+    const tiposDenuncia = {{ tipos_denuncia|tojson }};
+    const estadosSolicitud = {{ estados_solicitud|tojson }};
+    const estadosDenuncia = {{ estados_denuncia|tojson }};
+    const tiposUsuario = {{ tipos_usuario|tojson }};
+    const SERVICIOS_CITAS = {{ SERVICIOS_CITAS|tojson }};
+
+    function actualizarCampos() {
+        const tipo = document.getElementById('tipo_reporte').value;
+        const divEstados = document.getElementById('div_estados');
+        const divServicios = document.getElementById('div_servicios');
+        const containerEstados = document.getElementById('estados_checkboxes');
+        const containerServicios = document.getElementById('servicios_checkboxes');
+
+        let estados = [];
+        if (tipo === 'solicitudes') estados = estadosSolicitud;
+        else if (tipo === 'denuncias') estados = estadosDenuncia;
+        else if (tipo === 'usuarios') estados = ['activo', 'inactivo'];
+        else if (tipo === 'citas') estados = ['pendiente', 'confirmada', 'cancelada', 'completada'];
+        else if (tipo === 'contactos') estados = ['respondido', 'pendiente'];
+        
+        if (estados.length) {
+            divEstados.style.display = 'block';
+            containerEstados.innerHTML = estados.map(e => `<div class="form-check"><input class="form-check-input" type="checkbox" name="estados" value="${e}" id="estado_${e}"><label class="form-check-label" for="estado_${e}">${e.replace('_', ' ').toUpperCase()}</label></div>`).join('');
+        } else divEstados.style.display = 'none';
+
+        let items = [];
+        if (tipo === 'solicitudes') items = servicios;
+        else if (tipo === 'denuncias') items = tiposDenuncia;
+        else if (tipo === 'usuarios') items = tiposUsuario.map(t => ({id: t, nombre: t}));
+        else if (tipo === 'citas') items = Object.entries(SERVICIOS_CITAS).map(([k,v]) => ({id: k, nombre: v}));
+        
+        if (items.length && tipo !== 'contactos') {
+            divServicios.style.display = 'block';
+            containerServicios.innerHTML = items.map(i => `<div class="form-check"><input class="form-check-input" type="checkbox" name="servicios_tipos" value="${i.id}" id="serv_${i.id}"><label class="form-check-label" for="serv_${i.id}">${i.nombre}</label></div>`).join('');
+        } else divServicios.style.display = 'none';
+
+        actualizarColumnas();
+    }
+
+    function actualizarColumnas() {
+        const tipo = document.getElementById('tipo_reporte').value;
+        const container = document.getElementById('columnas_container');
+        let columnasDisponibles = [];
+        if (tipo === 'solicitudes') columnasDisponibles = ['Folio', 'Usuario', 'Email', 'Servicio', 'Descripción', 'Estado', 'Fecha Creación'];
+        else if (tipo === 'denuncias') columnasDisponibles = ['Folio', 'Usuario', 'Email', 'Tipo', 'Ubicación', 'Descripción', 'Estado', 'Fecha'];
+        else if (tipo === 'usuarios') columnasDisponibles = ['Email', 'Nombre Completo', 'Cédula', 'Teléfono', 'Tipo', 'Rol', 'Activo', 'Registro'];
+        else if (tipo === 'citas') columnasDisponibles = ['Folio', 'Usuario', 'Email', 'Servicio', 'Fecha Cita', 'Hora', 'Motivo', 'Estado'];
+        else if (tipo === 'contactos') columnasDisponibles = ['Folio', 'Nombre', 'Email', 'Mensaje', 'Fecha', 'Respondido'];
+        
+        container.innerHTML = columnasDisponibles.map(col => `<div class="form-check"><input class="form-check-input" type="checkbox" name="columnas" value="${col}" id="col_${col.replace(/\s/g, '_')}" checked><label class="form-check-label" for="col_${col.replace(/\s/g, '_')}">${col}</label></div>`).join('');
+    }
+
+    document.getElementById('btnAplicarEstilos').addEventListener('click', function() {
+        const formPrincipal = document.getElementById('formReporte');
+        const estilosDiv = document.getElementById('formEstilos');
+        document.querySelectorAll('#formReporte input[type="hidden"].estilo-dinamico').forEach(el => el.remove());
+        Array.from(estilosDiv.querySelectorAll('input, select')).forEach(el => {
+            if (el.name) {
+                let hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = el.name;
+                hidden.className = 'estilo-dinamico';
+                if (el.type === 'checkbox') hidden.value = el.checked ? 'on' : 'off';
+                else hidden.value = el.value;
+                formPrincipal.appendChild(hidden);
+            }
+        });
+        alert('Estilos aplicados. Ahora puedes generar el reporte.');
+    });
+
+    // *** NUEVO: auto-aplicar estilos al enviar el formulario ***
+    document.getElementById('formReporte').addEventListener('submit', function() {
+        document.querySelectorAll('#formReporte input.estilo-dinamico').forEach(el => el.remove());
+        const estilosDiv = document.getElementById('formEstilos');
+        Array.from(estilosDiv.querySelectorAll('input, select')).forEach(function(el) {
+            if (!el.name) return;
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = el.name;
+            hidden.className = 'estilo-dinamico';
+            hidden.value = (el.type === 'checkbox') ? (el.checked ? 'on' : 'off') : el.value;
+            document.getElementById('formReporte').appendChild(hidden);
+        });
+    });
+
+    // Guardar plantilla
+    document.getElementById('btnGuardarPlantilla').addEventListener('click', function() {
+        const nombre = document.getElementById('nombre_plantilla').value;
+        if (!nombre) return alert('Escribe un nombre');
+        
+        const formData = new FormData(document.getElementById('formReporte'));
+        const estilosDiv = document.getElementById('formEstilos');
+        Array.from(estilosDiv.querySelectorAll('input, select')).forEach(el => {
+            if (el.name) formData.append(el.name, (el.type === 'checkbox' ? el.checked : el.value));
+        });
+        
+        const filtros = {};
+        for (let [key, value] of formData.entries()) {
+            if (key === 'estados' || key === 'servicios_tipos' || key === 'columnas') {
+                if (!filtros[key]) filtros[key] = [];
+                filtros[key].push(value);
+            } else {
+                filtros[key] = value;
+            }
+        }
+        
+        fetch('/admin/reportes/guardar-plantilla', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ nombre: nombre, tipo_reporte: filtros.tipo_reporte, filtros: filtros })
+        }).then(r => r.json()).then(data => { if (data.success) location.reload(); else alert('Error: '+data.error); });
+    });
+
+    document.getElementById('tipo_reporte').addEventListener('change', actualizarCampos);
+    actualizarCampos();
+</script>
+{% endblock %}

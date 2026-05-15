@@ -29,9 +29,19 @@
     .coords-result{background:var(--gray-50);padding:.8rem;border-radius:8px;margin-top:.5rem;font-family:monospace;font-size:.8rem}
     .btn-ayuntamiento{background:#2563eb;color:white;padding:.6rem 1.5rem;border:none;border-radius:8px;cursor:pointer;margin-bottom:1rem}
     .btn-ayuntamiento:hover{background:#1d4ed8}
-    .ayuntamiento-marker-icon{background:white;border-radius:50%;padding:8px;border:3px solid #1a3b2e;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
-    .leaflet-popup-content-wrapper{border-radius:10px;border-left:4px solid #1a3b2e}
     .map-buttons{display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+    .leaflet-popup-content-wrapper{border-radius:10px;border-left:4px solid #1a3b2e}
+    .custom-marker {
+        transition: transform 0.2s;
+    }
+    .custom-marker:hover {
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+    @keyframes pulse {
+        0% { transform: scale(0.8); opacity: 1; }
+        100% { transform: scale(1.5); opacity: 0; }
+    }
 </style>
 {% endblock %}
 
@@ -99,8 +109,8 @@
                 <select id="denunciaSelect">
                     <option value="">-- Selecciona una denuncia --</option>
                     {% for d in denuncias %}
-                        <option value="{{ d.id }}" data-direccion="{{ d.direccion }}">
-                            {{ d.folio }} - {{ d.direccion[:50] }}
+                        <option value="{{ d.id }}" data-direccion="{{ d.direccion or d.ubicacion }}">
+                            {{ d.folio }} - {{ (d.direccion or d.ubicacion)[:50] }}
                         </option>
                     {% endfor %}
                 </select>
@@ -194,35 +204,72 @@ async function cargarDenuncias() {
                 const props = feature.properties;
                 const coords = feature.geometry.coordinates;
                 
-                // Determinar color según estado
-                let markerColor = '#1a3b2e';
-                if (props.estado === 'pendiente') markerColor = '#b85e00';
-                if (props.estado === 'en_proceso') markerColor = '#2563eb';
-                if (props.estado === 'resuelta') markerColor = '#1e7b4c';
+                // NO mostrar denuncias resueltas, rechazadas o canceladas en el mapa
+                if (props.estado === 'resuelto' || props.estado === 'rechazado' || props.estado === 'cancelado') return;
                 
+                // Colores según estado
+                const colores = {
+                    'pendiente': { bg: '#b85e00', label: '🟠 Pendiente' },
+                    'en_investigacion': { bg: '#2563eb', label: '🔵 En investigación' },
+                    'en_proceso': { bg: '#2563eb', label: '🔵 En proceso' }
+                };
+                const c = colores[props.estado] || { bg: '#6b7280', label: props.estado };
+                
+                // Icono con inicial del tipo de denuncia
+                const inicialTipo = (props.tipo_nombre || '?')[0].toUpperCase();
                 const customIcon = L.divIcon({
                     className: 'custom-marker',
-                    html: `<div style="background:${markerColor};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 0 4px rgba(0,0,0,0.5)"></div>`,
-                    iconSize: [12, 12],
-                    popupAnchor: [0, -6]
+                    html: `
+                        <div style="
+                            position:relative;width:36px;height:36px;
+                            background:${c.bg};border-radius:50% 50% 50% 0;
+                            transform:rotate(-45deg);border:3px solid white;
+                            box-shadow:0 2px 8px rgba(0,0,0,0.35);">
+                            <span style="
+                                position:absolute;top:50%;left:50%;
+                                transform:translate(-50%,-50%) rotate(45deg);
+                                color:white;font-weight:800;font-size:13px;line-height:1;">
+                                ${inicialTipo}
+                            </span>
+                        </div>`,
+                    iconSize: [36, 36],
+                    iconAnchor: [18, 36],
+                    popupAnchor: [0, -36]
                 });
                 
                 const marker = L.marker([coords[1], coords[0]], { icon: customIcon }).addTo(map);
                 
+                // Popup con nombre del ciudadano y tipo de servicio
                 marker.bindPopup(`
-                    <div style="min-width:220px">
-                        <strong style="color:#1a3b2e">📋 ${props.folio}</strong><br>
-                        <span style="color:#666;font-size:.8rem">
-                            <i class="fas fa-tag"></i> ${props.tipo_nombre}
-                        </span><br>
-                        <span style="font-size:.8rem">
-                            <i class="fas fa-location-dot"></i> ${props.direccion}
-                        </span><br>
-                        <span class="badge" style="background:${markerColor}20;color:${markerColor};padding:2px 8px;border-radius:12px;font-size:.7rem">
-                            ${props.estado.replace('_',' ')}
-                        </span><br>
-                        <a href="${props.url}" style="display:inline-block;margin-top:.5rem;color:#1a3b2e;text-decoration:none">
-                            <i class="fas fa-eye"></i> Ver detalle
+                    <div style="min-width:240px;font-family:system-ui,sans-serif;">
+                        <div style="background:${c.bg};color:white;padding:.5rem .75rem;border-radius:6px 6px 0 0;margin:-8px -12px 8px;">
+                            <strong style="font-size:.9rem;">📋 ${props.folio}</strong>
+                            <span style="float:right;font-size:.75rem;opacity:.85;">${c.label}</span>
+                        </div>
+                        <table style="width:100%;font-size:.82rem;border-collapse:collapse;">
+                            <tr>
+                                <td style="color:#666;padding:2px 4px;white-space:nowrap;"><strong>👤 Ciudadano:</strong></td>
+                                <td style="padding:2px 4px;">${props.usuario_nombre || 'Anónimo'}</td>
+                            </tr>
+                            <tr>
+                                <td style="color:#666;padding:2px 4px;white-space:nowrap;"><strong>🏷️ Tipo:</strong></td>
+                                <td style="padding:2px 4px;">${props.tipo_nombre}</td>
+                            </tr>
+                            <tr>
+                                <td style="color:#666;padding:2px 4px;white-space:nowrap;"><strong>📍 Lugar:</strong></td>
+                                <td style="padding:2px 4px;">${props.direccion || props.ubicacion || '—'}</td>
+                            </tr>
+                            <tr>
+                                <td style="color:#666;padding:2px 4px;white-space:nowrap;"><strong>📅 Fecha:</strong></td>
+                                <td style="padding:2px 4px;">${props.fecha ? new Date(props.fecha).toLocaleDateString('es-DO') : '—'}</td>
+                            </tr>
+                        </table>
+                        <hr style="margin:.6rem 0;border-color:#eee;">
+                        <a href="${props.url}" style="display:inline-flex;align-items:center;gap:.3rem;
+                           color:white;background:${c.bg};text-decoration:none;
+                           padding:.35rem .9rem;border-radius:6px;font-size:.8rem;font-weight:600;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            Ver detalle
                         </a>
                     </div>
                 `);
@@ -321,21 +368,6 @@ async function geocodificar() {
         btn.disabled = false;
     }
 }
-
-// Animación CSS para el marcador temporal
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes pulse {
-        0% { transform: scale(0.8); opacity: 1; }
-        100% { transform: scale(1.5); opacity: 0; }
-    }
-    .custom-marker:hover {
-        transform: scale(1.2);
-        transition: transform 0.2s;
-        cursor: pointer;
-    }
-`;
-document.head.appendChild(style);
 
 // Auto-completar dirección al seleccionar denuncia
 document.getElementById('denunciaSelect').addEventListener('change', function() {
