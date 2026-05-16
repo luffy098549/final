@@ -183,7 +183,7 @@ def generar_tabla_html_profesional(dataframe, titulo, estilos=None):
         estilos: dict con opciones de personalización (color_encabezado, fuente, etc.)
     
     Returns:
-        str: código HTML de la tabla.
+        str: código HTML de la tabla (sin título duplicado).
     """
     if dataframe.empty:
         return "<div class='alert alert-warning text-center'>No hay datos para mostrar.</div>"
@@ -203,59 +203,25 @@ def generar_tabla_html_profesional(dataframe, titulo, estilos=None):
     
     border_style = '1px solid #dee2e6' if mostrar_bordes else 'none'
     
-    html = f"""
-    <style>
-        .reporte-tabla {{
-            font-family: {fuente};
-            font-size: {tamano}px;
-            border-collapse: collapse;
-            width: 100%;
-        }}
-        .reporte-tabla th {{
-            background-color: {color_encabezado};
-            color: {color_texto_encabezado};
-            padding: 10px;
-            border: {border_style};
-        }}
-        .reporte-tabla td {{
-            border: {border_style};
-            padding: 8px;
-        }}
-        .reporte-tabla tr:nth-child(even) {{
-            background-color: {color_fila_par};
-        }}
-        .reporte-tabla tr:nth-child(odd) {{
-            background-color: {color_fila_impar};
-        }}
-    </style>
-    <div class="reporte-tabla mt-4">
-        <h4 class="mb-3">{titulo}</h4>
-        <div class="table-responsive">
-            <table class="reporte-tabla">
-                <thead>
-                    <tr>
-    """
+    # Generar tabla con estilos inline (sin título)
+    html = f'<div style="overflow-x:auto; margin-top:1rem;"><table style="width:100%; border-collapse:collapse; font-family:{fuente}; font-size:{tamano}px;"><thead><tr>'
+    
     for col in dataframe.columns:
-        html += f"<th>{col}</th>"
-    html += """
-                    </tr>
-                </thead>
-                <tbody>
-    """
-    for _, row in dataframe.iterrows():
-        html += "<tr>"
+        html += f'<th style="background-color:{color_encabezado}; color:{color_texto_encabezado}; padding:10px 12px; border:{border_style}; text-align:left; font-weight:600;">{col}</th>'
+    
+    html += '</tr></thead><tbody>'
+    
+    for i, (_, row) in enumerate(dataframe.iterrows()):
+        bg = color_fila_par if i % 2 == 0 else color_fila_impar
+        html += f'<tr style="background-color:{bg};">'
         for col in dataframe.columns:
             valor = row[col]
             if isinstance(valor, (datetime, pd.Timestamp)):
                 valor = valor.strftime(formato_fecha)
-            html += f"<td>{valor}</td>"
-        html += "</tr>"
-    html += """
-                </tbody>
-            </table>
-        </div>
-    </div>
-    """
+            html += f'<td style="padding:8px 12px; border:{border_style}; color:#333; vertical-align:middle;">{valor}</td>'
+        html += '</tr>'
+    
+    html += '</tbody></table></div>'
     return html
 
 

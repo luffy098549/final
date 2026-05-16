@@ -188,6 +188,7 @@
     const FILTROS = {{ filtros_usados|tojson }};
     const TIPO_REPORTE = "{{ tipo_reporte }}";
     const GENERADO_POR = "{{ usuario_genero }}";
+    const ESTILOS_REPORTE = {{ estilos|tojson }};
 
     const STORAGE_KEY = 'reportes_municipales';
 
@@ -212,6 +213,7 @@
             datos: DATOS_REPORTE,
             columnas: COLUMNAS,
             filtros: FILTROS,
+            estilos: ESTILOS_REPORTE,
             fecha: new Date().toISOString(),
             generadoPor: GENERADO_POR
         };
