@@ -3,208 +3,856 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ titulo }} - {{ nombre_municipio }}</title>
+    <title>Historial de Reportes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome para íconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        @media print {
-            body {
-                margin: 0;
-                padding: 0.5cm;
-            }
-            .no-print {
-                display: none;
-            }
-            .table {
-                font-size: 11pt;
-            }
-            .page-break {
-                page-break-before: always;
-            }
+        :root {
+            --verde: #2D5016;
+            --verde-claro: #3d6b1f;
+            --fondo: #f4f6f4;
         }
+
         body {
-            background: #f4f6f9;
+            background: var(--fondo);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 20px;
         }
-        .reporte-container {
-            max-width: 1200px;
-            margin: 0 auto;
+
+        .page-header {
+            background: var(--verde);
+            color: white;
+            padding: 1.5rem 2rem;
+            margin-bottom: 0;
+        }
+
+        .page-header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .stats-bar {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            padding: 30px;
+            border-bottom: 1px solid #dee2e6;
+            padding: 0.75rem 2rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        .reporte-header {
-            border-bottom: 3px solid #2d6a4f;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .stat-pill strong {
+            color: var(--verde);
+            font-size: 15px;
+        }
+
+        .main-content {
+            padding: 1.5rem 2rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Tabs de período */
+        .periodo-tabs {
+            display: flex;
+            gap: 4px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 1.5rem;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            padding: 7px 18px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .tab-btn.active {
+            background: var(--verde);
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #f0f0f0;
+        }
+
+        /* Grupos por fecha */
+        .grupo-fecha {
+            margin-bottom: 2rem;
+        }
+
+        .grupo-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+        }
+
+        .grupo-label h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .grupo-label .linea {
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .grupo-label .badge-count {
+            font-size: 11px;
+            background: #eee;
+            color: #666;
+            border-radius: 10px;
+            padding: 2px 8px;
+        }
+
+        /* Cards de reportes */
+        .reportes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px;
+        }
+
+        .reporte-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1rem 1.1rem;
+            transition: box-shadow 0.15s, border-color 0.15s;
+            position: relative;
+        }
+
+        .reporte-card:hover {
+            box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+            border-color: #bbb;
+        }
+
+        .reporte-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .reporte-tipo-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .tipo-solicitudes { background: #e8f4e8; color: #2D5016; }
+        .tipo-denuncias   { background: #fde8e8; color: #8B1A1A; }
+        .tipo-usuarios    { background: #e8eef8; color: #1a3a6b; }
+        .tipo-citas       { background: #fdf3e3; color: #7a4400; }
+        .tipo-contactos   { background: #f0e8f8; color: #4a1a6b; }
+
+        .reporte-card-menu {
+            display: flex;
+            gap: 4px;
+        }
+
+        .btn-card-action {
+            width: 28px;
+            height: 28px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
+            transition: all 0.1s;
+        }
+
+        .btn-card-action:hover {
+            background: #f5f5f5;
+            border-color: #bbb;
+        }
+
+        .btn-card-action.danger:hover {
+            background: #fff0f0;
+            border-color: #e57373;
+            color: #c0392b;
+        }
+
+        .reporte-nombre {
+            font-size: 14px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .reporte-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #888;
+            flex-wrap: wrap;
+        }
+
+        .reporte-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .reporte-card-footer {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-ver-reporte {
+            flex: 1;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--verde);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.15s;
+        }
+
+        .btn-ver-reporte:hover {
+            background: var(--verde-claro);
+            color: white;
+        }
+
+        .btn-export-xls {
+            padding: 5px 10px;
+            font-size: 12px;
+            background: white;
+            border: 1px solid #c8e6c9;
+            color: #2D5016;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .btn-export-xls:hover {
+            background: #f1f8f1;
+        }
+
+        /* Filtros */
+        .filtros-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filtros-bar input[type="text"] {
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            padding: 7px 12px;
+            font-size: 13px;
+            width: 220px;
+        }
+
+        .filtros-bar select {
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            padding: 7px 10px;
+            font-size: 13px;
+            background: white;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #aaa;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 15px;
+            margin: 0;
+        }
+
+        /* Modal ver reporte */
+        .modal-reporte {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            overflow-y: auto;
+        }
+
+        .modal-reporte.open {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .modal-reporte-inner {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 1100px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .modal-reporte-header {
+            background: var(--verde);
+            color: white;
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .logo {
-            max-height: 80px;
+
+        .modal-reporte-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
         }
-        .titulo-reporte {
-            color: #2d6a4f;
-            font-weight: bold;
-        }
-        .info-reporte {
-            background: #e9ecef;
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        .table thead th {
-            background-color: #2d6a4f;
+
+        .btn-cerrar-modal {
+            background: rgba(255,255,255,0.2);
+            border: none;
             color: white;
-            border-color: #1b4332;
-            vertical-align: middle;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
         }
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: rgba(45,106,79,0.05);
+
+        .modal-reporte-body {
+            padding: 1.5rem;
+            overflow-x: auto;
         }
-        .table-bordered {
-            border: 1px solid #dee2e6;
+
+        .modal-meta-bar {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 11px;
-            color: #6c757d;
-            border-top: 1px solid #dee2e6;
-            padding-top: 15px;
+
+        .tabla-reporte {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
         }
-        .btn-imprimir {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
+
+        .tabla-reporte th {
+            background: var(--verde);
+            color: white;
+            padding: 9px 12px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .tabla-reporte td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        .tabla-reporte tr:nth-child(even) td {
+            background: #f9faf9;
+        }
+
+        .tabla-reporte tr:hover td {
+            background: #f0f5f0;
+        }
+
+        @media (max-width: 768px) {
+            .main-content { padding: 1rem; }
+            .stats-bar { padding: 0.75rem 1rem; gap: 1rem; }
+            .page-header { padding: 1rem; }
         }
     </style>
 </head>
 <body>
-    <div class="reporte-container">
-        <div class="reporte-header">
-            <div>
-                <img src="{{ logo_url }}" alt="Logo" class="logo" onerror="this.style.display='none'">
-            </div>
-            <div class="text-end">
-                <h2 class="titulo-reporte">{{ nombre_municipio }}</h2>
-                <p class="mb-0">Sistema Municipal de Trámites</p>
-            </div>
-        </div>
-        
-        <div class="text-center mb-4">
-            <h3>{{ titulo }}</h3>
-        </div>
-        
-        <div class="info-reporte d-flex justify-content-between">
-            <span><strong>Generado por:</strong> {{ usuario_genero }}</span>
-            <span><strong>Fecha:</strong> {{ fecha_generacion.strftime('%d/%m/%Y %H:%M:%S') }}</span>
-            <span><strong>Total registros:</strong> {{ total_registros }}</span>
-        </div>
-        
-        {{ tabla_html|safe }}
-        
-        <div class="footer">
-            <p>{{ nombre_municipio }} - Todos los derechos reservados &copy; {{ now.year }}</p>
-            <p>Este reporte es generado automáticamente a partir de los datos del sistema.</p>
-        </div>
-    </div>
-    
-    <!-- Botones flotantes (no se imprimen) -->
-    <div class="no-print btn-imprimir">
-        <button class="btn btn-success" onclick="window.print()">
-            <i class="fas fa-print"></i> Imprimir / Guardar PDF
-        </button>
-        <a href="{{ url_for('admin.crear_reporte') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Nuevo reporte
-        </a>
-        <!-- Nuevo botón Guardar reporte -->
-        <button class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#modalGuardarReporte">
-            <i class="fas fa-save"></i> Guardar este reporte
-        </button>
-    </div>
 
-    <!-- Modal para guardar reporte -->
-    <div class="modal fade" id="modalGuardarReporte" tabindex="-1" aria-labelledby="modalGuardarReporteLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalGuardarReporteLabel">Guardar reporte</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <label for="nombre_reporte" class="form-label">Nombre del reporte</label>
-                    <input type="text" id="nombre_reporte" class="form-control" placeholder="Ej: Denuncias enero 2025">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnConfirmarGuardar">Guardar</button>
-                </div>
+<div class="page-header">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+            <div style="font-size:12px; opacity:0.7; margin-bottom:2px;">
+                <a href="/admin/dashboard" style="color:rgba(255,255,255,0.7); text-decoration:none;">Panel Admin</a>
+                &rsaquo; Reportes
             </div>
+            <h1><i class="fas fa-history"></i> Historial de Reportes</h1>
+        </div>
+        <div style="display:flex; gap:8px;">
+            <a href="/admin/reportes/crear" class="btn btn-sm btn-light">
+                <i class="fas fa-plus"></i> Nuevo reporte
+            </a>
+            <button onclick="limpiarTodo()" class="btn btn-sm btn-outline-light">
+                <i class="fas fa-trash"></i> Limpiar todo
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="stats-bar" id="statsBar">
+    <div class="stat-pill"><strong id="statTotal">0</strong> reportes guardados</div>
+    <div class="stat-pill"><i class="fas fa-calendar-day" style="color:#2D5016"></i> <strong id="statHoy">0</strong> hoy</div>
+    <div class="stat-pill"><i class="fas fa-calendar-week" style="color:#2D5016"></i> <strong id="statSemana">0</strong> esta semana</div>
+    <div class="stat-pill"><i class="fas fa-calendar-alt" style="color:#2D5016"></i> <strong id="statMes">0</strong> este mes</div>
+    <div class="stat-pill" style="margin-left:auto; font-size:12px; color:#aaa;">
+        <i class="fas fa-hdd"></i> Almacenamiento local del navegador
+    </div>
+</div>
+
+<div class="main-content">
+
+    <div class="filtros-bar">
+        <input type="text" id="busqueda" placeholder="🔍 Buscar por nombre..." oninput="filtrarYRenderizar()">
+        <select id="filtroTipo" onchange="filtrarYRenderizar()">
+            <option value="">Todos los tipos</option>
+            <option value="solicitudes">Solicitudes</option>
+            <option value="denuncias">Denuncias</option>
+            <option value="usuarios">Usuarios</option>
+            <option value="citas">Citas</option>
+            <option value="contactos">Contactos</option>
+        </select>
+        <select id="filtroOrden" onchange="filtrarYRenderizar()">
+            <option value="reciente">Más reciente primero</option>
+            <option value="antiguo">Más antiguo primero</option>
+            <option value="nombre">Por nombre (A-Z)</option>
+            <option value="registros">Por cantidad de registros</option>
+        </select>
+
+        <div class="periodo-tabs" style="margin-bottom:0; margin-left:auto;">
+            <button class="tab-btn active" data-periodo="todos" onclick="cambiarPeriodo(this)">Todos</button>
+            <button class="tab-btn" data-periodo="hoy" onclick="cambiarPeriodo(this)">Hoy</button>
+            <button class="tab-btn" data-periodo="semana" onclick="cambiarPeriodo(this)">Esta semana</button>
+            <button class="tab-btn" data-periodo="mes" onclick="cambiarPeriodo(this)">Este mes</button>
+            <button class="tab-btn" data-periodo="anio" onclick="cambiarPeriodo(this)">Este año</button>
         </div>
     </div>
 
-    <!-- Bootstrap JS + Popper (necesario para modales) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div id="contenido-reportes"></div>
+</div>
 
-    <script>
-        // Funcionalidad para guardar reporte vía API
-        document.getElementById('btnConfirmarGuardar').addEventListener('click', function() {
-            const nombre = document.getElementById('nombre_reporte').value.trim();
-            if (!nombre) {
-                alert('Escribe un nombre para el reporte');
-                return;
-            }
+<!-- Modal para ver reporte -->
+<div class="modal-reporte" id="modalReporte">
+    <div class="modal-reporte-inner">
+        <div class="modal-reporte-header">
+            <h2 id="modalTitulo">Reporte</h2>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <button onclick="exportarCSV()" style="background:rgba(255,255,255,0.15); border:none; color:white; padding:5px 12px; border-radius:5px; font-size:12px; cursor:pointer;">
+                    <i class="fas fa-file-csv"></i> CSV
+                </button>
+                <button onclick="imprimirReporte()" style="background:rgba(255,255,255,0.15); border:none; color:white; padding:5px 12px; border-radius:5px; font-size:12px; cursor:pointer;">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+                <button class="btn-cerrar-modal" onclick="cerrarModal()">✕</button>
+            </div>
+        </div>
+        <div class="modal-reporte-body" id="modalBody">
+        </div>
+    </div>
+</div>
 
-            // Datos que vienen desde el backend (asegurar que existan en el contexto)
-            const datos = {{ datos_json|safe }};
-            const columnas = {{ columnas_seleccionadas|tojson }};
-            const filtros = {{ filtros_usados|tojson }};
-            const tipoReporte = "{{ tipo_reporte }}";
+<script>
+const STORAGE_KEY = 'reportes_municipales';
+let periodoActivo = 'todos';
+let reporteActualModal = null;
 
-            fetch('/admin/reportes/guardar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre: nombre,
-                    tipo_reporte: tipoReporte,
-                    datos: datos,
-                    columnas: columnas,
-                    filtros: filtros
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Reporte guardado correctamente');
-                    // Opcional: recargar o cerrar modal y limpiar campo
-                    document.getElementById('nombre_reporte').value = '';
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalGuardarReporte'));
-                    if (modal) modal.hide();
-                    // Si se desea recargar para mostrar lista actualizada, descomentar:
-                    // location.reload();
-                } else {
-                    alert('Error: ' + (data.error || 'No se pudo guardar el reporte'));
-                }
-            })
-            .catch(error => {
-                console.error('Error al guardar:', error);
-                alert('Ocurrió un error de red. Intente nuevamente.');
-            });
-        });
+// ===== STORAGE =====
+function cargarReportes() {
+    try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    } catch { return []; }
+}
 
-        // Impresión automática si viene con parámetro print=1
-        window.onload = function() {
-            if (window.location.search.includes('print=1')) {
-                setTimeout(() => window.print(), 500);
-            }
+function guardarReportes(lista) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+}
+
+// ===== CLASIFICACIÓN DE PERÍODO =====
+function esMismaFecha(fecha, ref, unidad) {
+    const d = new Date(fecha);
+    const r = ref || new Date();
+    if (unidad === 'dia') {
+        return d.toDateString() === r.toDateString();
+    } else if (unidad === 'semana') {
+        const inicioSemana = new Date(r);
+        inicioSemana.setDate(r.getDate() - r.getDay());
+        inicioSemana.setHours(0,0,0,0);
+        return d >= inicioSemana;
+    } else if (unidad === 'mes') {
+        return d.getMonth() === r.getMonth() && d.getFullYear() === r.getFullYear();
+    } else if (unidad === 'anio') {
+        return d.getFullYear() === r.getFullYear();
+    }
+    return true;
+}
+
+function filtrarPorPeriodo(reportes) {
+    if (periodoActivo === 'todos') return reportes;
+    const ahora = new Date();
+    return reportes.filter(r => {
+        if (periodoActivo === 'hoy') return esMismaFecha(r.fecha, ahora, 'dia');
+        if (periodoActivo === 'semana') return esMismaFecha(r.fecha, ahora, 'semana');
+        if (periodoActivo === 'mes') return esMismaFecha(r.fecha, ahora, 'mes');
+        if (periodoActivo === 'anio') return esMismaFecha(r.fecha, ahora, 'anio');
+        return true;
+    });
+}
+
+// ===== AGRUPACIÓN =====
+function agruparPorDia(reportes) {
+    const grupos = {};
+    reportes.forEach(r => {
+        const d = new Date(r.fecha);
+        const hoy = new Date();
+        const ayer = new Date(); ayer.setDate(ayer.getDate() - 1);
+
+        let label;
+        if (d.toDateString() === hoy.toDateString()) {
+            label = 'Hoy — ' + d.toLocaleDateString('es-DO', { weekday:'long', day:'numeric', month:'long' });
+        } else if (d.toDateString() === ayer.toDateString()) {
+            label = 'Ayer — ' + d.toLocaleDateString('es-DO', { day:'numeric', month:'long' });
+        } else {
+            label = d.toLocaleDateString('es-DO', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
         }
-    </script>
+
+        if (!grupos[label]) grupos[label] = [];
+        grupos[label].push(r);
+    });
+    return grupos;
+}
+
+function agruparPorSemana(reportes) {
+    const grupos = {};
+    reportes.forEach(r => {
+        const d = new Date(r.fecha);
+        const inicio = new Date(d);
+        inicio.setDate(d.getDate() - d.getDay());
+        const label = 'Semana del ' + inicio.toLocaleDateString('es-DO', { day:'numeric', month:'long', year:'numeric' });
+        if (!grupos[label]) grupos[label] = [];
+        grupos[label].push(r);
+    });
+    return grupos;
+}
+
+function agruparPorMes(reportes) {
+    const grupos = {};
+    reportes.forEach(r => {
+        const d = new Date(r.fecha);
+        const label = d.toLocaleDateString('es-DO', { month:'long', year:'numeric' });
+        const cap = label.charAt(0).toUpperCase() + label.slice(1);
+        if (!grupos[cap]) grupos[cap] = [];
+        grupos[cap].push(r);
+    });
+    return grupos;
+}
+
+function elegirAgrupacion(reportes) {
+    if (periodoActivo === 'hoy') return agruparPorDia(reportes);
+    if (periodoActivo === 'semana') return agruparPorDia(reportes);
+    if (periodoActivo === 'mes') return agruparPorSemana(reportes);
+    if (periodoActivo === 'anio') return agruparPorMes(reportes);
+    // todos: agrupar por mes
+    return agruparPorMes(reportes);
+}
+
+// ===== RENDER =====
+function tipoBadge(tipo) {
+    const mapa = {
+        solicitudes: 'Solicitudes',
+        denuncias: 'Denuncias',
+        usuarios: 'Usuarios',
+        citas: 'Citas',
+        contactos: 'Contactos'
+    };
+    return `<span class="reporte-tipo-badge tipo-${tipo}">${mapa[tipo] || tipo}</span>`;
+}
+
+function tiempoHace(fechaStr) {
+    const d = new Date(fechaStr);
+    const ahora = new Date();
+    const diff = Math.floor((ahora - d) / 1000);
+    if (diff < 60) return 'Hace un momento';
+    if (diff < 3600) return `Hace ${Math.floor(diff/60)} min`;
+    if (diff < 86400) return `Hace ${Math.floor(diff/3600)} h`;
+    return d.toLocaleDateString('es-DO', { day:'numeric', month:'short' });
+}
+
+function renderCard(r) {
+    const cols = r.columnas && r.columnas.length ? r.columnas.slice(0,3).join(', ') + (r.columnas.length > 3 ? '…' : '') : 'Todas las columnas';
+    return `
+    <div class="reporte-card" id="card-${r.id}">
+        <div class="reporte-card-top">
+            ${tipoBadge(r.tipo)}
+            <div class="reporte-card-menu">
+                <button class="btn-card-action" onclick="abrirModal('${r.id}')" title="Ver reporte">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-card-action danger" onclick="eliminarReporte('${r.id}')" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        <div class="reporte-nombre">${r.nombre}</div>
+        <div class="reporte-meta">
+            <span><i class="fas fa-table"></i> ${(r.datos || []).length} registros</span>
+            <span><i class="fas fa-clock"></i> ${tiempoHace(r.fecha)}</span>
+            <span title="${cols}" style="max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                <i class="fas fa-columns"></i> ${cols}
+            </span>
+        </div>
+        <div class="reporte-card-footer">
+            <button class="btn-ver-reporte" onclick="abrirModal('${r.id}')">
+                <i class="fas fa-eye"></i> Ver reporte
+            </button>
+            <button class="btn-export-xls" onclick="exportarCSVById('${r.id}')" title="Exportar CSV">
+                <i class="fas fa-file-csv"></i>
+            </button>
+        </div>
+    </div>`;
+}
+
+function filtrarYRenderizar() {
+    const busqueda = document.getElementById('busqueda').value.toLowerCase();
+    const tipo = document.getElementById('filtroTipo').value;
+    const orden = document.getElementById('filtroOrden').value;
+
+    let reportes = cargarReportes();
+
+    // Filtrar por período
+    reportes = filtrarPorPeriodo(reportes);
+
+    // Filtrar por texto
+    if (busqueda) {
+        reportes = reportes.filter(r => r.nombre.toLowerCase().includes(busqueda));
+    }
+    if (tipo) {
+        reportes = reportes.filter(r => r.tipo === tipo);
+    }
+
+    // Ordenar
+    if (orden === 'reciente') reportes.sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+    else if (orden === 'antiguo') reportes.sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+    else if (orden === 'nombre') reportes.sort((a,b) => a.nombre.localeCompare(b.nombre));
+    else if (orden === 'registros') reportes.sort((a,b) => (b.datos||[]).length - (a.datos||[]).length);
+
+    const contenedor = document.getElementById('contenido-reportes');
+
+    if (reportes.length === 0) {
+        contenedor.innerHTML = `
+        <div class="empty-state">
+            <i class="fas fa-chart-bar"></i>
+            <p><strong>No hay reportes en este período</strong></p>
+            <p style="margin-top:8px; font-size:13px;">Genera un reporte desde la pantalla de creación y guárdalo para verlo aquí.</p>
+            <a href="/admin/reportes/crear" class="btn btn-sm mt-3" style="background:var(--verde); color:white;">
+                <i class="fas fa-plus"></i> Crear reporte
+            </a>
+        </div>`;
+        return;
+    }
+
+    const grupos = elegirAgrupacion(reportes);
+
+    let html = '';
+    for (const [label, items] of Object.entries(grupos)) {
+        html += `
+        <div class="grupo-fecha">
+            <div class="grupo-label">
+                <h3>${label}</h3>
+                <div class="linea"></div>
+                <span class="badge-count">${items.length}</span>
+            </div>
+            <div class="reportes-grid">
+                ${items.map(renderCard).join('')}
+            </div>
+        </div>`;
+    }
+
+    contenedor.innerHTML = html;
+    actualizarStats();
+}
+
+function actualizarStats() {
+    const todos = cargarReportes();
+    const ahora = new Date();
+    document.getElementById('statTotal').textContent = todos.length;
+    document.getElementById('statHoy').textContent = todos.filter(r => esMismaFecha(r.fecha, ahora, 'dia')).length;
+    document.getElementById('statSemana').textContent = todos.filter(r => esMismaFecha(r.fecha, ahora, 'semana')).length;
+    document.getElementById('statMes').textContent = todos.filter(r => esMismaFecha(r.fecha, ahora, 'mes')).length;
+}
+
+function cambiarPeriodo(btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    periodoActivo = btn.dataset.periodo;
+    filtrarYRenderizar();
+}
+
+// ===== MODAL =====
+function abrirModal(id) {
+    const reportes = cargarReportes();
+    const r = reportes.find(x => x.id === id);
+    if (!r) return;
+
+    reporteActualModal = r;
+    document.getElementById('modalTitulo').textContent = r.nombre;
+
+    const datos = r.datos || [];
+    const cols = r.columnas && r.columnas.length ? r.columnas : (datos.length ? Object.keys(datos[0]) : []);
+
+    let tablaHTML = '';
+    if (datos.length === 0) {
+        tablaHTML = '<div class="text-center text-muted py-4">Sin datos</div>';
+    } else {
+        tablaHTML = `
+        <div style="overflow-x:auto;">
+        <table class="tabla-reporte">
+            <thead><tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+            <tbody>
+            ${datos.map(fila => `<tr>${cols.map(c => `<td>${fila[c] ?? ''}</td>`).join('')}</tr>`).join('')}
+            </tbody>
+        </table>
+        </div>`;
+    }
+
+    const fechaFormateada = new Date(r.fecha).toLocaleDateString('es-DO', {
+        weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit'
+    });
+
+    document.getElementById('modalBody').innerHTML = `
+    <div class="modal-meta-bar">
+        <span><i class="fas fa-calendar"></i> ${fechaFormateada}</span>
+        <span><i class="fas fa-table"></i> ${datos.length} registros</span>
+        <span><i class="fas fa-tag"></i> ${r.tipo}</span>
+        <span><i class="fas fa-user"></i> ${r.generadoPor || 'Admin'}</span>
+    </div>
+    ${tablaHTML}`;
+
+    document.getElementById('modalReporte').classList.add('open');
+}
+
+function cerrarModal() {
+    document.getElementById('modalReporte').classList.remove('open');
+    reporteActualModal = null;
+}
+
+// ===== ACCIONES =====
+function eliminarReporte(id) {
+    if (!confirm('¿Eliminar este reporte del historial local?')) return;
+    let reportes = cargarReportes();
+    reportes = reportes.filter(r => r.id !== id);
+    guardarReportes(reportes);
+    filtrarYRenderizar();
+}
+
+function limpiarTodo() {
+    if (!confirm('¿Eliminar TODOS los reportes del historial local? Esta acción no se puede deshacer.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    filtrarYRenderizar();
+}
+
+function exportarCSVById(id) {
+    const reportes = cargarReportes();
+    const r = reportes.find(x => x.id === id);
+    if (r) exportarComoCSV(r);
+}
+
+function exportarCSV() {
+    if (reporteActualModal) exportarComoCSV(reporteActualModal);
+}
+
+function exportarComoCSV(r) {
+    const datos = r.datos || [];
+    if (!datos.length) return alert('Sin datos para exportar');
+    const cols = r.columnas && r.columnas.length ? r.columnas : Object.keys(datos[0]);
+    const filas = [cols.join(',')].concat(
+        datos.map(fila => cols.map(c => `"${String(fila[c]||'').replace(/"/g,'""')}"`).join(','))
+    );
+    const blob = new Blob(['\ufeff' + filas.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `${r.nombre.replace(/\s+/g,'_')}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+}
+
+function imprimirReporte() {
+    window.print();
+}
+
+// Click fuera del modal para cerrar
+document.getElementById('modalReporte').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+});
+
+// ===== FUNCIÓN GLOBAL PARA GUARDAR DESDE reporte_generado.html =====
+// Esta función debe ser llamada desde el modal de "Guardar este reporte"
+window.guardarReporteLocal = function(datos) {
+    const id = 'rpt_' + Date.now() + '_' + Math.random().toString(36).substr(2,6);
+    const nuevo = {
+        id,
+        nombre: datos.nombre,
+        tipo: datos.tipo_reporte,
+        datos: datos.datos,
+        columnas: datos.columnas,
+        filtros: datos.filtros,
+        estilos: datos.estilos || {},
+        fecha: new Date().toISOString(),
+        generadoPor: datos.generadoPor || 'Admin'
+    };
+    const lista = cargarReportes();
+    lista.unshift(nuevo);
+    // Limitar a 200 reportes máximo
+    if (lista.length > 200) lista.splice(200);
+    guardarReportes(lista);
+    return id;
+};
+
+// ===== INIT =====
+filtrarYRenderizar();
+</script>
 </body>
 </html>

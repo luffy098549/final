@@ -1,93 +1,160 @@
 {% extends "admin/base_admin.html" %}
 {% block content %}
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <!-- ENCABEZADO -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h1><i class="fas fa-chart-line"></i> Generar Reporte Personalizado</h1>
-        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalGuardarPlantilla">
-            <i class="fas fa-save"></i> Guardar como plantilla
-        </button>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="/admin/reportes/historial" class="btn btn-success">
+                <i class="fas fa-history"></i> Ver historial de reportes
+            </a>
+            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalGuardarPlantilla">
+                <i class="fas fa-save"></i> Guardar como plantilla
+            </button>
+        </div>
     </div>
 
-    <div class="row">
+    <!-- PLANTILLAS GUARDADAS (si existen) -->
+    {% if plantillas %}
+    <div class="alert alert-info d-flex align-items-center gap-3 mb-4 py-2">
+        <i class="fas fa-bookmark"></i>
+        <span>Tienes <strong>{{ plantillas|length }}</strong> plantilla(s) guardada(s):</span>
+        {% for p in plantillas %}
+        <button class="btn btn-sm btn-outline-primary" onclick="cargarPlantilla({{ p.id }})">
+            <i class="fas fa-download"></i> {{ p.nombre }}
+        </button>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+
+        <!-- COLUMNA IZQUIERDA: Filtros -->
         <div class="col-md-5">
-            <div class="card shadow">
+            <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Filtros y datos</h5>
+                    <h5 class="mb-0"><i class="fas fa-filter"></i> Filtros y datos</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('admin.crear_reporte') }}" id="formReporte">
+
+                        <!-- Tipo de reporte -->
                         <div class="mb-3">
-                            <label>Tipo de reporte *</label>
+                            <label class="form-label fw-bold">Tipo de reporte *</label>
                             <select name="tipo_reporte" id="tipo_reporte" class="form-select" required>
-                                <option value="solicitudes">Solicitudes de servicio</option>
-                                <option value="denuncias">Denuncias ciudadanas</option>
-                                <option value="usuarios">Usuarios registrados</option>
-                                <option value="citas">Citas agendadas</option>
-                                <option value="contactos">Mensajes de contacto</option>
+                                <option value="solicitudes">📋 Solicitudes de servicio</option>
+                                <option value="denuncias">🚨 Denuncias ciudadanas</option>
+                                <option value="usuarios">👥 Usuarios registrados</option>
+                                <option value="citas">📅 Citas agendadas</option>
+                                <option value="contactos">✉️ Mensajes de contacto</option>
                             </select>
                         </div>
+
+                        <!-- Rango de fechas -->
                         <div class="mb-3">
-                            <label>Rango de fechas</label>
-                            <div class="row">
-                                <div class="col"><input type="date" name="fecha_desde" class="form-control" placeholder="Desde"></div>
-                                <div class="col"><input type="date" name="fecha_hasta" class="form-control" placeholder="Hasta"></div>
+                            <label class="form-label fw-bold">Rango de fechas</label>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <label class="form-label text-muted small">Desde</label>
+                                    <input type="date" name="fecha_desde" id="fecha_desde" class="form-control">
+                                </div>
+                                <div class="col">
+                                    <label class="form-label text-muted small">Hasta</label>
+                                    <input type="date" name="fecha_hasta" id="fecha_hasta" class="form-control">
+                                </div>
+                            </div>
+                            <!-- Atajos rápidos de fecha -->
+                            <div class="mt-2 d-flex gap-1 flex-wrap">
+                                <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" style="font-size:11px" onclick="setFechaRapida('hoy')">Hoy</button>
+                                <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" style="font-size:11px" onclick="setFechaRapida('semana')">Esta semana</button>
+                                <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" style="font-size:11px" onclick="setFechaRapida('mes')">Este mes</button>
+                                <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" style="font-size:11px" onclick="setFechaRapida('anio')">Este año</button>
+                                <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" style="font-size:11px" onclick="setFechaRapida('limpiar')">✕ Limpiar</button>
                             </div>
                         </div>
+
+                        <!-- Estados -->
                         <div class="mb-3" id="div_estados">
-                            <label>Estado(s)</label>
-                            <div class="border p-2 rounded" id="estados_checkboxes"></div>
+                            <label class="form-label fw-bold">Estado(s)</label>
+                            <div class="border p-2 rounded bg-light" id="estados_checkboxes"></div>
+                            <div class="mt-1">
+                                <button type="button" class="btn btn-xs btn-link p-0" style="font-size:11px" onclick="toggleTodos('estados_checkboxes', true)">Seleccionar todos</button>
+                                &nbsp;|&nbsp;
+                                <button type="button" class="btn btn-xs btn-link p-0" style="font-size:11px" onclick="toggleTodos('estados_checkboxes', false)">Deseleccionar</button>
+                            </div>
                         </div>
+
+                        <!-- Servicios / Tipos -->
                         <div class="mb-3" id="div_servicios">
-                            <label>Servicios / Tipos</label>
-                            <div class="border p-2 rounded" id="servicios_checkboxes"></div>
+                            <label class="form-label fw-bold">Servicios / Tipos</label>
+                            <div class="border p-2 rounded bg-light" id="servicios_checkboxes" style="max-height:150px; overflow-y:auto;"></div>
+                            <div class="mt-1">
+                                <button type="button" class="btn btn-xs btn-link p-0" style="font-size:11px" onclick="toggleTodos('servicios_checkboxes', true)">Seleccionar todos</button>
+                                &nbsp;|&nbsp;
+                                <button type="button" class="btn btn-xs btn-link p-0" style="font-size:11px" onclick="toggleTodos('servicios_checkboxes', false)">Deseleccionar</button>
+                            </div>
                         </div>
+
+                        <!-- Columnas -->
                         <div class="mb-3">
-                            <label>Columnas a mostrar</label>
-                            <div class="border p-2 rounded" id="columnas_container" style="max-height: 200px; overflow-y: auto;"></div>
+                            <label class="form-label fw-bold">Columnas a mostrar</label>
+                            <div class="border p-2 rounded bg-light" id="columnas_container" style="max-height:200px; overflow-y:auto;"></div>
+                            <div class="mt-1">
+                                <button type="button" class="btn btn-xs btn-link p-0" style="font-size:11px" onclick="toggleTodos('columnas_container', true)">Seleccionar todas</button>
+                                &nbsp;|&nbsp;
+                                <button type="button" class="btn btn-xs btn-link p-0" style="font-size:11px" onclick="toggleTodos('columnas_container', false)">Deseleccionar</button>
+                            </div>
                         </div>
+
+                        <!-- Formato -->
                         <div class="mb-3">
-                            <label>Formato de salida</label>
-                            <select name="formato" class="form-select">
-                                <option value="html">Vista previa HTML</option>
-                                <option value="excel">Exportar a Excel</option>
-                                <option value="pdf">Exportar a PDF</option>
+                            <label class="form-label fw-bold">Formato de salida</label>
+                            <select name="formato" class="form-select" id="formato_salida">
+                                <option value="html">👁️ Vista previa HTML</option>
+                                <option value="excel">📊 Exportar a Excel</option>
+                                <option value="pdf">📄 Exportar a PDF</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-success w-100"><i class="fas fa-play"></i> Generar reporte</button>
+
+                        <button type="submit" class="btn btn-success w-100 py-2">
+                            <i class="fas fa-play"></i> Generar reporte
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
 
+        <!-- COLUMNA DERECHA: Personalización -->
         <div class="col-md-7">
-            <div class="card shadow">
+            <div class="card shadow-sm">
                 <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0">🎨 Personalización visual</h5>
                 </div>
                 <div class="card-body">
                     <div id="formEstilos" class="row g-3">
                         <div class="col-md-6">
-                            <label>Título personalizado</label>
+                            <label class="form-label fw-bold">Título personalizado</label>
                             <input type="text" name="titulo_personalizado" class="form-control" placeholder="Dejar vacío para usar el título por defecto">
                         </div>
                         <div class="col-md-3">
-                            <label>Color encabezado</label>
-                            <input type="color" name="color_encabezado" class="form-control form-control-color" value="#2D5016">
+                            <label class="form-label fw-bold">Color encabezado</label>
+                            <input type="color" name="color_encabezado" class="form-control form-control-color w-100" value="#2D5016">
                         </div>
                         <div class="col-md-3">
-                            <label>Color texto encabezado</label>
-                            <input type="color" name="color_texto_encabezado" class="form-control form-control-color" value="#FFFFFF">
+                            <label class="form-label fw-bold">Color texto encabezado</label>
+                            <input type="color" name="color_texto_encabezado" class="form-control form-control-color w-100" value="#FFFFFF">
                         </div>
                         <div class="col-md-4">
-                            <label>Color fila par</label>
-                            <input type="color" name="color_fila_par" class="form-control form-control-color" value="#F8F9FA">
+                            <label class="form-label fw-bold">Color fila par</label>
+                            <input type="color" name="color_fila_par" class="form-control form-control-color w-100" value="#F8F9FA">
                         </div>
                         <div class="col-md-4">
-                            <label>Color fila impar</label>
-                            <input type="color" name="color_fila_impar" class="form-control form-control-color" value="#FFFFFF">
+                            <label class="form-label fw-bold">Color fila impar</label>
+                            <input type="color" name="color_fila_impar" class="form-control form-control-color w-100" value="#FFFFFF">
                         </div>
                         <div class="col-md-4">
-                            <label>Tipo de fuente</label>
+                            <label class="form-label fw-bold">Tipo de fuente</label>
                             <select name="fuente" class="form-select">
                                 <option value="Arial, sans-serif">Arial</option>
                                 <option value="'Times New Roman', serif">Times New Roman</option>
@@ -97,34 +164,91 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label>Tamaño fuente (px)</label>
+                            <label class="form-label fw-bold">Tamaño fuente (px)</label>
                             <input type="number" name="tamano_fuente" class="form-control" value="14" min="8" max="24">
                         </div>
                         <div class="col-md-5">
-                            <label>Formato de fecha</label>
+                            <label class="form-label fw-bold">Formato de fecha</label>
                             <input type="text" name="formato_fecha" class="form-control" value="%d/%m/%Y %H:%M" placeholder="Ej: %d/%m/%Y">
                         </div>
                         <div class="col-md-4">
-                            <label>Logo (URL)</label>
+                            <label class="form-label fw-bold">Logo (URL)</label>
                             <input type="text" name="logo_url" class="form-control" placeholder="https://...">
                         </div>
                         <div class="col-md-8">
-                            <label>Pie de página</label>
-                            <input type="text" name="pie_pagina" class="form-control" placeholder="Texto que aparecerá al final">
+                            <label class="form-label fw-bold">Pie de página</label>
+                            <input type="text" name="pie_pagina" class="form-control" placeholder="Texto que aparecerá al final del reporte">
                         </div>
                         <div class="col-md-12">
-                            <div class="form-check">
+                            <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" name="mostrar_bordes" id="mostrar_bordes" checked>
                                 <label class="form-check-label" for="mostrar_bordes">Mostrar bordes en la tabla</label>
                             </div>
-                            <div class="form-check">
+                            <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" name="mostrar_logo" id="mostrar_logo" checked>
                                 <label class="form-check-label" for="mostrar_logo">Mostrar logo en el encabezado</label>
                             </div>
                         </div>
                     </div>
                     <hr>
-                    <button type="button" class="btn btn-primary" id="btnAplicarEstilos"><i class="fas fa-palette"></i> Aplicar estilos al formulario</button>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="btn btn-primary" id="btnAplicarEstilos">
+                            <i class="fas fa-palette"></i> Aplicar estilos al formulario
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="btnResetEstilos">
+                            <i class="fas fa-undo"></i> Restablecer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREVISUALIZACIÓN DE ESTILOS -->
+            <div class="card shadow-sm mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-eye"></i> Vista previa de estilos</h6>
+                </div>
+                <div class="card-body p-2">
+                    <div id="preview_tabla" style="overflow-x:auto; font-size:13px;">
+                        <table style="width:100%; border-collapse:collapse;" id="tablaPreview">
+                            <thead>
+                                <tr>
+                                    <th id="prev_th1" style="padding:8px; background:#2D5016; color:#FFFFFF;">Folio</th>
+                                    <th id="prev_th2" style="padding:8px; background:#2D5016; color:#FFFFFF;">Usuario</th>
+                                    <th id="prev_th3" style="padding:8px; background:#2D5016; color:#FFFFFF;">Estado</th>
+                                    <th id="prev_th4" style="padding:8px; background:#2D5016; color:#FFFFFF;">Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="prev_td1" style="padding:7px; background:#F8F9FA;">SOL-001</td>
+                                    <td style="padding:7px; background:#F8F9FA;">Juan Pérez</td>
+                                    <td style="padding:7px; background:#F8F9FA;">pendiente</td>
+                                    <td style="padding:7px; background:#F8F9FA;">16/05/2026</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:7px; background:#FFFFFF;">SOL-002</td>
+                                    <td style="padding:7px; background:#FFFFFF;">María García</td>
+                                    <td style="padding:7px; background:#FFFFFF;">completado</td>
+                                    <td style="padding:7px; background:#FFFFFF;">16/05/2026</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACCESO RÁPIDO AL HISTORIAL -->
+            <div class="card shadow-sm mt-3 border-success">
+                <div class="card-body py-3">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div>
+                            <h6 class="mb-1 text-success"><i class="fas fa-history"></i> Historial de reportes</h6>
+                            <p class="mb-0 text-muted small">Accede a todos los reportes que has guardado, organizados por día, semana, mes y año.</p>
+                        </div>
+                        <a href="/admin/reportes/historial" class="btn btn-success">
+                            <i class="fas fa-arrow-right"></i> Ir al historial
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -133,22 +257,69 @@
 
 <!-- Modal guardar plantilla -->
 <div class="modal fade" id="modalGuardarPlantilla" tabindex="-1">
-    <div class="modal-dialog"><div class="modal-content">
-        <div class="modal-header"><h5 class="modal-title">Guardar como plantilla</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body"><input type="text" id="nombre_plantilla" class="form-control" placeholder="Nombre de la plantilla"></div>
-        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="btnGuardarPlantilla">Guardar</button></div>
-    </div></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-bookmark"></i> Guardar como plantilla</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label">Nombre de la plantilla</label>
+                <input type="text" id="nombre_plantilla" class="form-control" placeholder="Ej: Reporte mensual de solicitudes">
+                <div class="form-text text-muted mt-1">La plantilla guardará el tipo de reporte, filtros y columnas seleccionadas.</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardarPlantilla">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    // Datos dinámicos desde el backend
+    // ===== DATOS DESDE BACKEND =====
     const servicios = {{ servicios|tojson }};
     const tiposDenuncia = {{ tipos_denuncia|tojson }};
     const estadosSolicitud = {{ estados_solicitud|tojson }};
     const estadosDenuncia = {{ estados_denuncia|tojson }};
     const tiposUsuario = {{ tipos_usuario|tojson }};
-    const SERVICIOS_CITAS = {{ SERVICIOS_CITAS|tojson }};
+    const SERVICIOS_CITAS = {{ servicios_citas|tojson }};
 
+    // ===== FECHAS RÁPIDAS =====
+    function setFechaRapida(periodo) {
+        const hoy = new Date();
+        const fmt = d => d.toISOString().split('T')[0];
+        const desde = document.getElementById('fecha_desde');
+        const hasta = document.getElementById('fecha_hasta');
+
+        if (periodo === 'hoy') {
+            desde.value = fmt(hoy);
+            hasta.value = fmt(hoy);
+        } else if (periodo === 'semana') {
+            const ini = new Date(hoy);
+            ini.setDate(hoy.getDate() - hoy.getDay());
+            desde.value = fmt(ini);
+            hasta.value = fmt(hoy);
+        } else if (periodo === 'mes') {
+            desde.value = fmt(new Date(hoy.getFullYear(), hoy.getMonth(), 1));
+            hasta.value = fmt(hoy);
+        } else if (periodo === 'anio') {
+            desde.value = fmt(new Date(hoy.getFullYear(), 0, 1));
+            hasta.value = fmt(hoy);
+        } else if (periodo === 'limpiar') {
+            desde.value = '';
+            hasta.value = '';
+        }
+    }
+
+    // ===== TOGGLE TODOS LOS CHECKBOXES =====
+    function toggleTodos(containerId, estado) {
+        document.querySelectorAll(`#${containerId} input[type="checkbox"]`).forEach(cb => cb.checked = estado);
+    }
+
+    // ===== ACTUALIZAR CAMPOS SEGÚN TIPO =====
     function actualizarCampos() {
         const tipo = document.getElementById('tipo_reporte').value;
         const divEstados = document.getElementById('div_estados');
@@ -162,22 +333,32 @@
         else if (tipo === 'usuarios') estados = ['activo', 'inactivo'];
         else if (tipo === 'citas') estados = ['pendiente', 'confirmada', 'cancelada', 'completada'];
         else if (tipo === 'contactos') estados = ['respondido', 'pendiente'];
-        
+
         if (estados.length) {
             divEstados.style.display = 'block';
-            containerEstados.innerHTML = estados.map(e => `<div class="form-check"><input class="form-check-input" type="checkbox" name="estados" value="${e}" id="estado_${e}"><label class="form-check-label" for="estado_${e}">${e.replace('_', ' ').toUpperCase()}</label></div>`).join('');
-        } else divEstados.style.display = 'none';
+            containerEstados.innerHTML = estados.map(e =>
+                `<div class="form-check"><input class="form-check-input" type="checkbox" name="estados" value="${e}" id="estado_${e}">
+                <label class="form-check-label" for="estado_${e}">${e.replace(/_/g, ' ').toUpperCase()}</label></div>`
+            ).join('');
+        } else {
+            divEstados.style.display = 'none';
+        }
 
         let items = [];
         if (tipo === 'solicitudes') items = servicios;
         else if (tipo === 'denuncias') items = tiposDenuncia;
         else if (tipo === 'usuarios') items = tiposUsuario.map(t => ({id: t, nombre: t}));
-        else if (tipo === 'citas') items = Object.entries(SERVICIOS_CITAS).map(([k,v]) => ({id: k, nombre: v}));
-        
+        else if (tipo === 'citas') items = SERVICIOS_CITAS;
+
         if (items.length && tipo !== 'contactos') {
             divServicios.style.display = 'block';
-            containerServicios.innerHTML = items.map(i => `<div class="form-check"><input class="form-check-input" type="checkbox" name="servicios_tipos" value="${i.id}" id="serv_${i.id}"><label class="form-check-label" for="serv_${i.id}">${i.nombre}</label></div>`).join('');
-        } else divServicios.style.display = 'none';
+            containerServicios.innerHTML = items.map(i =>
+                `<div class="form-check"><input class="form-check-input" type="checkbox" name="servicios_tipos" value="${i.id}" id="serv_${i.id}">
+                <label class="form-check-label" for="serv_${i.id}">${i.nombre}</label></div>`
+            ).join('');
+        } else {
+            divServicios.style.display = 'none';
+        }
 
         actualizarColumnas();
     }
@@ -185,39 +366,70 @@
     function actualizarColumnas() {
         const tipo = document.getElementById('tipo_reporte').value;
         const container = document.getElementById('columnas_container');
-        let columnasDisponibles = [];
-        if (tipo === 'solicitudes') columnasDisponibles = ['Folio', 'Usuario', 'Email', 'Servicio', 'Descripción', 'Estado', 'Fecha Creación'];
-        else if (tipo === 'denuncias') columnasDisponibles = ['Folio', 'Usuario', 'Email', 'Tipo', 'Ubicación', 'Descripción', 'Estado', 'Fecha'];
-        else if (tipo === 'usuarios') columnasDisponibles = ['Email', 'Nombre Completo', 'Cédula', 'Teléfono', 'Tipo', 'Rol', 'Activo', 'Registro'];
-        else if (tipo === 'citas') columnasDisponibles = ['Folio', 'Usuario', 'Email', 'Servicio', 'Fecha Cita', 'Hora', 'Motivo', 'Estado'];
-        else if (tipo === 'contactos') columnasDisponibles = ['Folio', 'Nombre', 'Email', 'Mensaje', 'Fecha', 'Respondido'];
-        
-        container.innerHTML = columnasDisponibles.map(col => `<div class="form-check"><input class="form-check-input" type="checkbox" name="columnas" value="${col}" id="col_${col.replace(/\s/g, '_')}" checked><label class="form-check-label" for="col_${col.replace(/\s/g, '_')}">${col}</label></div>`).join('');
+        let cols = [];
+        if (tipo === 'solicitudes') cols = ['Folio', 'Usuario', 'Email', 'Servicio', 'Descripción', 'Estado', 'Fecha Creación'];
+        else if (tipo === 'denuncias') cols = ['Folio', 'Usuario', 'Email', 'Tipo', 'Ubicación', 'Descripción', 'Estado', 'Fecha'];
+        else if (tipo === 'usuarios') cols = ['Email', 'Nombre Completo', 'Cédula', 'Teléfono', 'Tipo', 'Rol', 'Activo', 'Registro'];
+        else if (tipo === 'citas') cols = ['Folio', 'Usuario', 'Email', 'Servicio', 'Fecha Cita', 'Hora', 'Motivo', 'Estado'];
+        else if (tipo === 'contactos') cols = ['Folio', 'Nombre', 'Email', 'Mensaje', 'Fecha', 'Respondido'];
+
+        container.innerHTML = cols.map(col =>
+            `<div class="form-check"><input class="form-check-input" type="checkbox" name="columnas" value="${col}" id="col_${col.replace(/\s/g,'_')}" checked>
+            <label class="form-check-label" for="col_${col.replace(/\s/g,'_')}">${col}</label></div>`
+        ).join('');
     }
 
-    document.getElementById('btnAplicarEstilos').addEventListener('click', function() {
-        const formPrincipal = document.getElementById('formReporte');
-        const estilosDiv = document.getElementById('formEstilos');
-        document.querySelectorAll('#formReporte input[type="hidden"].estilo-dinamico').forEach(el => el.remove());
-        Array.from(estilosDiv.querySelectorAll('input, select')).forEach(el => {
-            if (el.name) {
-                let hidden = document.createElement('input');
-                hidden.type = 'hidden';
-                hidden.name = el.name;
-                hidden.className = 'estilo-dinamico';
-                if (el.type === 'checkbox') hidden.value = el.checked ? 'on' : 'off';
-                else hidden.value = el.value;
-                formPrincipal.appendChild(hidden);
-            }
+    // ===== PREVIEW EN TIEMPO REAL =====
+    function actualizarPreview() {
+        const colorEnc = document.querySelector('[name="color_encabezado"]').value;
+        const colorTexto = document.querySelector('[name="color_texto_encabezado"]').value;
+        const colorPar = document.querySelector('[name="color_fila_par"]').value;
+        const colorImpar = document.querySelector('[name="color_fila_impar"]').value;
+        const fuente = document.querySelector('[name="fuente"]').value;
+        const tamano = document.querySelector('[name="tamano_fuente"]').value;
+        const bordes = document.querySelector('[name="mostrar_bordes"]').checked;
+
+        document.querySelectorAll('#tablaPreview th').forEach(th => {
+            th.style.background = colorEnc;
+            th.style.color = colorTexto;
+            th.style.fontFamily = fuente;
+            th.style.fontSize = tamano + 'px';
+            th.style.border = bordes ? '1px solid #ccc' : 'none';
         });
-        alert('Estilos aplicados. Ahora puedes generar el reporte.');
+
+        const filas = document.querySelectorAll('#tablaPreview tbody tr');
+        filas.forEach((tr, i) => {
+            const bg = i % 2 === 0 ? colorPar : colorImpar;
+            tr.querySelectorAll('td').forEach(td => {
+                td.style.background = bg;
+                td.style.fontFamily = fuente;
+                td.style.fontSize = tamano + 'px';
+                td.style.border = bordes ? '1px solid #eee' : 'none';
+            });
+        });
+    }
+
+    // Escuchar cambios en estilos para preview en tiempo real
+    document.querySelectorAll('#formEstilos input, #formEstilos select').forEach(el => {
+        el.addEventListener('input', actualizarPreview);
+        el.addEventListener('change', actualizarPreview);
     });
 
-    // *** NUEVO: auto-aplicar estilos al enviar el formulario ***
-    document.getElementById('formReporte').addEventListener('submit', function() {
+    // ===== APLICAR ESTILOS AL FORMULARIO =====
+    document.getElementById('btnAplicarEstilos').addEventListener('click', function() {
+        aplicarEstilosAlForm();
+        this.innerHTML = '<i class="fas fa-check"></i> Estilos aplicados';
+        this.classList.replace('btn-primary', 'btn-success');
+        setTimeout(() => {
+            this.innerHTML = '<i class="fas fa-palette"></i> Aplicar estilos al formulario';
+            this.classList.replace('btn-success', 'btn-primary');
+        }, 2000);
+    });
+
+    function aplicarEstilosAlForm() {
         document.querySelectorAll('#formReporte input.estilo-dinamico').forEach(el => el.remove());
         const estilosDiv = document.getElementById('formEstilos');
-        Array.from(estilosDiv.querySelectorAll('input, select')).forEach(function(el) {
+        Array.from(estilosDiv.querySelectorAll('input, select')).forEach(el => {
             if (!el.name) return;
             const hidden = document.createElement('input');
             hidden.type = 'hidden';
@@ -226,36 +438,113 @@
             hidden.value = (el.type === 'checkbox') ? (el.checked ? 'on' : 'off') : el.value;
             document.getElementById('formReporte').appendChild(hidden);
         });
+    }
+
+    // ===== RESTABLECER ESTILOS =====
+    document.getElementById('btnResetEstilos').addEventListener('click', function() {
+        document.querySelector('[name="color_encabezado"]').value = '#2D5016';
+        document.querySelector('[name="color_texto_encabezado"]').value = '#FFFFFF';
+        document.querySelector('[name="color_fila_par"]').value = '#F8F9FA';
+        document.querySelector('[name="color_fila_impar"]').value = '#FFFFFF';
+        document.querySelector('[name="fuente"]').value = 'Arial, sans-serif';
+        document.querySelector('[name="tamano_fuente"]').value = '14';
+        document.querySelector('[name="mostrar_bordes"]').checked = true;
+        document.querySelector('[name="mostrar_logo"]').checked = true;
+        document.querySelector('[name="titulo_personalizado"]').value = '';
+        document.querySelector('[name="pie_pagina"]').value = '';
+        document.querySelector('[name="logo_url"]').value = '';
+        actualizarPreview();
     });
 
-    // Guardar plantilla
+    // Auto-aplicar estilos al enviar
+    document.getElementById('formReporte').addEventListener('submit', function() {
+        aplicarEstilosAlForm();
+    });
+
+    // ===== GUARDAR PLANTILLA =====
     document.getElementById('btnGuardarPlantilla').addEventListener('click', function() {
-        const nombre = document.getElementById('nombre_plantilla').value;
-        if (!nombre) return alert('Escribe un nombre');
-        
+        const nombre = document.getElementById('nombre_plantilla').value.trim();
+        if (!nombre) return alert('Escribe un nombre para la plantilla');
+
         const formData = new FormData(document.getElementById('formReporte'));
-        const estilosDiv = document.getElementById('formEstilos');
-        Array.from(estilosDiv.querySelectorAll('input, select')).forEach(el => {
-            if (el.name) formData.append(el.name, (el.type === 'checkbox' ? el.checked : el.value));
-        });
-        
         const filtros = {};
         for (let [key, value] of formData.entries()) {
-            if (key === 'estados' || key === 'servicios_tipos' || key === 'columnas') {
+            if (['estados', 'servicios_tipos', 'columnas'].includes(key)) {
                 if (!filtros[key]) filtros[key] = [];
                 filtros[key].push(value);
             } else {
                 filtros[key] = value;
             }
         }
-        
+
         fetch('/admin/reportes/guardar-plantilla', {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ nombre: nombre, tipo_reporte: filtros.tipo_reporte, filtros: filtros })
-        }).then(r => r.json()).then(data => { if (data.success) location.reload(); else alert('Error: '+data.error); });
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                nombre: nombre,
+                tipo_reporte: filtros.tipo_reporte,
+                filtros: filtros
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ Plantilla guardada correctamente');
+                location.reload();
+            } else {
+                alert('❌ Error: ' + data.error);
+            }
+        });
     });
 
+    // ===== CARGAR PLANTILLA =====
+    function cargarPlantilla(id) {
+        fetch(`/admin/reportes/cargar-plantilla/${id}`)
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) return alert('Error al cargar plantilla');
+
+            // Cambiar tipo
+            document.getElementById('tipo_reporte').value = data.tipo_reporte;
+            actualizarCampos();
+
+            // Esperar que se rendericen los checkboxes
+            setTimeout(() => {
+                const filtros = data.filtros || {};
+
+                // Estados
+                if (filtros.estados) {
+                    document.querySelectorAll('[name="estados"]').forEach(cb => {
+                        cb.checked = filtros.estados.includes(cb.value);
+                    });
+                }
+
+                // Servicios
+                if (filtros.servicios_tipos) {
+                    document.querySelectorAll('[name="servicios_tipos"]').forEach(cb => {
+                        cb.checked = filtros.servicios_tipos.includes(cb.value);
+                    });
+                }
+
+                // Columnas
+                if (filtros.columnas) {
+                    document.querySelectorAll('[name="columnas"]').forEach(cb => {
+                        cb.checked = filtros.columnas.includes(cb.value);
+                    });
+                }
+
+                // Fechas
+                if (filtros.fecha_desde) document.getElementById('fecha_desde').value = filtros.fecha_desde;
+                if (filtros.fecha_hasta) document.getElementById('fecha_hasta').value = filtros.fecha_hasta;
+
+                alert('✅ Plantilla cargada correctamente');
+            }, 300);
+        });
+    }
+
+    // ===== INICIALIZAR =====
     document.getElementById('tipo_reporte').addEventListener('change', actualizarCampos);
     actualizarCampos();
+    actualizarPreview();
 </script>
-{% endblock %}
+{% endblock %} 

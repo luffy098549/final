@@ -2831,7 +2831,6 @@ def mostrar_reporte_generado():
     
     tabla_html = generar_tabla_html_profesional(df, estilos['titulo_personalizado'], estilos)
     
-    # Logo por defecto si no se ha proporcionado uno
     logo_url = estilos.get('logo_url', '') or url_for('static', filename='img/Adobe Express - file.png')
     
     return render_template("admin/reporte_generado.html",
@@ -2846,7 +2845,19 @@ def mostrar_reporte_generado():
                          filtros_usados=filtros,
                          logo_url=logo_url,
                          nombre_municipio=cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
-                         usuario_genero=session.get('user_name', 'Administrador'))
+                         usuario_genero=session.get('user_name', 'Administrador'),
+                         now=datetime.now())
+
+
+@admin_bp.route("/reportes/historial")
+@admin_required
+@permiso_requerido(Permiso.VER_BITACORA)
+def reportes_historial():
+    return render_template(
+        "admin/reportes_guardados.html",
+        nombre_municipio=cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
+        now=datetime.now()
+    )
 
 
 @admin_bp.route("/reportes/generar", methods=["POST"])
