@@ -9,7 +9,7 @@
 
     <div class="container">
 
-        <!-- ── HEADER ── -->
+        <!-- HEADER -->
         <div class="galeria-header">
             <div class="galeria-eyebrow anim" style="--d:0s">
                 <span class="eyebrow-icon"><i class="fas fa-images"></i></span>
@@ -25,12 +25,9 @@
             </p>
         </div>
 
-        <!-- ── GRID ── -->
+        <!-- GRID -->
         <div class="galeria-grid">
-
-            <!-- Item grande - Vista Panorámica (NUEVA) -->
-            <div class="galeria-item large anim anim-left" style="--d:.10s"
-                 data-index="0">
+            <div class="galeria-item large anim anim-left" style="--d:.10s" data-index="0">
                 <div class="galeria-img-wrap">
                     <img src="https://res.cloudinary.com/dwst50un4/image/upload/v1778069860/WhatsApp_Image_2026-02-16_at_10.09.06_PM_n0rxjn.jpg"
                          alt="Vista Panorámica" loading="lazy">
@@ -42,16 +39,12 @@
                         <h4>Vista Panorámica</h4>
                         <p>Nuestro hermoso distrito rodeado de naturaleza</p>
                     </div>
-                    <div class="galeria-zoom-btn">
-                        <i class="fas fa-expand-alt"></i>
-                    </div>
+                    <div class="galeria-zoom-btn"><i class="fas fa-expand-alt"></i></div>
                 </div>
                 <div class="galeria-item-num">01</div>
             </div>
 
-            <!-- Item 2 - Parque Central (NUEVA) -->
-            <div class="galeria-item anim" style="--d:.18s"
-                 data-index="1">
+            <div class="galeria-item anim" style="--d:.18s" data-index="1">
                 <div class="galeria-img-wrap">
                     <img src="https://res.cloudinary.com/dwst50un4/image/upload/v1778069869/WhatsApp_Image_2026-02-16_at_10.09.13_PM_oou7s2.jpg"
                          alt="Parque Central" loading="lazy">
@@ -63,19 +56,15 @@
                         <h4>Parque Central</h4>
                         <p>Espacio de recreación y encuentro familiar</p>
                     </div>
-                    <div class="galeria-zoom-btn">
-                        <i class="fas fa-expand-alt"></i>
-                    </div>
+                    <div class="galeria-zoom-btn"><i class="fas fa-expand-alt"></i></div>
                 </div>
                 <div class="galeria-item-num">02</div>
             </div>
 
-            <!-- Item 3 - Sede de la Junta (MANTIENE la misma ayuntamiento1) -->
-            <div class="galeria-item anim anim-right" style="--d:.26s"
-                 data-index="2">
+            <div class="galeria-item anim anim-right" style="--d:.26s" data-index="2">
                 <div class="galeria-img-wrap">
                     <img src="https://res.cloudinary.com/dwst50un4/image/upload/v1778068522/ayuntamiento1_j2zt8n.jpg"
-                         alt="Sede de la Junta" loading="lazy">
+                         alt="Sede de la Junta Distrital" loading="lazy">
                     <div class="galeria-shimmer"></div>
                 </div>
                 <div class="galeria-overlay">
@@ -84,21 +73,16 @@
                         <h4>Sede de la Junta Distrital</h4>
                         <p>Oficina central del Ayuntamiento de Cutupú</p>
                     </div>
-                    <div class="galeria-zoom-btn">
-                        <i class="fas fa-expand-alt"></i>
-                    </div>
+                    <div class="galeria-zoom-btn"><i class="fas fa-expand-alt"></i></div>
                 </div>
                 <div class="galeria-item-num">03</div>
             </div>
-
         </div>
 
-        <!-- ── FOOTER ── -->
+        <!-- FOOTER -->
         <div class="galeria-footer anim" style="--d:.35s">
             <div class="footer-left">
-                <div class="footer-pin">
-                    <i class="fas fa-map-marker-alt"></i>
-                </div>
+                <div class="footer-pin"><i class="fas fa-map-marker-alt"></i></div>
                 <div>
                     <div class="footer-place">Villa Cutupú, Río Verde Arriba — La Vega, República Dominicana</div>
                     <div class="footer-note">Espacios públicos mantenidos por el Ayuntamiento para el disfrute de todos los ciudadanos</div>
@@ -111,27 +95,7 @@
 
     </div>
 
-    <!-- ── LIGHTBOX ── -->
-    <div class="galeria-lightbox" id="galeriaLightbox" aria-hidden="true">
-        <div class="lb-backdrop"></div>
-        <button class="lb-close" aria-label="Cerrar">
-            <i class="fas fa-times"></i>
-        </button>
-        <button class="lb-prev" aria-label="Anterior">
-            <i class="fas fa-chevron-left"></i>
-        </button>
-        <button class="lb-next" aria-label="Siguiente">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-        <div class="lb-content">
-            <img src="" alt="" class="lb-img">
-            <div class="lb-info">
-                <div class="lb-title"></div>
-                <div class="lb-desc"></div>
-                <div class="lb-counter"></div>
-            </div>
-        </div>
-    </div>
+    <!-- EL LIGHTBOX ESTÁTICO HA SIDO ELIMINADO. SE CREARÁ DINÁMICAMENTE EN EL BODY -->
 
 </section>
 
@@ -139,51 +103,45 @@
 /* ── Sección ── */
 .galeria {
     padding: 7rem 0;
-    background: var(--crema);
+    background: var(--crema, #fffaf0);
     position: relative;
     overflow: hidden;
     z-index: 1;
 }
 
-/* ── Fondo ── */
+/* Fondo decorativo */
 .galeria-bg {
     position: absolute;
     inset: 0;
     pointer-events: none;
     overflow: hidden;
 }
-
 .galeria-bg-orb {
     position: absolute;
     border-radius: 50%;
     filter: blur(70px);
     opacity: .06;
 }
-
 .orb-a {
     width: 500px; height: 500px;
-    background: var(--verde);
+    background: var(--verde, #2c7a3e);
     top: -180px; left: -180px;
     animation: galeriaOrb1 16s ease-in-out infinite;
 }
-
 .orb-b {
     width: 400px; height: 400px;
-    background: var(--dorado);
+    background: var(--dorado, #c9a03d);
     bottom: -120px; right: -120px;
     animation: galeriaOrb2 20s ease-in-out infinite;
 }
-
 .galeria-bg-grid {
     position: absolute;
     inset: 0;
-    background-image:
-        linear-gradient(rgba(30,58,15,.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(30,58,15,.04) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(30,58,15,.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(30,58,15,.04) 1px, transparent 1px);
     background-size: 50px 50px;
     mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
 }
-
 @keyframes galeriaOrb1 {
     0%,100% { transform: translate(0,0) scale(1); }
     50%      { transform: translate(30px,20px) scale(1.08); }
@@ -193,53 +151,47 @@
     50%      { transform: translate(-20px,-25px) scale(1.06); }
 }
 
-/* ── Delays ── */
-.galeria .anim { transition-delay: var(--d, 0s); }
-
-/* ── Header ── */
+/* Header */
 .galeria-header { text-align: center; margin-bottom: 3.5rem; }
-
 .galeria-eyebrow {
     display: inline-flex;
     align-items: center;
     gap: .6rem;
-    background: var(--verde-xlight);
+    background: var(--verde-xlight, #e8f3e8);
     border: 1px solid rgba(74,122,40,.2);
     padding: .4rem 1.1rem;
-    border-radius: var(--r-pill);
+    border-radius: 40px;
     font-size: .75rem;
     font-weight: 700;
-    color: var(--verde);
+    color: var(--verde, #2c7a3e);
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin-bottom: 1.2rem;
 }
-
 .eyebrow-icon {
     width: 22px; height: 22px;
     background: var(--verde);
     border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
     font-size: .6rem;
 }
-
 .galeria-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(2.2rem, 5vw, 3.4rem);
     font-weight: 700;
-    color: var(--texto);
+    color: var(--texto, #1e2a1e);
     margin-bottom: 1rem;
     line-height: 1.1;
 }
-
 .galeria-accent {
     font-style: italic;
     color: var(--verde);
     position: relative;
     display: inline-block;
 }
-
 .galeria-accent::after {
     content: '';
     position: absolute;
@@ -248,16 +200,15 @@
     background: linear-gradient(90deg, var(--dorado), transparent);
     border-radius: 3px;
 }
-
 .galeria-subtitle {
-    color: var(--gris-500);
+    color: var(--gris-500, #888);
     font-size: .95rem;
     max-width: 520px;
     margin: 0 auto;
     line-height: 1.65;
 }
 
-/* ── Grid ── */
+/* Grid */
 .galeria-grid {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
@@ -265,85 +216,56 @@
     gap: 1.25rem;
     height: 560px;
 }
-
-/* ── Item base ── */
 .galeria-item {
     position: relative;
-    border-radius: var(--r-block);
+    border-radius: 20px;
     overflow: hidden;
     cursor: pointer;
-    box-shadow: var(--sh-sm);
-    transition: transform .4s var(--spring), box-shadow .4s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform .4s cubic-bezier(0.2,0.9,0.4,1.1), box-shadow .4s;
 }
-
-.galeria-item.large {
-    grid-row: 1 / 3;
-}
-
+.galeria-item.large { grid-row: 1 / 3; }
 .galeria-img-wrap {
     position: absolute;
     inset: 0;
 }
-
 .galeria-img-wrap img {
     width: 100%; height: 100%;
     object-fit: cover;
-    display: block;
-    transition: transform .65s var(--smooth);
+    transition: transform .65s ease;
 }
-
 .galeria-shimmer {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(255,255,255,.06) 0%,
-        transparent 60%
-    );
+    background: linear-gradient(135deg, rgba(255,255,255,.06) 0%, transparent 60%);
     pointer-events: none;
 }
-
-/* Hover */
 .galeria-item:hover {
     transform: translateY(-6px) scale(1.01);
-    box-shadow: var(--sh-lg);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     z-index: 2;
 }
-
-.galeria-item:hover .galeria-img-wrap img {
-    transform: scale(1.07);
-}
-
-/* ── Overlay ── */
+.galeria-item:hover .galeria-img-wrap img { transform: scale(1.07); }
 .galeria-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        to top,
-        rgba(10,20,6,.88) 0%,
-        rgba(10,20,6,.35) 45%,
-        transparent 75%
-    );
+    background: linear-gradient(to top, rgba(10,20,6,.88) 0%, rgba(10,20,6,.35) 45%, transparent 75%);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-end;
     padding: 1.2rem;
     opacity: 0;
-    transition: opacity .35s var(--smooth);
+    transition: opacity .35s ease;
 }
-
 .galeria-item:hover .galeria-overlay { opacity: 1; }
-
 .galeria-caption {
     align-self: flex-start;
     margin-top: auto;
     transform: translateY(12px);
-    transition: transform .35s var(--spring);
+    transition: transform .35s cubic-bezier(0.2,0.9,0.4,1.1);
 }
-
 .galeria-item:hover .galeria-caption { transform: translateY(0); }
-
 .caption-tag {
     display: inline-flex;
     align-items: center;
@@ -357,49 +279,36 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     padding: .25rem .7rem;
-    border-radius: var(--r-pill);
+    border-radius: 40px;
     margin-bottom: .55rem;
 }
-
 .galeria-caption h4 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.15rem;
     font-weight: 700;
     color: white;
     margin-bottom: .25rem;
-    line-height: 1.2;
 }
-
 .galeria-caption p {
     font-size: .76rem;
     color: rgba(255,255,255,.78);
-    line-height: 1.4;
 }
-
-/* Botón zoom */
 .galeria-zoom-btn {
     width: 38px; height: 38px;
     background: rgba(255,255,255,.15);
     backdrop-filter: blur(8px);
     border-radius: 50%;
     border: 1px solid rgba(255,255,255,.2);
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
     font-size: .85rem;
-    align-self: flex-start;
     transform: scale(0) rotate(-45deg);
-    transition: transform .35s var(--spring) .05s, background .2s;
+    transition: transform .35s cubic-bezier(0.2,0.9,0.4,1.1) .05s;
 }
-
-.galeria-item:hover .galeria-zoom-btn {
-    transform: scale(1) rotate(0deg);
-}
-
-.galeria-zoom-btn:hover {
-    background: var(--dorado);
-}
-
-/* Número decorativo */
+.galeria-item:hover .galeria-zoom-btn { transform: scale(1) rotate(0); }
+.galeria-zoom-btn:hover { background: var(--dorado); }
 .galeria-item-num {
     position: absolute;
     top: 1rem; left: 1rem;
@@ -409,14 +318,10 @@
     color: rgba(255,255,255,.08);
     line-height: 1;
     pointer-events: none;
-    transition: color .3s;
 }
+.galeria-item:hover .galeria-item-num { color: rgba(255,255,255,.14); }
 
-.galeria-item:hover .galeria-item-num {
-    color: rgba(255,255,255,.14);
-}
-
-/* ── Footer ── */
+/* Footer */
 .galeria-footer {
     display: flex;
     align-items: center;
@@ -425,53 +330,44 @@
     margin-top: 2rem;
     padding: 1.4rem 2rem;
     background: white;
-    border-radius: var(--r-block);
-    border: 1px solid var(--gris-200);
-    box-shadow: var(--sh-xs);
+    border-radius: 20px;
+    border: 1px solid var(--gris-200, #eaeaea);
     flex-wrap: wrap;
-    transition: box-shadow .3s, transform .3s var(--spring);
+    transition: box-shadow .3s, transform .3s cubic-bezier(0.2,0.9,0.4,1.1);
 }
-
 .galeria-footer:hover {
-    box-shadow: var(--sh-sm);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     transform: translateY(-2px);
 }
-
 .footer-left {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
-
 .footer-pin {
     width: 42px; height: 42px;
     background: var(--verde-xlight);
     border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--verde);
     font-size: 1rem;
-    flex-shrink: 0;
     animation: pinBounce 2.5s ease-in-out infinite;
 }
-
 @keyframes pinBounce {
     0%,100% { transform: translateY(0); }
     50%      { transform: translateY(-5px); }
 }
-
 .footer-place {
     font-weight: 600;
     font-size: .88rem;
     color: var(--texto);
-    margin-bottom: .2rem;
 }
-
 .footer-note {
     font-size: .74rem;
-    color: var(--gris-400);
-    line-height: 1.4;
+    color: var(--gris-400, #aaa);
 }
-
 .galeria-ver-mas {
     display: inline-flex;
     align-items: center;
@@ -479,47 +375,37 @@
     padding: .65rem 1.4rem;
     background: var(--verde);
     color: white;
-    border-radius: var(--r-pill);
+    border-radius: 40px;
     font-weight: 600;
     font-size: .83rem;
     text-decoration: none;
     white-space: nowrap;
     box-shadow: 0 3px 14px rgba(30,58,15,.28);
-    transition: all .28s var(--spring);
+    transition: all .28s cubic-bezier(0.2,0.9,0.4,1.1);
 }
-
-.galeria-ver-mas i {
-    transition: transform .28s var(--spring);
-}
-
 .galeria-ver-mas:hover {
-    background: var(--verde-med);
+    background: var(--verde-med, #1f5e2d);
     transform: translateY(-3px);
     box-shadow: 0 6px 22px rgba(30,58,15,.4);
 }
-
 .galeria-ver-mas:hover i { transform: translateX(5px); }
 
-/* ══════════════════════════════════════
-   LIGHTBOX
-══════════════════════════════════════ */
+/* LIGHTBOX (los estilos se aplican al elemento creado dinámicamente) */
 .galeria-lightbox {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: 999999 !important;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
     visibility: hidden;
-    transition: opacity .35s var(--smooth), visibility .35s;
+    transition: opacity .35s ease, visibility .35s;
 }
-
 .galeria-lightbox.active {
     opacity: 1;
     visibility: visible;
 }
-
 .lb-backdrop {
     position: absolute;
     inset: 0;
@@ -527,7 +413,6 @@
     backdrop-filter: blur(10px);
     cursor: zoom-out;
 }
-
 .lb-content {
     position: relative;
     z-index: 1;
@@ -538,38 +423,42 @@
     align-items: center;
     gap: 1.2rem;
     transform: scale(.9);
-    transition: transform .4s var(--spring);
+    transition: transform .4s cubic-bezier(0.2,0.9,0.4,1.1);
 }
-
 .galeria-lightbox.active .lb-content { transform: scale(1); }
-
 .lb-img {
     max-height: 75vh;
     max-width: 100%;
-    border-radius: var(--r-card);
+    border-radius: 16px;
     box-shadow: 0 30px 80px rgba(0,0,0,.6);
     object-fit: contain;
-    display: block;
+    transition: opacity .25s ease, transform .3s cubic-bezier(0.2,0.9,0.4,1.1) !important;
 }
-
+.lb-img.slide-left  { animation: lbSlideLeft  .32s cubic-bezier(0.2,0.9,0.4,1.1) both; }
+.lb-img.slide-right { animation: lbSlideRight .32s cubic-bezier(0.2,0.9,0.4,1.1) both; }
+@keyframes lbSlideLeft {
+    from { opacity:0; transform: translateX(60px) scale(.96); }
+    to   { opacity:1; transform: translateX(0)    scale(1); }
+}
+@keyframes lbSlideRight {
+    from { opacity:0; transform: translateX(-60px) scale(.96); }
+    to   { opacity:1; transform: translateX(0)     scale(1); }
+}
 .lb-info {
     text-align: center;
     color: white;
 }
-
 .lb-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.3rem;
     font-weight: 700;
     margin-bottom: .3rem;
 }
-
 .lb-desc {
     font-size: .85rem;
     color: rgba(255,255,255,.6);
     margin-bottom: .5rem;
 }
-
 .lb-counter {
     font-size: .72rem;
     color: var(--dorado);
@@ -577,85 +466,86 @@
     letter-spacing: 1px;
     text-transform: uppercase;
 }
+.lb-dots {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: .3rem;
+}
+.lb-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.3);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all .3s cubic-bezier(0.2,0.9,0.4,1.1);
+}
+.lb-dot.active {
+    background: var(--dorado);
+    width: 24px;
+    border-radius: 4px;
+}
+.lb-dot:hover:not(.active) { background: rgba(255,255,255,.6); }
 
 /* Botones lightbox */
-.lb-close,
-.lb-prev,
-.lb-next {
+.lb-close, .lb-prev, .lb-next {
     position: fixed;
     background: rgba(255,255,255,.1);
     border: 1px solid rgba(255,255,255,.15);
     color: white;
     border-radius: 50%;
     cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .2s, transform .3s var(--spring);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s, transform .3s cubic-bezier(0.2,0.9,0.4,1.1);
     z-index: 2;
     backdrop-filter: blur(6px);
 }
-
 .lb-close {
     top: 1.5rem; right: 1.5rem;
     width: 46px; height: 46px;
     font-size: .95rem;
 }
-
 .lb-close:hover {
     background: #dc2626;
     transform: rotate(90deg) scale(1.1);
 }
-
 .lb-prev, .lb-next {
     top: 50%; transform: translateY(-50%);
     width: 52px; height: 52px;
     font-size: 1.1rem;
 }
-
 .lb-prev { left: 1.5rem; }
 .lb-next { right: 1.5rem; }
-
 .lb-prev:hover { background: var(--verde); transform: translateY(-50%) translateX(-4px) scale(1.1); }
 .lb-next:hover { background: var(--verde); transform: translateY(-50%) translateX(4px) scale(1.1); }
 
-/* ── Responsive ── */
+/* Responsive */
 @media (max-width: 900px) {
     .galeria { padding: 5rem 0; }
-
     .galeria-grid {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto auto auto;
         height: auto;
     }
-
     .galeria-item.large {
         grid-column: 1 / 3;
         grid-row: auto;
         aspect-ratio: 16/9;
     }
-
     .galeria-item { aspect-ratio: 4/3; }
-
-    /* Overlay siempre visible en móvil */
     .galeria-overlay { opacity: 1; }
     .galeria-caption { transform: translateY(0); }
     .galeria-zoom-btn { transform: scale(1) rotate(0); }
 }
-
 @media (max-width: 640px) {
-    .galeria-grid {
-        grid-template-columns: 1fr;
-    }
-
+    .galeria-grid { grid-template-columns: 1fr; }
     .galeria-item.large { grid-column: auto; }
-
-    .galeria-footer {
-        flex-direction: column;
-        text-align: center;
-        padding: 1.2rem;
-    }
-
+    .galeria-footer { flex-direction: column; text-align: center; padding: 1.2rem; }
     .footer-left { flex-direction: column; }
-
     .lb-prev { left: .75rem; }
     .lb-next { right: .75rem; }
 }
@@ -665,7 +555,6 @@
 (function(){
     'use strict';
 
-    /* ── Datos de las imágenes ── */
     const fotos = [
         {
             src:   'https://res.cloudinary.com/dwst50un4/image/upload/v1778069860/WhatsApp_Image_2026-02-16_at_10.09.06_PM_n0rxjn.jpg',
@@ -686,14 +575,87 @@
 
     let current = 0;
 
-    const lb      = document.getElementById('galeriaLightbox');
-    const lbImg   = lb?.querySelector('.lb-img');
-    const lbTitle = lb?.querySelector('.lb-title');
-    const lbDesc  = lb?.querySelector('.lb-desc');
-    const lbCount = lb?.querySelector('.lb-counter');
+    // =============================================
+    // CREAR EL LIGHTBOX DIRECTAMENTE EN EL BODY
+    // =============================================
+    const lb = document.createElement('div');
+    lb.id = 'galeriaLightbox';
+    lb.className = 'galeria-lightbox';
+    lb.setAttribute('aria-hidden', 'true');
+    lb.innerHTML = `
+        <div class="lb-backdrop"></div>
+        <button class="lb-close" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+        <button class="lb-prev"  aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <button class="lb-next"  aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>
+        <div class="lb-content">
+            <img src="" alt="" class="lb-img">
+            <div class="lb-info">
+                <div class="lb-title"></div>
+                <div class="lb-desc"></div>
+                <div class="lb-counter"></div>
+                <div class="lb-dots" id="lbDots"></div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(lb);
+
+    // Eliminar cualquier lightbox estático residual
+    document.querySelectorAll('.galeria-lightbox:not(#galeriaLightbox)').forEach(el => el.remove());
+
+    const lbImg   = lb.querySelector('.lb-img');
+    const lbTitle = lb.querySelector('.lb-title');
+    const lbDesc  = lb.querySelector('.lb-desc');
+    const lbCount = lb.querySelector('.lb-counter');
+    const lbDots  = lb.querySelector('#lbDots');
+
+    function buildDots() {
+        lbDots.innerHTML = '';
+        fotos.forEach((_, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'lb-dot' + (i === current ? ' active' : '');
+            btn.setAttribute('aria-label', `Foto ${i+1}`);
+            btn.addEventListener('click', () => goTo(i));
+            lbDots.appendChild(btn);
+        });
+    }
+
+    function updateDots() {
+        lbDots.querySelectorAll('.lb-dot').forEach((d, i) => {
+            d.classList.toggle('active', i === current);
+        });
+    }
+
+    function showFoto(direction) {
+        const f = fotos[current];
+        if (!f) return;
+
+        lbImg.classList.remove('slide-left', 'slide-right');
+        void lbImg.offsetWidth;
+
+        lbImg.src = f.src;
+        lbImg.alt = f.title;
+        lbTitle.textContent = f.title;
+        lbDesc.textContent  = f.desc;
+        lbCount.textContent = `${current + 1} / ${fotos.length}`;
+
+        if (direction === 'next') lbImg.classList.add('slide-left');
+        if (direction === 'prev') lbImg.classList.add('slide-right');
+
+        updateDots();
+    }
+
+    function goTo(idx, direction) {
+        const dir = direction || (idx > current ? 'next' : 'prev');
+        current = (idx + fotos.length) % fotos.length;
+        showFoto(dir);
+    }
+
+    function prevFoto() { goTo(current - 1, 'prev'); }
+    function nextFoto() { goTo(current + 1, 'next'); }
 
     function openLb(index) {
         current = index;
+        buildDots();
         showFoto();
         lb.classList.add('active');
         lb.setAttribute('aria-hidden', 'false');
@@ -706,51 +668,36 @@
         document.body.style.overflow = '';
     }
 
-    function showFoto() {
-        const f = fotos[current];
-        if (!f || !lbImg) return;
-        lbImg.style.opacity = '0';
-        lbImg.style.transform = 'scale(.94)';
-        setTimeout(() => {
-            lbImg.src = f.src;
-            lbImg.alt = f.title;
-            if (lbTitle) lbTitle.textContent = f.title;
-            if (lbDesc)  lbDesc.textContent  = f.desc;
-            if (lbCount) lbCount.textContent = `${current + 1} / ${fotos.length}`;
-            lbImg.style.opacity = '1';
-            lbImg.style.transform = 'scale(1)';
-            lbImg.style.transition = 'opacity .3s, transform .35s var(--spring, cubic-bezier(.34,1.56,.64,1))';
-        }, 100);
-    }
-
-    function prevFoto() {
-        current = (current - 1 + fotos.length) % fotos.length;
-        showFoto();
-    }
-
-    function nextFoto() {
-        current = (current + 1) % fotos.length;
-        showFoto();
-    }
-
-    /* Clicks en items */
+    // Asignar clicks a cada item de la galería
     document.querySelectorAll('.galeria-item').forEach((item, i) => {
         item.addEventListener('click', () => openLb(i));
     });
 
-    /* Controles lightbox */
-    lb?.querySelector('.lb-close')?.addEventListener('click', closeLb);
-    lb?.querySelector('.lb-backdrop')?.addEventListener('click', closeLb);
-    lb?.querySelector('.lb-prev')?.addEventListener('click', prevFoto);
-    lb?.querySelector('.lb-next')?.addEventListener('click', nextFoto);
+    // Controles del lightbox
+    lb.querySelector('.lb-close').addEventListener('click', closeLb);
+    lb.querySelector('.lb-backdrop').addEventListener('click', closeLb);
+    lb.querySelector('.lb-prev').addEventListener('click', prevFoto);
+    lb.querySelector('.lb-next').addEventListener('click', nextFoto);
 
-    /* Teclado */
+    // Teclado
     document.addEventListener('keydown', e => {
-        if (!lb?.classList.contains('active')) return;
+        if (!lb.classList.contains('active')) return;
         if (e.key === 'Escape')     closeLb();
         if (e.key === 'ArrowLeft')  prevFoto();
         if (e.key === 'ArrowRight') nextFoto();
     });
 
+    // Swipe táctil
+    let touchStartX = 0;
+    lb.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+
+    lb.addEventListener('touchend', e => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 45) {
+            diff > 0 ? nextFoto() : prevFoto();
+        }
+    });
 })();
 </script>

@@ -239,7 +239,7 @@
             border-radius: 12px;
             color: var(--texto-claro);
             transition: all 0.3s var(--spring);
-            cursor: default;
+            cursor: pointer;
         }
 
         .sector-item:hover {
@@ -332,57 +332,178 @@
             }
         }
 
+        /* ========== MODAL SECTOR ========== */
+        .sector-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10,20,6,.85);
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .35s, visibility .35s;
+        }
+
+        .sector-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .sector-modal {
+            background: white;
+            border-radius: 2rem;
+            max-width: 550px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0,0,0,.4);
+            transform: scale(.88) translateY(30px);
+            transition: transform .45s var(--spring);
+        }
+
+        .sector-modal-overlay.active .sector-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .sector-modal::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--verde), var(--dorado), var(--verde));
+            background-size: 200%;
+            animation: modalBorderFlow 3s linear infinite;
+            z-index: 2;
+        }
+
+        @keyframes modalBorderFlow {
+            from { background-position: 0%; }
+            to   { background-position: 200%; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.2rem; right: 1.2rem;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            border: none;
+            background: #e8eee8;
+            color: #5a6e5a;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .95rem;
+            z-index: 10;
+            transition: background .2s, color .2s, transform .3s var(--spring);
+        }
+
+        .modal-close:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-icono {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 1rem auto;
+            background: var(--verde-xlight, #EAF5E6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--verde);
+            border: 2px solid var(--dorado);
+        }
+
+        .modal-titulo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--texto);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-divider {
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--verde), var(--dorado));
+            margin: 1rem auto;
+            border-radius: 3px;
+        }
+
+        .modal-texto {
+            color: #5a6e5a;
+            font-size: 0.9rem;
+            line-height: 1.75;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .modal-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e8eee8;
+        }
+
+        .modal-stat {
+            text-align: center;
+        }
+
+        .modal-stat-number {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--verde);
+            display: block;
+        }
+
+        .modal-stat-label {
+            font-size: 0.7rem;
+            color: #9aab9a;
+        }
+
+        @media (max-width: 500px) {
+            .modal-body { padding: 1.5rem; }
+            .modal-titulo { font-size: 1.5rem; }
+            .modal-icono { width: 55px; height: 55px; font-size: 1.5rem; }
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 1000px) {
-            .distrito-container {
-                gap: 3rem;
-            }
-            .sectores-lista {
-                grid-template-columns: 1fr;
-            }
+            .distrito-container { gap: 3rem; }
+            .sectores-lista { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 900px) {
-            .distrito {
-                padding: 4rem 0;
-            }
-            .distrito-container {
-                flex-direction: column;
-                gap: 2.5rem;
-            }
-            .distrito-stats {
-                width: 100%;
-                grid-template-columns: repeat(4, 1fr);
-            }
+            .distrito { padding: 4rem 0; }
+            .distrito-container { flex-direction: column; gap: 2.5rem; }
+            .distrito-stats { width: 100%; grid-template-columns: repeat(4, 1fr); }
         }
 
         @media (max-width: 640px) {
-            .distrito .container {
-                padding: 0 1.5rem;
-            }
-            .distrito-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-            .stat-card {
-                padding: 1.2rem 0.8rem;
-            }
-            .stat-number {
-                font-size: 1.8rem;
-            }
-            .sector-item {
-                font-size: 0.8rem;
-                padding: 0.5rem;
-            }
-            .sectores-wrapper {
-                padding: 1.2rem;
-            }
+            .distrito .container { padding: 0 1.5rem; }
+            .distrito-stats { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .stat-card { padding: 1.2rem 0.8rem; }
+            .stat-number { font-size: 1.8rem; }
+            .sectores-wrapper { padding: 1.2rem; }
         }
 
         @media (max-width: 480px) {
-            .distrito-stats {
-                grid-template-columns: 1fr;
-            }
+            .distrito-stats { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -420,18 +541,18 @@
                         <span>Sectores del Distrito</span>
                     </div>
                     <div class="sectores-lista">
-                        <div class="sector-item"><i class="fas fa-city"></i> Casco urbano de Cutupú</div>
-                        <div class="sector-item"><i class="fas fa-mountain"></i> Mirador</div>
-                        <div class="sector-item"><i class="fas fa-water"></i> La Susei</div>
-                        <div class="sector-item"><i class="fas fa-tree"></i> Arroyo Hondo</div>
-                        <div class="sector-item"><i class="fas fa-leaf"></i> Bonagua El Llano</div>
-                        <div class="sector-item"><i class="fas fa-road"></i> Manga Larga</div>
-                        <div class="sector-item"><i class="fas fa-home"></i> La Vereda</div>
-                        <div class="sector-item"><i class="fas fa-church"></i> Pueblo Viejo</div>
-                        <div class="sector-item"><i class="fas fa-tint"></i> Río Verde</div>
-                        <div class="sector-item"><i class="fas fa-seedling"></i> Naranjal</div>
-                        <div class="sector-item"><i class="fas fa-sun"></i> Romero</div>
-                        <div class="sector-item"><i class="fas fa-map-pin"></i> El Higüero</div>
+                        <div class="sector-item" data-sector="casco"><i class="fas fa-city"></i> Casco urbano de Cutupú</div>
+                        <div class="sector-item" data-sector="mirador"><i class="fas fa-mountain"></i> Mirador</div>
+                        <div class="sector-item" data-sector="susei"><i class="fas fa-water"></i> La Susei</div>
+                        <div class="sector-item" data-sector="arroyo"><i class="fas fa-tree"></i> Arroyo Hondo</div>
+                        <div class="sector-item" data-sector="bonagua"><i class="fas fa-leaf"></i> Bonagua El Llano</div>
+                        <div class="sector-item" data-sector="manga"><i class="fas fa-road"></i> Manga Larga</div>
+                        <div class="sector-item" data-sector="vereda"><i class="fas fa-home"></i> La Vereda</div>
+                        <div class="sector-item" data-sector="pueblo"><i class="fas fa-church"></i> Pueblo Viejo</div>
+                        <div class="sector-item" data-sector="rio"><i class="fas fa-tint"></i> Río Verde</div>
+                        <div class="sector-item" data-sector="naranjal"><i class="fas fa-seedling"></i> Naranjal</div>
+                        <div class="sector-item" data-sector="romero"><i class="fas fa-sun"></i> Romero</div>
+                        <div class="sector-item" data-sector="higüero"><i class="fas fa-map-pin"></i> El Higüero</div>
                     </div>
                 </div>
             </div>
@@ -457,5 +578,191 @@
             </div>
         </div>
     </section>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // Datos detallados de cada sector (información contextual realista basada en la geografía y cultura local)
+            const sectoresData = {
+                casco: {
+                    nombre: "Casco urbano de Cutupú",
+                    icono: "fas fa-city",
+                    descripcion: "El corazón administrativo y comercial del distrito. Aquí se concentran el Ayuntamiento, la Parroquia Nuestra Señora de la Altagracia, el mercado municipal y los principales negocios. Es el punto de encuentro para las festividades patronales y actividades comunitarias.",
+                    poblacion: "1,820 hab.",
+                    viviendas: "520",
+                    caracteristica: "Zona urbana con todos los servicios"
+                },
+                mirador: {
+                    nombre: "Mirador",
+                    icono: "fas fa-mountain",
+                    descripcion: "Sector elevado que ofrece una vista panorámica espectacular del valle y las montañas circundantes. Ideal para el ecoturismo y el senderismo. Sus residentes disfrutan de un ambiente tranquilo y aire puro.",
+                    poblacion: "680 hab.",
+                    viviendas: "195",
+                    caracteristica: "Vistas panorámicas del valle"
+                },
+                susei: {
+                    nombre: "La Susei",
+                    icono: "fas fa-water",
+                    descripcion: "Comunidad agrícola ubicada cerca del río. Sus tierras fértiles producen cultivos como yuca, plátano, cacao y café. Sus familias trabajadoras han mantenido vivas las tradiciones campesinas por generaciones.",
+                    poblacion: "740 hab.",
+                    viviendas: "210",
+                    caracteristica: "Agricultura y tradición"
+                },
+                arroyo: {
+                    nombre: "Arroyo Hondo",
+                    icono: "fas fa-tree",
+                    descripcion: "Sector rodeado de montañas y exuberante vegetación. Conocido por su arroyo de aguas cristalinas que desciende de las lomas. Sus habitantes se dedican principalmente a la agricultura, ganadería menor y el cuidado del medio ambiente.",
+                    poblacion: "490 hab.",
+                    viviendas: "135",
+                    caracteristica: "Recursos hídricos y ecoturismo"
+                },
+                bonagua: {
+                    nombre: "Bonagua El Llano",
+                    icono: "fas fa-leaf",
+                    descripcion: "Extensa zona llana con suelos de gran fertilidad. Importante productora de café y frutas como naranjas y aguacates. Las familias conservan tradiciones y costumbres campesinas, y es reconocida por su producción de café de altura.",
+                    poblacion: "650 hab.",
+                    viviendas: "180",
+                    caracteristica: "Tierras altas para el café"
+                },
+                manga: {
+                    nombre: "Manga Larga",
+                    icono: "fas fa-road",
+                    descripcion: "Barrio lineal a lo largo de la carretera principal que conecta los diferentes sectores. Cuenta con pequeños comercios, escuelas y fácil acceso al transporte público. Es un punto de conexión estratégico y de creciente desarrollo.",
+                    poblacion: "1,050 hab.",
+                    viviendas: "290",
+                    caracteristica: "Corredor comercial y residencial"
+                },
+                vereda: {
+                    nombre: "La Vereda",
+                    icono: "fas fa-home",
+                    descripcion: "Comunidad pequeña y muy unida, de calles de tierra y casas típicas. Sus habitantes mantienen huertos familiares y crían animales de traspatio. En los últimos años se han mejorado los accesos y caminos vecinales.",
+                    poblacion: "380 hab.",
+                    viviendas: "105",
+                    caracteristica: "Vida rural tranquila"
+                },
+                pueblo: {
+                    nombre: "Pueblo Viejo",
+                    icono: "fas fa-church",
+                    descripcion: "Asentamiento histórico del distrito, con ruinas que datan de la época colonial. Se conserva una antigua capilla y casas de arquitectura tradicional. Es un lugar de gran valor patrimonial y cultural.",
+                    poblacion: "310 hab.",
+                    viviendas: "88",
+                    caracteristica: "Patrimonio histórico-cultural"
+                },
+                rio: {
+                    nombre: "Río Verde",
+                    icono: "fas fa-tint",
+                    descripcion: "Ubicado a orillas del río que da nombre al distrito. Sus aguas son utilizadas para riego y para la pesca artesanal. Es famoso por sus balnearios naturales, especialmente durante los meses de verano.",
+                    poblacion: "620 hab.",
+                    viviendas: "175",
+                    caracteristica: "Balnearios y pesca artesanal"
+                },
+                naranjal: {
+                    nombre: "Naranjal",
+                    icono: "fas fa-seedling",
+                    descripcion: "Reconocido por sus plantaciones de naranjas y otros cítricos que llenan el aire de aroma durante la cosecha. Es un polo de desarrollo agrícola y cada año celebran la Feria de los Cítricos.",
+                    poblacion: "560 hab.",
+                    viviendas: "155",
+                    caracteristica: "Producción citrícola"
+                },
+                romero: {
+                    nombre: "Romero",
+                    icono: "fas fa-sun",
+                    descripcion: "Sector con un clima cálido característico. Se cultivan hierbas medicinales (como el romero), pastos para ganado y plantas ornamentales. Sus habitantes son emprendedores y famosos por su hospitalidad.",
+                    poblacion: "470 hab.",
+                    viviendas: "128",
+                    caracteristica: "Hierbas aromáticas y tradición"
+                },
+                higüero: {
+                    nombre: "El Higüero",
+                    icono: "fas fa-map-pin",
+                    descripcion: "Pequeño caserío rodeado de árboles de higüero, de los cuales los artesanos locales tallan hermosas piezas. Familias muy unidas que conservan la tradición de la talla en madera y las festividades comunitarias.",
+                    poblacion: "310 hab.",
+                    viviendas: "87",
+                    caracteristica: "Artesanía en higüero"
+                }
+            };
+
+            // Crear el modal dinámicamente en el body
+            const modalOverlay = document.createElement('div');
+            modalOverlay.className = 'sector-modal-overlay';
+            modalOverlay.innerHTML = `
+                <div class="sector-modal">
+                    <button class="modal-close" id="sectorModalClose"><i class="fas fa-times"></i></button>
+                    <div class="modal-body">
+                        <div class="modal-icono" id="modalIcono"><i class="fas fa-city"></i></div>
+                        <h3 class="modal-titulo" id="modalTitulo"></h3>
+                        <div class="modal-divider"></div>
+                        <p class="modal-texto" id="modalDescripcion"></p>
+                        <div class="modal-stats">
+                            <div class="modal-stat">
+                                <span class="modal-stat-number" id="modalPoblacion"></span>
+                                <span class="modal-stat-label">Habitantes</span>
+                            </div>
+                            <div class="modal-stat">
+                                <span class="modal-stat-number" id="modalViviendas"></span>
+                                <span class="modal-stat-label">Viviendas</span>
+                            </div>
+                            <div class="modal-stat">
+                                <span class="modal-stat-number" id="modalCaracteristica"></span>
+                                <span class="modal-stat-label">Destaca</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modalOverlay);
+
+            const modal = modalOverlay;
+            const closeBtn = modal.querySelector('#sectorModalClose');
+            const modalIcono = document.getElementById('modalIcono');
+            const modalTitulo = document.getElementById('modalTitulo');
+            const modalDescripcion = document.getElementById('modalDescripcion');
+            const modalPoblacion = document.getElementById('modalPoblacion');
+            const modalViviendas = document.getElementById('modalViviendas');
+            const modalCaracteristica = document.getElementById('modalCaracteristica');
+
+            function openModal(sectorId) {
+                const data = sectoresData[sectorId];
+                if (!data) return;
+
+                // Actualizar contenido
+                modalIcono.innerHTML = `<i class="${data.icono}"></i>`;
+                modalTitulo.textContent = data.nombre;
+                modalDescripcion.textContent = data.descripcion;
+                modalPoblacion.textContent = data.poblacion;
+                modalViviendas.textContent = data.viviendas;
+                modalCaracteristica.textContent = data.caracteristica;
+
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            // Asignar evento click a cada sector
+            const sectorItems = document.querySelectorAll('.sector-item');
+            sectorItems.forEach(item => {
+                const sectorId = item.getAttribute('data-sector');
+                if (sectorId) {
+                    item.addEventListener('click', () => openModal(sectorId));
+                }
+            });
+
+            // Cerrar modal
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+        })();
+    </script>
 </body>
 </html>

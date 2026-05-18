@@ -4,6 +4,202 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/servicios.css') }}">
+<style>
+    /* Ajuste para que el hero no quede tapado */
+    .serv-hero {
+        padding-top: 120px;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+    
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 130px;
+    }
+    
+    /* Stats clickeables */
+    .serv-hero-stat {
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(4px);
+    }
+    .serv-hero-stat:hover {
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.3);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    
+    /* Tarjetas clickeables */
+    .serv-card-premium,
+    .serv-beneficiario-card,
+    .serv-ayuda-item,
+    .serv-valor,
+    .serv-seguridad-card,
+    .serv-tabla-conductores tbody tr {
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .serv-card-premium:hover,
+    .serv-beneficiario-card:hover,
+    .serv-ayuda-item:hover,
+    .serv-valor:hover,
+    .serv-seguridad-card:hover,
+    .serv-tabla-conductores tbody tr:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+    .serv-tabla-conductores tbody tr {
+        cursor: pointer;
+    }
+    
+    /* Modal global (mismo estilo que municipio) */
+    .serv-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(10,20,6,.85);
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .35s, visibility .35s;
+    }
+    .serv-modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+        backdrop-filter: blur(10px);
+    }
+    .serv-modal {
+        background: white;
+        border-radius: 2rem;
+        max-width: 560px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 40px 100px rgba(0,0,0,.4);
+        transform: scale(.88) translateY(30px);
+        transition: transform .45s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+    .serv-modal-overlay.active .serv-modal {
+        transform: scale(1) translateY(0);
+    }
+    .serv-modal::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #2E6B2F, #C9A03D, #2E6B2F);
+        background-size: 200%;
+        animation: modalBorderFlow 3s linear infinite;
+        z-index: 2;
+    }
+    @keyframes modalBorderFlow {
+        from { background-position: 0%; }
+        to   { background-position: 200%; }
+    }
+    .serv-modal-close {
+        position: absolute;
+        top: 1.2rem; right: 1.2rem;
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        border: none;
+        background: #e8eee8;
+        color: #5a6e5a;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .95rem;
+        z-index: 10;
+        transition: background .2s, color .2s, transform .3s;
+    }
+    .serv-modal-close:hover {
+        background: #fee2e2;
+        color: #dc2626;
+        transform: rotate(90deg) scale(1.1);
+    }
+    .serv-modal-body {
+        padding: 2rem;
+    }
+    .serv-modal-icono {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 1rem auto;
+        background: #EAF5E6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #2E6B2F;
+        border: 2px solid #C9A03D;
+    }
+    .serv-modal-titulo {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-align: center;
+        color: #1A2A1A;
+        margin-bottom: 0.5rem;
+    }
+    .serv-modal-divider {
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(90deg, #2E6B2F, #C9A03D);
+        margin: 1rem auto;
+        border-radius: 3px;
+    }
+    .serv-modal-texto {
+        color: #5a6e5a;
+        font-size: 0.95rem;
+        line-height: 1.75;
+        margin-bottom: 1rem;
+    }
+    .serv-modal-lista {
+        list-style: none;
+        padding: 0;
+        margin-top: 1rem;
+    }
+    .serv-modal-lista li {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 0.7rem;
+        font-size: 0.85rem;
+        color: #5a6e5a;
+    }
+    .serv-modal-lista li i {
+        color: #C9A03D;
+        width: 20px;
+    }
+    .serv-modal-boton {
+        display: inline-block;
+        background: #2E6B2F;
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border-radius: 2rem;
+        text-decoration: none;
+        margin-top: 1rem;
+        transition: background 0.2s;
+    }
+    .serv-modal-boton:hover {
+        background: #1E4F1E;
+    }
+    @media (max-width: 560px) {
+        .serv-modal-body { padding: 1.5rem; }
+        .serv-modal-titulo { font-size: 1.5rem; }
+        .serv-modal-icono { width: 55px; height: 55px; font-size: 1.5rem; }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -19,11 +215,11 @@
             </h1>
             <div class="serv-hero-line"></div>
             <p class="serv-hero-subtitle">
-                Tramites, solicitudes y denuncias disponibles para los ciudadanos de Villa Cutupu.<br>
-                Rapido, transparente y a tu alcance.
+                Trámites, solicitudes y denuncias disponibles para los ciudadanos de Villa Cutupú.<br>
+                Rápido, transparente y a tu alcance.
             </p>
             <div class="serv-hero-stats" id="heroStats">
-                <!-- Stats loaded dynamically -->
+                <!-- Stats se llenan con JS -->
             </div>
         </div>
     </div>
@@ -47,32 +243,32 @@
     </div>
 </div>
 
-<!-- GRID DE SERVICIOS - Se genera dinámicamente -->
+<!-- GRID DE SERVICIOS (dinámico) -->
 <div class="serv-grid-premium" id="serviciosGrid"></div>
 
 <!-- SERVICIOS SOCIALES -->
 <section class="serv-sociales-section">
     <div class="container">
         <h2>❤️ Servicios Sociales</h2>
-        <p class="subtitle">Programas y acciones para apoyar a las personas en situacion de vulnerabilidad</p>
+        <p class="subtitle">Programas y acciones para apoyar a las personas en situación de vulnerabilidad</p>
         
         <div class="serv-beneficiarios-grid">
-            <div class="serv-beneficiario-card">
+            <div class="serv-beneficiario-card" data-beneficio="envejecientes">
                 <div class="icon">👴</div>
                 <h3>Envejecientes</h3>
-                <p>Apoyo y proteccion para adultos mayores</p>
+                <p>Apoyo y protección para adultos mayores</p>
             </div>
-            <div class="serv-beneficiario-card">
+            <div class="serv-beneficiario-card" data-beneficio="estudiantes">
                 <div class="icon">🎓</div>
                 <h3>Estudiantes</h3>
                 <p>Becas y apoyo educativo</p>
             </div>
-            <div class="serv-beneficiario-card">
+            <div class="serv-beneficiario-card" data-beneficio="familias">
                 <div class="icon">🏠</div>
                 <h3>Familias de bajos recursos</h3>
-                <p>Asistencia alimentaria y economica</p>
+                <p>Asistencia alimentaria y económica</p>
             </div>
-            <div class="serv-beneficiario-card">
+            <div class="serv-beneficiario-card" data-beneficio="necesidades">
                 <div class="icon">♿</div>
                 <h3>Personas con necesidades especiales</h3>
                 <p>Apoyo y recursos adaptados</p>
@@ -80,19 +276,19 @@
         </div>
         
         <div class="serv-ayudas-grid">
-            <div class="serv-ayuda-item"><strong>💰 Ayudas economicas</strong><span>Apoyo financiero a familias</span></div>
-            <div class="serv-ayuda-item"><strong>🎓 Becas estudiantiles</strong><span>Para jovenes del distrito</span></div>
-            <div class="serv-ayuda-item"><strong>🏥 Asistencia medica</strong><span>Atencion y medicamentos</span></div>
-            <div class="serv-ayuda-item"><strong>🍞 Apoyo alimentario</strong><span>Alimentos para familias</span></div>
+            <div class="serv-ayuda-item" data-ayuda="economicas"><strong>💰 Ayudas económicas</strong><span>Apoyo financiero a familias</span></div>
+            <div class="serv-ayuda-item" data-ayuda="becas"><strong>🎓 Becas estudiantiles</strong><span>Para jóvenes del distrito</span></div>
+            <div class="serv-ayuda-item" data-ayuda="medica"><strong>🏥 Asistencia médica</strong><span>Atención y medicamentos</span></div>
+            <div class="serv-ayuda-item" data-ayuda="alimentario"><strong>🍞 Apoyo alimentario</strong><span>Alimentos para familias</span></div>
         </div>
         
         <div class="serv-valores">
             <h3>🌟 Valores que promovemos</h3>
             <div class="serv-valores-grid">
-                <span class="serv-valor">🤝 Solidaridad</span>
-                <span class="serv-valor">💚 Empatia</span>
-                <span class="serv-valor">🙏 Respeto</span>
-                <span class="serv-valor">🤲 Compromiso social</span>
+                <span class="serv-valor" data-valor="solidaridad">🤝 Solidaridad</span>
+                <span class="serv-valor" data-valor="empatia">💚 Empatía</span>
+                <span class="serv-valor" data-valor="respeto">🙏 Respeto</span>
+                <span class="serv-valor" data-valor="compromiso">🤲 Compromiso social</span>
             </div>
         </div>
     </div>
@@ -102,20 +298,20 @@
 <section class="serv-seguridad-section">
     <div class="container">
         <h2>🛡️ Seguridad y Medio Ambiente</h2>
-        <p class="subtitle">Comprometidos con la proteccion ciudadana y el cuidado de nuestro entorno</p>
+        <p class="subtitle">Comprometidos con la protección ciudadana y el cuidado de nuestro entorno</p>
         
         <div class="serv-seguridad-grid">
-            <div class="serv-seguridad-card">
+            <div class="serv-seguridad-card" data-seguridad="policia">
                 <div class="icon">👮</div>
-                <h3>Policia Municipal</h3>
-                <p>Brinda proteccion al ayuntamiento y garantiza la seguridad en los espacios publicos del distrito municipal.</p>
+                <h3>Policía Municipal</h3>
+                <p>Brinda protección al ayuntamiento y garantiza la seguridad en los espacios públicos del distrito municipal.</p>
             </div>
-            <div class="serv-seguridad-card">
+            <div class="serv-seguridad-card" data-seguridad="ambiente">
                 <div class="icon">🌿</div>
                 <h3>Medio Ambiente</h3>
-                <p>Velar por la limpieza y el cuidado de los espacios publicos, asegurando que el entorno se mantenga en buenas condiciones.</p>
+                <p>Velar por la limpieza y el cuidado de los espacios públicos, asegurando que el entorno se mantenga en buenas condiciones.</p>
             </div>
-            <div class="serv-seguridad-card">
+            <div class="serv-seguridad-card" data-seguridad="ciudadanas">
                 <div class="icon">🤝</div>
                 <h3>Acciones Ciudadanas</h3>
                 <p>Evitar tirar basura, ser conscientes con el entorno y respetar los horarios para sacar los desechos.</p>
@@ -123,7 +319,7 @@
         </div>
         
         <div class="serv-warning">
-            <p><strong>⚠️ Importante:</strong> No respetar los horarios de recoleccion puede provocar contaminacion, enfermedades, malos olores y la proliferacion de mosquitos.</p>
+            <p><strong>⚠️ Importante:</strong> No respetar los horarios de recolección puede provocar contaminación, enfermedades, malos olores y la proliferación de mosquitos.</p>
         </div>
     </div>
 </section>
@@ -131,8 +327,8 @@
 <!-- CONDUCTORES Y RUTAS -->
 <section class="serv-conductores-section">
     <div class="container">
-        <h2>🚛 Conductores y Rutas de Recoleccion</h2>
-        <p class="subtitle">Departamento de Transportacion - Responsable del mantenimiento de equipos pesados y vehiculos</p>
+        <h2>🚛 Conductores y Rutas de Recolección</h2>
+        <p class="subtitle">Departamento de Transportación - Responsable del mantenimiento de equipos pesados y vehículos</p>
         
         <div class="serv-tabla-wrapper">
             <table class="serv-tabla-conductores">
@@ -141,43 +337,43 @@
                         <th>Conductor</th>
                         <th>Lunes</th>
                         <th>Martes</th>
-                        <th>Miercoles</th>
+                        <th>Miércoles</th>
                         <th>Jueves</th>
                         <th>Viernes</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr data-conductor="franquelis">
                         <td>Franquelis Serrano</td>
-                        <td>Aljibes, Guanabano</td>
-                        <td>Manga Larga, Ramon Caceres, Arroyo Hondo, Queco Aires</td>
-                        <td>Carretera del Caimito, Penda, camino a Artesania Belkis</td>
-                        <td>Carretera Duarte, entrada de la tusa, residencia Taveras, entrada de Guanabano</td>
-                        <td>Entrada de Guanabano, callejones y calles cercanas</td>
+                        <td>Aljibes, Guanábano</td>
+                        <td>Manga Larga, Ramón Cáceres, Arroyo Hondo, Queco Aires</td>
+                        <td>Carretera del Caimito, Penda, camino a Artesanía Belkis</td>
+                        <td>Carretera Duarte, entrada de la tusa, residencia Taveras, entrada de Guanábano</td>
+                        <td>Entrada de Guanábano, callejones y calles cercanas</td>
                     </tr>
-                    <tr>
-                        <td>Fabio Rodriguez</td>
+                    <tr data-conductor="fabio">
+                        <td>Fabio Rodríguez</td>
                         <td>La Primera Dama, barrios de los profesores, La Tuza, El Coli</td>
                         <td>Manga Larga, La Destiladera, Paja de Coco</td>
                         <td>El Llano, carretera principal, El Hoyo</td>
-                        <td>Carretera de Rio Verde, Pozo de Jose Peña, La Lima, Los Suarez</td>
+                        <td>Carretera de Río Verde, Pozo de José Peña, La Lima, Los Suárez</td>
                         <td>Barrio de los profesores, Ranchito, La Vereda</td>
                     </tr>
-                    <tr>
-                        <td>Sandro Hernandez</td>
+                    <tr data-conductor="sandro">
+                        <td>Sandro Hernández</td>
                         <td>Ayuntamiento, hospital, parque, Vista Bella, Los Mangos, Villa Tilín</td>
                         <td>El Quemado, Romero</td>
                         <td>Arroyo Hondo, Los Abreu</td>
                         <td>El Naranjal</td>
                         <td>Misma ruta del lunes (con cambios en algunos puntos)</td>
                     </tr>
-                    <tr>
-                        <td>Enrique Gutierrez</td>
-                        <td>Calle del Tecnologico, Villa Tilín, callejon del mirador</td>
-                        <td>Callejon Los Hernandez, Los Rodriguez, Los Guacaros, La Vereda, Jurungo</td>
+                    <tr data-conductor="enrique">
+                        <td>Enrique Gutiérrez</td>
+                        <td>Calle del Tecnológico, Villa Tilín, callejón del mirador</td>
+                        <td>Callejón Los Hernández, Los Rodríguez, Los Guácaros, La Vereda, Jurungo</td>
                         <td>Arroyo Hondo, La Jabilla, Bonagua, varios callejones del Llano</td>
-                        <td>Callejon de Salito, Los Suarez, Las Escobas, La Lima, Los Cocos</td>
-                        <td>Ranchito, entrada al lado del rio, la gallera, La Tuza, La Cereza, La Caña</td>
+                        <td>Callejón de Salito, Los Suárez, Las Escobas, La Lima, Los Cocos</td>
+                        <td>Ranchito, entrada al lado del río, la gallera, La Tuza, La Cereza, La Caña</td>
                     </tr>
                 </tbody>
             </table>
@@ -188,10 +384,10 @@
 <!-- CTA FINAL -->
 <section class="serv-cta-section">
     <div class="container">
-        <h2>¿Necesitas mas informacion?</h2>
-        <p>Estamos aqui para ayudarte. Contactanos o revisa nuestra transparencia.</p>
+        <h2>¿Necesitas más información?</h2>
+        <p>Estamos aquí para ayudarte. Contáctanos o revisa nuestra transparencia.</p>
         <div class="serv-cta-buttons">
-            <a href="/contacto" class="serv-cta-btn-primary">Contactanos <i class="fas fa-arrow-right"></i></a>
+            <a href="/contacto" class="serv-cta-btn-primary">Contáctanos <i class="fas fa-arrow-right"></i></a>
             <a href="/transparencia" class="serv-cta-btn-secondary">Ver transparencia <i class="fas fa-chart-line"></i></a>
         </div>
     </div>
@@ -199,9 +395,7 @@
 
 <script>
 (function() {
-    // ============================================
-    // DATA CENTRALIZATION - Cambia los servicios aquí
-    // ============================================
+    // ========== 1. DATOS DE SERVICIOS ==========
     const SERVICIOS_DATA = {
         totalServicios: 11,
         categorias: {
@@ -210,109 +404,139 @@
             consulta: "CONSULTAS"
         },
         servicios: [
-            // Solicitudes (01-07)
-            { id: 1, categoria: "solicitud", numero: "01", icono: "fa-church", titulo: "Funerarias Municipales", descripcion: "Apoyo y facilidades para la realizacion de servicios funerarios dignos y accesibles.", link: "/solicitar/funeraria", meta: "Presencial", botonTexto: "Solicitar" },
-            { id: 2, categoria: "solicitud", numero: "02", icono: "fa-file-alt", titulo: "Certificado de Uso de Suelo", descripcion: "Documento oficial que indica el uso permitido de un terreno o inmueble.", link: "/solicitar/uso-suelo", meta: "3-5 dias", botonTexto: "Solicitar" },
-            { id: 3, categoria: "solicitud", numero: "03", icono: "fa-info-circle", titulo: "Acceso a Informacion (OAI/M)", descripcion: "Solicitud de informacion publica conforme a la ley de transparencia.", link: "/solicitar/oaim", meta: "15 dias habiles", botonTexto: "Solicitar" },
-            { id: 4, categoria: "solicitud", numero: "04", icono: "fa-draw-polygon", titulo: "Planeamiento Urbano", descripcion: "Asesoria para proyectos urbanisticos y cumplimiento de normativas municipales.", link: "/solicitar/planeamiento", meta: "Cita previa", botonTexto: "Solicitar" },
-            { id: 5, categoria: "solicitud", numero: "05", icono: "fa-tree", titulo: "Ornato y Prestamos de Areas", descripcion: "Solicitud de uso de plazas, parques y salones comunales para eventos.", link: "/solicitar/ornato", meta: "5 dias habiles", botonTexto: "Solicitar" },
-            { id: 6, categoria: "solicitud", numero: "06", icono: "fa-map", titulo: "Catastro Municipal", descripcion: "Tramites de nomenclatura, deslindes y certificaciones de avaluo.", link: "/solicitar/catastro", meta: "7 dias habiles", botonTexto: "Solicitar" },
-            { id: 7, categoria: "solicitud", numero: "07", icono: "fa-truck", titulo: "Gestion Comercial de Aseo", descripcion: "Altas, bajas o modificaciones del servicio de recoleccion para comercios.", link: "/solicitar/aseo-comercial", meta: "En linea", botonTexto: "Gestionar" },
-            // Denuncias (08-10)
-            { id: 8, categoria: "denuncia", numero: "08", icono: "fa-shield-alt", titulo: "Policia Municipal", descripcion: "Reportes de orden publico, ruidos molestos, ocupacion de aceras y ventas informales.", link: "/denunciar/policia", meta: "Urgente", botonTexto: "Denunciar" },
-            { id: 9, categoria: "denuncia", numero: "09", icono: "fa-broom", titulo: "Limpieza y Cuidado de la Via Publica", descripcion: "Reportes de basura acumulada, calles sucias y espacios descuidados.", link: "/denunciar/limpieza", meta: "24-48 h", botonTexto: "Reportar" },
-            { id: 10, categoria: "denuncia", numero: "10", icono: "fa-trash-alt", titulo: "Recogida de Basura", descripcion: "Denuncias por falta de recoleccion, horarios incumplidos e irregularidades.", link: "/denunciar/basura", meta: "48 h", botonTexto: "Denunciar" },
-            // Consultas (11)
-            { id: 11, categoria: "consulta", numero: "11", icono: "fa-city", titulo: "Plan de Ordenamiento Territorial", descripcion: "Consulta y asesoria sobre el plan regulador, zonificacion y desarrollo urbano.", link: "/consultar/pot", meta: "En linea", botonTexto: "Consultar" }
+            { id: 1, categoria: "solicitud", numero: "01", icono: "fa-church", titulo: "Funerarias Municipales", descripcion: "Apoyo y facilidades para la realización de servicios funerarios dignos y accesibles.", link: "/solicitar/funeraria", meta: "Presencial", botonTexto: "Solicitar", textoExtra: "Ofrecemos asesoría en trámites funerarios, reducción de tasas para familias de escasos recursos y coordinación con funerarias locales para servicios básicos gratuitos." },
+            { id: 2, categoria: "solicitud", numero: "02", icono: "fa-file-alt", titulo: "Certificado de Uso de Suelo", descripcion: "Documento oficial que indica el uso permitido de un terreno o inmueble.", link: "/solicitar/uso-suelo", meta: "3-5 dias", botonTexto: "Solicitar", textoExtra: "Requisitos: copia de cédula, título de propiedad, y plano de localización. El certificado tiene vigencia de un año." },
+            { id: 3, categoria: "solicitud", numero: "03", icono: "fa-info-circle", titulo: "Acceso a Información (OAI/M)", descripcion: "Solicitud de información pública conforme a la ley de transparencia.", link: "/solicitar/oaim", meta: "15 días hábiles", botonTexto: "Solicitar", textoExtra: "La unidad de acceso a la información responde en un plazo máximo de 15 días hábiles. Puedes hacer seguimiento en línea." },
+            { id: 4, categoria: "solicitud", numero: "04", icono: "fa-draw-polygon", titulo: "Planeamiento Urbano", descripcion: "Asesoría para proyectos urbanísticos y cumplimiento de normativas municipales.", link: "/solicitar/planeamiento", meta: "Cita previa", botonTexto: "Solicitar", textoExtra: "Incluye revisión de planos, factibilidad de proyectos y permisos de construcción. Cita con el departamento de ingeniería." },
+            { id: 5, categoria: "solicitud", numero: "05", icono: "fa-tree", titulo: "Ornato y Préstamos de Áreas", descripcion: "Solicitud de uso de plazas, parques y salones comunales para eventos.", link: "/solicitar/ornato", meta: "5 días hábiles", botonTexto: "Solicitar", textoExtra: "Disponibilidad de salones: Salón de la Cultura, Parque Central, Cancha Deportiva. Se requiere depósito de garantía." },
+            { id: 6, categoria: "solicitud", numero: "06", icono: "fa-map", titulo: "Catastro Municipal", descripcion: "Trámites de nomenclatura, deslindes y certificaciones de avalúo.", link: "/solicitar/catastro", meta: "7 días hábiles", botonTexto: "Solicitar", textoExtra: "Actualización de datos catastrales, obtención de número de casa, y certificado de avalúo para ventas o herencias." },
+            { id: 7, categoria: "solicitud", numero: "07", icono: "fa-truck", titulo: "Gestión Comercial de Aseo", descripcion: "Altas, bajas o modificaciones del servicio de recolección para comercios.", link: "/solicitar/aseo-comercial", meta: "En línea", botonTexto: "Gestionar", textoExtra: "Tarifas según categoría del comercio. Se puede gestionar totalmente en línea con firma digital." },
+            { id: 8, categoria: "denuncia", numero: "08", icono: "fa-shield-alt", titulo: "Policía Municipal", descripcion: "Reportes de orden público, ruidos molestos, ocupación de aceras y ventas informales.", link: "/denunciar/policia", meta: "Urgente", botonTexto: "Denunciar", textoExtra: "Denuncias anónimas disponibles. La policía municipal actúa en un plazo de 24 horas en caso de emergencia." },
+            { id: 9, categoria: "denuncia", numero: "09", icono: "fa-broom", titulo: "Limpieza y Cuidado de la Vía Pública", descripcion: "Reportes de basura acumulada, calles sucias y espacios descuidados.", link: "/denunciar/limpieza", meta: "24-48 h", botonTexto: "Reportar", textoExtra: "Incluye solares baldíos, escombros en vías, y falta de mantenimiento de áreas verdes." },
+            { id: 10, categoria: "denuncia", numero: "10", icono: "fa-trash-alt", titulo: "Recogida de Basura", descripcion: "Denuncias por falta de recolección, horarios incumplidos e irregularidades.", link: "/denunciar/basura", meta: "48 h", botonTexto: "Denunciar", textoExtra: "Puedes reportar el sector exacto y la fecha del incumplimiento. Se programa recuperación en 48 horas." },
+            { id: 11, categoria: "consulta", numero: "11", icono: "fa-city", titulo: "Plan de Ordenamiento Territorial", descripcion: "Consulta y asesoría sobre el plan regulador, zonificación y desarrollo urbano.", link: "/consultar/pot", meta: "En línea", botonTexto: "Consultar", textoExtra: "Acceso a mapas interactivos, zonificación vigente y proyectos futuros de expansión urbana." }
         ]
     };
 
-    // Mapeo de iconos adicionales por categoria
-    const categoriaIconos = {
-        solicitud: "solicitud-icon",
-        denuncia: "denuncia-icon",
-        consulta: "consulta-icon"
-    };
-
-    const categoriaClasesBtn = {
-        solicitud: "solicitud-btn",
-        denuncia: "denuncia-btn",
-        consulta: "consulta-btn"
-    };
-
-    // 1. Actualizar Hero Stats
-    const heroStats = document.getElementById('heroStats');
-    if (heroStats) {
-        heroStats.innerHTML = `
-            <div class="serv-hero-stat">${SERVICIOS_DATA.totalServicios} Servicios</div>
-            <div class="serv-hero-stat">3 Categorias</div>
-            <div class="serv-hero-stat">24h Respuesta</div>
-        `;
+    // ========== 2. MODAL DINÁMICO ==========
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'serv-modal-overlay';
+    modalOverlay.innerHTML = `
+        <div class="serv-modal">
+            <button class="serv-modal-close" id="servModalClose"><i class="fas fa-times"></i></button>
+            <div class="serv-modal-body">
+                <div class="serv-modal-icono" id="servModalIcono"><i class="fas fa-info-circle"></i></div>
+                <h3 class="serv-modal-titulo" id="servModalTitulo"></h3>
+                <div class="serv-modal-divider"></div>
+                <div id="servModalContenido"></div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modalOverlay);
+    const modal = modalOverlay;
+    const closeBtn = document.getElementById('servModalClose');
+    const modalIcono = document.getElementById('servModalIcono');
+    const modalTitulo = document.getElementById('servModalTitulo');
+    const modalContenido = document.getElementById('servModalContenido');
+    
+    function openModal(iconoHtml, titulo, contenidoHtml) {
+        modalIcono.innerHTML = iconoHtml;
+        modalTitulo.textContent = titulo;
+        modalContenido.innerHTML = contenidoHtml;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
     }
-
-    // 2. Generar todo el grid de servicios dinámicamente
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+    
+    // ========== 3. HERO STATS CLICKEABLES ==========
+    const heroStatsDiv = document.getElementById('heroStats');
+    if (heroStatsDiv) {
+        heroStatsDiv.innerHTML = `
+            <div class="serv-hero-stat" data-stat="servicios">11 Servicios</div>
+            <div class="serv-hero-stat" data-stat="categorias">3 Categorías</div>
+            <div class="serv-hero-stat" data-stat="respuesta">24h Respuesta</div>
+        `;
+        const stats = heroStatsDiv.querySelectorAll('.serv-hero-stat');
+        stats.forEach(stat => {
+            stat.addEventListener('click', () => {
+                const tipo = stat.getAttribute('data-stat');
+                let titulo = '', icono = '<i class="fas fa-chart-line"></i>', contenido = '';
+                if (tipo === 'servicios') {
+                    titulo = "11 Servicios Municipales";
+                    icono = '<i class="fas fa-concierge-bell"></i>';
+                    contenido = `<p class="serv-modal-texto">El ayuntamiento ofrece 11 servicios digitales y presenciales, organizados en tres categorías: Solicitudes (7), Denuncias (3) y Consultas (1). Todos los trámites pueden iniciarse en línea y tienen seguimiento personalizado.</p><ul class="serv-modal-lista"><li><i class="fas fa-check-circle"></i> 100% digitales</li><li><i class="fas fa-check-circle"></i> Notificaciones por correo</li><li><i class="fas fa-check-circle"></i> Tiempos máximos garantizados</li></ul>`;
+                } else if (tipo === 'categorias') {
+                    titulo = "3 Categorías de Servicios";
+                    icono = '<i class="fas fa-tags"></i>';
+                    contenido = `<p class="serv-modal-texto">Clasificamos nuestros servicios para facilitar tu búsqueda:</p><ul class="serv-modal-lista"><li><i class="fas fa-file-alt"></i> <strong>Solicitudes</strong> (7 trámites)</li><li><i class="fas fa-exclamation-triangle"></i> <strong>Denuncias</strong> (3 trámites)</li><li><i class="fas fa-question-circle"></i> <strong>Consultas</strong> (1 trámite)</li></ul><p>Cada categoría tiene plazos de respuesta diferenciados y canales específicos.</p>`;
+                } else if (tipo === 'respuesta') {
+                    titulo = "Respuesta en 24 horas";
+                    icono = '<i class="fas fa-clock"></i>';
+                    contenido = `<p class="serv-modal-texto">Nos comprometemos a dar respuesta inicial a todas las solicitudes, denuncias y consultas en un plazo máximo de 24 horas hábiles. Los plazos de resolución final varían según el tipo de trámite (3 a 15 días).</p><div class="serv-modal-stats"><div class="serv-modal-stat"><span class="serv-modal-stat-number">98%</span><span class="serv-modal-stat-label">Satisfacción</span></div><div class="serv-modal-stat"><span class="serv-modal-stat-number">24h</span><span class="serv-modal-stat-label">Respuesta inicial</span></div></div>`;
+                }
+                openModal(icono, titulo, contenido);
+            });
+        });
+    }
+    
+    // ========== 4. GENERAR GRID DE SERVICIOS CON MODALES ==========
     const serviciosGrid = document.getElementById('serviciosGrid');
     if (serviciosGrid) {
         let html = '';
+        const categoriaIconos = { solicitud: "solicitud-icon", denuncia: "denuncia-icon", consulta: "consulta-icon" };
+        const categoriaClasesBtn = { solicitud: "solicitud-btn", denuncia: "denuncia-btn", consulta: "consulta-btn" };
+        const grupos = { solicitud: [], denuncia: [], consulta: [] };
+        SERVICIOS_DATA.servicios.forEach(s => grupos[s.categoria].push(s));
         
-        // Agrupar servicios por categoria
-        const grupos = {
-            solicitud: [],
-            denuncia: [],
-            consulta: []
-        };
-        
-        SERVICIOS_DATA.servicios.forEach(servicio => {
-            grupos[servicio.categoria].push(servicio);
-        });
-        
-        // Generar HTML por categoria
         for (const [cat, nombreCat] of Object.entries(SERVICIOS_DATA.categorias)) {
             if (grupos[cat].length > 0) {
-                // Separador de categoria
-                const labelClass = `${cat}-label`;
-                html += `
-                    <div class="serv-categoria-separador">
-                        <span class="serv-separador-linea"></span>
-                        <span class="serv-separador-label ${labelClass}">${nombreCat}</span>
-                        <span class="serv-separador-linea"></span>
-                    </div>
-                `;
-                
-                // Tarjetas de la categoria
+                html += `<div class="serv-categoria-separador"><span class="serv-separador-linea"></span><span class="serv-separador-label ${cat}-label">${nombreCat}</span><span class="serv-separador-linea"></span></div>`;
                 grupos[cat].forEach(serv => {
                     html += `
-                        <div class="serv-card-premium" data-categoria="${serv.categoria}">
+                        <div class="serv-card-premium" data-categoria="${serv.categoria}" data-servicio-id="${serv.id}">
                             <div class="serv-card-band"></div>
                             <div class="serv-card-badge-number">${serv.numero}</div>
-                            <div class="serv-card-icon ${categoriaIconos[serv.categoria]}">
-                                <i class="fas ${serv.icono}"></i>
-                            </div>
+                            <div class="serv-card-icon ${categoriaIconos[serv.categoria]}"><i class="fas ${serv.icono}"></i></div>
                             <h3>${serv.titulo}</h3>
                             <p>${serv.descripcion}</p>
                             <div class="serv-card-divider"></div>
-                            <a href="${serv.link}" class="serv-card-btn ${categoriaClasesBtn[serv.categoria]}">${serv.botonTexto} <i class="fas fa-arrow-right"></i></a>
                             <span class="serv-card-meta">${serv.meta}</span>
                         </div>
                     `;
                 });
             }
         }
-        
         serviciosGrid.innerHTML = html;
+        
+        // Añadir evento click a cada card de servicio
+        document.querySelectorAll('.serv-card-premium').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = parseInt(card.getAttribute('data-servicio-id'));
+                const servicio = SERVICIOS_DATA.servicios.find(s => s.id === id);
+                if (servicio) {
+                    const contenido = `
+                        <p class="serv-modal-texto">${servicio.descripcion}</p>
+                        <p class="serv-modal-texto"><strong>Información adicional:</strong> ${servicio.textoExtra}</p>
+                        <div class="serv-modal-divider"></div>
+                        <a href="${servicio.link}" class="serv-modal-boton">${servicio.botonTexto} <i class="fas fa-arrow-right"></i></a>
+                    `;
+                    openModal(`<i class="fas ${servicio.icono}"></i>`, servicio.titulo, contenido);
+                }
+            });
+        });
     }
-
-    // 3. Filtros y contador
+    
+    // ========== 5. FILTROS ==========
     const filtroBtns = document.querySelectorAll('.serv-filtro-btn');
     const contadorSpan = document.getElementById('contador');
-    let cards = []; // Se actualiza despues de generar el HTML
-    
-    function actualizarCardsReferencia() {
-        cards = document.querySelectorAll('.serv-card-premium');
-    }
-    
     function actualizarFiltros(filtro) {
-        actualizarCardsReferencia();
+        const cards = document.querySelectorAll('.serv-card-premium');
         let count = 0;
         cards.forEach(card => {
             const categoria = card.getAttribute('data-categoria');
@@ -325,13 +549,7 @@
         });
         if (contadorSpan) contadorSpan.textContent = count;
     }
-    
-    // Pequeño delay para asegurar que las cards estan en el DOM
-    setTimeout(() => {
-        actualizarCardsReferencia();
-        actualizarFiltros('todos');
-    }, 50);
-    
+    setTimeout(() => actualizarFiltros('todos'), 50);
     filtroBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             filtroBtns.forEach(b => b.classList.remove('active'));
@@ -339,7 +557,106 @@
             actualizarFiltros(btn.getAttribute('data-filtro'));
         });
     });
+    
+    // ========== 6. BENEFICIARIOS SOCIALES ==========
+    const beneficios = {
+        envejecientes: { icono: '<i class="fas fa-user-graduate"></i>', titulo: "Atención a Envejecientes", descripcion: "Programa municipal de apoyo integral a adultos mayores. Incluye visitas domiciliarias, asistencia médica básica, talleres recreativos y gestión de pensiones solidarias.", detalles: ["Visitas semanales a hogares", "Despensas alimenticias", "Actividades recreativas", "Asesoría legal en pensiones"] },
+        estudiantes: { icono: '<i class="fas fa-graduation-cap"></i>', titulo: "Becas y Apoyo Educativo", descripcion: "Programa de becas municipales para estudiantes de escasos recursos. Incluye becas completas, parciales, útiles escolares y transporte.", detalles: ["Becas de excelencia", "Ayuda para útiles", "Transporte escolar", "Talleres de refuerzo"] },
+        familias: { icono: '<i class="fas fa-home"></i>', titulo: "Asistencia a Familias de Bajos Recursos", descripcion: "Programa integral que provee ayuda alimentaria, económica y de vivienda a familias en situación de vulnerabilidad del distrito.", detalles: ["Entrega mensual de alimentos", "Ayudas económicas por emergencia", "Mejoras de vivienda", "Asesoría para empleo"] },
+        necesidades: { icono: '<i class="fas fa-wheelchair"></i>', titulo: "Personas con Necesidades Especiales", descripcion: "Programa de inclusión y apoyo para personas con discapacidad física, sensorial o intelectual. Adaptación de espacios públicos y servicios personalizados.", detalles: ["Rampa de acceso en edificios municipales", "Transporte adaptado", "Terapias gratuitas", "Empleo protegido"] }
+    };
+    document.querySelectorAll('.serv-beneficiario-card').forEach(card => {
+        const id = card.getAttribute('data-beneficio');
+        if (id && beneficios[id]) {
+            card.addEventListener('click', () => {
+                const info = beneficios[id];
+                const lista = info.detalles.map(d => `<li><i class="fas fa-check-circle"></i> ${d}</li>`).join('');
+                const contenido = `<p class="serv-modal-texto">${info.descripcion}</p><ul class="serv-modal-lista">${lista}</ul>`;
+                openModal(info.icono, info.titulo, contenido);
+            });
+        }
+    });
+    
+    // ========== 7. AYUDAS ==========
+    const ayudas = {
+        economicas: { icono: '<i class="fas fa-hand-holding-usd"></i>', titulo: "Ayudas Económicas", descripcion: "Subsidios directos para familias en situación crítica. Montos variables según evaluación social.", detalles: ["Hasta RD$5,000 por emergencia", "Fondo de desempleo", "Ayuda para funerales", "Asistencia por desastre natural"] },
+        becas: { icono: '<i class="fas fa-graduation-cap"></i>', titulo: "Becas Estudiantiles", descripcion: "Cobertura total o parcial de matrículas y útiles para estudiantes de primaria, secundaria y universidad.", detalles: ["Becas completas para universidad", "Útiles escolares anuales", "Transporte gratuito", "Programa de tutorías"] },
+        medica: { icono: '<i class="fas fa-ambulance"></i>', titulo: "Asistencia Médica", descripcion: "Atención primaria, medicamentos y referencias a hospitales para población sin seguro.", detalles: ["Consultas gratuitas en centro de salud municipal", "Medicamentos esenciales", "Referencias a La Vega", "Charlas de prevención"] },
+        alimentario: { icono: '<i class="fas fa-apple-alt"></i>', titulo: "Apoyo Alimentario", descripcion: "Distribución mensual de raciones alimenticias a familias en pobreza extrema.", detalles: ["Canasta básica mensual", "Comedores comunitarios", "Programa de huertos familiares", "Leche para infantes"] }
+    };
+    document.querySelectorAll('.serv-ayuda-item').forEach(item => {
+        const id = item.getAttribute('data-ayuda');
+        if (id && ayudas[id]) {
+            item.addEventListener('click', () => {
+                const info = ayudas[id];
+                const lista = info.detalles.map(d => `<li><i class="fas fa-check-circle"></i> ${d}</li>`).join('');
+                const contenido = `<p class="serv-modal-texto">${info.descripcion}</p><ul class="serv-modal-lista">${lista}</ul>`;
+                openModal(info.icono, info.titulo, contenido);
+            });
+        }
+    });
+    
+    // ========== 8. VALORES ==========
+    const valores = {
+        solidaridad: { icono: '<i class="fas fa-hand-holding-heart"></i>', titulo: "Solidaridad", descripcion: "Fomentamos la cooperación mutua entre ciudadanos y el apoyo a quienes más lo necesitan, creando redes de ayuda comunitaria.", detalles: ["Campañas de donación", "Voluntariado municipal", "Brigadas de ayuda"] },
+        empatia: { icono: '<i class="fas fa-heart"></i>', titulo: "Empatía", descripcion: "Nos ponemos en el lugar del otro para ofrecer un trato humano, respetuoso y personalizado en cada servicio municipal.", detalles: ["Atención al ciudadano prioritaria", "Oficina de mediación", "Escucha activa"] },
+        respeto: { icono: '<i class="fas fa-hand-peace"></i>', titulo: "Respeto", descripcion: "Valoramos la dignidad de cada persona, sus opiniones y su entorno, actuando siempre con cortesía y transparencia.", detalles: ["Cero discriminación", "Derechos ciudadanos", "Trato igualitario"] },
+        compromiso: { icono: '<i class="fas fa-handshake"></i>', titulo: "Compromiso Social", descripcion: "Trabajamos incansablemente por el bienestar común, con responsabilidad y vocación de servicio.", detalles: ["Obras y proyectos comunitarios", "Rendición de cuentas", "Participación ciudadana"] }
+    };
+    document.querySelectorAll('.serv-valor').forEach(val => {
+        const id = val.getAttribute('data-valor');
+        if (id && valores[id]) {
+            val.addEventListener('click', () => {
+                const info = valores[id];
+                const lista = info.detalles.map(d => `<li><i class="fas fa-check-circle"></i> ${d}</li>`).join('');
+                const contenido = `<p class="serv-modal-texto">${info.descripcion}</p><ul class="serv-modal-lista">${lista}</ul>`;
+                openModal(info.icono, info.titulo, contenido);
+            });
+        }
+    });
+    
+    // ========== 9. SEGURIDAD Y MEDIO AMBIENTE ==========
+    const seguridad = {
+        policia: { icono: '<i class="fas fa-shield-alt"></i>', titulo: "Policía Municipal", descripcion: "Cuerpo de seguridad encargado de la protección del ayuntamiento, espacios públicos y atención de emergencias en el distrito.", detalles: ["Patrullaje 24/7", "Atención a denuncias", "Control de tránsito", "Protección de edificios públicos"] },
+        ambiente: { icono: '<i class="fas fa-tree"></i>', titulo: "Medio Ambiente", descripcion: "Departamento que vela por la limpieza, ornato y conservación de áreas verdes, así como el cumplimiento de normas ambientales.", detalles: ["Limpieza de calles y parques", "Campañas de reciclaje", "Reforestación", "Sanciones por vertidos ilegales"] },
+        ciudadanas: { icono: '<i class="fas fa-users"></i>', titulo: "Acciones Ciudadanas", descripcion: "Iniciativas de educación ambiental y participación comunitaria para mantener limpio nuestro distrito.", detalles: ["Horarios de recolección", "No tirar basura en la vía", "Separación de residuos", "Multas por incumplimiento"] }
+    };
+    document.querySelectorAll('.serv-seguridad-card').forEach(card => {
+        const id = card.getAttribute('data-seguridad');
+        if (id && seguridad[id]) {
+            card.addEventListener('click', () => {
+                const info = seguridad[id];
+                const lista = info.detalles.map(d => `<li><i class="fas fa-check-circle"></i> ${d}</li>`).join('');
+                const contenido = `<p class="serv-modal-texto">${info.descripcion}</p><ul class="serv-modal-lista">${lista}</ul>`;
+                openModal(info.icono, info.titulo, contenido);
+            });
+        }
+    });
+    
+    // ========== 10. CONDUCTORES (TABLA) ==========
+    const conductoresInfo = {
+        franquelis: { nombre: "Franquelis Serrano", icono: '<i class="fas fa-truck"></i>', experiencia: "5 años en el departamento", rutas: "Lunes: Aljibes, Guanábano; Martes: Manga Larga, Ramón Cáceres, Arroyo Hondo, Queco Aires; Miércoles: Carretera del Caimito, Penda, camino a Artesanía Belkis; Jueves: Carretera Duarte, entrada de la tusa, residencia Taveras, entrada de Guanábano; Viernes: Entrada de Guanábano, callejones y calles cercanas." },
+        fabio: { nombre: "Fabio Rodríguez", icono: '<i class="fas fa-truck"></i>', experiencia: "8 años en el municipio", rutas: "Lunes: La Primera Dama, barrios de los profesores, La Tuza, El Coli; Martes: Manga Larga, La Destiladera, Paja de Coco; Miércoles: El Llano, carretera principal, El Hoyo; Jueves: Carretera de Río Verde, Pozo de José Peña, La Lima, Los Suárez; Viernes: Barrio de los profesores, Ranchito, La Vereda." },
+        sandro: { nombre: "Sandro Hernández", icono: '<i class="fas fa-truck"></i>', experiencia: "4 años en rutas pesadas", rutas: "Lunes: Ayuntamiento, hospital, parque, Vista Bella, Los Mangos, Villa Tilín; Martes: El Quemado, Romero; Miércoles: Arroyo Hondo, Los Abreu; Jueves: El Naranjal; Viernes: Misma ruta del lunes con cambios en algunos puntos." },
+        enrique: { nombre: "Enrique Gutiérrez", icono: '<i class="fas fa-truck"></i>', experiencia: "6 años en zonas rurales", rutas: "Lunes: Calle del Tecnológico, Villa Tilín, callejón del mirador; Martes: Callejón Los Hernández, Los Rodríguez, Los Guácaros, La Vereda, Jurungo; Miércoles: Arroyo Hondo, La Jabilla, Bonagua, varios callejones del Llano; Jueves: Callejón de Salito, Los Suárez, Las Escobas, La Lima, Los Cocos; Viernes: Ranchito, entrada al lado del río, la gallera, La Tuza, La Cereza, La Caña." }
+    };
+    document.querySelectorAll('.serv-tabla-conductores tbody tr').forEach(row => {
+        const id = row.getAttribute('data-conductor');
+        if (id && conductoresInfo[id]) {
+            row.addEventListener('click', () => {
+                const info = conductoresInfo[id];
+                const contenido = `
+                    <p class="serv-modal-texto"><strong>Conductor:</strong> ${info.nombre}</p>
+                    <p class="serv-modal-texto"><strong>Experiencia:</strong> ${info.experiencia}</p>
+                    <p class="serv-modal-texto"><strong>Rutas semanales:</strong></p>
+                    <p class="serv-modal-texto">${info.rutas}</p>
+                    <div class="serv-modal-divider"></div>
+                    <p class="serv-modal-texto">* Los horarios pueden variar por condiciones climáticas. Se recomienda sacar la basura antes de las 6:00 a.m.</p>
+                `;
+                openModal(info.icono, info.nombre, contenido);
+            });
+        }
+    });
 })();
 </script>
-
 {% endblock %}

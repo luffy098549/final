@@ -47,7 +47,6 @@
             overflow: hidden;
         }
 
-        /* Fondo decorativo */
         .acciones-bg {
             position: absolute;
             inset: 0;
@@ -110,7 +109,6 @@
             z-index: 2;
         }
 
-        /* Eyebrow */
         .acciones-eyebrow {
             display: flex;
             align-items: center;
@@ -137,7 +135,6 @@
             font-weight: 700;
         }
 
-        /* Título */
         .acciones-title {
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(2rem, 4.5vw, 3rem);
@@ -169,7 +166,6 @@
             border-radius: 3px;
         }
 
-        /* Subtítulo */
         .acciones-subtitle {
             text-align: center;
             color: var(--texto-claro);
@@ -183,7 +179,6 @@
             animation-delay: 0.16s;
         }
 
-        /* Grid de cards */
         .acciones-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -193,7 +188,6 @@
             z-index: 2;
         }
 
-        /* Card individual */
         .accion-card {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(8px);
@@ -237,7 +231,6 @@
             transform: scaleX(1);
         }
 
-        /* Icono */
         .accion-icono {
             width: 70px;
             height: 70px;
@@ -267,7 +260,6 @@
             transform: scale(1.1);
         }
 
-        /* Texto */
         .accion-card h3 {
             font-size: 1.15rem;
             font-weight: 700;
@@ -282,7 +274,6 @@
             font-size: 0.85rem;
         }
 
-        /* Botón */
         .accion-btn {
             display: inline-flex;
             align-items: center;
@@ -313,7 +304,6 @@
             transform: translateX(3px);
         }
 
-        /* CTA inferior */
         .acciones-cta {
             text-align: center;
             padding: 2rem;
@@ -368,7 +358,6 @@
             transform: scale(1.1);
         }
 
-        /* Animación */
         @keyframes fadeUpAcciones {
             to {
                 opacity: 1;
@@ -376,7 +365,6 @@
             }
         }
 
-        /* ── RESPONSIVE ── */
         @media (max-width: 1100px) {
             .acciones-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -451,7 +439,6 @@
 </head>
 <body>
     <section class="acciones">
-        <!-- Fondo decorativo -->
         <div class="acciones-bg">
             <div class="acciones-bg-circle c1"></div>
             <div class="acciones-bg-circle c2"></div>
@@ -481,7 +468,7 @@
                     </div>
                     <h3>Solicitudes Municipales</h3>
                     <p>Realiza solicitudes de servicios como funerarias, certificado de uso de suelo, catastro, planeamiento urbano y más.</p>
-                    <a href="#" class="accion-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
+                    <a href="/servicios" class="accion-btn">Solicitar <i class="fas fa-arrow-right"></i></a>
                 </div>
 
                 <!-- Denuncias -->
@@ -491,7 +478,7 @@
                     </div>
                     <h3>Denuncias Ciudadanas</h3>
                     <p>Reporta problemas de limpieza, acumulación de basura, policía municipal, alumbrado público y otras irregularidades.</p>
-                    <a href="#" class="accion-btn">Denunciar <i class="fas fa-arrow-right"></i></a>
+                    <a href="/servicios" class="accion-btn">Denunciar <i class="fas fa-arrow-right"></i></a>
                 </div>
 
                 <!-- Recolección de Basura -->
@@ -501,7 +488,7 @@
                     </div>
                     <h3>Recolección de Basura</h3>
                     <p>Sistema de recolección mediante camiones que transportan los desechos hacia el vertedero Soto, ubicado en La Vega.</p>
-                    <a href="#" class="accion-btn">Más info <i class="fas fa-arrow-right"></i></a>
+                    <a href="/servicios" class="accion-btn">Más info <i class="fas fa-arrow-right"></i></a>
                 </div>
 
                 <!-- Transparencia -->
@@ -511,13 +498,13 @@
                     </div>
                     <h3>Transparencia</h3>
                     <p>Accede a información pública sobre finanzas municipales, actas, compras y contrataciones del ayuntamiento.</p>
-                    <a href="#" class="accion-btn">Ver más <i class="fas fa-arrow-right"></i></a>
+                    <a href="/transparencia" class="accion-btn">Ver más <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
 
             <div class="acciones-cta">
                 <p>¿No encuentras lo que buscas?</p>
-                <a href="#" class="btn-outline">Contáctanos <i class="fas fa-headset"></i></a>
+                <a href="/contacto" class="btn-outline">Contáctanos <i class="fas fa-headset"></i></a>
             </div>
         </div>
     </section>

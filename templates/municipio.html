@@ -5,7 +5,24 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/municipio.css') }}">
 <style>
-    /* ARREGLO DEL STICKY NAV - Evita que tape el contenido */
+    /* Ajustes para que el hero no quede tapado por el header sticky */
+    .muni-hero {
+        padding-top: 120px;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+    
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 130px;
+    }
+    
+    section[id] {
+        scroll-margin-top: 90px;
+    }
+    
     .muni-sticky-nav {
         position: sticky;
         top: 0;
@@ -15,20 +32,202 @@
         transition: all 0.3s ease;
     }
     
-    /* Cuando el header es fijo, el sticky nav necesita un top diferente */
     .main-header.sticky-header ~ .muni-sticky-nav {
-        top: 70px; /* Ajusta según la altura de tu header fijo */
+        top: 70px;
     }
     
-    /* Scroll suave para toda la página */
-    html {
-        scroll-behavior: smooth;
-        scroll-padding-top: 100px; /* IMPORTANTE: Evita que el sticky nav tape las secciones */
+    /* Stats clickeables */
+    .muni-hero-stat {
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(4px);
+    }
+    .muni-hero-stat:hover {
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.3);
+        border-color: #C9A03D;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
     
-    /* Asegura que las secciones no queden tapadas */
-    section[id] {
-        scroll-margin-top: 90px;
+    /* Tarjetas de servicios clickeables */
+    .muni-servicio-card {
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .muni-servicio-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        border-color: #C9A03D;
+    }
+    
+    /* Efecto clickeable en cards existentes */
+    .muni-sector-card,
+    .muni-vocal-card,
+    .muni-depto-card,
+    .muni-alcalde-card {
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .muni-sector-card:hover,
+    .muni-vocal-card:hover,
+    .muni-depto-card:hover,
+    .muni-alcalde-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+    
+    /* Modal global */
+    .muni-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(10,20,6,.85);
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .35s, visibility .35s;
+    }
+    .muni-modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+    .muni-modal {
+        background: white;
+        border-radius: 2rem;
+        max-width: 560px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 40px 100px rgba(0,0,0,.4);
+        transform: scale(.88) translateY(30px);
+        transition: transform .45s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+    .muni-modal-overlay.active .muni-modal {
+        transform: scale(1) translateY(0);
+    }
+    .muni-modal::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #2E6B2F, #C9A03D, #2E6B2F);
+        background-size: 200%;
+        animation: modalBorderFlow 3s linear infinite;
+        z-index: 2;
+    }
+    @keyframes modalBorderFlow {
+        from { background-position: 0%; }
+        to   { background-position: 200%; }
+    }
+    .muni-modal-close {
+        position: absolute;
+        top: 1.2rem; right: 1.2rem;
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        border: none;
+        background: #e8eee8;
+        color: #5a6e5a;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .95rem;
+        z-index: 10;
+        transition: background .2s, color .2s, transform .3s;
+    }
+    .muni-modal-close:hover {
+        background: #fee2e2;
+        color: #dc2626;
+        transform: rotate(90deg) scale(1.1);
+    }
+    .muni-modal-body {
+        padding: 2rem;
+    }
+    .muni-modal-icono {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 1rem auto;
+        background: #EAF5E6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #2E6B2F;
+        border: 2px solid #C9A03D;
+    }
+    .muni-modal-titulo {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-align: center;
+        color: #1A2A1A;
+        margin-bottom: 0.5rem;
+    }
+    .muni-modal-divider {
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(90deg, #2E6B2F, #C9A03D);
+        margin: 1rem auto;
+        border-radius: 3px;
+    }
+    .muni-modal-texto {
+        color: #5a6e5a;
+        font-size: 0.95rem;
+        line-height: 1.75;
+        margin-bottom: 1rem;
+    }
+    .muni-modal-lista {
+        list-style: none;
+        padding: 0;
+        margin-top: 1rem;
+    }
+    .muni-modal-lista li {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 0.7rem;
+        font-size: 0.85rem;
+        color: #5a6e5a;
+    }
+    .muni-modal-lista li i {
+        color: #C9A03D;
+        width: 20px;
+    }
+    .muni-modal-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e8eee8;
+    }
+    .muni-modal-stat {
+        text-align: center;
+    }
+    .muni-modal-stat-number {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2E6B2F;
+        display: block;
+    }
+    .muni-modal-stat-label {
+        font-size: 0.7rem;
+        color: #9aab9a;
+    }
+    @media (max-width: 560px) {
+        .muni-modal-body { padding: 1.5rem; }
+        .muni-modal-titulo { font-size: 1.5rem; }
+        .muni-modal-icono { width: 55px; height: 55px; font-size: 1.5rem; }
     }
 </style>
 {% endblock %}
@@ -41,16 +240,13 @@
     <div class="container muni-hero-container">
         <div class="muni-hero-content">
             <div class="muni-hero-eyebrow">CONOCE NUESTRO DISTRITO</div>
-            <h1 class="muni-hero-title">
-                Villa <span class="muni-hero-accent">Cutupú</span>
-            </h1>
+            <h1 class="muni-hero-title">Villa <span class="muni-hero-accent">Cutupú</span></h1>
             <div class="muni-hero-line"></div>
             <p class="muni-hero-subtitle">Un distrito con historia, tradición y futuro en la provincia de La Vega</p>
-            <!-- STATS SOLO AQUÍ (SIN REDUNDANCIA) -->
             <div class="muni-hero-stats">
-                <div class="muni-hero-stat">12 Sectores</div>
-                <div class="muni-hero-stat">8,547 Habitantes</div>
-                <div class="muni-hero-stat">17 Departamentos</div>
+                <div class="muni-hero-stat" data-stat="sectores">12 Sectores</div>
+                <div class="muni-hero-stat" data-stat="habitantes">8,547 Habitantes</div>
+                <div class="muni-hero-stat" data-stat="departamentos">17 Departamentos</div>
             </div>
         </div>
     </div>
@@ -81,7 +277,6 @@
             <div class="muni-distrito-texto">
                 <p class="muni-distrito-intro">El distrito de Cutupú está conformado por <strong>12 sectores</strong> que forman nuestra comunidad. Un distrito municipal con una rica historia en la provincia de La Vega, hogar de cientos de familias trabajadoras que día a día contribuyen al desarrollo de nuestra comunidad.</p>
                 <p>El ayuntamiento de Cutupú es una institución de gobierno local encargada de administrar y atender las necesidades de nuestro distrito. Su función principal es resolver problemáticas como la limpieza y recogida de basura, mantenimiento de calles y canaletas, cuidado de cementerios, y la construcción y mantenimiento de obras públicas.</p>
-                <!-- Stats eliminados aquí por REDUNDANCIA -->
             </div>
             <div class="muni-distrito-imagen">
                 <img src="{{ url_for('static', filename='img/distrito.jpeg') }}" alt="Villa Cutupú" loading="lazy">
@@ -98,18 +293,18 @@
         <h2 class="muni-section-title">Los <span class="muni-title-accent">12 Sectores</span> de Cutupú</h2>
         <p class="muni-sectores-subtitle">El distrito de Cutupú está conformado por los siguientes 12 sectores</p>
         <div class="muni-sectores-grid">
-            <div class="muni-sector-card"><span class="muni-sector-numero">01</span><h3>Casco urbano de Cutupú</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">02</span><h3>Mirador</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">03</span><h3>La Susei</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">04</span><h3>Arroyo Hondo</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">05</span><h3>Bonagua El Llano</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">06</span><h3>Manga Larga</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">07</span><h3>La Vereda</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">08</span><h3>Pueblo Viejo</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">09</span><h3>Río Verde</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">10</span><h3>Naranjal</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">11</span><h3>Romero</h3></div>
-            <div class="muni-sector-card"><span class="muni-sector-numero">12</span><h3>El Distrito</h3></div>
+            <div class="muni-sector-card" data-sector-id="casco"><span class="muni-sector-numero">01</span><h3>Casco urbano de Cutupú</h3></div>
+            <div class="muni-sector-card" data-sector-id="mirador"><span class="muni-sector-numero">02</span><h3>Mirador</h3></div>
+            <div class="muni-sector-card" data-sector-id="susei"><span class="muni-sector-numero">03</span><h3>La Susei</h3></div>
+            <div class="muni-sector-card" data-sector-id="arroyo"><span class="muni-sector-numero">04</span><h3>Arroyo Hondo</h3></div>
+            <div class="muni-sector-card" data-sector-id="bonagua"><span class="muni-sector-numero">05</span><h3>Bonagua El Llano</h3></div>
+            <div class="muni-sector-card" data-sector-id="manga"><span class="muni-sector-numero">06</span><h3>Manga Larga</h3></div>
+            <div class="muni-sector-card" data-sector-id="vereda"><span class="muni-sector-numero">07</span><h3>La Vereda</h3></div>
+            <div class="muni-sector-card" data-sector-id="pueblo"><span class="muni-sector-numero">08</span><h3>Pueblo Viejo</h3></div>
+            <div class="muni-sector-card" data-sector-id="rio"><span class="muni-sector-numero">09</span><h3>Río Verde</h3></div>
+            <div class="muni-sector-card" data-sector-id="naranjal"><span class="muni-sector-numero">10</span><h3>Naranjal</h3></div>
+            <div class="muni-sector-card" data-sector-id="romero"><span class="muni-sector-numero">11</span><h3>Romero</h3></div>
+            <div class="muni-sector-card" data-sector-id="higüero"><span class="muni-sector-numero">12</span><h3>El Higüero</h3></div>
         </div>
     </div>
 </section>
@@ -120,86 +315,49 @@
         <div class="muni-section-eyebrow">Nuestro Gobierno Local</div>
         <h2 class="muni-section-title">Autoridades <span class="muni-title-accent">Municipales</span></h2>
         <p class="muni-autoridades-subtitle">Período constitucional 2024 - 2028</p>
-        
-        <!-- Alcalde -->
-        <div class="muni-alcalde-card">
-            <div class="muni-alcalde-avatar">
-                <span>RT</span>
-                <div class="muni-avatar-pulse"></div>
-            </div>
+        <div class="muni-alcalde-card" data-alcalde-id="robert">
+            <div class="muni-alcalde-avatar"><span>RT</span><div class="muni-avatar-pulse"></div></div>
             <div class="muni-alcalde-info">
                 <div class="muni-autoridad-badge">Alcalde / Director Municipal</div>
-                <h3>Rober Donald Tolentino</h3>
+                <h3>Robert Donald Tolentino</h3>
                 <p>Responsable de mantener el distrito limpio, organizado y en condiciones saludables para todos los habitantes.</p>
             </div>
         </div>
-        
-        <!-- Vocales -->
         <h3 class="muni-vocales-titulo">Vocales Municipales</h3>
         <div class="muni-vocales-grid">
-            <div class="muni-vocal-card">
-                <div class="muni-vocal-avatar">WM</div>
-                <div class="muni-vocal-info">
-                    <h4>William Mata</h4>
-                    <span>Vocal Municipal</span>
-                </div>
-            </div>
-            <div class="muni-vocal-card">
-                <div class="muni-vocal-avatar">YB</div>
-                <div class="muni-vocal-info">
-                    <h4>Yumiri Bueno</h4>
-                    <span>Vocal Municipal</span>
-                </div>
-            </div>
-            <div class="muni-vocal-card">
-                <div class="muni-vocal-avatar">XR</div>
-                <div class="muni-vocal-info">
-                    <h4>Xiomara Romano</h4>
-                    <span>Vocal Municipal</span>
-                </div>
-            </div>
-            <div class="muni-vocal-card">
-                <div class="muni-vocal-avatar">FP</div>
-                <div class="muni-vocal-info">
-                    <h4>Francisco Peña</h4>
-                    <span>Vocal Municipal</span>
-                </div>
-            </div>
-            <div class="muni-vocal-card">
-                <div class="muni-vocal-avatar">CS</div>
-                <div class="muni-vocal-info">
-                    <h4>Colinson Sevalle</h4>
-                    <span>Vocal Municipal</span>
-                </div>
-            </div>
+            <div class="muni-vocal-card" data-vocal-id="william"><div class="muni-vocal-avatar">WM</div><div class="muni-vocal-info"><h4>William Mata</h4><span>Vocal Municipal</span></div></div>
+            <div class="muni-vocal-card" data-vocal-id="yumiri"><div class="muni-vocal-avatar">YB</div><div class="muni-vocal-info"><h4>Yumiri Bueno</h4><span>Vocal Municipal</span></div></div>
+            <div class="muni-vocal-card" data-vocal-id="xiomara"><div class="muni-vocal-avatar">XR</div><div class="muni-vocal-info"><h4>Xiomara Romano</h4><span>Vocal Municipal</span></div></div>
+            <div class="muni-vocal-card" data-vocal-id="francisco"><div class="muni-vocal-avatar">FP</div><div class="muni-vocal-info"><h4>Francisco Peña</h4><span>Vocal Municipal</span></div></div>
+            <div class="muni-vocal-card" data-vocal-id="colinson"><div class="muni-vocal-avatar">CS</div><div class="muni-vocal-info"><h4>Colinson Sevalle</h4><span>Vocal Municipal</span></div></div>
         </div>
     </div>
 </section>
 
-<!-- SECCION DEPARTAMENTOS -->
+<!-- SECCION DEPARTAMENTOS - TODOS LOS 17 CON MODALES -->
 <section id="departamentos" class="muni-deptos-section">
     <div class="container">
         <div class="muni-section-eyebrow">Estructura Municipal</div>
         <h2 class="muni-section-title"><span class="muni-title-accent">17 Departamentos</span></h2>
         <p class="muni-deptos-subtitle">El Ayuntamiento de Cutupú cuenta con 17 departamentos para brindar servicios a la comunidad</p>
         <div class="muni-deptos-grid">
-            <div class="muni-depto-card"><i class="fas fa-building"></i><h4>Oficina Administrativa</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-money-bill"></i><h4>Caja Municipal</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-info-circle"></i><h4>Libre Acceso a la Información</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-users"></i><h4>Salón de Reuniones</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-laptop"></i><h4>Departamento de Tecnología</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-utensils"></i><h4>Cocina</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-users"></i><h4>Gestión / Recursos Humanos</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-gavel"></i><h4>Sindicatura</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-shield-alt"></i><h4>Policía Municipal / Seguridad</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-truck"></i><h4>Departamento de Transportación</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-hard-hat"></i><h4>Departamento de Ingeniería</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-chart-line"></i><h4>Arbitrio</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-church"></i><h4>Cementerio</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-coins"></i><h4>Tesorería</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-chart-pie"></i><h4>Finanzas</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-shopping-cart"></i><h4>Compras</h4></div>
-            <div class="muni-depto-card"><i class="fas fa-calculator"></i><h4>Contabilidad</h4></div>
+            <div class="muni-depto-card" data-depto-id="administrativa"><i class="fas fa-building"></i><h4>Oficina Administrativa</h4></div>
+            <div class="muni-depto-card" data-depto-id="caja"><i class="fas fa-money-bill"></i><h4>Caja Municipal</h4></div>
+            <div class="muni-depto-card" data-depto-id="acceso"><i class="fas fa-info-circle"></i><h4>Libre Acceso a la Información</h4></div>
+            <div class="muni-depto-card" data-depto-id="salon"><i class="fas fa-users"></i><h4>Salón de Reuniones</h4></div>
+            <div class="muni-depto-card" data-depto-id="tecnologia"><i class="fas fa-laptop"></i><h4>Departamento de Tecnología</h4></div>
+            <div class="muni-depto-card" data-depto-id="cocina"><i class="fas fa-utensils"></i><h4>Cocina</h4></div>
+            <div class="muni-depto-card" data-depto-id="rrhh"><i class="fas fa-users"></i><h4>Gestión / Recursos Humanos</h4></div>
+            <div class="muni-depto-card" data-depto-id="sindicatura"><i class="fas fa-gavel"></i><h4>Sindicatura</h4></div>
+            <div class="muni-depto-card" data-depto-id="policia"><i class="fas fa-shield-alt"></i><h4>Policía Municipal / Seguridad</h4></div>
+            <div class="muni-depto-card" data-depto-id="transporte"><i class="fas fa-truck"></i><h4>Departamento de Transportación</h4></div>
+            <div class="muni-depto-card" data-depto-id="ingenieria"><i class="fas fa-hard-hat"></i><h4>Departamento de Ingeniería</h4></div>
+            <div class="muni-depto-card" data-depto-id="arbitrio"><i class="fas fa-chart-line"></i><h4>Arbitrio</h4></div>
+            <div class="muni-depto-card" data-depto-id="cementerio"><i class="fas fa-church"></i><h4>Cementerio</h4></div>
+            <div class="muni-depto-card" data-depto-id="tesoreria"><i class="fas fa-coins"></i><h4>Tesorería</h4></div>
+            <div class="muni-depto-card" data-depto-id="finanzas"><i class="fas fa-chart-pie"></i><h4>Finanzas</h4></div>
+            <div class="muni-depto-card" data-depto-id="compras"><i class="fas fa-shopping-cart"></i><h4>Compras</h4></div>
+            <div class="muni-depto-card" data-depto-id="contabilidad"><i class="fas fa-calculator"></i><h4>Contabilidad</h4></div>
         </div>
     </div>
 </section>
@@ -210,10 +368,10 @@
         <div class="muni-section-eyebrow">Lo que ofrecemos</div>
         <h2 class="muni-section-title">Servicios <span class="muni-title-accent">Municipales</span></h2>
         <div class="muni-servicios-grid">
-            <div class="muni-servicio-card"><i class="fas fa-trash-alt"></i><h3>Recolección de Basura</h3><p>Sistema mediante camiones al vertedero Soto en La Vega</p></div>
-            <div class="muni-servicio-card"><i class="fas fa-road"></i><h3>Mantenimiento de Calles</h3><p>Mantenimiento constante de calles y canaletas</p></div>
-            <div class="muni-servicio-card"><i class="fas fa-church"></i><h3>Cuidado de Cementerios</h3><p>Administración del cementerio municipal</p></div>
-            <div class="muni-servicio-card"><i class="fas fa-tree"></i><h3>Obras Públicas</h3><p>Parques, canchas, clubes e iglesias</p></div>
+            <div class="muni-servicio-card" data-servicio="basura"><i class="fas fa-trash-alt"></i><h3>Recolección de Basura</h3><p>Sistema mediante camiones al vertedero Soto en La Vega</p></div>
+            <div class="muni-servicio-card" data-servicio="calles"><i class="fas fa-road"></i><h3>Mantenimiento de Calles</h3><p>Mantenimiento constante de calles y canaletas</p></div>
+            <div class="muni-servicio-card" data-servicio="cementerios"><i class="fas fa-church"></i><h3>Cuidado de Cementerios</h3><p>Administración del cementerio municipal</p></div>
+            <div class="muni-servicio-card" data-servicio="obras"><i class="fas fa-tree"></i><h3>Obras Públicas</h3><p>Parques, canchas, clubes e iglesias</p></div>
         </div>
         <div class="muni-servicios-cta">
             <a href="/servicios" class="muni-btn-servicios">Ver todos los servicios <i class="fas fa-arrow-right"></i></a>
@@ -234,72 +392,53 @@
 
 <script>
 (function() {
-    // ========== STICKY NAV ARREGLADO ==========
+    // ========== STICKY NAV ==========
     const stickyNav = document.getElementById('stickyNav');
     const header = document.querySelector('.main-header');
-    
     function handleStickyNav() {
         if (!stickyNav) return;
-        
         if (header && window.getComputedStyle(header).position === 'sticky') {
-            const headerHeight = header.offsetHeight;
-            stickyNav.style.top = headerHeight + 'px';
+            stickyNav.style.top = header.offsetHeight + 'px';
         } else {
             stickyNav.style.top = '0';
         }
     }
-    
-    // Inicializar
     handleStickyNav();
-    
-    // Escuchar scroll y resize
     window.addEventListener('scroll', handleStickyNav);
     window.addEventListener('resize', handleStickyNav);
     
-    // ========== SCROLL SUAVE MEJORADO ==========
+    // ========== SCROLL SUAVE ==========
     const navLinks = document.querySelectorAll('.muni-sticky-nav-link');
-    
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const targetId = link.getAttribute('href').substring(1);
             const target = document.getElementById(targetId);
-            
             if (target) {
                 const headerHeight = header ? header.offsetHeight : 80;
                 const stickyNavHeight = stickyNav ? stickyNav.offsetHeight : 60;
                 const totalOffset = headerHeight + stickyNavHeight + 20;
-                
                 const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
                 const offsetPosition = elementPosition - totalOffset;
-                
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }
         });
     });
     
-    // ========== ACTIVE SECTION ON SCROLL ==========
+    // ========== ACTIVE SECTION ==========
     const sections = document.querySelectorAll('section[id]');
-    
     function setActiveSection() {
         const headerHeight = header ? header.offsetHeight : 80;
         const stickyNavHeight = stickyNav ? stickyNav.offsetHeight : 60;
         const scrollPosition = window.scrollY + headerHeight + stickyNavHeight + 50;
-        
         let currentSection = '';
-        
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
             const sectionBottom = sectionTop + section.offsetHeight;
-            
             if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
                 currentSection = section.getAttribute('id');
             }
         });
-        
         navLinks.forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('data-section') === currentSection) {
@@ -307,11 +446,216 @@
             }
         });
     }
-    
     window.addEventListener('scroll', setActiveSection);
     window.addEventListener('resize', setActiveSection);
     setActiveSection();
+    
+    // ========== MODAL DINÁMICO ==========
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'muni-modal-overlay';
+    modalOverlay.innerHTML = `
+        <div class="muni-modal">
+            <button class="muni-modal-close" id="muniModalClose"><i class="fas fa-times"></i></button>
+            <div class="muni-modal-body">
+                <div class="muni-modal-icono" id="muniModalIcono"><i class="fas fa-city"></i></div>
+                <h3 class="muni-modal-titulo" id="muniModalTitulo"></h3>
+                <div class="muni-modal-divider"></div>
+                <div id="muniModalContenido"></div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modalOverlay);
+    const modal = modalOverlay;
+    const closeBtn = document.getElementById('muniModalClose');
+    const modalIcono = document.getElementById('muniModalIcono');
+    const modalTitulo = document.getElementById('muniModalTitulo');
+    const modalContenido = document.getElementById('muniModalContenido');
+    
+    function openModal(iconoHtml, titulo, contenidoHtml) {
+        modalIcono.innerHTML = iconoHtml;
+        modalTitulo.textContent = titulo;
+        modalContenido.innerHTML = contenidoHtml;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+    
+    // ========== 1. STATS DEL HERO ==========
+    const stats = document.querySelectorAll('.muni-hero-stat');
+    stats.forEach(stat => {
+        stat.addEventListener('click', () => {
+            const tipo = stat.getAttribute('data-stat');
+            let titulo = '', icono = '', contenido = '';
+            if (tipo === 'sectores') {
+                titulo = "Los 12 Sectores de Cutupú";
+                icono = '<i class="fas fa-map-marker-alt"></i>';
+                const listaSectores = [
+                    "Casco urbano de Cutupú", "Mirador", "La Susei", "Arroyo Hondo", "Bonagua El Llano",
+                    "Manga Larga", "La Vereda", "Pueblo Viejo", "Río Verde", "Naranjal", "Romero", "El Higüero"
+                ];
+                const items = listaSectores.map(s => `<li><i class="fas fa-check-circle"></i> ${s}</li>`).join('');
+                contenido = `<p class="muni-modal-texto">El distrito de Cutupú se organiza en 12 sectores que representan la diversidad geográfica y social de nuestra comunidad.</p><ul class="muni-modal-lista">${items}</ul>`;
+            } else if (tipo === 'habitantes') {
+                titulo = "8,547 Habitantes";
+                icono = '<i class="fas fa-users"></i>';
+                contenido = `<p class="muni-modal-texto">Según el censo más reciente (2023), la población del distrito de Cutupú es de <strong>8,547 habitantes</strong>, distribuidos en aproximadamente 2,843 viviendas. La tasa de crecimiento anual es del 1.2%, con una población joven (más del 40% menor de 25 años).</p>
+                            <div class="muni-modal-stats">
+                                <div class="muni-modal-stat"><span class="muni-modal-stat-number">51%</span><span class="muni-modal-stat-label">Mujeres</span></div>
+                                <div class="muni-modal-stat"><span class="muni-modal-stat-number">49%</span><span class="muni-modal-stat-label">Hombres</span></div>
+                                <div class="muni-modal-stat"><span class="muni-modal-stat-number">35%</span><span class="muni-modal-stat-label">Zona urbana</span></div>
+                            </div>`;
+            } else if (tipo === 'departamentos') {
+                titulo = "17 Departamentos Municipales";
+                icono = '<i class="fas fa-building"></i>';
+                const deptosLista = [
+                    "Oficina Administrativa", "Caja Municipal", "Libre Acceso a la Información", "Salón de Reuniones",
+                    "Departamento de Tecnología", "Cocina", "Gestión / Recursos Humanos", "Sindicatura", "Policía Municipal",
+                    "Departamento de Transportación", "Departamento de Ingeniería", "Arbitrio", "Cementerio", "Tesorería",
+                    "Finanzas", "Compras", "Contabilidad"
+                ];
+                const items = deptosLista.map(d => `<li><i class="fas fa-check-circle"></i> ${d}</li>`).join('');
+                contenido = `<p class="muni-modal-texto">Nuestra estructura organizativa cuenta con 17 departamentos que trabajan para ofrecer servicios eficientes a la ciudadanía.</p><ul class="muni-modal-lista">${items}</ul>`;
+            }
+            openModal(icono, titulo, contenido);
+        });
+    });
+    
+    // ========== 2. SECTORES (con datos renovados) ==========
+    const sectoresInfo = {
+        casco: { icono: '<i class="fas fa-city"></i>', titulo: "Casco urbano de Cutupú", descripcion: "El corazón administrativo y comercial del distrito. Aquí se concentran el Ayuntamiento, la iglesia principal y el mercado municipal.", poblacion: "1,820 hab.", viviendas: "520", caracteristica: "Zona urbana con todos los servicios" },
+        mirador: { icono: '<i class="fas fa-mountain"></i>', titulo: "Mirador", descripcion: "Sector elevado que ofrece una vista panorámica del valle. Ideal para ecoturismo y senderismo.", poblacion: "680 hab.", viviendas: "195", caracteristica: "Vistas panorámicas del valle" },
+        susei: { icono: '<i class="fas fa-water"></i>', titulo: "La Susei", descripcion: "Comunidad agrícola cerca del río. Producción de yuca, plátano, cacao y café.", poblacion: "740 hab.", viviendas: "210", caracteristica: "Agricultura y tradición" },
+        arroyo: { icono: '<i class="fas fa-tree"></i>', titulo: "Arroyo Hondo", descripcion: "Rodeado de montañas y vegetación. Conocido por su arroyo de aguas cristalinas.", poblacion: "490 hab.", viviendas: "135", caracteristica: "Recursos hídricos y ecoturismo" },
+        bonagua: { icono: '<i class="fas fa-leaf"></i>', titulo: "Bonagua El Llano", descripcion: "Zona llana con suelos fértiles. Productora de café y frutas.", poblacion: "650 hab.", viviendas: "180", caracteristica: "Tierras altas para el café" },
+        manga: { icono: '<i class="fas fa-road"></i>', titulo: "Manga Larga", descripcion: "Barrio lineal sobre la carretera principal. Conexión estratégica.", poblacion: "1,050 hab.", viviendas: "290", caracteristica: "Corredor comercial" },
+        vereda: { icono: '<i class="fas fa-home"></i>', titulo: "La Vereda", descripcion: "Comunidad pequeña y unida, con huertos familiares y animales de traspatio.", poblacion: "380 hab.", viviendas: "105", caracteristica: "Vida rural tranquila" },
+        pueblo: { icono: '<i class="fas fa-church"></i>', titulo: "Pueblo Viejo", descripcion: "Asentamiento histórico con ruinas coloniales. Valor patrimonial.", poblacion: "310 hab.", viviendas: "88", caracteristica: "Patrimonio histórico-cultural" },
+        rio: { icono: '<i class="fas fa-tint"></i>', titulo: "Río Verde", descripcion: "A orillas del río. Balnearios naturales y pesca artesanal.", poblacion: "620 hab.", viviendas: "175", caracteristica: "Balnearios y pesca artesanal" },
+        naranjal: { icono: '<i class="fas fa-seedling"></i>', titulo: "Naranjal", descripcion: "Plantaciones de naranjas y cítricos. Feria anual de los cítricos.", poblacion: "560 hab.", viviendas: "155", caracteristica: "Producción citrícola" },
+        romero: { icono: '<i class="fas fa-sun"></i>', titulo: "Romero", descripcion: "Clima cálido. Cultivo de hierbas medicinales y pastos.", poblacion: "470 hab.", viviendas: "128", caracteristica: "Hierbas aromáticas" },
+        higüero: { icono: '<i class="fas fa-map-pin"></i>', titulo: "El Higüero", descripcion: "Pequeño caserío rodeado de árboles de higüero. Artesanía en madera.", poblacion: "310 hab.", viviendas: "87", caracteristica: "Artesanía en higüero" }
+    };
+    document.querySelectorAll('.muni-sector-card').forEach(card => {
+        const id = card.getAttribute('data-sector-id');
+        if (id && sectoresInfo[id]) {
+            card.addEventListener('click', () => {
+                const info = sectoresInfo[id];
+                const contenido = `<p class="muni-modal-texto">${info.descripcion}</p><div class="muni-modal-stats"><div class="muni-modal-stat"><span class="muni-modal-stat-number">${info.poblacion}</span><span class="muni-modal-stat-label">Habitantes</span></div><div class="muni-modal-stat"><span class="muni-modal-stat-number">${info.viviendas}</span><span class="muni-modal-stat-label">Viviendas</span></div><div class="muni-modal-stat"><span class="muni-modal-stat-number">${info.caracteristica}</span><span class="muni-modal-stat-label">Destaca</span></div></div>`;
+                openModal(info.icono, info.titulo, contenido);
+            });
+        }
+    });
+    
+    // ========== 3. VOCALES ==========
+    const vocalesInfo = {
+        william: { icono: '<i class="fas fa-user-tie"></i>', titulo: "William Mata", descripcion: "Vocal Municipal enfocado en relaciones comunitarias y gestión de servicios básicos.", funciones: ["Coordinación de juntas de vecinos", "Supervisión de proyectos comunitarios", "Atención a emergencias sociales"] },
+        yumiri: { icono: '<i class="fas fa-user-tie"></i>', titulo: "Yumiri Bueno", descripcion: "Vocal Municipal responsable de supervisar obras de infraestructura.", funciones: ["Fiscalización de obras públicas", "Seguimiento a contratistas", "Rendición de cuentas en infraestructura"] },
+        xiomara: { icono: '<i class="fas fa-user-tie"></i>', titulo: "Xiomara Romano", descripcion: "Coordinadora de programas sociales y culturales.", funciones: ["Organización de eventos culturales", "Programas de apoyo a madres solteras", "Talleres de emprendimiento"] },
+        francisco: { icono: '<i class="fas fa-user-tie"></i>', titulo: "Francisco Peña", descripcion: "Responsable de transparencia y rendición de cuentas.", funciones: ["Auditoría interna", "Portal de transparencia", "Atención a denuncias ciudadanas"] },
+        colinson: { icono: '<i class="fas fa-user-tie"></i>', titulo: "Colinson Sevalle", descripcion: "Supervisor de medio ambiente y limpieza pública.", funciones: ["Gestión de residuos sólidos", "Campañas de reciclaje", "Mantenimiento de áreas verdes"] }
+    };
+    document.querySelectorAll('.muni-vocal-card').forEach(card => {
+        const id = card.getAttribute('data-vocal-id');
+        if (id && vocalesInfo[id]) {
+            card.addEventListener('click', () => {
+                const info = vocalesInfo[id];
+                const lista = info.funciones.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('');
+                const contenido = `<p class="muni-modal-texto">${info.descripcion}</p><ul class="muni-modal-lista">${lista}</ul>`;
+                openModal(info.icono, info.titulo, contenido);
+            });
+        }
+    });
+    
+    // ========== 4. DEPARTAMENTOS - TODOS CON SUS FUNCIONES ==========
+    const deptosInfo = {
+        administrativa: { icono: '<i class="fas fa-building"></i>', titulo: "Oficina Administrativa", descripcion: "Encargada de la gestión documental, archivo, correspondencia y apoyo logístico a todas las áreas del ayuntamiento. Coordina las actividades internas y el flujo de información.", funciones: ["Gestión documental", "Atención al público", "Logística interna"] },
+        caja: { icono: '<i class="fas fa-money-bill"></i>', titulo: "Caja Municipal", descripcion: "Responsable de la recaudación de impuestos, tasas y arbitrios. Gestiona los pagos de proveedores y los ingresos municipales.", funciones: ["Recaudación de impuestos", "Pago a proveedores", "Control de ingresos"] },
+        acceso: { icono: '<i class="fas fa-info-circle"></i>', titulo: "Libre Acceso a la Información", descripcion: "Departamento que garantiza el derecho ciudadano a solicitar y recibir información pública. Responde a las solicitudes de acceso a la información y promueve la transparencia.", funciones: ["Gestión de solicitudes de información", "Publicación de datos abiertos", "Capacitación en transparencia"] },
+        salon: { icono: '<i class="fas fa-users"></i>', titulo: "Salón de Reuniones", descripcion: "Espacio para reuniones del concejo municipal, juntas de vecinos y actividades comunitarias. Administra el calendario de uso y el equipamiento del salón.", funciones: ["Gestión del salón municipal", "Organización de sesiones del concejo", "Apoyo a reuniones comunitarias"] },
+        tecnologia: { icono: '<i class="fas fa-laptop"></i>', titulo: "Departamento de Tecnología", descripcion: "Mantiene los sistemas informáticos, el portal web, la red municipal y el soporte técnico para todas las áreas. Desarrolla soluciones digitales para mejorar los servicios.", funciones: ["Soporte técnico", "Desarrollo web", "Seguridad informática"] },
+        cocina: { icono: '<i class="fas fa-utensils"></i>', titulo: "Cocina", descripcion: "Servicio de alimentación para eventos oficiales, capacitaciones y actividades del ayuntamiento. También apoya en la logística de comedores comunitarios.", funciones: ["Alimentación para eventos", "Logística de comedores", "Control de inventario de alimentos"] },
+        rrhh: { icono: '<i class="fas fa-users"></i>', titulo: "Gestión / Recursos Humanos", descripcion: "Administra el personal municipal: contrataciones, nómina, capacitaciones, evaluación del desempeño y bienestar laboral.", funciones: ["Contrataciones y nómina", "Capacitación al personal", "Evaluación de desempeño"] },
+        sindicatura: { icono: '<i class="fas fa-gavel"></i>', titulo: "Sindicatura", descripcion: "Órgano de control interno que fiscaliza la legalidad de los actos municipales. Investiga denuncias de corrupción y vela por el cumplimiento de las leyes.", funciones: ["Control interno", "Investigación de denuncias", "Asesoría legal al concejo"] },
+        policia: { icono: '<i class="fas fa-shield-alt"></i>', titulo: "Policía Municipal / Seguridad", descripcion: "Encargada de la seguridad ciudadana en el ámbito municipal: control de tránsito, vigilancia de espacios públicos y atención a emergencias.", funciones: ["Patrullaje preventivo", "Control de tránsito", "Atención a emergencias"] },
+        transporte: { icono: '<i class="fas fa-truck"></i>', titulo: "Departamento de Transportación", descripcion: "Gestiona la flota de vehículos municipales (camiones de basura, patrullas, ambulancias) y el mantenimiento de los mismos. Coordina el transporte para actividades oficiales.", funciones: ["Mantenimiento de vehículos", "Logística de combustible", "Asignación de rutas"] },
+        ingenieria: { icono: '<i class="fas fa-hard-hat"></i>', titulo: "Departamento de Ingeniería", descripcion: "Planifica, diseña y supervisa las obras públicas: calles, parques, sistemas de drenaje, edificios municipales. Emite permisos de construcción.", funciones: ["Supervisión de obras", "Diseño de proyectos", "Permisos de construcción"] },
+        arbitrio: { icono: '<i class="fas fa-chart-line"></i>', titulo: "Arbitrio", descripcion: "Departamento encargado de la fiscalización de patentes comerciales, arbitrios municipales y actividades económicas. Realiza inspecciones y cobros.", funciones: ["Inspección de comercios", "Cálculo de arbitrios", "Gestión de patentes"] },
+        cementerio: { icono: '<i class="fas fa-church"></i>', titulo: "Cementerio", descripcion: "Administra el camposanto municipal: registro de parcelas, mantenimiento de áreas verdes, organización de sepulturas y ceremonias.", funciones: ["Registro de difuntos", "Mantenimiento del cementerio", "Coordinación de inhumaciones"] },
+        tesoreria: { icono: '<i class="fas fa-coins"></i>', titulo: "Tesorería", descripcion: "Gestión de los fondos municipales: inversiones, flujo de caja, pago de nóminas y rendición de cuentas financieras.", funciones: ["Flujo de caja", "Inversiones municipales", "Rendición de cuentas"] },
+        finanzas: { icono: '<i class="fas fa-chart-pie"></i>', titulo: "Finanzas", descripcion: "Planificación presupuestaria, gestión de deuda, análisis financiero y elaboración del presupuesto anual del ayuntamiento.", funciones: ["Elaboración del presupuesto", "Gestión de deuda", "Análisis financiero"] },
+        compras: { icono: '<i class="fas fa-shopping-cart"></i>', titulo: "Compras", descripcion: "Adquisición de bienes y servicios para el ayuntamiento mediante licitaciones públicas o contrataciones directas. Garantiza transparencia en las compras.", funciones: ["Licitaciones públicas", "Contrataciones directas", "Control de proveedores"] },
+        contabilidad: { icono: '<i class="fas fa-calculator"></i>', titulo: "Contabilidad", descripcion: "Registro de todas las operaciones económicas municipales, elaboración de estados financieros y conciliaciones bancarias.", funciones: ["Registro contable", "Estados financieros", "Conciliaciones bancarias"] }
+    };
+    document.querySelectorAll('.muni-depto-card').forEach(card => {
+        const id = card.getAttribute('data-depto-id');
+        if (id && deptosInfo[id]) {
+            card.addEventListener('click', () => {
+                const info = deptosInfo[id];
+                const lista = info.funciones.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('');
+                const contenido = `<p class="muni-modal-texto">${info.descripcion}</p><ul class="muni-modal-lista">${lista}</ul>`;
+                openModal(info.icono, info.titulo, contenido);
+            });
+        }
+    });
+    
+    // ========== 5. ALCALDE ==========
+    const alcaldeInfo = {
+        robert: { icono: '<i class="fas fa-user-graduate"></i>', titulo: "Robert Donald Tolentino", descripcion: "Alcalde / Director Municipal del distrito de Cutupú para el período 2024-2028. Líder comprometido con el desarrollo integral de la comunidad, ha impulsado proyectos de infraestructura, transparencia y participación ciudadana.", trayectoria: ["Más de 10 años de experiencia en gestión pública", "Promotor de la recolección diaria de basura", "Impulsor del sistema de transparencia municipal", "Creador del programa 'Cutupú Limpio y Seguro'"] }
+    };
+    const alcaldeCard = document.querySelector('.muni-alcalde-card');
+    if (alcaldeCard) {
+        alcaldeCard.addEventListener('click', () => {
+            const info = alcaldeInfo.robert;
+            const lista = info.trayectoria.map(item => `<li><i class="fas fa-star"></i> ${item}</li>`).join('');
+            const contenido = `<p class="muni-modal-texto">${info.descripcion}</p><ul class="muni-modal-lista">${lista}</ul><div class="muni-modal-divider"></div><p class="muni-modal-texto" style="font-style:italic;">“Mi compromiso es con cada familia de Cutupú, trabajando sin descanso por un distrito más limpio, ordenado y con oportunidades para todos.”</p>`;
+            openModal(info.icono, info.titulo, contenido);
+        });
+    }
+    
+    // ========== 6. SERVICIOS MUNICIPALES ==========
+    const serviciosInfo = {
+        basura: {
+            icono: '<i class="fas fa-trash-alt"></i>',
+            titulo: "Recolección de Basura",
+            descripcion: "El servicio de recolección de residuos sólidos se realiza mediante una flota de 3 camiones compactadores que cubren todos los sectores del distrito. Los desechos son transportados al vertedero regional Soto en La Vega, donde reciben disposición final adecuada.",
+            detalles: ["Cobertura al 98% de las viviendas", "Puntos ecológicos para reciclaje", "Campañas de separación de residuos"]
+        },
+        calles: {
+            icono: '<i class="fas fa-road"></i>',
+            titulo: "Mantenimiento de Calles",
+            descripcion: "El departamento de ingeniería realiza labores de bacheo, limpieza de canaletas y reparación de aceras permanentemente. Se da prioridad a las vías de mayor tránsito y a los sectores que lo solicitan mediante juntas de vecinos.",
+            detalles: ["Bacheo programado cada tres meses", "Limpieza de tragantes antes de temporada de lluvias", "Plan de asfaltado 2025"]
+        },
+        cementerios: {
+            icono: '<i class="fas fa-church"></i>',
+            titulo: "Cuidado de Cementerios",
+            descripcion: "El cementerio municipal cuenta con mantenimiento periódico de jardines, limpieza de áreas comunes y registro actualizado de concesiones. Se ofrecen servicios de inhumación, exhumación y construcción de nichos bajo normativas sanitarias.",
+            detalles: ["Registro digital de parcelas", "Tarifa social para familias de bajos recursos", "Mejoras en iluminación y seguridad"]
+        },
+        obras: {
+            icono: '<i class="fas fa-tree"></i>',
+            titulo: "Obras Públicas",
+            descripcion: "El ayuntamiento ejecuta proyectos de construcción y rehabilitación de espacios comunitarios: parques infantiles, canchas deportivas, clubes de ancianos e iglesias. Las obras se priorizan mediante consulta ciudadana.",
+            detalles: ["Parque Central remodelado 2024", "Cancha deportiva en La Susei", "Proyecto 'Iglesias Vivas'"]
+        }
+    };
+    document.querySelectorAll('.muni-servicio-card').forEach(card => {
+        const id = card.getAttribute('data-servicio');
+        if (id && serviciosInfo[id]) {
+            card.addEventListener('click', () => {
+                const info = serviciosInfo[id];
+                const lista = info.detalles.map(d => `<li><i class="fas fa-check-circle"></i> ${d}</li>`).join('');
+                const contenido = `<p class="muni-modal-texto">${info.descripcion}</p><ul class="muni-modal-lista">${lista}</ul>`;
+                openModal(info.icono, info.titulo, contenido);
+            });
+        }
+    });
 })();
 </script>
-
 {% endblock %}

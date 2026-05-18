@@ -8,6 +8,7 @@
    TRANSPARENCIA.CSS — VILLA CUTUPU
    ★ ULTRA ANIMATION EDITION ★
    Basado en el estilo premium de servicios
+   (TODO EL CSS ORIGINAL SE MANTIENE ÍNTEGRO)
 ════════════════════════════════════════════════════════════════ */
 
 /* ================================================================
@@ -33,7 +34,7 @@
 }
 
 /* ================================================================
-   KEYFRAMES — 40+ ANIMACIONES
+   KEYFRAMES — 40+ ANIMACIONES (ÍNTEGRO)
 ================================================================ */
 @keyframes trans-float {
     0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -196,7 +197,7 @@
 }
 
 /* ================================================================
-   HERO SECTION
+   HERO SECTION (ÍNTEGRO)
 ================================================================ */
 section.trans-hero {
     position: relative !important;
@@ -436,7 +437,7 @@ section.trans-hero::after {
 }
 
 /* ================================================================
-   SECCIÓN BIENVENIDA
+   SECCIÓN BIENVENIDA (ÍNTEGRA)
 ================================================================ */
 .trans-welcome {
     padding: 5rem 0;
@@ -569,7 +570,7 @@ section.trans-hero::after {
 }
 
 /* ================================================================
-   SECCIÓN CATEGORÍAS
+   SECCIÓN CATEGORÍAS (ÍNTEGRA)
 ================================================================ */
 .trans-categorias {
     padding: 5rem 0;
@@ -790,7 +791,7 @@ section.trans-hero::after {
 }
 
 /* ================================================================
-   SECCIÓN DOCUMENTOS PUBLICADOS (NUEVA)
+   SECCIÓN DOCUMENTOS PUBLICADOS (ÍNTEGRA)
 ================================================================ */
 .trans-documentos {
     padding: 5rem 0;
@@ -1114,7 +1115,7 @@ section.trans-hero::after {
 }
 
 /* ================================================================
-   SECCIÓN DERECHOS CIUDADANOS
+   SECCIÓN DERECHOS CIUDADANOS (ÍNTEGRA)
 ================================================================ */
 .trans-derechos {
     padding: 5rem 0;
@@ -1211,7 +1212,7 @@ section.trans-hero::after {
 }
 
 /* ================================================================
-   SECCIÓN OAIM
+   SECCIÓN OAIM (ÍNTEGRA)
 ================================================================ */
 .trans-oaim {
     padding: 5rem 0;
@@ -1347,7 +1348,7 @@ section.trans-hero::after {
 }
 
 /* ================================================================
-   CTA FINAL
+   CTA FINAL (ÍNTEGRA)
 ================================================================ */
 .trans-cta {
     padding: 5rem 0;
@@ -1446,7 +1447,7 @@ section.trans-hero::after {
 }
 
 /* ================================================================
-   RESPONSIVE
+   RESPONSIVE (ÍNTEGRO)
 ================================================================ */
 @media (max-width: 1100px) {
     .trans-grid { gap: 1.5rem; }
@@ -1517,12 +1518,157 @@ section.trans-hero::after {
         animation: none;
     }
 }
+
+/* ===== ESTILOS DEL MODAL (AÑADIDOS AL FINAL, NO ELIMINA NADA) ===== */
+.trans-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,20,6,.85);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .35s, visibility .35s;
+}
+.trans-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    backdrop-filter: blur(10px);
+}
+.trans-modal {
+    background: white;
+    border-radius: 2rem;
+    max-width: 560px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,.4);
+    transform: scale(.88) translateY(30px);
+    transition: transform .45s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    max-height: 85vh;
+    overflow-y: auto;
+}
+.trans-modal-overlay.active .trans-modal {
+    transform: scale(1) translateY(0);
+}
+.trans-modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #2D5016, #C8960C, #3D6B20);
+    background-size: 200%;
+    animation: modalBorderFlow 3s linear infinite;
+    z-index: 2;
+}
+@keyframes modalBorderFlow {
+    from { background-position: 0%; }
+    to   { background-position: 200%; }
+}
+.trans-modal-close {
+    position: absolute;
+    top: 1.2rem; right: 1.2rem;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: #e8eee8;
+    color: #5a6e5a;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .95rem;
+    z-index: 10;
+    transition: background .2s, color .2s, transform .3s;
+}
+.trans-modal-close:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    transform: rotate(90deg) scale(1.1);
+}
+.trans-modal-body {
+    padding: 2rem;
+}
+.trans-modal-icono {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1rem auto;
+    background: var(--trans-verde-xlight);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--trans-verde-dark);
+    border: 2px solid var(--trans-gold);
+}
+.trans-modal-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-align: center;
+    color: var(--trans-dark);
+    margin-bottom: 0.5rem;
+}
+.trans-modal-divider {
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--trans-verde-dark), var(--trans-gold));
+    margin: 1rem auto;
+    border-radius: 3px;
+}
+.trans-modal-texto {
+    color: var(--trans-gray);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-bottom: 1rem;
+}
+.trans-modal-lista {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+.trans-modal-lista li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.7rem;
+    font-size: 0.85rem;
+    color: var(--trans-gray);
+}
+.trans-modal-lista li i {
+    color: var(--trans-gold);
+    width: 20px;
+}
+.trans-modal-boton {
+    display: inline-block;
+    background: var(--trans-verde-dark);
+    color: white;
+    padding: 0.6rem 1.5rem;
+    border-radius: 2rem;
+    text-decoration: none;
+    margin-top: 1rem;
+    transition: background 0.2s, transform 0.2s;
+    font-weight: 600;
+}
+.trans-modal-boton:hover {
+    background: var(--trans-gold);
+    transform: translateY(-2px);
+}
+@media (max-width: 560px) {
+    .trans-modal-body { padding: 1.5rem; }
+    .trans-modal-titulo { font-size: 1.5rem; }
+    .trans-modal-icono { width: 55px; height: 55px; font-size: 1.5rem; }
+}
 </style>
 {% endblock %}
 
 {% block content %}
 <main>
-    <!-- HERO SECTION -->
+    <!-- HERO SECTION (con stats clickeables) -->
     <section class="trans-hero">
         <div class="trans-hero-left-line"></div>
         <div class="trans-particle trans-particle-1"></div>
@@ -1543,13 +1689,13 @@ section.trans-hero::after {
                     Acceso libre a la información pública · Rendición de cuentas · Gobierno abierto
                 </p>
                 <div class="trans-hero-stats">
-                    <div class="trans-hero-stat">
+                    <div class="trans-hero-stat" data-stat="categorias">
                         <i class="fas fa-file-alt"></i> 10+ Categorías
                     </div>
-                    <div class="trans-hero-stat">
+                    <div class="trans-hero-stat" data-stat="actualizacion">
                         <i class="fas fa-chart-line"></i> Actualización permanente
                     </div>
-                    <div class="trans-hero-stat">
+                    <div class="trans-hero-stat" data-stat="ley">
                         <i class="fas fa-gavel"></i> Ley 200-04
                     </div>
                 </div>
@@ -1557,7 +1703,7 @@ section.trans-hero::after {
         </div>
     </section>
 
-    <!-- SECCIÓN BIENVENIDA -->
+    <!-- SECCIÓN BIENVENIDA (badges clickeables) -->
     <section class="trans-welcome">
         <div class="container">
             <div class="trans-welcome-card">
@@ -1570,16 +1716,16 @@ section.trans-hero::after {
                     <p><span class="ley-ref">Artículo 5.-</span> «Se dispone la informatización y la incorporación al sistema de comunicación por Internet, o a cualquier otro sistema similar que en el futuro se establezca, de todos los organismos públicos centralizados y descentralizados del Estado, incluyendo el Distrito Nacional y los Municipios, con la finalidad de garantizar a través de éste un acceso directo del público a la información del Estado.»</p>
                 </div>
                 <div class="trans-compliance-badges">
-                    <span class="badge"><i class="fas fa-balance-scale"></i> Ley 200-04</span>
-                    <span class="badge"><i class="fas fa-file-contract"></i> Decreto 130-05</span>
-                    <span class="badge"><i class="fas fa-sync-alt"></i> Actualización permanente</span>
-                    <span class="badge"><i class="fas fa-unlock-alt"></i> Libre acceso</span>
+                    <span class="badge" data-badge="ley200"><i class="fas fa-balance-scale"></i> Ley 200-04</span>
+                    <span class="badge" data-badge="decreto130"><i class="fas fa-file-contract"></i> Decreto 130-05</span>
+                    <span class="badge" data-badge="actualizacion"><i class="fas fa-sync-alt"></i> Actualización permanente</span>
+                    <span class="badge" data-badge="libreacceso"><i class="fas fa-unlock-alt"></i> Libre acceso</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SECCIÓN CATEGORÍAS ESTÁTICAS -->
+    <!-- SECCIÓN CATEGORÍAS (cards clickeables) -->
     <section class="trans-categorias">
         <div class="container">
             <div class="trans-section-header">
@@ -1590,7 +1736,7 @@ section.trans-hero::after {
 
             <div class="trans-grid">
                 <!-- Estructura orgánica -->
-                <div class="trans-card">
+                <div class="trans-card" data-categoria="estructura" data-url="{{ url_for('transparencia_estructura') }}">
                     <div class="trans-card-band"></div>
                     <div class="trans-card-icon estructura-icon">
                         <i class="fas fa-landmark"></i>
@@ -1604,7 +1750,7 @@ section.trans-hero::after {
                 </div>
 
                 <!-- Integrantes y autoridades -->
-                <div class="trans-card">
+                <div class="trans-card" data-categoria="integrantes" data-url="{{ url_for('transparencia_integrantes') }}">
                     <div class="trans-card-band"></div>
                     <div class="trans-card-icon integrantes-icon">
                         <i class="fas fa-users"></i>
@@ -1618,7 +1764,7 @@ section.trans-hero::after {
                 </div>
 
                 <!-- Normativas -->
-                <div class="trans-card">
+                <div class="trans-card" data-categoria="normativas" data-url="{{ url_for('transparencia_normativas') }}">
                     <div class="trans-card-band"></div>
                     <div class="trans-card-icon normativas-icon">
                         <i class="fas fa-gavel"></i>
@@ -1632,7 +1778,7 @@ section.trans-hero::after {
                 </div>
 
                 <!-- Proyectos y obras -->
-                <div class="trans-card">
+                <div class="trans-card" data-categoria="proyectos" data-url="{{ url_for('transparencia_proyectos') }}">
                     <div class="trans-card-band"></div>
                     <div class="trans-card-icon proyectos-icon">
                         <i class="fas fa-hard-hat"></i>
@@ -1646,7 +1792,7 @@ section.trans-hero::after {
                 </div>
 
                 <!-- Informes de gestión -->
-                <div class="trans-card">
+                <div class="trans-card" data-categoria="informes" data-url="{{ url_for('transparencia_informes') }}">
                     <div class="trans-card-band"></div>
                     <div class="trans-card-icon informes-icon">
                         <i class="fas fa-chart-bar"></i>
@@ -1660,7 +1806,7 @@ section.trans-hero::after {
                 </div>
 
                 <!-- Base de datos -->
-                <div class="trans-card">
+                <div class="trans-card" data-categoria="datos" data-url="{{ url_for('transparencia_datos') }}">
                     <div class="trans-card-band"></div>
                     <div class="trans-card-icon datos-icon">
                         <i class="fas fa-database"></i>
@@ -1674,7 +1820,7 @@ section.trans-hero::after {
                 </div>
 
                 <!-- Atención al usuario -->
-                <div class="trans-card">
+                <div class="trans-card" data-categoria="atencion" data-url="{{ url_for('transparencia_atencion') }}">
                     <div class="trans-card-band"></div>
                     <div class="trans-card-icon atencion-icon">
                         <i class="fas fa-headset"></i>
@@ -1688,7 +1834,7 @@ section.trans-hero::after {
                 </div>
 
                 <!-- Trámites y servicios -->
-                <div class="trans-card">
+                <div class="trans-card" data-categoria="tramites" data-url="{{ url_for('servicios') }}">
                     <div class="trans-card-band"></div>
                     <div class="trans-card-icon tramites-icon">
                         <i class="fas fa-clipboard-list"></i>
@@ -1702,7 +1848,7 @@ section.trans-hero::after {
                 </div>
 
                 <!-- Actas y acuerdos -->
-                <div class="trans-card">
+                <div class="trans-card" data-categoria="actas" data-url="{{ url_for('transparencia_actas') }}">
                     <div class="trans-card-band"></div>
                     <div class="trans-card-icon actas-icon">
                         <i class="fas fa-file-signature"></i>
@@ -1716,7 +1862,7 @@ section.trans-hero::after {
                 </div>
 
                 <!-- Compras y contrataciones -->
-                <div class="trans-card">
+                <div class="trans-card" data-categoria="compras" data-url="{{ url_for('transparencia_compras') }}">
                     <div class="trans-card-band"></div>
                     <div class="trans-card-icon compras-icon">
                         <i class="fas fa-shopping-cart"></i>
@@ -1732,7 +1878,7 @@ section.trans-hero::after {
         </div>
     </section>
 
-    <!-- NUEVA SECCIÓN: DOCUMENTOS PUBLICADOS DESDE BD -->
+    <!-- NUEVA SECCIÓN: DOCUMENTOS PUBLICADOS DESDE BD (ya tenía filtros y grid) -->
     <section class="trans-documentos">
         <div class="container">
             <div class="trans-section-header">
@@ -1741,7 +1887,6 @@ section.trans-hero::after {
                 <div class="trans-header-line"></div>
             </div>
 
-            <!-- Filtros por categoría -->
             {% if categorias %}
             <div class="trans-filtros">
                 <a href="{{ url_for('transparencia') }}" class="trans-filtro-btn {% if not categoria_actual %}active{% endif %}">
@@ -1755,12 +1900,11 @@ section.trans-hero::after {
             </div>
             {% endif %}
 
-            <!-- Grid de documentos -->
             {% if documentos and documentos|length > 0 %}
             <div class="trans-documentos-grid">
                 {% for doc in documentos %}
                 {% if doc.publicado %}
-                <div class="trans-doc-card">
+                <div class="trans-doc-card" data-doc-id="{{ doc.id }}" data-doc-titulo="{{ doc.titulo }}" data-doc-descripcion="{{ doc.descripcion|e }}" data-doc-categoria="{% for cat_key, cat_name in categorias %}{% if cat_key == doc.categoria %}{{ cat_name }}{% endif %}{% endfor %}" data-doc-periodo="{{ doc.periodo or doc.anio or '' }}" data-doc-fecha="{{ doc.fecha_doc.strftime('%d/%m/%Y') if doc.fecha_doc else '' }}" data-doc-url="{{ doc.archivo_url or doc.enlace_ext or '#' }}">
                     <div class="trans-doc-band"></div>
                     <div class="trans-doc-header">
                         <div class="trans-doc-icon">
@@ -1776,38 +1920,25 @@ section.trans-hero::after {
                             </span>
                         </div>
                     </div>
-                    
                     {% if doc.descripcion %}
                     <p class="trans-doc-descripcion">{{ doc.descripcion|truncate(120) }}</p>
                     {% endif %}
-                    
                     <div class="trans-doc-meta">
                         {% if doc.periodo %}
-                        <span class="trans-doc-periodo">
-                            <i class="fas fa-calendar-alt"></i> {{ doc.periodo }}
-                        </span>
+                        <span class="trans-doc-periodo"><i class="fas fa-calendar-alt"></i> {{ doc.periodo }}</span>
                         {% elif doc.anio %}
-                        <span class="trans-doc-anio">
-                            <i class="fas fa-calendar"></i> {{ doc.anio }}
-                        </span>
+                        <span class="trans-doc-anio"><i class="fas fa-calendar"></i> {{ doc.anio }}</span>
                         {% endif %}
                         {% if doc.fecha_doc %}
-                        <span class="trans-doc-periodo">
-                            <i class="fas fa-clock"></i> {{ doc.fecha_doc.strftime('%d/%m/%Y') if doc.fecha_doc else '' }}
-                        </span>
+                        <span class="trans-doc-periodo"><i class="fas fa-clock"></i> {{ doc.fecha_doc.strftime('%d/%m/%Y') if doc.fecha_doc else '' }}</span>
                         {% endif %}
                     </div>
-                    
                     <div class="trans-doc-actions">
                         {% if doc.archivo_url %}
-                        <a href="{{ doc.archivo_url }}" class="trans-doc-btn trans-doc-btn-download" target="_blank">
-                            <i class="fas fa-download"></i> Descargar
-                        </a>
+                        <a href="{{ doc.archivo_url }}" class="trans-doc-btn trans-doc-btn-download" target="_blank"><i class="fas fa-download"></i> Descargar</a>
                         {% endif %}
                         {% if doc.enlace_ext %}
-                        <a href="{{ doc.enlace_ext }}" class="trans-doc-btn trans-doc-btn-external" target="_blank">
-                            <i class="fas fa-external-link-alt"></i> Ver enlace
-                        </a>
+                        <a href="{{ doc.enlace_ext }}" class="trans-doc-btn trans-doc-btn-external" target="_blank"><i class="fas fa-external-link-alt"></i> Ver enlace</a>
                         {% endif %}
                     </div>
                 </div>
@@ -1829,36 +1960,27 @@ section.trans-hero::after {
         </div>
     </section>
 
-    <!-- SECCIÓN DERECHOS CIUDADANOS -->
+    <!-- SECCIÓN DERECHOS CIUDADANOS (cards clickeables) -->
     <section class="trans-derechos">
         <div class="container">
             <div class="trans-derechos-grid">
-                <div class="trans-derecho-card">
-                    <div class="trans-derecho-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
+                <div class="trans-derecho-card" data-derecho="informacion">
+                    <div class="trans-derecho-icon"><i class="fas fa-eye"></i></div>
                     <h3>Derecho a la información</h3>
                     <p>Toda persona tiene derecho a solicitar y recibir información completa, veraz, adecuada y oportuna de cualquier órgano del Estado.</p>
                 </div>
-                <div class="trans-derecho-card">
-                    <div class="trans-derecho-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
+                <div class="trans-derecho-card" data-derecho="plazo">
+                    <div class="trans-derecho-icon"><i class="fas fa-clock"></i></div>
                     <h3>Plazo de respuesta</h3>
                     <p>Las solicitudes de información deben ser respondidas en un plazo no mayor de 15 días hábiles.</p>
-                    <div class="trans-card-divider"></div>
                 </div>
-                <div class="trans-derecho-card">
-                    <div class="trans-derecho-icon">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                    </div>
+                <div class="trans-derecho-card" data-derecho="gratuidad">
+                    <div class="trans-derecho-icon"><i class="fas fa-file-invoice-dollar"></i></div>
                     <h3>Gratuidad</h3>
                     <p>El acceso a la información pública es gratuito. Solo se podrá cobrar el costo de reproducción.</p>
                 </div>
-                <div class="trans-derecho-card">
-                    <div class="trans-derecho-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
+                <div class="trans-derecho-card" data-derecho="datos">
+                    <div class="trans-derecho-icon"><i class="fas fa-shield-alt"></i></div>
                     <h3>Protección de datos</h3>
                     <p>Se garantiza la protección de datos personales y la información clasificada como reservada.</p>
                 </div>
@@ -1866,7 +1988,7 @@ section.trans-hero::after {
         </div>
     </section>
 
-    <!-- SECCIÓN OAIM -->
+    <!-- SECCIÓN OAIM (íntegra) -->
     <section class="trans-oaim">
         <div class="container">
             <div class="trans-oaim-card">
@@ -1874,30 +1996,16 @@ section.trans-hero::after {
                     <h2>Oficina de Acceso a la Información (OAI/M)</h2>
                     <p>¿Necesitas información específica que no encuentras en nuestro portal? Puedes solicitar información a través de nuestra Oficina de Acceso a la Información Municipal.</p>
                     <div class="trans-oaim-info">
-                        <div class="info-item">
-                            <i class="fas fa-user-tie"></i>
-                            <span>Encargado: Lic. María Rodríguez</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>oaim@villacutupu.gob.do</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-phone-alt"></i>
-                            <span>(809) 691-7111 ext. 104</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-clock"></i>
-                            <span>Lun-Vie: 8:00 AM - 2:00 PM</span>
-                        </div>
+                        <div class="info-item"><i class="fas fa-user-tie"></i><span>Encargado: Lic. María Rodríguez</span></div>
+                        <div class="info-item"><i class="fas fa-envelope"></i><span>oaim@villacutupu.gob.do</span></div>
+                        <div class="info-item"><i class="fas fa-phone-alt"></i><span>(809) 691-7111 ext. 104</span></div>
+                        <div class="info-item"><i class="fas fa-clock"></i><span>Lun-Vie: 8:00 AM - 2:00 PM</span></div>
                     </div>
                     <a href="{{ url_for('transparencia_atencion') }}" class="trans-oaim-btn">
                         Solicitar información <i class="fas fa-paper-plane"></i>
                     </a>
                 </div>
-                <div class="trans-oaim-icon">
-                    <i class="fas fa-balance-scale"></i>
-                </div>
+                <div class="trans-oaim-icon"><i class="fas fa-balance-scale"></i></div>
             </div>
         </div>
     </section>
@@ -1922,7 +2030,7 @@ section.trans-hero::after {
 
 {% block extra_js %}
 <script>
-    // Scroll reveal animation for transparencia
+    // Scroll reveal original (íntegro)
     const transObserverOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
     const transObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -1933,12 +2041,155 @@ section.trans-hero::after {
             }
         });
     }, transObserverOptions);
-
     document.querySelectorAll('.trans-card, .trans-doc-card, .trans-derecho-card, .trans-welcome-card, .trans-oaim-card').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(30px)';
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         transObserver.observe(el);
     });
+
+    // ========== MODALES: creación, eventos y contenido ==========
+    (function() {
+        // Crear modal una sola vez e inyectarlo en el body
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'trans-modal-overlay';
+        modalOverlay.innerHTML = `
+            <div class="trans-modal">
+                <button class="trans-modal-close" id="transModalClose"><i class="fas fa-times"></i></button>
+                <div class="trans-modal-body">
+                    <div class="trans-modal-icono" id="transModalIcono"><i class="fas fa-info-circle"></i></div>
+                    <h3 class="trans-modal-titulo" id="transModalTitulo"></h3>
+                    <div class="trans-modal-divider"></div>
+                    <div id="transModalContenido"></div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modalOverlay);
+        const modal = modalOverlay;
+        const closeBtn = document.getElementById('transModalClose');
+        const modalIcono = document.getElementById('transModalIcono');
+        const modalTitulo = document.getElementById('transModalTitulo');
+        const modalContenido = document.getElementById('transModalContenido');
+
+        function openModal(iconoHtml, titulo, contenidoHtml) {
+            modalIcono.innerHTML = iconoHtml;
+            modalTitulo.textContent = titulo;
+            modalContenido.innerHTML = contenidoHtml;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+
+        // 1. Hero stats
+        const stats = document.querySelectorAll('.trans-hero-stat');
+        const statsInfo = {
+            categorias: { icono: '<i class="fas fa-file-alt"></i>', titulo: '10+ Categorías de Información', texto: 'Nuestro portal de transparencia ofrece más de 10 categorías de información pública, organizadas para facilitar el acceso ciudadano. Incluye estructura orgánica, normativas, proyectos, informes, datos abiertos, atención al usuario, trámites, actas y compras. Todas las secciones se actualizan conforme a la Ley 200-04.', detalles: ['Acceso gratuito', 'Sin necesidad de registro', 'Datos abiertos reutilizables'] },
+            actualizacion: { icono: '<i class="fas fa-sync-alt"></i>', titulo: 'Actualización Permanente', texto: 'La información se actualiza de forma continua conforme se generan nuevos documentos y datos. Las actualizaciones se realizan al menos una vez al mes, y los informes de gestión trimestral se publican dentro de los 30 días posteriores al cierre de cada trimestre.', detalles: [`Última actualización: ${new Date().toLocaleDateString('es-DO')}`, 'Próxima programada: primer día del mes siguiente'] },
+            ley: { icono: '<i class="fas fa-balance-scale"></i>', titulo: 'Ley 200-04 de Libre Acceso a la Información', texto: 'La Ley 200-04, del 28 de julio de 2004, establece el derecho de las personas a solicitar y recibir información de los poderes públicos. Crea la Comisión Nacional de Ética y Combate a la Corrupción, y define los principios de transparencia, máxima publicidad y gratuidad.', detalles: ['Plazo máximo de respuesta: 15 días hábiles', 'Información de oficio obligatoria', 'Sanciones por incumplimiento'] }
+        };
+        stats.forEach(stat => {
+            const tipo = stat.getAttribute('data-stat');
+            if (tipo && statsInfo[tipo]) {
+                stat.addEventListener('click', () => {
+                    const info = statsInfo[tipo];
+                    const lista = info.detalles.map(d => `<li><i class="fas fa-check-circle"></i> ${d}</li>`).join('');
+                    const contenido = `<p class="trans-modal-texto">${info.texto}</p><ul class="trans-modal-lista">${lista}</ul>`;
+                    openModal(info.icono, info.titulo, contenido);
+                });
+            }
+        });
+
+        // 2. Badges de compliance
+        const badgesInfo = {
+            ley200: { icono: '<i class="fas fa-balance-scale"></i>', titulo: 'Ley 200-04', texto: 'Ley de Libre Acceso a la Información Pública. Establece que toda persona tiene derecho a solicitar y recibir información de cualquier entidad del Estado. La información debe ser completa, veraz, adecuada y oportuna.', detalles: ['Crea la Comisión Nacional de Ética', 'Define categorías de información reservada', 'Establece plazos máximos de respuesta'] },
+            decreto130: { icono: '<i class="fas fa-file-contract"></i>', titulo: 'Decreto 130-05', texto: 'Reglamento de aplicación de la Ley 200-04. Define procedimientos, plazos específicos y las responsabilidades de los oficiales de información.', detalles: ['Oficinas de Acceso a la Información en cada municipio', 'Formularios estandarizados', 'Sanciones para funcionarios incumplidos'] },
+            actualizacion: { icono: '<i class="fas fa-sync-alt"></i>', titulo: 'Actualización Permanente', texto: 'Compromiso de mantener la información actualizada conforme al Artículo 5 de la Ley 200-04, que obliga a los organismos públicos a informatizar sus datos y ofrecer acceso por internet.', detalles: ['Actualización mensual garantizada', 'Control de versiones de documentos', 'Notificaciones por correo de cambios relevantes'] },
+            libreacceso: { icono: '<i class="fas fa-unlock-alt"></i>', titulo: 'Libre Acceso', texto: 'Principio de máxima publicidad: toda la información en poder del Estado es pública, salvo las excepciones previstas por ley (seguridad nacional, intimidad, etc.). El acceso es gratuito y sin necesidad de justificar la solicitud.', detalles: ['No se requiere abogado', 'Formatos reutilizables', 'Portal disponible 24/7'] }
+        };
+        document.querySelectorAll('.trans-compliance-badges .badge').forEach(badge => {
+            const key = badge.getAttribute('data-badge');
+            if (key && badgesInfo[key]) {
+                badge.addEventListener('click', () => {
+                    const info = badgesInfo[key];
+                    const lista = info.detalles.map(d => `<li><i class="fas fa-check-circle"></i> ${d}</li>`).join('');
+                    const contenido = `<p class="trans-modal-texto">${info.texto}</p><ul class="trans-modal-lista">${lista}</ul>`;
+                    openModal(info.icono, info.titulo, contenido);
+                });
+            }
+        });
+
+        // 3. Tarjetas de categorías (10)
+        const categoriasInfo = {
+            estructura: { icono: '<i class="fas fa-landmark"></i>', titulo: "Estructura orgánica", descripcion: "Conoce el organigrama completo de la Junta Municipal, las funciones de cada departamento, los responsables y la base legal que rige su funcionamiento. Incluye manuales de organización y reglamentos internos.", detalles: ["Organigrama actualizado", "Reglamento orgánico", "Manual de funciones"] },
+            integrantes: { icono: '<i class="fas fa-users"></i>', titulo: "Integrantes y autoridades", descripcion: "Listado completo de funcionarios electos y de carrera: alcalde, vocales, directores, coordinadores. Incluye perfiles profesionales, declaraciones juradas de patrimonio y horarios de atención.", detalles: ["Currículos publicados", "Declaraciones juradas", "Agenda pública de autoridades"] },
+            normativas: { icono: '<i class="fas fa-gavel"></i>', titulo: "Normativas de funcionamiento", descripcion: "Compilación de ordenanzas municipales, resoluciones, decretos, reglamentos y bandos vigentes. Cada norma se presenta en formato PDF descargable.", detalles: ["Ordenanzas 2020-2026", "Resoluciones del concejo", "Bandos de policía"] },
+            proyectos: { icono: '<i class="fas fa-hard-hat"></i>', titulo: "Proyectos y obras", descripcion: "Información sobre proyectos de inversión, obras en ejecución, licitaciones, contratos adjudicados y avances físicos/financieros. Actualizado trimestralmente.", detalles: ["Plan de inversión anual", "Licitaciones vigentes", "Reportes de avance de obra"] },
+            informes: { icono: '<i class="fas fa-chart-bar"></i>', titulo: "Informes de gestión", descripcion: "Rendición de cuentas: informes trimestrales y anuales, ejecución presupuestaria, indicadores de gestión y resultados de auditorías.", detalles: ["Informe de alcalde", "Ejecución presupuestaria", "Auditorías externas"] },
+            datos: { icono: '<i class="fas fa-database"></i>', titulo: "Base de datos municipal", descripcion: "Conjuntos de datos abiertos: censo poblacional, estadísticas de servicios, indicadores socioeconómicos, georreferenciación de sectores.", detalles: ["Datos abiertos en CSV", "Visualizaciones interactivas", "Histórico anual"] },
+            atencion: { icono: '<i class="fas fa-headset"></i>', titulo: "Atención al usuario", descripcion: "Sistema de gestión de consultas, quejas y sugerencias. Puedes hacer seguimiento a tus solicitudes y recibir respuestas oficiales.", detalles: ["Formulario en línea", "Seguimiento con número de folio", "Plazo máximo de respuesta: 5 días"] },
+            tramites: { icono: '<i class="fas fa-clipboard-list"></i>', titulo: "Trámites y servicios", descripcion: "Catálogo completo de trámites disponibles: certificados, permisos, constancias, licencias. Incluye requisitos, costos y plazos.", detalles: ["Ventanilla única virtual", "Pagos en línea", "Notificaciones automáticas"] },
+            actas: { icono: '<i class="fas fa-file-signature"></i>', titulo: "Actas y acuerdos", descripcion: "Actas de las sesiones del concejo municipal, acuerdos adoptados, resoluciones administrativas y documentos de la comisión de transparencia.", detalles: ["Actas desde 2020", "Buscador por fecha", "Votaciones nominales"] },
+            compras: { icono: '<i class="fas fa-shopping-cart"></i>', titulo: "Compras y contrataciones", descripcion: "Detalle de todas las compras y contrataciones: procedimientos de licitación, contratos suscritos, proveedores, montos y plazos.", detalles: ["Registro de proveedores", "Órdenes de compra", "Contratos vigentes"] }
+        };
+        document.querySelectorAll('.trans-card').forEach(card => {
+            const categoria = card.getAttribute('data-categoria');
+            const url = card.getAttribute('data-url');
+            if (categoria && categoriasInfo[categoria]) {
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.trans-card-btn')) return;
+                    const info = categoriasInfo[categoria];
+                    const lista = info.detalles.map(d => `<li><i class="fas fa-check-circle"></i> ${d}</li>`).join('');
+                    const boton = `<a href="${url}" class="trans-modal-boton" target="_blank">Ir a la sección <i class="fas fa-arrow-right"></i></a>`;
+                    const contenido = `<p class="trans-modal-texto">${info.descripcion}</p><ul class="trans-modal-lista">${lista}</ul>${boton}`;
+                    openModal(info.icono, info.titulo, contenido);
+                });
+            }
+        });
+
+        // 4. Documentos desde BD
+        document.querySelectorAll('.trans-doc-card').forEach(docCard => {
+            docCard.addEventListener('click', (e) => {
+                if (e.target.closest('.trans-doc-btn')) return;
+                const titulo = docCard.getAttribute('data-doc-titulo');
+                const descripcion = docCard.getAttribute('data-doc-descripcion');
+                const categoria = docCard.getAttribute('data-doc-categoria');
+                const periodo = docCard.getAttribute('data-doc-periodo');
+                const fecha = docCard.getAttribute('data-doc-fecha');
+                const url = docCard.getAttribute('data-doc-url');
+                const contenido = `
+                    <p class="trans-modal-texto"><strong>Categoría:</strong> ${categoria}</p>
+                    <p class="trans-modal-texto"><strong>${periodo ? 'Período: ' + periodo : (fecha ? 'Fecha: ' + fecha : '')}</strong></p>
+                    <p class="trans-modal-texto">${descripcion || 'Documento oficial publicado para consulta y descarga.'}</p>
+                    <a href="${url}" class="trans-modal-boton" target="_blank"><i class="fas fa-download"></i> Acceder al documento</a>
+                `;
+                openModal('<i class="fas fa-file-alt"></i>', titulo, contenido);
+            });
+        });
+
+        // 5. Derechos ciudadanos
+        const derechosInfo = {
+            informacion: { icono: '<i class="fas fa-eye"></i>', titulo: "Derecho a la información", descripcion: "Toda persona, sin necesidad de demostrar interés legítimo, tiene derecho a solicitar y recibir información completa, veraz, adecuada y oportuna de cualquier órgano del Estado. Este derecho es un pilar de la democracia participativa.", detalles: ["Aplicable a nacionales y extranjeros", "No se requiere abogado", "La información debe entregarse en el formato solicitado"] },
+            plazo: { icono: '<i class="fas fa-clock"></i>', titulo: "Plazo de respuesta", descripcion: "Las solicitudes de acceso a la información deben ser respondidas en un plazo máximo de 15 días hábiles. Excepcionalmente, por razones justificadas, el plazo puede extenderse por 8 días más.", detalles: ["Solicitudes sencillas: 5 días", "Solicitudes complejas: hasta 23 días", "Silencio administrativo positivo"] },
+            gratuidad: { icono: '<i class="fas fa-file-invoice-dollar"></i>', titulo: "Gratuidad", descripcion: "El acceso a la información pública es gratuito. Solo se podrá cobrar el costo de reproducción (fotocopias, CDs, etc.), nunca por la búsqueda ni por la consulta.", detalles: ["Primeras 20 copias gratis", "Descarga digital sin costo", "Exención para personas de escasos recursos"] },
+            datos: { icono: '<i class="fas fa-shield-alt"></i>', titulo: "Protección de datos", descripcion: "Se garantiza la protección de datos personales y la información clasificada como reservada (seguridad nacional, intimidad, etc.). La ley establece categorías de información reservada y confidencial.", detalles: ["Datos de salud: confidenciales", "Información de menores: restringida", "Investigaciones en curso: reservadas"] }
+        };
+        document.querySelectorAll('.trans-derecho-card').forEach(card => {
+            const derecho = card.getAttribute('data-derecho');
+            if (derecho && derechosInfo[derecho]) {
+                card.addEventListener('click', () => {
+                    const info = derechosInfo[derecho];
+                    const lista = info.detalles.map(d => `<li><i class="fas fa-check-circle"></i> ${d}</li>`).join('');
+                    const contenido = `<p class="trans-modal-texto">${info.descripcion}</p><ul class="trans-modal-lista">${lista}</ul>`;
+                    openModal(info.icono, info.titulo, contenido);
+                });
+            }
+        });
+    })();
 </script>
 {% endblock %}

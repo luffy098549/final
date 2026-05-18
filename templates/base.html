@@ -45,7 +45,7 @@
         --smooth:  cubic-bezier(.2,.9,.4,1);
         --ease-o:  cubic-bezier(.0,0,.2,1);
 
-        --header-h: 72px;
+        --header-h: 160px;  /* Altura muy grande para el logo enorme */
     }
 
     /* ================================================================
@@ -136,9 +136,11 @@
     }
 
     .main-header.scrolled {
-        height: 60px;
+        height: 100px;  /* Altura al hacer scroll, aún grande */
         background: rgba(250,246,238,.98);
         box-shadow: 0 2px 28px rgba(30,58,15,.10);
+        border-bottom: 2px solid transparent;
+        border-image: linear-gradient(90deg, var(--verde), var(--dorado), var(--verde)) 1;
     }
 
     .header-container {
@@ -146,19 +148,62 @@
         max-width:1280px; height:100%; margin:0 auto; padding:0 2rem;
     }
 
-    .logo a { display:flex; align-items:center; text-decoration:none; }
-
-    .header-logo {
-        height: 52px; width:auto;
-        transition: all .4s var(--spring);
-        filter: drop-shadow(0 2px 6px rgba(0,0,0,.10));
+    /* Logo link con resplandor radial */
+    .logo a {
+        display:flex; align-items:center; text-decoration:none;
+        position: relative;
     }
 
-    .main-header.scrolled .header-logo { height:42px; }
+    .logo a::after {
+        content: '';
+        position: absolute;
+        inset: -6px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(184,134,11,.12) 0%, transparent 70%);
+        opacity: 0;
+        transform: scale(0.7);
+        transition: opacity .4s, transform .4s var(--spring);
+        pointer-events: none;
+    }
+
+    .logo a:hover::after {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    /* Animaciones del logo */
+    @keyframes logoPulse {
+        0%,100% { filter: drop-shadow(0 3px 10px rgba(30,58,15,.15)); }
+        50%      { filter: drop-shadow(0 5px 20px rgba(184,134,11,.30))
+                           drop-shadow(0 0 12px rgba(30,58,15,.20)); }
+    }
+
+    @keyframes logoBounceIn {
+        0%   { opacity:0; transform: scale(0.5) rotate(-15deg); }
+        60%  { opacity:1; transform: scale(1.12) rotate(3deg); }
+        80%  { transform: scale(0.95) rotate(-1deg); }
+        100% { transform: scale(1) rotate(0deg); }
+    }
+
+    /* LOGO ENORME - Tamaño gigante (como la D de Distrital) */
+    .header-logo {
+        height: 140px;          /* Tamaño enorme */
+        width: auto;
+        transition: all .45s var(--spring);
+        filter: drop-shadow(0 3px 10px rgba(0,0,0,.12));
+        animation: logoBounceIn .8s var(--spring) both,
+                   logoPulse 3.5s ease-in-out 1s infinite;
+    }
+
+    .main-header.scrolled .header-logo {
+        height: 90px;           /* Sigue siendo grande en scroll */
+    }
 
     .logo:hover .header-logo {
-        transform: scale(1.05) rotate(-2deg);
-        filter: drop-shadow(0 4px 14px rgba(30,58,15,.25));
+        transform: scale(1.10) rotate(-4deg);
+        filter: drop-shadow(0 8px 24px rgba(30,58,15,.40))
+                drop-shadow(0 0 16px rgba(184,134,11,.30));
+        animation: none;
     }
 
     /* ── Nav ── */
@@ -693,6 +738,10 @@
         .main-nav { display:none; }
         .menu-toggle { display:flex; }
         .header-container { padding:0 1rem; }
+        .header-logo { height: 100px; } /* Ajuste para tablet */
+        .main-header { height: 120px; }
+        .main-header.scrolled { height: 80px; }
+        .main-header.scrolled .header-logo { height: 70px; }
     }
 
     @media (max-width:768px) {
@@ -705,10 +754,14 @@
         .footer-contact h3::after { left:50%; transform:translateX(-50%); }
         .footer-links a::before { display:none; }
         .footer-links a:hover { transform:none; }
+        .header-logo { height: 85px; }
+        .main-header { height: 105px; }
+        .main-header.scrolled { height: 75px; }
+        .main-header.scrolled .header-logo { height: 60px; }
     }
 
     @media (max-width:480px) {
-        :root { --header-h:64px; }
+        :root { --header-h: 90px; }
         .back-to-top { bottom:1.25rem; right:1.25rem; }
         .dropdown-menu {
             position: fixed;
@@ -719,6 +772,10 @@
             border-radius: 1rem 1rem 0 0;
             width: 100%;
         }
+        .header-logo { height: 70px; }
+        .main-header { height: 85px; }
+        .main-header.scrolled { height: 65px; }
+        .main-header.scrolled .header-logo { height: 50px; }
     }
 
     @media (prefers-reduced-motion:reduce) {
