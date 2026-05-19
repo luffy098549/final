@@ -209,7 +209,7 @@ def generar_tabla_html_profesional(dataframe, titulo, estilos=None):
     for col in dataframe.columns:
         html += f'<th style="background-color:{color_encabezado}; color:{color_texto_encabezado}; padding:10px 12px; border:{border_style}; text-align:left; font-weight:600;">{col}</th>'
     
-    html += '</tr></thead><tbody>'
+    html += '</table></thead><tbody>'
     
     for i, (_, row) in enumerate(dataframe.iterrows()):
         bg = color_fila_par if i % 2 == 0 else color_fila_impar
@@ -221,7 +221,7 @@ def generar_tabla_html_profesional(dataframe, titulo, estilos=None):
             html += f'<td style="padding:8px 12px; border:{border_style}; color:#333; vertical-align:middle;">{valor}</td>'
         html += '</tr>'
     
-    html += '</tbody></table></div>'
+    html += '</tbody><table></div>'
     return html
 
 
@@ -231,12 +231,17 @@ def generar_tabla_html_profesional(dataframe, titulo, estilos=None):
 
 def exportar_excel_profesional(dataframe, titulo_hoja="Reporte", estilos=None):
     """
-    Exporta un DataFrame a un archivo Excel en memoria (BytesIO) con formato básico.
+    Exporta un DataFrame a un archivo Excel en memoria (BytesIO) con formato profesional.
     
     Args:
         dataframe: pd.DataFrame con los datos.
         titulo_hoja: str, nombre de la hoja (máx 31 caracteres).
-        estilos: dict con opciones de personalización (color_encabezado, fuente, etc.)
+        estilos: dict con opciones de personalización:
+            - color_encabezado: str, color en formato hexadecimal (ej: '#2D5016' o '2D5016')
+            - color_texto_encabezado: str, color para el texto del encabezado
+            - color_fila_par: str, color de fondo para filas pares
+            - fuente: str, nombre de la fuente (se usará el primer nombre, ej: 'Arial')
+            - tamano_fuente: int, tamaño base de la fuente
     
     Returns:
         io.BytesIO: objeto tipo archivo listo para enviar.
@@ -244,37 +249,64 @@ def exportar_excel_profesional(dataframe, titulo_hoja="Reporte", estilos=None):
     if estilos is None:
         estilos = {}
     
-    color_encabezado = estilos.get('color_encabezado', '2D5016').lstrip('#')
-    color_texto = estilos.get('color_texto_encabezado', 'FFFFFF')
-    fuente = estilos.get('fuente', 'Arial')
-    tamano = estilos.get('tamano_fuente', 11)
+    # ✅ Función auxiliar para convertir a formato aRGB de 8 caracteres (FFRRGGBB)
+    def to_argb(color, defecto):
+        """
+        Convierte un color hexadecimal a formato aRGB de 8 caracteres requerido por openpyxl.
+        - Si viene con #, lo elimina.
+        - Si tiene 6 dígitos, antepone 'FF' para canal alpha opaco.
+        - Si tiene 8 dígitos, lo deja tal cual.
+        - En cualquier otro caso, usa el defecto con 'FF' antepuesto.
+        """
+        c = color.lstrip('#') if color else defecto
+        if len(c) == 6:
+            return 'FF' + c.upper()
+        elif len(c) == 8:
+            return c.upper()
+        return 'FF' + defecto.upper()
+    
+    # Obtener colores convertidos al formato correcto
+    color_encabezado = to_argb(estilos.get('color_encabezado', '#2D5016'), '2D5016')
+    color_texto      = to_argb(estilos.get('color_texto_encabezado', '#FFFFFF'), 'FFFFFF')
+    color_fila_par   = to_argb(estilos.get('color_fila_par', '#F8F9FA'), 'F8F9FA')
+    
+    # ✅ Limpiar nombre de fuente: tomar solo el primer nombre (ej: "Arial, sans-serif" -> "Arial")
+    fuente_raw = estilos.get('fuente', 'Arial')
+    fuente = fuente_raw.split(',')[0].strip() if ',' in fuente_raw else fuente_raw.strip()
+    tamano = int(estilos.get('tamano_fuente', 11))
     
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         dataframe.to_excel(writer, sheet_name=titulo_hoja[:31], index=False)
-        workbook = writer.book
         worksheet = writer.sheets[titulo_hoja[:31]]
         
-        # Aplicar estilo a los encabezados
+        # Estilo para los encabezados
         header_font = Font(name=fuente, size=tamano+2, bold=True, color=color_texto)
         header_fill = PatternFill(start_color=color_encabezado, end_color=color_encabezado, fill_type='solid')
-        for col in range(1, len(dataframe.columns)+1):
+        
+        for col in range(1, len(dataframe.columns) + 1):
             cell = worksheet.cell(row=1, column=col)
             cell.font = header_font
             cell.fill = header_fill
             cell.alignment = Alignment(horizontal='center')
         
-        # Ajustar ancho de columnas
+        # Estilo para filas alternas (pares)
+        fila_fill = PatternFill(start_color=color_fila_par, end_color=color_fila_par, fill_type='solid')
+        for row in range(2, worksheet.max_row + 1):
+            if row % 2 == 0:
+                for col in range(1, len(dataframe.columns) + 1):
+                    worksheet.cell(row=row, column=col).fill = fila_fill
+        
+        # Ajustar ancho de columnas dinámicamente
         for col in worksheet.columns:
             max_len = 0
             col_letter = col[0].column_letter
             for cell in col:
                 try:
-                    max_len = max(max_len, len(str(cell.value)))
+                    max_len = max(max_len, len(str(cell.value or '')))
                 except:
                     pass
-            adjusted_width = min(max_len + 2, 50)
-            worksheet.column_dimensions[col_letter].width = adjusted_width
+            worksheet.column_dimensions[col_letter].width = min(max_len + 4, 50)
     
     output.seek(0)
     return output

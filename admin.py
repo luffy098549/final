@@ -42,11 +42,21 @@ from models.menu_item import MenuItem
 # Importar para reportes avanzados
 import pandas as pd
 from models.reporte_guardado import ReporteGuardado
+
 # ReportePlantilla es opcional, lo importamos con try/except
 try:
     from models.plantilla_reporte import ReportePlantilla
 except ImportError:
     ReportePlantilla = None
+
+# ✅ IMPORT CORREGIDO: generar_pdf_desde_template en lugar de generar_pdf_desde_html
+from utils.reportes_utils import (
+    dataframe_desde_solicitudes, dataframe_desde_denuncias,
+    dataframe_desde_usuarios, dataframe_desde_citas,
+    dataframe_desde_contactos, generar_grafico_barras,
+    generar_tabla_html_profesional, exportar_excel_profesional,
+    generar_pdf_desde_template
+)
 
 # Intentar importar nombres desde app.py
 try:
@@ -2761,21 +2771,30 @@ def crear_reporte():
                 as_attachment=True,
                 download_name=f"{tipo}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
             )
-        
-        # ========== EXPORTAR A PDF ==========
+      # ========== EXPORTAR A PDF ==========
         elif formato == 'pdf':
             tabla_html = generar_tabla_html_profesional(df, estilos['titulo_personalizado'], estilos)
-            context = {
-                'titulo': estilos['titulo_personalizado'],
-                'fecha_generacion': datetime.now(),
-                'total_registros': len(datos),
-                'tabla_html': tabla_html,
-                'estilos': estilos,
-                'nombre_municipio': cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
-                'usuario_genero': session.get('user_name', 'Administrador'),
-                'logo_url': estilos.get('logo_url') or url_for('static', filename='img/Adobe%20Express%20-%20file.png')
+            filtros_serializables = {
+                k: str(v) if not isinstance(v, (str, list, dict, int, float, bool, type(None))) else v
+                for k, v in filtros.items()
             }
-            pdf_io = generar_pdf_desde_html('admin/reporte_pdf.html', context, None)
+            context = {
+                'titulo':                 estilos['titulo_personalizado'],
+                'fecha_generacion':       datetime.now(),
+                'total_registros':        len(datos),
+                'tabla_html':             tabla_html,
+                'estilos':                estilos,
+                'nombre_municipio':       cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
+                'usuario_genero':         session.get('user_name', 'Administrador'),
+                'logo_url':               estilos.get('logo_url') or url_for('static', filename='img/Adobe Express - file.png'),
+                'tipo_reporte':           tipo,
+                'filtros_usados':         filtros_serializables,
+                'columnas_seleccionadas': columnas_seleccionadas or [],
+                'datos_json':             json.dumps(df.to_dict(orient='records'), default=str),
+                'grafico_base64':         None,
+                'now':                    datetime.now(),
+            }
+            pdf_io = generar_pdf_desde_template('admin/reporte_pdf.html', context)
             return send_file(
                 pdf_io,
                 mimetype='application/pdf',

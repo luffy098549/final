@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }} — {{ nombre_municipio }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ======================================================
+           VARIABLES DINÁMICAS DESDE FLASK / ESTILOS DEL REPORTE
+           ====================================================== */
+        :root {
+            --color-primario:   {{ estilos.get('color_encabezado',      '#2D5016') }};
+            --color-texto-enc:  {{ estilos.get('color_texto_encabezado','#FFFFFF') }};
+            --color-fila-par:   {{ estilos.get('color_fila_par',        '#F0F5EB') }};
+            --color-fila-impar: {{ estilos.get('color_fila_impar',      '#FFFFFF') }};
+            --fuente-base:      {{ estilos.get('fuente',                '"Source Sans 3", sans-serif') }};
+            --tamano-base:      {{ estilos.get('tamano_fuente',         14) }}px;
+
+            /* Derivados automáticos */
+            --color-acento:     color-mix(in srgb, var(--color-primario) 60%, white);
+            --color-suave:      color-mix(in srgb, var(--color-primario) 10%, white);
+            --color-borde:      color-mix(in srgb, var(--color-primario) 25%, #e0e0e0);
+            --radio:            6px;
+        }
+
+        /* ======================================================
+           RESET & BASE
+           ====================================================== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--fuente-base);
+            font-size: var(--tamano-base);
+            background: #eef0f2;
+            color: #1a1a1a;
+            line-height: 1.55;
+            padding: 24px;
+        }
+
+        /* ======================================================
+           CONTENEDOR PRINCIPAL
+           ====================================================== */
+        .reporte-wrap {
+            max-width: 1180px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 32px rgba(0,0,0,.13);
+            overflow: hidden;
+        }
+
+        /* ======================================================
+           BANDA SUPERIOR CON COLOR PRIMARIO
+           ====================================================== */
+        .banda-top {
+            background: var(--color-primario);
+            height: 8px;
+            width: 100%;
+        }
+
+        /* ======================================================
+           ENCABEZADO INSTITUCIONAL
+           ====================================================== */
+        .reporte-header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 20px;
+            padding: 28px 36px 22px;
+            border-bottom: 2px solid var(--color-borde);
+            background: #fff;
+        }
+
+        .header-logo img {
+            max-height: 72px;
+            max-width: 120px;
+            object-fit: contain;
+        }
+        .header-logo .logo-placeholder {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: var(--color-primario);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--color-texto-enc);
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .header-center {
+            text-align: center;
+        }
+        .header-center .municipio {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.55rem;
+            color: var(--color-primario);
+            letter-spacing: -.3px;
+            line-height: 1.2;
+        }
+        .header-center .subtitulo {
+            font-size: .82rem;
+            color: #777;
+            margin-top: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: .78rem;
+            color: #888;
+            line-height: 1.8;
+        }
+        .header-meta strong { color: #333; font-size: .85rem; }
+
+        /* ======================================================
+           BLOQUE DE TÍTULO DEL REPORTE
+           ====================================================== */
+        .titulo-bloque {
+            background: var(--color-suave);
+            border-left: 5px solid var(--color-primario);
+            padding: 18px 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .titulo-bloque h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem;
+            color: var(--color-primario);
+            font-weight: 700;
+        }
+        .tipo-badge {
+            background: var(--color-primario);
+            color: var(--color-texto-enc);
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 5px 14px;
+            border-radius: 20px;
+        }
+
+        /* ======================================================
+           TARJETAS DE METADATOS
+           ====================================================== */
+        .meta-row {
+            display: flex;
+            gap: 12px;
+            padding: 18px 36px;
+            border-bottom: 1px solid var(--color-borde);
+            flex-wrap: wrap;
+        }
+        .meta-card {
+            flex: 1;
+            min-width: 160px;
+            border: 1px solid var(--color-borde);
+            border-radius: var(--radio);
+            padding: 12px 16px;
+            background: #fafafa;
+        }
+        .meta-card .label {
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .meta-card .valor {
+            font-size: .97rem;
+            font-weight: 600;
+            color: #222;
+        }
+        .meta-card.destacado {
+            border-color: var(--color-primario);
+            background: var(--color-suave);
+        }
+        .meta-card.destacado .valor {
+            color: var(--color-primario);
+            font-size: 1.3rem;
+        }
+
+        /* ======================================================
+           FILTROS APLICADOS
+           ====================================================== */
+        .filtros-bloque {
+            margin: 0 36px 16px;
+            background: #f8fafc;
+            border: 1px solid var(--color-borde);
+            border-radius: var(--radio);
+            padding: 12px 18px;
+            font-size: .82rem;
+            color: #555;
+        }
+        .filtros-bloque strong { color: var(--color-primario); }
+        .filtro-pill {
+            display: inline-block;
+            background: var(--color-suave);
+            border: 1px solid var(--color-borde);
+            color: var(--color-primario);
+            border-radius: 20px;
+            padding: 2px 11px;
+            margin: 3px 4px;
+            font-size: .78rem;
+            font-weight: 600;
+        }
+
+        /* ======================================================
+           ÁREA DE TABLA
+           ====================================================== */
+        .tabla-wrap {
+            padding: 0 36px 28px;
+            overflow-x: auto;
+        }
+
+        /* Estilos para la tabla generada por generar_tabla_html_profesional */
+        .tabla-wrap table,
+        .tabla-wrap > div > table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            font-family: var(--fuente-base) !important;
+            font-size: calc(var(--tamano-base) * 0.9) !important;
+        }
+        .tabla-wrap th {
+            background-color: var(--color-primario) !important;
+            color: var(--color-texto-enc) !important;
+            padding: 11px 14px !important;
+            border: 1px solid color-mix(in srgb, var(--color-primario) 80%, black) !important;
+            text-align: left !important;
+            font-weight: 700 !important;
+            letter-spacing: .3px;
+            white-space: nowrap;
+        }
+        .tabla-wrap td {
+            padding: 9px 14px !important;
+            border: 1px solid #e0e0e0 !important;
+            color: #2a2a2a !important;
+            vertical-align: middle !important;
+        }
+        .tabla-wrap tr:nth-child(even) td { background: var(--color-fila-par) !important; }
+        .tabla-wrap tr:nth-child(odd)  td { background: var(--color-fila-impar) !important; }
+        .tabla-wrap tr:hover td {
+            background: color-mix(in srgb, var(--color-primario) 8%, white) !important;
+        }
+
+        /* ======================================================
+           GRÁFICO (OPCIONAL)
+           ====================================================== */
+        .grafico-bloque {
+            padding: 0 36px 28px;
+            text-align: center;
+        }
+        .grafico-bloque img {
+            max-width: 100%;
+            border-radius: var(--radio);
+            border: 1px solid var(--color-borde);
+        }
+        .grafico-titulo {
+            font-size: .85rem;
+            color: #888;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* ======================================================
+           PIE DE PÁGINA
+           ====================================================== */
+        .reporte-footer {
+            border-top: 2px solid var(--color-borde);
+            padding: 18px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: #fafafa;
+        }
+        .footer-izq { font-size: .8rem; color: #888; line-height: 1.7; }
+        .footer-der { font-size: .8rem; color: #aaa; text-align: right; line-height: 1.7; }
+        .footer-firma {
+            font-size: .78rem;
+            color: #666;
+            border-top: 1px solid #ccc;
+            padding-top: 4px;
+            margin-top: 4px;
+        }
+
+        .banda-bottom {
+            background: var(--color-primario);
+            height: 5px;
+        }
+
+        /* ======================================================
+           BOTONES FLOTANTES (NO SE IMPRIMEN)
+           ====================================================== */
+        .no-print {
+            /* visible en pantalla */
+        }
+        .btn-flotantes {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+            z-index: 1000;
+        }
+        .btn-flotantes a,
+        .btn-flotantes button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 30px;
+            font-family: var(--fuente-base);
+            font-size: .85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            box-shadow: 0 3px 12px rgba(0,0,0,.2);
+            transition: transform .15s, box-shadow .15s;
+        }
+        .btn-flotantes a:hover,
+        .btn-flotantes button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,.25);
+        }
+        .btn-imprimir-float {
+            background: var(--color-primario);
+            color: var(--color-texto-enc);
+        }
+        .btn-guardar-float {
+            background: #1a56db;
+            color: #fff;
+        }
+        .btn-nuevo-float {
+            background: #fff;
+            color: #444;
+            border: 1px solid #ddd !important;
+        }
+        .btn-historial-float {
+            background: transparent;
+            color: var(--color-primario);
+            border: 2px solid var(--color-primario) !important;
+        }
+
+        /* ======================================================
+           TOAST
+           ====================================================== */
+        .toast-guardado {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--color-primario);
+            color: var(--color-texto-enc);
+            padding: 13px 22px;
+            border-radius: 8px;
+            font-size: .88rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,.25);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity .3s;
+        }
+        .toast-guardado.visible { display: flex; opacity: 1; }
+        .toast-guardado a { color: rgba(255,255,255,.8); text-decoration: underline; }
+
+        /* ======================================================
+           MODAL
+           ====================================================== */
+        .modal-header-custom {
+            background: var(--color-primario);
+            color: var(--color-texto-enc);
+        }
+        .modal-header-custom .btn-close { filter: invert(1); }
+
+        /* ======================================================
+           IMPRESIÓN
+           ====================================================== */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                font-size: 10pt !important;
+            }
+            .no-print,
+            .btn-flotantes,
+            .toast-guardado { display: none !important; }
+
+            .reporte-wrap {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                max-width: 100% !important;
+            }
+
+            .reporte-header  { padding: 14px 20px !important; }
+            .titulo-bloque   { padding: 10px 20px !important; }
+            .meta-row        { padding: 10px 20px !important; }
+            .filtros-bloque  { margin: 0 20px 10px !important; }
+            .tabla-wrap      { padding: 0 20px 18px !important; }
+            .grafico-bloque  { padding: 0 20px 18px !important; }
+            .reporte-footer  { padding: 12px 20px !important; }
+
+            .tabla-wrap th,
+            .tabla-wrap td { font-size: 8pt !important; padding: 6px 8px !important; }
+
+            thead { display: table-header-group; }
+            tr    { page-break-inside: avoid; }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            @page {
+                size: A4 landscape;
+                margin: 1.2cm 1cm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- =================== TOAST =================== -->
+<div class="toast-guardado no-print" id="toastGuardado">
+    ✓ &nbsp;<span id="toastMensaje">Reporte guardado. <a href="/admin/reportes/historial">Ver historial →</a></span>
+</div>
+
+<!-- =================== CONTENEDOR =================== -->
+<div class="reporte-wrap">
+    <div class="banda-top"></div>
+
+    <!-- ENCABEZADO -->
+    <div class="reporte-header">
+        <div class="header-logo">
+            {% if logo_url %}
+                <img src="{{ logo_url }}" alt="Logo {{ nombre_municipio }}"
+                     onerror="this.replaceWith(document.querySelector('.logo-placeholder').cloneNode(true))">
+            {% endif %}
+            <div class="logo-placeholder" {% if logo_url %}style="display:none"{% endif %}>
+                {{ nombre_municipio[0]|upper }}
+            </div>
+        </div>
+
+        <div class="header-center">
+            <div class="municipio">{{ nombre_municipio }}</div>
+            <div class="subtitulo">Sistema Municipal de Trámites</div>
+        </div>
+
+        <div class="header-meta">
+            <strong>Reporte oficial</strong><br>
+            Folio interno: <strong>#{{ range(10000,99999)|random }}</strong><br>
+            {{ fecha_generacion.strftime('%d/%m/%Y') }}
+        </div>
+    </div>
+
+    <!-- TÍTULO -->
+    <div class="titulo-bloque">
+        <h1>{{ titulo }}</h1>
+        <span class="tipo-badge">{{ tipo_reporte }}</span>
+    </div>
+
+    <!-- METADATOS -->
+    <div class="meta-row">
+        <div class="meta-card">
+            <div class="label">Elaborado por</div>
+            <div class="valor">{{ usuario_genero }}</div>
+        </div>
+        <div class="meta-card">
+            <div class="label">Fecha de generación</div>
+            <div class="valor">{{ fecha_generacion.strftime('%d/%m/%Y') }}</div>
+        </div>
+        <div class="meta-card">
+            <div class="label">Hora</div>
+            <div class="valor">{{ fecha_generacion.strftime('%H:%M:%S') }} hrs</div>
+        </div>
+        <div class="meta-card destacado">
+            <div class="label">Total de registros</div>
+            <div class="valor">{{ total_registros }}</div>
+        </div>
+    </div>
+
+    <!-- FILTROS -->
+    {% if filtros_usados %}
+    <div class="filtros-bloque">
+        <strong>⚙ Filtros aplicados:</strong>
+        {% for clave, valor in filtros_usados.items() %}
+            {% if valor %}
+            <span class="filtro-pill">
+                {{ clave|replace('_',' ')|capitalize }}:
+                {% if valor is iterable and valor is not string %}
+                    {{ valor|join(', ') }}
+                {% else %}
+                    {{ valor }}
+                {% endif %}
+            </span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- TABLA DE DATOS -->
+    <div class="tabla-wrap">
+        {{ tabla_html|safe }}
+    </div>
+
+    <!-- GRÁFICO (OPCIONAL) -->
+    {% if grafico_base64 %}
+    <div class="grafico-bloque">
+        <img src="data:image/png;base64,{{ grafico_base64 }}" alt="Gráfico del reporte">
+        <p class="grafico-titulo">Distribución visual de los datos — {{ tipo_reporte }}</p>
+    </div>
+    {% endif %}
+
+    <!-- PIE -->
+    <div class="reporte-footer">
+        <div class="footer-izq">
+            <strong>{{ nombre_municipio }}</strong><br>
+            Todos los derechos reservados &copy; {{ now.year }}<br>
+            Este reporte es generado automáticamente por el sistema.
+        </div>
+        <div class="footer-der">
+            Documento generado el {{ fecha_generacion.strftime('%d/%m/%Y') }}<br>
+            a las {{ fecha_generacion.strftime('%H:%M') }} hrs.<br>
+            <div class="footer-firma">Preparado por: {{ usuario_genero }}</div>
+        </div>
+    </div>
+
+    <div class="banda-bottom"></div>
+</div><!-- /reporte-wrap -->
+
+
+<!-- =================== BOTONES FLOTANTES =================== -->
+<div class="btn-flotantes no-print">
+    <button class="btn-imprimir-float" onclick="window.print()">
+        🖨 Imprimir / Guardar PDF
+    </button>
+    <button class="btn-guardar-float" data-bs-toggle="modal" data-bs-target="#modalGuardar">
+        💾 Guardar reporte
+    </button>
+    <a href="{{ url_for('admin.crear_reporte') }}" class="btn-nuevo-float">
+        ← Nuevo reporte
+    </a>
+    <a href="/admin/reportes/historial" class="btn-historial-float">
+        🕑 Ver historial
+    </a>
+</div>
+
+
+<!-- =================== MODAL GUARDAR =================== -->
+<div class="modal fade no-print" id="modalGuardar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-header-custom">
+                <h5 class="modal-title">💾 Guardar reporte</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre del reporte</label>
+                    <input type="text" id="inputNombre" class="form-control"
+                           value="{{ titulo }}" placeholder="Ej: Solicitudes mayo 2026">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Elaborado por</label>
+                    <input type="text" id="inputAutor" class="form-control"
+                           value="{{ usuario_genero }}" placeholder="Tu nombre completo">
+                </div>
+                <div class="alert alert-secondary py-2" style="font-size:.83rem;">
+                    📊 <strong>{{ total_registros }}</strong> registros de tipo
+                    <strong>{{ tipo_reporte }}</strong> quedarán guardados y accesibles
+                    desde cualquier dispositivo.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnGuardar">💾 Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- =================== SCRIPTS =================== -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const DATOS_REPORTE   = {{ datos_json|safe }};
+    const COLUMNAS        = {{ columnas_seleccionadas|tojson }};
+    const FILTROS         = {{ filtros_usados|tojson }};
+    const TIPO_REPORTE    = "{{ tipo_reporte }}";
+    const ESTILOS_REPORTE = {{ estilos|tojson }};
+
+    document.getElementById('btnGuardar').addEventListener('click', async function () {
+        const nombre = document.getElementById('inputNombre').value.trim();
+        const autor  = document.getElementById('inputAutor').value.trim();
+
+        if (!nombre) { alert('Escribe un nombre para el reporte.'); return; }
+
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Guardando…';
+
+        try {
+            const res = await fetch('/admin/reportes/guardar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre, tipo_reporte: TIPO_REPORTE,
+                    datos: DATOS_REPORTE, columnas: COLUMNAS,
+                    filtros: FILTROS,
+                    estilos: { ...ESTILOS_REPORTE, generado_por: autor }
+                })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                bootstrap.Modal.getInstance(document.getElementById('modalGuardar')).hide();
+                const toast = document.getElementById('toastGuardado');
+                document.getElementById('toastMensaje').innerHTML =
+                    'Reporte guardado. <a href="/admin/reportes/historial">Ver historial →</a>';
+                toast.classList.add('visible');
+                setTimeout(() => toast.classList.remove('visible'), 5000);
+            } else {
+                alert('Error: ' + (data.error || 'Error desconocido'));
+            }
+        } catch (err) {
+            alert('Error de conexión: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '💾 Guardar';
+        }
+    });
+
+    // Auto-print si viene con ?print=1
+    if (window.location.search.includes('print=1')) {
+        setTimeout(() => window.print(), 600);
+    }
+</script>
+
+</body>
+</html>
