@@ -214,5 +214,77 @@
     "tipo": "guardar_reporte",
     "descripcion": "Guardó reporte 'Reporte general' con 4 registros",
     "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T20:17:43.057841",
+    "tipo": "guardar_reporte",
+    "descripcion": "Guardó reporte 'Reporte de Solicitudes' con 4 registros",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T20:17:56.832574",
+    "tipo": "guardar_reporte",
+    "descripcion": "Guardó reporte 'Reporte de Solicitudes' con 4 registros",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T20:40:38.263368",
+    "tipo": "eliminar_reporte",
+    "descripcion": "Eliminó el reporte 'Reporte de Solicitudes'",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T20:40:38.285654",
+    "tipo": "eliminar_reporte",
+    "descripcion": "Eliminó el reporte 'Reporte de Solicitudes'",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T20:40:38.617680",
+    "tipo": "eliminar_reporte",
+    "descripcion": "Eliminó el reporte 'Reporte general'",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T20:41:03.186160",
+    "tipo": "guardar_reporte",
+    "descripcion": "Guardó reporte 'Reporte de Solicitudes' con 4 registros",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T20:47:59.572464",
+    "tipo": "guardar_reporte",
+    "descripcion": "Guardó reporte 'Reporte de Solicitudes' con 4 registros",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T20:48:24.741702",
+    "tipo": "guardar_reporte",
+    "descripcion": "Guardó reporte 'Reporte de Solicitudes' con 4 registros",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T21:13:08.179743",
+    "tipo": "eliminar_reporte",
+    "descripcion": "Eliminó el reporte 'Reporte de Solicitudes'",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T21:13:08.197196",
+    "tipo": "eliminar_reporte",
+    "descripcion": "Eliminó el reporte 'Reporte de Solicitudes'",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T21:13:08.521929",
+    "tipo": "eliminar_reporte",
+    "descripcion": "Eliminó el reporte 'Reporte de Solicitudes'",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-18T21:13:32.789612",
+    "tipo": "guardar_reporte",
+    "descripcion": "Guardó reporte 'Reporte de Solicitudes' con 4 registros",
+    "admin": "superadmin@cutupu.gob.do"
   }
 ]

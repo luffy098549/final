@@ -22,14 +22,9 @@
             background: var(--verde);
             color: white;
             padding: 1.5rem 2rem;
-            margin-bottom: 0;
         }
 
-        .page-header h1 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin: 0;
-        }
+        .page-header h1 { font-size: 1.4rem; font-weight: 600; margin: 0; }
 
         .stats-bar {
             background: white;
@@ -41,229 +36,10 @@
             flex-wrap: wrap;
         }
 
-        .stat-pill {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: #555;
-        }
+        .stat-pill { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #555; }
+        .stat-pill strong { color: var(--verde); font-size: 15px; }
 
-        .stat-pill strong {
-            color: var(--verde);
-            font-size: 15px;
-        }
-
-        .main-content {
-            padding: 1.5rem 2rem;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        .periodo-tabs {
-            display: flex;
-            gap: 4px;
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 4px;
-            margin-bottom: 1.5rem;
-            width: fit-content;
-        }
-
-        .tab-btn {
-            padding: 7px 18px;
-            border-radius: 6px;
-            border: none;
-            background: transparent;
-            font-size: 13px;
-            font-weight: 500;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .tab-btn.active {
-            background: var(--verde);
-            color: white;
-        }
-
-        .tab-btn:hover:not(.active) {
-            background: #f0f0f0;
-        }
-
-        .grupo-fecha {
-            margin-bottom: 2rem;
-        }
-
-        .grupo-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 0.75rem;
-        }
-
-        .grupo-label h3 {
-            font-size: 13px;
-            font-weight: 600;
-            color: #777;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin: 0;
-        }
-
-        .grupo-label .linea {
-            flex: 1;
-            height: 1px;
-            background: #e0e0e0;
-        }
-
-        .grupo-label .badge-count {
-            font-size: 11px;
-            background: #eee;
-            color: #666;
-            border-radius: 10px;
-            padding: 2px 8px;
-        }
-
-        .reportes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 12px;
-        }
-
-        .reporte-card {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 1rem 1.1rem;
-            transition: box-shadow 0.15s, border-color 0.15s;
-            position: relative;
-        }
-
-        .reporte-card:hover {
-            box-shadow: 0 2px 12px rgba(0,0,0,0.09);
-            border-color: #bbb;
-        }
-
-        .reporte-card-top {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .reporte-tipo-badge {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .tipo-solicitudes { background: #e8f4e8; color: #2D5016; }
-        .tipo-denuncias   { background: #fde8e8; color: #8B1A1A; }
-        .tipo-usuarios    { background: #e8eef8; color: #1a3a6b; }
-        .tipo-citas       { background: #fdf3e3; color: #7a4400; }
-        .tipo-contactos   { background: #f0e8f8; color: #4a1a6b; }
-
-        .reporte-card-menu {
-            display: flex;
-            gap: 4px;
-        }
-
-        .btn-card-action {
-            width: 28px;
-            height: 28px;
-            border-radius: 5px;
-            border: 1px solid #e0e0e0;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 12px;
-            color: #666;
-            transition: all 0.1s;
-        }
-
-        .btn-card-action:hover {
-            background: #f5f5f5;
-            border-color: #bbb;
-        }
-
-        .btn-card-action.danger:hover {
-            background: #fff0f0;
-            border-color: #e57373;
-            color: #c0392b;
-        }
-
-        .reporte-nombre {
-            font-size: 14px;
-            font-weight: 600;
-            color: #222;
-            margin-bottom: 4px;
-            line-height: 1.3;
-        }
-
-        .reporte-meta {
-            display: flex;
-            gap: 12px;
-            font-size: 12px;
-            color: #888;
-            flex-wrap: wrap;
-        }
-
-        .reporte-meta span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .reporte-card-footer {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #f0f0f0;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .btn-ver-reporte {
-            flex: 1;
-            padding: 5px 12px;
-            font-size: 12px;
-            font-weight: 500;
-            background: var(--verde);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            transition: background 0.15s;
-        }
-
-        .btn-ver-reporte:hover {
-            background: var(--verde-claro);
-            color: white;
-        }
-
-        .btn-export-xls {
-            padding: 5px 10px;
-            font-size: 12px;
-            background: white;
-            border: 1px solid #c8e6c9;
-            color: #2D5016;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.1s;
-        }
-
-        .btn-export-xls:hover {
-            background: #f1f8f1;
-        }
+        .main-content { padding: 1.5rem 2rem; max-width: 1300px; margin: 0 auto; }
 
         .filtros-bar {
             display: flex;
@@ -289,101 +65,133 @@
             background: white;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #aaa;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 1rem;
-            opacity: 0.3;
-        }
-
-        /* Modal ver reporte con diseño completo */
-        .modal-reporte {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 9999;
-            overflow-y: auto;
-        }
-
-        .modal-reporte.open {
+        .periodo-tabs {
             display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-
-        .modal-reporte-inner {
+            gap: 4px;
             background: white;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 1100px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 4px;
+            margin-left: auto;
         }
 
-        .modal-reporte-header {
-            background: var(--verde);
-            color: white;
-            padding: 1rem 1.5rem;
+        .tab-btn {
+            padding: 7px 18px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .tab-btn.active { background: var(--verde); color: white; }
+        .tab-btn:hover:not(.active) { background: #f0f0f0; }
+
+        .grupo-fecha { margin-bottom: 2rem; }
+
+        .grupo-label {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
         }
 
-        .modal-reporte-header h2 {
-            font-size: 1rem;
+        .grupo-label h3 {
+            font-size: 13px;
             font-weight: 600;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             margin: 0;
         }
 
-        .btn-cerrar-modal {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
+        .grupo-label .linea { flex: 1; height: 1px; background: #e0e0e0; }
+        .grupo-label .badge-count {
+            font-size: 11px; background: #eee; color: #666;
+            border-radius: 10px; padding: 2px 8px;
         }
 
-        .modal-reporte-body {
-            padding: 1.5rem;
-            overflow-x: auto;
+        .reportes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px;
         }
 
-        /* Estilos para impresión (solo el contenido del modal) */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .modal-reporte, .modal-reporte * {
-                visibility: visible;
-            }
-            .modal-reporte {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                background: white;
-            }
-            .modal-reporte-inner {
-                box-shadow: none;
-                border-radius: 0;
-                max-width: 100%;
-            }
-            .modal-reporte-header, .btn-cerrar-modal, .btn-export-xls, .btn-card-action, .page-header, .stats-bar, .filtros-bar, .reporte-card-footer {
-                display: none !important;
-            }
+        .reporte-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1rem 1.1rem;
+            transition: box-shadow 0.15s, border-color 0.15s;
+        }
+
+        .reporte-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.09); border-color: #bbb; }
+
+        .reporte-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .reporte-tipo-badge {
+            font-size: 11px; font-weight: 600; padding: 3px 8px;
+            border-radius: 4px; text-transform: uppercase; letter-spacing: 0.3px;
+        }
+
+        .tipo-solicitudes { background: #e8f4e8; color: #2D5016; }
+        .tipo-denuncias   { background: #fde8e8; color: #8B1A1A; }
+        .tipo-usuarios    { background: #e8eef8; color: #1a3a6b; }
+        .tipo-citas       { background: #fdf3e3; color: #7a4400; }
+        .tipo-contactos   { background: #f0e8f8; color: #4a1a6b; }
+
+        .reporte-card-menu { display: flex; gap: 4px; }
+
+        .btn-card-action {
+            width: 28px; height: 28px; border-radius: 5px;
+            border: 1px solid #e0e0e0; background: white;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 12px; color: #666; transition: all 0.1s;
+            text-decoration: none;
+        }
+
+        .btn-card-action:hover { background: #f5f5f5; border-color: #bbb; color: #333; }
+        .btn-card-action.danger:hover { background: #fff0f0; border-color: #e57373; color: #c0392b; }
+
+        .reporte-nombre { font-size: 14px; font-weight: 600; color: #222; margin-bottom: 4px; }
+
+        .reporte-meta { display: flex; gap: 12px; font-size: 12px; color: #888; flex-wrap: wrap; }
+        .reporte-meta span { display: flex; align-items: center; gap: 4px; }
+
+        .reporte-card-footer {
+            margin-top: 10px; padding-top: 10px;
+            border-top: 1px solid #f0f0f0;
+            display: flex; gap: 8px; align-items: center;
+        }
+
+        .btn-ver-reporte {
+            flex: 1; padding: 5px 12px; font-size: 12px; font-weight: 500;
+            background: var(--verde); color: white; border: none; border-radius: 5px;
+            cursor: pointer; text-decoration: none; text-align: center; transition: background 0.15s;
+        }
+
+        .btn-ver-reporte:hover { background: var(--verde-claro); color: white; }
+
+        .badge-compartido {
+            font-size: 10px; background: #e8f0fe; color: #1a56db;
+            border-radius: 4px; padding: 2px 6px; margin-left: 6px;
+        }
+
+        .empty-state { text-align: center; padding: 4rem 2rem; color: #aaa; }
+        .empty-state i { font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.3; }
+
+        .alert-bd {
+            background: #e8f4fd; border: 1px solid #bee3f8; color: #2c5282;
+            border-radius: 7px; padding: 8px 14px; font-size: 13px;
+            margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;
         }
     </style>
 </head>
@@ -402,26 +210,46 @@
             <a href="/admin/reportes/crear" class="btn btn-sm btn-light">
                 <i class="fas fa-plus"></i> Nuevo reporte
             </a>
-            <button onclick="limpiarTodo()" class="btn btn-sm btn-outline-light">
+            <button onclick="confirmarLimpiarTodo()" class="btn btn-sm btn-outline-light">
                 <i class="fas fa-trash"></i> Limpiar todo
             </button>
         </div>
     </div>
 </div>
 
-<div class="stats-bar" id="statsBar">
-    <div class="stat-pill"><strong id="statTotal">0</strong> reportes guardados</div>
-    <div class="stat-pill"><i class="fas fa-calendar-day"></i> <strong id="statHoy">0</strong> hoy</div>
-    <div class="stat-pill"><i class="fas fa-calendar-week"></i> <strong id="statSemana">0</strong> esta semana</div>
-    <div class="stat-pill"><i class="fas fa-calendar-alt"></i> <strong id="statMes">0</strong> este mes</div>
-    <div class="stat-pill" style="margin-left:auto; font-size:12px; color:#aaa;">
-        <i class="fas fa-hdd"></i> Almacenamiento local
+<!-- Stats -->
+<div class="stats-bar">
+    <div class="stat-pill"><strong id="statTotal">{{ reportes|length }}</strong> reportes guardados</div>
+    <div class="stat-pill">
+        <i class="fas fa-database"></i>
+        <strong id="statHoy">0</strong> hoy
+    </div>
+    <div class="stat-pill">
+        <i class="fas fa-calendar-week"></i>
+        <strong id="statSemana">0</strong> esta semana
+    </div>
+    <div class="stat-pill">
+        <i class="fas fa-calendar-alt"></i>
+        <strong id="statMes">0</strong> este mes
+    </div>
+    <div class="stat-pill" style="margin-left:auto; font-size:12px; color:#27ae60;">
+        <i class="fas fa-database"></i> Base de datos compartida
     </div>
 </div>
 
 <div class="main-content">
+
+    <!-- Aviso de base de datos -->
+    <div class="alert-bd">
+        <i class="fas fa-info-circle"></i>
+        Los reportes se guardan en la base de datos y son visibles para <strong>todos los administradores</strong>
+        desde cualquier dispositivo o cuenta.
+    </div>
+
+    <!-- Filtros -->
     <div class="filtros-bar">
-        <input type="text" id="busqueda" placeholder="🔍 Buscar por nombre..." oninput="filtrarYRenderizar()">
+        <input type="text" id="busqueda" placeholder="🔍 Buscar por nombre..."
+               oninput="filtrarYRenderizar()">
         <select id="filtroTipo" onchange="filtrarYRenderizar()">
             <option value="">Todos los tipos</option>
             <option value="solicitudes">Solicitudes</option>
@@ -436,7 +264,7 @@
             <option value="nombre">Por nombre (A-Z)</option>
             <option value="registros">Por cantidad de registros</option>
         </select>
-        <div class="periodo-tabs" style="margin-bottom:0; margin-left:auto;">
+        <div class="periodo-tabs">
             <button class="tab-btn active" data-periodo="todos" onclick="cambiarPeriodo(this)">Todos</button>
             <button class="tab-btn" data-periodo="hoy" onclick="cambiarPeriodo(this)">Hoy</button>
             <button class="tab-btn" data-periodo="semana" onclick="cambiarPeriodo(this)">Esta semana</button>
@@ -444,297 +272,219 @@
             <button class="tab-btn" data-periodo="anio" onclick="cambiarPeriodo(this)">Este año</button>
         </div>
     </div>
-    <div id="contenido-reportes"></div>
-</div>
 
-<!-- Modal para ver reporte (con diseño completo) -->
-<div class="modal-reporte" id="modalReporte">
-    <div class="modal-reporte-inner">
-        <div class="modal-reporte-header">
-            <h2 id="modalTitulo">Reporte</h2>
-            <div style="display:flex; gap:8px;">
-                <button onclick="exportarCSV()" style="background:rgba(255,255,255,0.15); border:none; color:white; padding:5px 12px; border-radius:5px; cursor:pointer;">
-                    <i class="fas fa-file-csv"></i> CSV
-                </button>
-                <button onclick="imprimirReporte()" style="background:rgba(255,255,255,0.15); border:none; color:white; padding:5px 12px; border-radius:5px; cursor:pointer;">
-                    <i class="fas fa-print"></i> Imprimir
-                </button>
-                <button class="btn-cerrar-modal" onclick="cerrarModal()">✕</button>
-            </div>
+    <div id="contenido-reportes">
+        <div class="empty-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Cargando reportes...</p>
         </div>
-        <div class="modal-reporte-body" id="modalBody"></div>
     </div>
 </div>
 
 <script>
-const STORAGE_KEY = 'reportes_municipales';
-let periodoActivo = 'todos';
-let reporteActualModal = null;
+    // ===== DATOS INYECTADOS DESDE FLASK =====
+    // Cargamos todos los reportes desde el servidor directamente en el HTML
+    const TODOS_REPORTES = [
+        {% for r in reportes %}
+        {
+            id: {{ r.id }},
+            nombre: {{ r.nombre | tojson }},
+            tipo: {{ r.tipo_reporte | tojson }},
+            registros: {{ r.total_registros }},
+            fecha: {{ r.fecha_generacion.isoformat() | tojson }},
+            generadoPor: {{ r.generado_por | tojson }},
+            urlVer: "/admin/reportes/ver/{{ r.id }}",
+            urlEliminar: "/admin/reportes/eliminar/{{ r.id }}"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
 
-// ===== STORAGE =====
-function cargarReportes() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
-}
-function guardarReportes(lista) { localStorage.setItem(STORAGE_KEY, JSON.stringify(lista)); }
+    let periodoActivo = 'todos';
 
-// ===== CLASIFICACIÓN DE PERÍODO =====
-function esMismaFecha(fecha, ref, unidad) {
-    const d = new Date(fecha);
-    const r = ref || new Date();
-    if (unidad === 'dia') return d.toDateString() === r.toDateString();
-    if (unidad === 'semana') {
-        const inicio = new Date(r);
-        inicio.setDate(r.getDate() - r.getDay());
-        inicio.setHours(0,0,0,0);
-        return d >= inicio;
-    }
-    if (unidad === 'mes') return d.getMonth() === r.getMonth() && d.getFullYear() === r.getFullYear();
-    if (unidad === 'anio') return d.getFullYear() === r.getFullYear();
-    return true;
-}
-function filtrarPorPeriodo(reportes) {
-    if (periodoActivo === 'todos') return reportes;
-    const ahora = new Date();
-    return reportes.filter(r => {
-        if (periodoActivo === 'hoy') return esMismaFecha(r.fecha, ahora, 'dia');
-        if (periodoActivo === 'semana') return esMismaFecha(r.fecha, ahora, 'semana');
-        if (periodoActivo === 'mes') return esMismaFecha(r.fecha, ahora, 'mes');
-        if (periodoActivo === 'anio') return esMismaFecha(r.fecha, ahora, 'anio');
+    // ===== UTILIDADES DE FECHA =====
+    function esMismoPeriodo(fechaStr, periodo) {
+        const d   = new Date(fechaStr);
+        const hoy = new Date();
+        if (periodo === 'hoy') return d.toDateString() === hoy.toDateString();
+        if (periodo === 'semana') {
+            const ini = new Date(hoy);
+            ini.setDate(hoy.getDate() - hoy.getDay());
+            ini.setHours(0,0,0,0);
+            return d >= ini;
+        }
+        if (periodo === 'mes')  return d.getMonth() === hoy.getMonth() && d.getFullYear() === hoy.getFullYear();
+        if (periodo === 'anio') return d.getFullYear() === hoy.getFullYear();
         return true;
-    });
-}
+    }
 
-function agruparPorMes(reportes) {
-    const grupos = {};
-    reportes.forEach(r => {
-        const d = new Date(r.fecha);
-        const label = d.toLocaleDateString('es-DO', { month:'long', year:'numeric' });
-        const cap = label.charAt(0).toUpperCase() + label.slice(1);
-        if (!grupos[cap]) grupos[cap] = [];
-        grupos[cap].push(r);
-    });
-    return grupos;
-}
+    function tiempoHace(fechaStr) {
+        const d    = new Date(fechaStr);
+        const diff = Math.floor((new Date() - d) / 1000);
+        if (diff < 60)    return 'Hace un momento';
+        if (diff < 3600)  return `Hace ${Math.floor(diff/60)} min`;
+        if (diff < 86400) return `Hace ${Math.floor(diff/3600)} h`;
+        return d.toLocaleDateString('es-DO', { day:'numeric', month:'short', year:'numeric' });
+    }
 
-function tipoBadge(tipo) {
-    const mapa = { solicitudes:'Solicitudes', denuncias:'Denuncias', usuarios:'Usuarios', citas:'Citas', contactos:'Contactos' };
-    return `<span class="reporte-tipo-badge tipo-${tipo}">${mapa[tipo] || tipo}</span>`;
-}
-function tiempoHace(fechaStr) {
-    const d = new Date(fechaStr);
-    const diff = Math.floor((new Date() - d) / 1000);
-    if (diff < 60) return 'Hace un momento';
-    if (diff < 3600) return `Hace ${Math.floor(diff/60)} min`;
-    if (diff < 86400) return `Hace ${Math.floor(diff/3600)} h`;
-    return d.toLocaleDateString('es-DO', { day:'numeric', month:'short' });
-}
-function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
-}
-function renderCard(r) {
-    const cols = r.columnas && r.columnas.length ? r.columnas.slice(0,3).join(', ') + (r.columnas.length > 3 ? '…' : '') : 'Todas';
-    return `
-    <div class="reporte-card" id="card-${r.id}">
-        <div class="reporte-card-top">
-            ${tipoBadge(r.tipo)}
-            <div class="reporte-card-menu">
-                <button class="btn-card-action" onclick="abrirModal('${r.id}')" title="Ver reporte"><i class="fas fa-eye"></i></button>
-                <button class="btn-card-action danger" onclick="eliminarReporte('${r.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+    function agruparPorMes(lista) {
+        const grupos = {};
+        lista.forEach(r => {
+            const d   = new Date(r.fecha);
+            const raw = d.toLocaleDateString('es-DO', { month:'long', year:'numeric' });
+            const lbl = raw.charAt(0).toUpperCase() + raw.slice(1);
+            if (!grupos[lbl]) grupos[lbl] = [];
+            grupos[lbl].push(r);
+        });
+        return grupos;
+    }
+
+    function tipoBadge(tipo) {
+        const mapa = {
+            solicitudes: 'Solicitudes', denuncias: 'Denuncias',
+            usuarios: 'Usuarios', citas: 'Citas', contactos: 'Contactos'
+        };
+        return `<span class="reporte-tipo-badge tipo-${tipo}">${mapa[tipo] || tipo}</span>`;
+    }
+
+    // ===== RENDERIZAR TARJETA =====
+    function renderCard(r) {
+        return `
+        <div class="reporte-card" id="card-${r.id}">
+            <div class="reporte-card-top">
+                ${tipoBadge(r.tipo)}
+                <div class="reporte-card-menu">
+                    <a class="btn-card-action" href="${r.urlVer}" title="Ver reporte">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <button class="btn-card-action danger" onclick="eliminarReporte(${r.id})" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="reporte-nombre">${escapeHtml(r.nombre)}</div>
-        <div class="reporte-meta">
-            <span><i class="fas fa-table"></i> ${(r.datos || []).length} registros</span>
-            <span><i class="fas fa-clock"></i> ${tiempoHace(r.fecha)}</span>
-            <span title="${cols}"><i class="fas fa-columns"></i> ${cols}</span>
-        </div>
-        <div class="reporte-card-footer">
-            <button class="btn-ver-reporte" onclick="abrirModal('${r.id}')"><i class="fas fa-eye"></i> Ver reporte</button>
-            <button class="btn-export-xls" onclick="exportarCSVById('${r.id}')"><i class="fas fa-file-csv"></i></button>
-        </div>
-    </div>`;
-}
-function filtrarYRenderizar() {
-    const busqueda = document.getElementById('busqueda').value.toLowerCase();
-    const tipo = document.getElementById('filtroTipo').value;
-    const orden = document.getElementById('filtroOrden').value;
-    let reportes = filtrarPorPeriodo(cargarReportes());
-    if (busqueda) reportes = reportes.filter(r => r.nombre.toLowerCase().includes(busqueda));
-    if (tipo) reportes = reportes.filter(r => r.tipo === tipo);
-    if (orden === 'reciente') reportes.sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
-    else if (orden === 'antiguo') reportes.sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
-    else if (orden === 'nombre') reportes.sort((a,b) => a.nombre.localeCompare(b.nombre));
-    else if (orden === 'registros') reportes.sort((a,b) => (b.datos||[]).length - (a.datos||[]).length);
-
-    const contenedor = document.getElementById('contenido-reportes');
-    if (!reportes.length) {
-        contenedor.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar"></i><p>No hay reportes en este período</p><a href="/admin/reportes/crear" class="btn btn-sm" style="background:var(--verde); color:white;">+ Crear reporte</a></div>`;
-        return;
-    }
-    const grupos = agruparPorMes(reportes);
-    let html = '';
-    for (const [label, items] of Object.entries(grupos)) {
-        html += `<div class="grupo-fecha"><div class="grupo-label"><h3>${label}</h3><div class="linea"></div><span class="badge-count">${items.length}</span></div><div class="reportes-grid">${items.map(renderCard).join('')}</div></div>`;
-    }
-    contenedor.innerHTML = html;
-    actualizarStats();
-}
-function actualizarStats() {
-    const todos = cargarReportes();
-    const ahora = new Date();
-    document.getElementById('statTotal').textContent = todos.length;
-    document.getElementById('statHoy').textContent = todos.filter(r => esMismaFecha(r.fecha, ahora, 'dia')).length;
-    document.getElementById('statSemana').textContent = todos.filter(r => esMismaFecha(r.fecha, ahora, 'semana')).length;
-    document.getElementById('statMes').textContent = todos.filter(r => esMismaFecha(r.fecha, ahora, 'mes')).length;
-}
-function cambiarPeriodo(btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    periodoActivo = btn.dataset.periodo;
-    filtrarYRenderizar();
-}
-
-// ===== NUEVA FUNCIÓN ABRIR MODAL CON ESTILOS GUARDADOS =====
-function abrirModal(id) {
-    const reportes = cargarReportes();
-    const r = reportes.find(x => x.id === id);
-    if (!r) return;
-
-    reporteActualModal = r;
-    document.getElementById('modalTitulo').textContent = r.nombre;
-
-    const datos = r.datos || [];
-    const cols = r.columnas && r.columnas.length ? r.columnas : (datos.length ? Object.keys(datos[0]) : []);
-
-    // Leer estilos guardados (con valores por defecto)
-    const estilos = r.estilos || {};
-    const colorEncabezado = estilos.color_encabezado || '#2d6a4f';
-    const colorTextoEncabezado = estilos.color_texto_encabezado || '#FFFFFF';
-    const colorFilaPar = estilos.color_fila_par || 'rgba(45,106,79,0.05)';
-    const colorFilaImpar = estilos.color_fila_impar || '#FFFFFF';
-    const fuente = estilos.fuente || 'Arial, sans-serif';
-    const tamano = estilos.tamano_fuente || 14;
-    const mostrarBordes = estilos.mostrar_bordes !== false; // true por defecto
-    const borderStyle = mostrarBordes ? '1px solid #dee2e6' : 'none';
-
-    // Construir tabla con estilos inline (igual que en generar_tabla_html_profesional)
-    let tablaHTML = '';
-    if (datos.length === 0) {
-        tablaHTML = '<div class="text-center text-muted py-4">Sin datos</div>';
-    } else {
-        tablaHTML = `
-        <div style="overflow-x:auto; margin-top:1rem;">
-            <table style="width:100%; border-collapse:collapse; font-family:${fuente}; font-size:${tamano}px;">
-                <thead>
-                    <tr>
-                        ${cols.map(c => `
-                            <th style="background-color:${colorEncabezado}; color:${colorTextoEncabezado}; padding:10px 12px; border:${borderStyle}; text-align:left; font-weight:600;">
-                                ${escapeHtml(c)}
-                            </th>
-                        `).join('')}
-                    </tr>
-                </thead>
-                <tbody>
-                    ${datos.map((fila, i) => {
-                        const bg = (i % 2 === 0) ? colorFilaPar : colorFilaImpar;
-                        return `
-                        <tr style="background-color:${bg};">
-                            ${cols.map(c => `
-                                <td style="padding:8px 12px; border:${borderStyle}; color:#333; vertical-align:middle;">
-                                    ${escapeHtml(fila[c] ?? '')}
-                                </td>
-                            `).join('')}
-                        </tr>`;
-                    }).join('')}
-                </tbody>
-            </table>
+            <div class="reporte-nombre">
+                ${r.nombre}
+                <span class="badge-compartido"><i class="fas fa-database"></i> BD</span>
+            </div>
+            <div class="reporte-meta">
+                <span><i class="fas fa-table"></i> ${r.registros} registros</span>
+                <span><i class="fas fa-clock"></i> ${tiempoHace(r.fecha)}</span>
+                <span><i class="fas fa-user"></i> ${r.generadoPor}</span>
+            </div>
+            <div class="reporte-card-footer">
+                <a class="btn-ver-reporte" href="${r.urlVer}">
+                    <i class="fas fa-eye"></i> Ver reporte
+                </a>
+            </div>
         </div>`;
     }
 
-    const fechaFormateada = new Date(r.fecha).toLocaleDateString('es-DO', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
+    // ===== FILTRAR Y RENDERIZAR =====
+    function filtrarYRenderizar() {
+        const busqueda = document.getElementById('busqueda').value.toLowerCase();
+        const tipo     = document.getElementById('filtroTipo').value;
+        const orden    = document.getElementById('filtroOrden').value;
 
-    // Construir HTML del reporte completo con logo y diseño institucional
-    const contenido = `
-        <!-- Header con logo (ruta corregida) -->
-        <div style="border-bottom:3px solid ${colorEncabezado}; margin-bottom:16px; padding-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-                <img src="/static/img/logo_municipio.png" alt="Logo" style="max-height:60px;" onerror="this.style.display='none'">
-            </div>
-            <div style="text-align:right;">
-                <h4 style="color:${colorEncabezado}; font-weight:bold; margin:0;">Villa Cutupú</h4>
-                <p style="margin:0; font-size:13px; color:#666;">Sistema Municipal de Trámites</p>
-            </div>
-        </div>
+        let lista = TODOS_REPORTES.filter(r => {
+            if (!esMismoPeriodo(r.fecha, periodoActivo)) return false;
+            if (busqueda && !r.nombre.toLowerCase().includes(busqueda)) return false;
+            if (tipo && r.tipo !== tipo) return false;
+            return true;
+        });
 
-        <!-- Barra de información (metadatos) -->
-        <div style="background:#e9ecef; padding:10px 15px; border-radius:6px; margin-bottom:16px; font-size:13px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-            <span><strong>Generado por:</strong> ${escapeHtml(r.generadoPor || 'Admin')}</span>
-            <span><strong>Fecha:</strong> ${fechaFormateada}</span>
-            <span><strong>Total registros:</strong> ${datos.length}</span>
-        </div>
+        if (orden === 'reciente')  lista.sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+        if (orden === 'antiguo')   lista.sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+        if (orden === 'nombre')    lista.sort((a,b) => a.nombre.localeCompare(b.nombre));
+        if (orden === 'registros') lista.sort((a,b) => b.registros - a.registros);
 
-        <!-- Título del reporte -->
-        <h5 style="color:${colorEncabezado}; font-weight:bold; margin-bottom:12px;">${escapeHtml(r.nombre)}</h5>
+        const contenedor = document.getElementById('contenido-reportes');
 
-        ${tablaHTML}
+        if (!lista.length) {
+            contenedor.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-chart-bar"></i>
+                    <p>No hay reportes en este período</p>
+                    <a href="/admin/reportes/crear" class="btn btn-sm"
+                       style="background:var(--verde); color:white;">+ Crear reporte</a>
+                </div>`;
+            return;
+        }
 
-        <!-- Footer -->
-        <div style="margin-top:20px; text-align:center; font-size:11px; color:#6c757d; border-top:1px solid #dee2e6; padding-top:12px;">
-            <p>Villa Cutupú - Todos los derechos reservados &copy; ${new Date().getFullYear()}</p>
-            <p>Este reporte es generado automáticamente a partir de los datos del sistema.</p>
-        </div>
-    `;
+        const grupos = agruparPorMes(lista);
+        let html = '';
+        for (const [label, items] of Object.entries(grupos)) {
+            html += `
+            <div class="grupo-fecha">
+                <div class="grupo-label">
+                    <h3>${label}</h3>
+                    <div class="linea"></div>
+                    <span class="badge-count">${items.length}</span>
+                </div>
+                <div class="reportes-grid">
+                    ${items.map(renderCard).join('')}
+                </div>
+            </div>`;
+        }
+        contenedor.innerHTML = html;
+        actualizarStats();
+    }
 
-    document.getElementById('modalBody').innerHTML = contenido;
-    document.getElementById('modalReporte').classList.add('open');
-}
+    // ===== STATS =====
+    function actualizarStats() {
+        const hoy    = TODOS_REPORTES.filter(r => esMismoPeriodo(r.fecha, 'hoy')).length;
+        const semana = TODOS_REPORTES.filter(r => esMismoPeriodo(r.fecha, 'semana')).length;
+        const mes    = TODOS_REPORTES.filter(r => esMismoPeriodo(r.fecha, 'mes')).length;
+        document.getElementById('statTotal').textContent  = TODOS_REPORTES.length;
+        document.getElementById('statHoy').textContent    = hoy;
+        document.getElementById('statSemana').textContent = semana;
+        document.getElementById('statMes').textContent    = mes;
+    }
 
-function cerrarModal() {
-    document.getElementById('modalReporte').classList.remove('open');
-    reporteActualModal = null;
-}
+    // ===== CAMBIAR PERÍODO =====
+    function cambiarPeriodo(btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        periodoActivo = btn.dataset.periodo;
+        filtrarYRenderizar();
+    }
 
-function eliminarReporte(id) {
-    if (!confirm('¿Eliminar este reporte del historial local?')) return;
-    let reportes = cargarReportes();
-    reportes = reportes.filter(r => r.id !== id);
-    guardarReportes(reportes);
+    // ===== ELIMINAR REPORTE (llama al servidor) =====
+    async function eliminarReporte(id) {
+        if (!confirm('¿Eliminar este reporte? Esta acción no se puede deshacer.')) return;
+
+        try {
+            const res = await fetch(`/admin/reportes/eliminar/${id}`, { method: 'POST' });
+            const data = await res.json();
+
+            if (data.success) {
+                // Quitar de la lista local y re-renderizar sin recargar la página
+                const idx = TODOS_REPORTES.findIndex(r => r.id === id);
+                if (idx !== -1) TODOS_REPORTES.splice(idx, 1);
+                filtrarYRenderizar();
+            } else {
+                alert('Error al eliminar: ' + (data.error || 'Error desconocido'));
+            }
+        } catch (err) {
+            alert('Error de conexión: ' + err.message);
+        }
+    }
+
+    // ===== LIMPIAR TODO =====
+    async function confirmarLimpiarTodo() {
+        if (!confirm('¿Eliminar TODOS los reportes? Esta acción no se puede deshacer.')) return;
+
+        const ids = [...TODOS_REPORTES.map(r => r.id)];
+        for (const id of ids) {
+            try {
+                await fetch(`/admin/reportes/eliminar/${id}`, { method: 'POST' });
+                const idx = TODOS_REPORTES.findIndex(r => r.id === id);
+                if (idx !== -1) TODOS_REPORTES.splice(idx, 1);
+            } catch {}
+        }
+        filtrarYRenderizar();
+    }
+
+    // ===== INICIALIZAR =====
     filtrarYRenderizar();
-}
-function limpiarTodo() {
-    if (!confirm('¿Eliminar TODOS los reportes del historial local?')) return;
-    localStorage.removeItem(STORAGE_KEY);
-    filtrarYRenderizar();
-}
-function exportarCSVById(id) {
-    const reportes = cargarReportes();
-    const r = reportes.find(x => x.id === id);
-    if (r) exportarComoCSV(r);
-}
-function exportarCSV() {
-    if (reporteActualModal) exportarComoCSV(reporteActualModal);
-}
-function exportarComoCSV(r) {
-    const datos = r.datos || [];
-    if (!datos.length) return alert('Sin datos para exportar');
-    const cols = r.columnas && r.columnas.length ? r.columnas : Object.keys(datos[0]);
-    const filas = [cols.join(',')].concat(
-        datos.map(fila => cols.map(c => `"${String(fila[c]||'').replace(/"/g,'""')}"`).join(','))
-    );
-    const blob = new Blob(['\ufeff' + filas.join('\n')], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `${r.nombre.replace(/\s+/g,'_')}.csv`;
-    a.click(); URL.revokeObjectURL(url);
-}
-function imprimirReporte() { window.print(); }
-
-document.getElementById('modalReporte').addEventListener('click', function(e) { if (e.target === this) cerrarModal(); });
-
-filtrarYRenderizar();
 </script>
 </body>
 </html>

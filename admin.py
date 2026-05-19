@@ -1,4 +1,4 @@
-# admin.py - VERSIÓN COMPLETA CON TODAS LAS RUTAS Y PERSONALIZACIÓN DE REPORTES
+# admin.py - VERSIÓN COMPLETA CON CORRECCIÓN EN GUARDAR REPORTE
 # (incluye logo por defecto y nombre del municipio)
 
 """
@@ -2849,36 +2849,31 @@ def mostrar_reporte_generado():
                          now=datetime.now())
 
 
+# ================================================================
+# ✅ RUTA CORREGIDA: HISTORIAL DE REPORTES
+# ================================================================
+
 @admin_bp.route("/reportes/historial")
 @admin_required
 @permiso_requerido(Permiso.VER_BITACORA)
 def reportes_historial():
+    """Muestra todos los reportes guardados por el administrador"""
+    # Obtener todos los reportes ordenados por fecha descendente
+    reportes = ReporteGuardado.query.order_by(
+        ReporteGuardado.fecha_generacion.desc()
+    ).all()
+    
     return render_template(
         "admin/reportes_guardados.html",
+        reportes=reportes,  # <-- clave agregada
         nombre_municipio=cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
         now=datetime.now()
     )
 
 
-@admin_bp.route("/reportes/generar", methods=["POST"])
-@admin_required
-@permiso_requerido(Permiso.VER_BITACORA)
-def generar_reporte():
-    """Genera reporte con columnas seleccionadas y filtros (respuesta JSON para AJAX)"""
-    # Esta ruta se usa cuando se llama desde el formulario con AJAX.
-    # Como ahora usamos /reportes/crear con redirección a /mostrar, esta ruta puede mantenerse
-    # para compatibilidad, pero ya no es necesaria. Se deja por si existe código JS que la use.
-    tipo = request.form.get("tipo_reporte")
-    fecha_desde = request.form.get("fecha_desde")
-    fecha_hasta = request.form.get("fecha_hasta")
-    estados = request.form.getlist("estados")
-    servicios_tipos = request.form.getlist("servicios_tipos")
-    columnas = request.form.getlist("columnas")
-    
-    # Simplemente redirigimos a crear_reporte con los datos para no duplicar lógica
-    # (opcional: procesar y devolver JSON)
-    return redirect(url_for('admin.crear_reporte'))
-
+# ================================================================
+# ✅ FUNCIÓN CORREGIDA: GUARDAR REPORTE (USA EL NOMBRE EDITADO)
+# ================================================================
 
 @admin_bp.route("/reportes/guardar", methods=["POST"])
 @admin_required
@@ -2896,10 +2891,16 @@ def guardar_reporte():
         if not nombre:
             return jsonify({'success': False, 'error': 'El nombre del reporte es obligatorio'}), 400
         
+        # ✅ Usar el nombre editado desde el frontend (estilos.generado_por)
+        # Si viene vacío, se usa el email de sesión o 'Administrador' como respaldo
+        autor = estilos.get('generado_por', '').strip()
+        if not autor:
+            autor = session.get('user', 'Administrador')
+        
         reporte = ReporteGuardado(
             nombre=nombre,
             tipo_reporte=tipo_reporte,
-            generado_por=session.get('user')
+            generado_por=autor      # ← Ahora guarda el nombre editado
         )
         reporte.set_datos(datos)
         reporte.set_columnas(columnas)
@@ -2916,12 +2917,15 @@ def guardar_reporte():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+# ================================================================
+# OTRAS RUTAS DE REPORTES (ya existentes)
+# ================================================================
+
 @admin_bp.route("/reportes/guardados")
 @admin_required
 def reportes_guardados():
-    """Lista todos los reportes guardados por el administrador"""
-    reportes = ReporteGuardado.query.order_by(ReporteGuardado.fecha_generacion.desc()).all()
-    return render_template("admin/reportes_guardados.html", reportes=reportes)
+    """Lista todos los reportes guardados por el administrador (redirige al historial)"""
+    return redirect(url_for('admin.reportes_historial'))
 
 
 @admin_bp.route("/reportes/ver/<int:reporte_id>")
@@ -2970,7 +2974,7 @@ def ver_reporte_guardado(reporte_id):
                          filtros_usados=reporte.get_filtros(),
                          logo_url=logo_url,
                          nombre_municipio=cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
-                         usuario_genero=reporte.generado_por,
+                         usuario_genero=reporte.generado_por,   # ← Aquí se muestra el nombre guardado
                          es_guardado=True)
 
 
@@ -3030,6 +3034,26 @@ def cargar_plantilla_reporte(id):
         'filtros': plantilla.get_filtros(),
         'columnas': plantilla.get_columnas()
     })
+
+
+@admin_bp.route("/reportes/generar", methods=["POST"])
+@admin_required
+@permiso_requerido(Permiso.VER_BITACORA)
+def generar_reporte():
+    """Genera reporte con columnas seleccionadas y filtros (respuesta JSON para AJAX)"""
+    # Esta ruta se usa cuando se llama desde el formulario con AJAX.
+    # Como ahora usamos /reportes/crear con redirección a /mostrar, esta ruta puede mantenerse
+    # para compatibilidad, pero ya no es necesaria. Se deja por si existe código JS que la use.
+    tipo = request.form.get("tipo_reporte")
+    fecha_desde = request.form.get("fecha_desde")
+    fecha_hasta = request.form.get("fecha_hasta")
+    estados = request.form.getlist("estados")
+    servicios_tipos = request.form.getlist("servicios_tipos")
+    columnas = request.form.getlist("columnas")
+    
+    # Simplemente redirigimos a crear_reporte con los datos para no duplicar lógica
+    # (opcional: procesar y devolver JSON)
+    return redirect(url_for('admin.crear_reporte'))
 
 
 # ================================================================

@@ -9,15 +9,22 @@
     <style>
         @media print {
             body { margin: 0; padding: 0.5cm; }
-            .no-print { display: none; }
+            .no-print { display: none !important; }
+            .toast-guardado { display: none !important; }
             .table { font-size: 11pt; }
-            .page-break { page-break-before: always; }
+            thead { display: table-header-group; }
+            tr { page-break-inside: avoid; }
+            @page { size: A4 landscape; margin: 1.5cm; }
+            .campo-editable-wrap { border: none !important; background: transparent !important; padding: 0 !important; }
+            .editable-hint { display: none !important; }
         }
+
         body {
             background: #f4f6f9;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
         }
+
         .reporte-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -26,6 +33,7 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             padding: 30px;
         }
+
         .reporte-header {
             border-bottom: 3px solid #2d6a4f;
             margin-bottom: 20px;
@@ -33,24 +41,69 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
+
         .logo { max-height: 80px; }
         .titulo-reporte { color: #2d6a4f; font-weight: bold; }
+
         .info-reporte {
             background: #e9ecef;
             padding: 10px 15px;
             border-radius: 6px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
         }
+
+        .filtros-reporte {
+            background: #f9f9f9;
+            border-left: 3px solid #2d6a4f;
+            padding: 8px 14px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #444;
+        }
+
+        .filtros-reporte strong { color: #2d6a4f; }
+
+        .filtro-tag {
+            display: inline-block;
+            background: #e8f4e8;
+            color: #2d5016;
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin: 2px 4px;
+            font-size: 12px;
+        }
+
+        .badge-tipo {
+            background: #2d6a4f;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
         .table thead th {
             background-color: #2d6a4f;
             color: white;
             border-color: #1b4332;
             vertical-align: middle;
         }
+
         .table-striped tbody tr:nth-of-type(odd) { background-color: rgba(45,106,79,0.05); }
         .table-bordered { border: 1px solid #dee2e6; }
+
         .footer {
             margin-top: 30px;
             text-align: center;
@@ -58,7 +111,9 @@
             color: #6c757d;
             border-top: 1px solid #dee2e6;
             padding-top: 15px;
+            line-height: 2;
         }
+
         .btn-imprimir {
             position: fixed;
             bottom: 20px;
@@ -69,7 +124,7 @@
             flex-direction: column;
             align-items: flex-end;
         }
-        /* Toast de confirmación */
+
         .toast-guardado {
             position: fixed;
             top: 20px;
@@ -85,8 +140,32 @@
             align-items: center;
             gap: 10px;
         }
+
         .toast-guardado.visible { display: flex; }
         .toast-guardado a { color: #a8d5a2; text-decoration: none; font-weight: 600; }
+
+        .campo-editable-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fffbea;
+            border: 1px dashed #c9a84c;
+            border-radius: 5px;
+            padding: 2px 8px;
+            cursor: text;
+            transition: border-color 0.2s;
+        }
+
+        .campo-editable-wrap:hover { border-color: #2d6a4f; background: #f0faf0; }
+        .campo-editable-wrap i { font-size: 11px; color: #c9a84c; pointer-events: none; }
+
+        [contenteditable="true"] { outline: none; min-width: 80px; display: inline-block; }
+        [contenteditable="true"]:focus { background: #fff; border-radius: 3px; }
+
+        .editable-hint { font-size: 11px; color: #bbb; margin-left: 4px; font-style: italic; }
+
+        /* Spinner de guardado */
+        .spinner-border-sm { width: 1rem; height: 1rem; }
     </style>
 </head>
 <body>
@@ -94,41 +173,86 @@
 <!-- Toast de confirmación -->
 <div class="toast-guardado" id="toastGuardado">
     <i class="fas fa-check-circle"></i>
-    <span>Reporte guardado. <a href="/admin/reportes/historial">Ver historial →</a></span>
+    <span id="toastMensaje">Reporte guardado. <a href="/admin/reportes/historial">Ver historial →</a></span>
 </div>
 
 <div class="reporte-container">
+
+    <!-- ENCABEZADO INSTITUCIONAL -->
     <div class="reporte-header">
         <div>
             <img src="{{ logo_url }}" alt="Logo" class="logo" onerror="this.style.display='none'">
         </div>
         <div class="text-end">
             <h2 class="titulo-reporte">{{ nombre_municipio }}</h2>
-            <p class="mb-0">Sistema Municipal de Trámites</p>
+            <p class="mb-0 text-muted" style="font-size:13px;">Sistema Municipal de Trámites</p>
         </div>
     </div>
-    
+
+    <!-- TÍTULO Y TIPO -->
     <div class="text-center mb-4">
-        <h3>{{ titulo }}</h3>
+        <h3 style="color:#1a1a2e; font-weight:700;">{{ titulo }}</h3>
+        <span class="badge-tipo">{{ tipo_reporte }}</span>
     </div>
-    
-    <div class="info-reporte d-flex justify-content-between flex-wrap gap-2">
-        <span><strong>Generado por:</strong> {{ usuario_genero }}</span>
+
+    <!-- METADATOS — "Elaborado por" es editable -->
+    <div class="info-reporte">
+        <span>
+            <strong>Elaborado por:</strong>&nbsp;
+            <span class="campo-editable-wrap" title="Haz clic para cambiar el nombre">
+                <i class="fas fa-pencil-alt"></i>
+                <span contenteditable="true" id="campoAutor" spellcheck="false">{{ usuario_genero }}</span>
+            </span>
+            <span class="editable-hint no-print">← clic para editar</span>
+        </span>
         <span><strong>Fecha:</strong> {{ fecha_generacion.strftime('%d/%m/%Y %H:%M:%S') }}</span>
-        <span><strong>Total registros:</strong> {{ total_registros }}</span>
+        <span><strong>Total registros:</strong> <strong style="color:#2d6a4f;">{{ total_registros }}</strong></span>
     </div>
-    
+
+    <!-- FILTROS APLICADOS -->
+    {% if filtros_usados %}
+    <div class="filtros-reporte">
+        <strong><i class="fas fa-filter"></i> Filtros aplicados:</strong>
+        {% for clave, valor in filtros_usados.items() %}
+            {% if valor %}
+            <span class="filtro-tag">
+                {{ clave | replace('_', ' ') | capitalize }}:
+                {% if valor is iterable and valor is not string %}
+                    {{ valor | join(', ') }}
+                {% else %}
+                    {{ valor }}
+                {% endif %}
+            </span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- TABLA DE DATOS -->
     {{ tabla_html|safe }}
-    
+
+    <!-- PIE DE PÁGINA -->
     <div class="footer">
-        <p>{{ nombre_municipio }} - Todos los derechos reservados &copy; {{ now.year }}</p>
+        <p><strong>{{ nombre_municipio }}</strong> — Todos los derechos reservados &copy; {{ now.year }}</p>
         <p>Este reporte es generado automáticamente a partir de los datos del sistema.</p>
+        <p>
+            Preparado por:&nbsp;
+            <span class="campo-editable-wrap no-print" title="Haz clic para editar">
+                <i class="fas fa-pencil-alt"></i>
+                <span contenteditable="true" id="campoAutorPie" spellcheck="false">{{ usuario_genero }}</span>
+            </span>
+            <span id="autorPieImpresion" style="display:none;">{{ usuario_genero }}</span>
+        </p>
+        <p style="font-size:10px; color:#bbb;">
+            Documento generado el {{ fecha_generacion.strftime('%d/%m/%Y') }} a las {{ fecha_generacion.strftime('%H:%M') }} hrs.
+        </p>
     </div>
+
 </div>
 
-<!-- Botones flotantes -->
+<!-- BOTONES FLOTANTES -->
 <div class="no-print btn-imprimir">
-    <button class="btn btn-success btn-sm shadow-sm" onclick="window.print()">
+    <button class="btn btn-success btn-sm shadow-sm" onclick="imprimirConAutor()">
         <i class="fas fa-print"></i> Imprimir / PDF
     </button>
     <button class="btn btn-primary btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#modalGuardarReporte">
@@ -142,15 +266,17 @@
     </a>
 </div>
 
-<!-- Modal para guardar reporte (en localStorage) -->
-<div class="modal fade" id="modalGuardarReporte" tabindex="-1" aria-labelledby="modalGuardarReporteLabel" aria-hidden="true">
+<!-- MODAL GUARDAR EN BASE DE DATOS -->
+<div class="modal fade" id="modalGuardarReporte" tabindex="-1"
+     aria-labelledby="modalGuardarReporteLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header" style="background:#2D5016; color:white;">
                 <h5 class="modal-title" id="modalGuardarReporteLabel">
-                    <i class="fas fa-save"></i> Guardar en historial local
+                    <i class="fas fa-save"></i> Guardar reporte
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
@@ -158,11 +284,20 @@
                     <input type="text" id="nombre_reporte" class="form-control"
                            placeholder="Ej: Denuncias mayo 2026"
                            value="{{ titulo }}">
+                </div>
+                <div class="mb-3">
+                    <label for="nombre_autor_modal" class="form-label fw-bold">Elaborado por</label>
+                    <input type="text" id="nombre_autor_modal" class="form-control"
+                           placeholder="Tu nombre completo"
+                           value="{{ usuario_genero }}">
                     <div class="form-text text-muted">
-                        <i class="fas fa-info-circle"></i>
-                        El reporte se guardará en el almacenamiento local de este navegador.
-                        No requiere base de datos.
+                        <i class="fas fa-user"></i> Este nombre quedará guardado en el reporte.
                     </div>
+                </div>
+                <div class="alert alert-info py-2" style="font-size:13px;">
+                    <i class="fas fa-database"></i>
+                    El reporte se guardará en la <strong>base de datos</strong> y será visible
+                    para todos los administradores desde cualquier dispositivo.
                 </div>
                 <div class="alert alert-success py-2" style="font-size:13px;">
                     <i class="fas fa-chart-bar"></i>
@@ -173,7 +308,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-success" id="btnConfirmarGuardar">
-                    <i class="fas fa-save"></i> Guardar en historial
+                    <i class="fas fa-save"></i> Guardar
                 </button>
             </div>
         </div>
@@ -182,61 +317,118 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Datos del reporte inyectados desde Flask
-    const DATOS_REPORTE = {{ datos_json|safe }};
-    const COLUMNAS = {{ columnas_seleccionadas|tojson }};
-    const FILTROS = {{ filtros_usados|tojson }};
-    const TIPO_REPORTE = "{{ tipo_reporte }}";
-    const GENERADO_POR = "{{ usuario_genero }}";
+    // ===== DATOS DESDE FLASK =====
+    const DATOS_REPORTE   = {{ datos_json|safe }};
+    const COLUMNAS        = {{ columnas_seleccionadas|tojson }};
+    const FILTROS         = {{ filtros_usados|tojson }};
+    const TIPO_REPORTE    = "{{ tipo_reporte }}";
+    const GENERADO_POR    = "{{ usuario_genero }}";
     const ESTILOS_REPORTE = {{ estilos|tojson }};
 
-    const STORAGE_KEY = 'reportes_municipales';
+    // ===== CAMPOS EDITABLES =====
+    const campoAutor    = document.getElementById('campoAutor');
+    const campoAutorPie = document.getElementById('campoAutorPie');
+    const inputModal    = document.getElementById('nombre_autor_modal');
+    const autorPieImp   = document.getElementById('autorPieImpresion');
 
-    function cargarListaReportes() {
-        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
-        catch { return []; }
+    function sincronizarAutor(valor) {
+        if (campoAutorPie && document.activeElement !== campoAutorPie) campoAutorPie.textContent = valor;
+        if (inputModal) inputModal.value = valor;
+        if (autorPieImp) autorPieImp.textContent = valor;
     }
 
-    document.getElementById('btnConfirmarGuardar').addEventListener('click', function() {
-        const nombre = document.getElementById('nombre_reporte').value.trim();
-        if (!nombre) {
-            alert('Escribe un nombre para el reporte');
-            return;
+    if (campoAutor) {
+        campoAutor.addEventListener('input', () => {
+            const nuevoValor = campoAutor.textContent.trim();
+            sincronizarAutor(nuevoValor);
+        });
+    }
+    if (campoAutorPie) {
+        campoAutorPie.addEventListener('input', () => {
+            const nuevoValor = campoAutorPie.textContent.trim();
+            if (campoAutor) campoAutor.textContent = nuevoValor;
+            sincronizarAutor(nuevoValor);
+        });
+    }
+
+    // ===== AL ABRIR EL MODAL, TOMAR EL VALOR ACTUAL DEL CAMPO EDITABLE =====
+    document.getElementById('modalGuardarReporte').addEventListener('show.bs.modal', function () {
+        const autorActual = campoAutor ? campoAutor.textContent.trim() : GENERADO_POR;
+        if (inputModal) inputModal.value = autorActual;
+        // También podrías resetear el nombre del reporte si está vacío
+        const inputNombre = document.getElementById('nombre_reporte');
+        if (inputNombre && (inputNombre.value === '' || inputNombre.value === '{{ titulo }}')) {
+            inputNombre.value = '{{ titulo }}';
         }
-
-        // Crear objeto del reporte
-        const id = 'rpt_' + Date.now() + '_' + Math.random().toString(36).substr(2,6);
-        const nuevoReporte = {
-            id,
-            nombre,
-            tipo: TIPO_REPORTE,
-            datos: DATOS_REPORTE,
-            columnas: COLUMNAS,
-            filtros: FILTROS,
-            estilos: ESTILOS_REPORTE,
-            fecha: new Date().toISOString(),
-            generadoPor: GENERADO_POR
-        };
-
-        // Guardar en localStorage
-        const lista = cargarListaReportes();
-        lista.unshift(nuevoReporte);
-        if (lista.length > 200) lista.splice(200); // máximo 200
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
-
-        // Cerrar modal y mostrar confirmación
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalGuardarReporte'));
-        if (modal) modal.hide();
-
-        const toast = document.getElementById('toastGuardado');
-        toast.classList.add('visible');
-        setTimeout(() => toast.classList.remove('visible'), 4000);
     });
 
-    // Auto-print si viene con ?print=1
-    window.onload = function() {
+    // ===== IMPRIMIR =====
+    function imprimirConAutor() {
+        const autorActual = campoAutor ? campoAutor.textContent.trim() : GENERADO_POR;
+        if (autorPieImp) { autorPieImp.textContent = autorActual; autorPieImp.style.display = 'inline'; }
+        window.print();
+        if (autorPieImp) autorPieImp.style.display = 'none';
+    }
+
+    // ===== GUARDAR EN BASE DE DATOS (POST al servidor) =====
+    document.getElementById('btnConfirmarGuardar').addEventListener('click', async function () {
+        const nombre = document.getElementById('nombre_reporte').value.trim();
+        const autor  = document.getElementById('nombre_autor_modal').value.trim() || GENERADO_POR;
+
+        if (!nombre) { alert('Escribe un nombre para el reporte'); return; }
+
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+
+        try {
+            const response = await fetch('/admin/reportes/guardar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre:       nombre,
+                    tipo_reporte: TIPO_REPORTE,
+                    datos:        DATOS_REPORTE,
+                    columnas:     COLUMNAS,
+                    filtros:      FILTROS,
+                    estilos:      { ...ESTILOS_REPORTE, generado_por: autor }
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Actualizar campos visibles con el nombre guardado
+                if (campoAutor)    campoAutor.textContent    = autor;
+                if (campoAutorPie) campoAutorPie.textContent = autor;
+                if (autorPieImp)   autorPieImp.textContent   = autor;
+
+                // Cerrar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalGuardarReporte'));
+                if (modal) modal.hide();
+
+                // Mostrar toast de éxito
+                const toast = document.getElementById('toastGuardado');
+                document.getElementById('toastMensaje').innerHTML =
+                    'Reporte guardado correctamente. <a href="/admin/reportes/historial">Ver historial →</a>';
+                toast.classList.add('visible');
+                setTimeout(() => toast.classList.remove('visible'), 5000);
+            } else {
+                alert('Error al guardar: ' + (data.error || 'Error desconocido'));
+            }
+
+        } catch (err) {
+            alert('Error de conexión: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save"></i> Guardar';
+        }
+    });
+
+    // ===== AUTO-IMPRIMIR SI VIENE CON ?print=1 =====
+    window.onload = function () {
         if (window.location.search.includes('print=1')) {
-            setTimeout(() => window.print(), 500);
+            setTimeout(() => imprimirConAutor(), 500);
         }
     };
 </script>
