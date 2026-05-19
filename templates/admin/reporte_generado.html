@@ -7,16 +7,31 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ========== CORRECCIÓN PRINCIPAL PARA IMPRESIÓN ========== */
         @media print {
-            body { margin: 0; padding: 0.5cm; }
+            body { 
+                margin: 0; 
+                padding: 0.5cm; 
+                background: white !important;
+            }
             .no-print { display: none !important; }
             .toast-guardado { display: none !important; }
-            .table { font-size: 11pt; }
+            .table { font-size: 9pt; }
             thead { display: table-header-group; }
             tr { page-break-inside: avoid; }
+            tbody tr { break-inside: avoid; }
             @page { size: A4 landscape; margin: 1.5cm; }
             .campo-editable-wrap { border: none !important; background: transparent !important; padding: 0 !important; }
             .editable-hint { display: none !important; }
+            
+            /* ESTO HACE QUE EL REPORTE OCUPE TODO EL ANCHO Y NO SE RECORTE */
+            .reporte-container {
+                max-width: 100% !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                padding: 10px !important;
+                margin: 0 !important;
+            }
         }
 
         body {
@@ -163,8 +178,6 @@
         [contenteditable="true"]:focus { background: #fff; border-radius: 3px; }
 
         .editable-hint { font-size: 11px; color: #bbb; margin-left: 4px; font-style: italic; }
-
-        /* Spinner de guardado */
         .spinner-border-sm { width: 1rem; height: 1rem; }
     </style>
 </head>
@@ -195,7 +208,7 @@
         <span class="badge-tipo">{{ tipo_reporte }}</span>
     </div>
 
-    <!-- METADATOS — "Elaborado por" es editable -->
+    <!-- METADATOS — "Elaborado por" editable -->
     <div class="info-reporte">
         <span>
             <strong>Elaborado por:</strong>&nbsp;
@@ -355,7 +368,6 @@
     document.getElementById('modalGuardarReporte').addEventListener('show.bs.modal', function () {
         const autorActual = campoAutor ? campoAutor.textContent.trim() : GENERADO_POR;
         if (inputModal) inputModal.value = autorActual;
-        // También podrías resetear el nombre del reporte si está vacío
         const inputNombre = document.getElementById('nombre_reporte');
         if (inputNombre && (inputNombre.value === '' || inputNombre.value === '{{ titulo }}')) {
             inputNombre.value = '{{ titulo }}';
@@ -398,16 +410,13 @@
             const data = await response.json();
 
             if (data.success) {
-                // Actualizar campos visibles con el nombre guardado
                 if (campoAutor)    campoAutor.textContent    = autor;
                 if (campoAutorPie) campoAutorPie.textContent = autor;
                 if (autorPieImp)   autorPieImp.textContent   = autor;
 
-                // Cerrar modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById('modalGuardarReporte'));
                 if (modal) modal.hide();
 
-                // Mostrar toast de éxito
                 const toast = document.getElementById('toastGuardado');
                 document.getElementById('toastMensaje').innerHTML =
                     'Reporte guardado correctamente. <a href="/admin/reportes/historial">Ver historial →</a>';
