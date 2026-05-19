@@ -286,5 +286,11 @@
     "tipo": "guardar_reporte",
     "descripcion": "Guardó reporte 'Reporte de Solicitudes' con 4 registros",
     "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-19T07:35:20.125644",
+    "tipo": "eliminar_reporte",
+    "descripcion": "Eliminó el reporte 'Reporte de Solicitudes'",
+    "admin": "superadmin@cutupu.gob.do"
   }
 ]
