@@ -48,7 +48,7 @@
             <li><a href="#" class="config-nav-item" data-section="base-datos">
                 <i class="fas fa-database"></i>
                 <div><span class="nav-label">Base de Datos</span><span class="nav-desc">Conexión, migración</span></div>
-                <span class="nav-badge pending">Pendiente</span>
+                <<span class="nav-badge" style="background:#e8f3ee;color:#2d6a4f;">Conectado</span>
             </a></li>
             <li><a href="#" class="config-nav-item" data-section="apariencia">
                 <i class="fas fa-palette"></i>
@@ -400,14 +400,15 @@
                     <i class="fas fa-database"></i>
                     <div><h2>Base de Datos</h2><p>Conexión futura, generador de URL y guía de migración</p></div>
                 </div>
-                <span class="status-badge pending"><i class="fas fa-clock"></i> Pendiente</span>
+               <span class="status-badge" style="background:#e8f3ee;color:#2d6a4f;border:1px solid #2d6a4f;"><i class="fas fa-check-circle"></i> Conectado</span>
             </div>
 
-            <div class="db-status-banner">
-                <div class="db-status-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <!-- BANNER ACTUALIZADO: PostgreSQL conectado -->
+            <div class="db-status-banner" style="background:#e8f3ee;border-left:4px solid #2d6a4f;">
+                <div class="db-status-icon"><i class="fas fa-check-circle" style="color:#2d6a4f;"></i></div>
                 <div class="db-status-content">
-                    <h3>Sistema actualmente sin base de datos</h3>
-                    <p>Usa archivos JSON locales. Cuando configures una BD, instala <code>flask-sqlalchemy</code> y <code>flask-migrate</code>, luego sigue los pasos de migración de abajo.</p>
+                    <h3 style="color:#1a3b2e;">✅ PostgreSQL conectado</h3>
+                    <p>El sistema está usando base de datos PostgreSQL correctamente.</p>
                 </div>
             </div>
 

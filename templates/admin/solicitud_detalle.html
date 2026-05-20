@@ -1,5 +1,4 @@
-{% extends "base.html" %}
-
+{% extends "admin/base_admin.html" %}
 {% block title %}Detalle de Solicitud: {{ solicitud.folio }} - Villa Cutupú{% endblock %}
 
 {% block extra_css %}
@@ -812,33 +811,65 @@
 {% include "admin/modal_plantillas.html" %}
 
 <script>
-// Función para abrir el selector de plantillas
+// ===== PLANTILLAS =====
+let _plantillasCache = [];
+
 function abrirSelectorPlantillas(tipo) {
     const modal = document.getElementById('modalPlantillas');
     if (modal) {
-        modal.classList.add('active');
+        modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
         
-        // Guardar referencia al tipo y al campo de texto actual
+        const buscar = document.getElementById('buscarPlantilla');
+        if (buscar) buscar.value = '';
+        
         window.plantillaTipo = tipo;
         window.plantillaCampo = 'comentarioText';
+        
+        fetch('/admin/api/plantillas-lista')
+            .then(r => r.json())
+            .then(data => {
+                _plantillasCache = data;
+                _renderPlantillas(data);
+            })
+            .catch(() => {
+                document.getElementById('listaPlantillasModal').innerHTML = 
+                    '<p style="color:#667085;text-align:center;padding:2rem;">No hay plantillas disponibles.</p>';
+            });
     }
 }
 
-// Función para cerrar el modal (debe definirse aquí también)
 function cerrarModalPlantillas() {
     const modal = document.getElementById('modalPlantillas');
     if (modal) {
-        modal.classList.remove('active');
+        modal.style.display = 'none';
         document.body.style.overflow = '';
     }
 }
 
-// Función para insertar plantilla en el campo de texto
+function _renderPlantillas(lista) {
+    const container = document.getElementById('listaPlantillasModal');
+    if (!container) return;
+    if (!lista || lista.length === 0) {
+        container.innerHTML = '<p style="color:#667085;text-align:center;padding:2rem;">No hay plantillas disponibles.</p>';
+        return;
+    }
+    container.innerHTML = lista.map(p => `
+        <div onclick="insertarPlantilla('${p.contenido.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')"
+             style="background:#f9fafb;border:1px solid #e4e7ec;border-radius:10px;padding:1rem;margin-bottom:.6rem;cursor:pointer;transition:all .2s;"
+             onmouseover="this.style.borderColor='#2e7d5e';this.style.background='#e8f3ee';"
+             onmouseout="this.style.borderColor='#e4e7ec';this.style.background='#f9fafb';">
+            <div style="font-weight:600;color:#1a3b2e;margin-bottom:.3rem;">${p.nombre}</div>
+            <div style="font-size:.85rem;color:#667085;">${p.contenido.substring(0,120)}...</div>
+            <span style="background:#e8f3ee;color:#1a3b2e;padding:.1rem .6rem;border-radius:20px;font-size:.75rem;">${p.categoria}</span>
+        </div>
+    `).join('');
+}
+
 function insertarPlantilla(contenido) {
-    const campo = document.getElementById(window.plantillaCampo);
+    const campo = document.getElementById(window.plantillaCampo || 'comentarioText');
     if (campo) {
-        campo.value = contenido;
+        campo.value = contenido.replace(/\\n/g, '\n');
         campo.focus();
     }
     cerrarModalPlantillas();
@@ -847,28 +878,33 @@ function insertarPlantilla(contenido) {
 // Cerrar modal al hacer clic fuera
 window.addEventListener('click', function(e) {
     const modal = document.getElementById('modalPlantillas');
-    if (e.target === modal) {
-        cerrarModalPlantillas();
-    }
+    if (e.target === modal) cerrarModalPlantillas();
 });
 
-// Cerrar con tecla ESC
+// Cerrar con ESC
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const modal = document.getElementById('modalPlantillas');
-        if (modal && modal.classList.contains('active')) {
-            cerrarModalPlantillas();
-        }
-    }
+    if (e.key === 'Escape') cerrarModalPlantillas();
 });
 
-// Cargar mensajes cuando se carga la página
+// Búsqueda en tiempo real
 document.addEventListener('DOMContentLoaded', function() {
+    const buscar = document.getElementById('buscarPlantilla');
+    if (buscar) {
+        buscar.addEventListener('input', function() {
+            const term = this.value.toLowerCase();
+            const filtradas = _plantillasCache.filter(p =>
+                p.nombre.toLowerCase().includes(term) ||
+                p.contenido.toLowerCase().includes(term)
+            );
+            _renderPlantillas(filtradas);
+        });
+    }
+
+    // ===== MENSAJES =====
     const folio = '{{ solicitud.folio }}';
     const tipo = 'solicitud';
     cargarMensajes(folio, tipo);
     
-    // Configurar el formulario
     const form = document.getElementById('formResponderMensaje');
     if (form) {
         form.addEventListener('submit', function(e) {

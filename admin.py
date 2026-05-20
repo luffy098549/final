@@ -1,5 +1,4 @@
-# admin.py - VERSIÓN COMPLETA CON CORRECCIÓN EN GUARDAR REPORTE
-# (incluye logo por defecto y nombre del municipio)
+# admin.py - VERSIÓN COMPLETA CON CORRECCIÓN EN ACTUALIZAR_SOLICITUD, GUARDAR REPORTE Y ESTILOS
 
 """
 Blueprint de administración profesional.
@@ -49,7 +48,7 @@ try:
 except ImportError:
     ReportePlantilla = None
 
-# ✅ IMPORT CORREGIDO: generar_pdf_desde_template en lugar de generar_pdf_desde_html
+# IMPORT CORREGIDO: generar_pdf_desde_template en lugar de generar_pdf_desde_html
 from utils.reportes_utils import (
     dataframe_desde_solicitudes, dataframe_desde_denuncias,
     dataframe_desde_usuarios, dataframe_desde_citas,
@@ -535,6 +534,10 @@ def detalle_solicitud(solicitud_id):
         return redirect(url_for("admin.listar_solicitudes"))
 
 
+# ================================================================
+# CORRECCIÓN: ACTUALIZAR SOLICITUD (MANEJO DE COMENTARIO SIN ESTADO)
+# ================================================================
+
 @admin_bp.route("/solicitudes/<int:solicitud_id>/actualizar", methods=["POST"])
 @admin_required
 @permiso_requerido(Permiso.EDITAR_SOLICITUDES)
@@ -549,8 +552,26 @@ def actualizar_solicitud(solicitud_id):
         nuevo_estado = request.form.get('estado')
         comentario = request.form.get('comentario', '')
         admin_email = session.get('user')
-        
-        if nuevo_estado in Solicitud.ESTADOS:
+        accion = request.form.get('accion', '')
+
+        # Si es solo comentario sin cambio de estado
+        if accion == 'comentar' or not nuevo_estado:
+            if comentario:
+                from sqlalchemy.orm.attributes import flag_modified
+                comentarios_actuales = list(solicitud.comentarios_admin or [])
+                comentarios_actuales.append({
+                    'fecha': datetime.now().isoformat(),
+                    'admin': admin_email,
+                    'comentario': comentario
+                })
+                solicitud.comentarios_admin = comentarios_actuales
+                flag_modified(solicitud, 'comentarios_admin')
+                db.session.commit()
+                flash("Comentario agregado correctamente.", "success")
+                enviar_notificacion_solicitud(solicitud, estado_anterior, comentario)
+            else:
+                flash("El comentario no puede estar vacío.", "error")
+        elif nuevo_estado in Solicitud.ESTADOS:
             solicitud.actualizar_estado(nuevo_estado, comentario, admin_email)
             flash(f"Solicitud actualizada a: {nuevo_estado}", "success")
             registrar_accion('actualizar_solicitud', f"Solicitud {solicitud.folio} actualizada a {nuevo_estado}")
@@ -1094,7 +1115,7 @@ def admin_cambiar_estado_cita(cita_id):
 
 
 # ================================================================
-# PLANTILLAS (sin cambios)
+# PLANTILLAS (con corrección: estilos={})
 # ================================================================
 
 @admin_bp.route("/plantillas")
@@ -1110,7 +1131,12 @@ def admin_plantillas():
                 por_categoria[p.categoria] = []
             por_categoria[p.categoria].append(p)
         
-        return render_template("admin/plantillas.html", plantillas=plantillas, por_categoria=por_categoria, categorias=Plantilla.CATEGORIAS)
+        # ✅ CORRECCIÓN: se agregó estilos={}
+        return render_template("admin/plantillas.html", 
+                               plantillas=plantillas, 
+                               por_categoria=por_categoria, 
+                               categorias=Plantilla.CATEGORIAS,
+                               estilos={})
     except Exception as e:
         flash(f"Error al cargar plantillas: {str(e)}", "error")
         return redirect(url_for('admin.dashboard'))
@@ -1184,6 +1210,24 @@ def admin_eliminar_plantilla(plantilla_id):
     except Exception as e:
         flash(f"Error: {str(e)}", "error")
         return redirect(url_for('admin.dashboard'))
+
+
+# ========== NUEVA RUTA API PARA LISTAR PLANTILLAS (JSON) ==========
+@admin_bp.route("/api/plantillas-lista")
+@admin_required
+def api_plantillas_lista():
+    try:
+        from models.plantilla import Plantilla
+        plantillas = Plantilla.query.filter_by(activa=True).all()
+        return jsonify([{
+            'id': p.id,
+            'nombre': p.nombre,
+            'contenido': p.contenido,
+            'categoria': p.categoria,
+            'variables': p.variables or []
+        } for p in plantillas])
+    except Exception as e:
+        return jsonify([])
 
 
 # ================================================================
@@ -2222,7 +2266,13 @@ def api_transparencia_item(id):
 @admin_required
 @permiso_requerido(Permiso.VER_CONFIG)
 def configuracion():
-    config_actual = cfg.cargar_config()
+    try:
+        from models.configuracion import Configuracion
+        registros = Configuracion.query.all()
+        config_actual = {r.clave: r.get_valor() for r in registros}
+    except Exception as e:
+        print(f"Error cargando config: {e}")
+        config_actual = {}
     return render_template("admin/configuracion.html", config=config_actual)
 
 
@@ -2771,7 +2821,7 @@ def crear_reporte():
                 as_attachment=True,
                 download_name=f"{tipo}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
             )
-      # ========== EXPORTAR A PDF ==========
+        # ========== EXPORTAR A PDF ==========
         elif formato == 'pdf':
             tabla_html = generar_tabla_html_profesional(df, estilos['titulo_personalizado'], estilos)
             filtros_serializables = {
@@ -2869,7 +2919,7 @@ def mostrar_reporte_generado():
 
 
 # ================================================================
-# ✅ RUTA CORREGIDA: HISTORIAL DE REPORTES
+# RUTA CORREGIDA: HISTORIAL DE REPORTES
 # ================================================================
 
 @admin_bp.route("/reportes/historial")
@@ -2884,14 +2934,14 @@ def reportes_historial():
     
     return render_template(
         "admin/reportes_guardados.html",
-        reportes=reportes,  # <-- clave agregada
+        reportes=reportes,
         nombre_municipio=cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
         now=datetime.now()
     )
 
 
 # ================================================================
-# ✅ FUNCIÓN CORREGIDA: GUARDAR REPORTE (USA EL NOMBRE EDITADO)
+# FUNCIÓN CORREGIDA: GUARDAR REPORTE (USA EL NOMBRE EDITADO)
 # ================================================================
 
 @admin_bp.route("/reportes/guardar", methods=["POST"])

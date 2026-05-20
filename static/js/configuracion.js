@@ -166,20 +166,112 @@ function resetSeccion(seccion) {
     }
 }
 
-// Función para cargar configuración inicial
+// Función para cargar configuración inicial (valores desde CONFIG_INICIAL)
 function cargarConfiguracionInicial() {
-    if (CONFIG_INICIAL) {
-        for (const [key, value] of Object.entries(CONFIG_INICIAL)) {
-            const elemento = document.getElementById(`cfg_${key}`);
+    if (!CONFIG_INICIAL) return;
+
+    // Construir mapa inverso: clave_config -> id_input
+    const mapaInverso = {};
+    const mapeoCampos = {
+        general: {
+            'cfg_nombre_municipio': 'nombre_municipio',
+            'cfg_siglas': 'siglas',
+            'cfg_direccion': 'direccion',
+            'cfg_telefono': 'telefono',
+            'cfg_email': 'email_institucional',
+            'cfg_web': 'sitio_web',
+            'cfg_timezone': 'zona_horaria',
+            'cfg_date_format': 'formato_fecha',
+            'cfg_idioma': 'idioma'
+        },
+        seguridad: {
+            'cfg_pass_min': 'pass_min_length',
+            'cfg_max_intentos': 'max_intentos_fallidos',
+            'cfg_pass_expiry': 'pass_expiry_dias',
+            'cfg_lockout_time': 'lockout_minutos',
+            'cfg_session_hours': 'session_duracion_horas',
+            'cfg_inactivity': 'inactividad_minutos',
+            'cfg_require_upper': 'require_mayusculas',
+            'cfg_require_num': 'require_numeros',
+            'cfg_require_special': 'require_especiales',
+            'cfg_single_session': 'single_session',
+            'cfg_log_access': 'log_intentos_acceso',
+            'cfg_2fa': 'two_factor_auth'
+        },
+        notificaciones: {
+            'cfg_smtp_host': 'smtp_host',
+            'cfg_smtp_port': 'smtp_port',
+            'cfg_smtp_user': 'smtp_user',
+            'cfg_smtp_pass': 'smtp_password',
+            'cfg_smtp_name': 'smtp_name',
+            'cfg_notif_solicitud': 'notif_nueva_solicitud',
+            'cfg_notif_denuncia': 'notif_nueva_denuncia',
+            'cfg_notif_usuario': 'notif_nuevo_usuario',
+            'cfg_notif_estado': 'notif_cambio_estado',
+            'cfg_notif_resumen': 'notif_resumen_diario'
+        },
+        servicios: {
+            'cfg_max_solicitudes': 'max_solicitudes_mes',
+            'cfg_max_denuncias': 'max_denuncias_mes',
+            'cfg_max_file_size': 'max_file_size_mb',
+            'cfg_file_types': 'tipos_archivo_permitidos'
+        },
+        apariencia: {
+            'cfg_color_primary': 'color_primario',
+            'cfg_color_primary_hex': 'color_primario_hex',
+            'cfg_color_accent': 'color_acento',
+            'cfg_color_accent_hex': 'color_acento_hex',
+            'cfg_color_sidebar': 'color_sidebar',
+            'cfg_color_sidebar_hex': 'color_sidebar_hex',
+            'cfg_sidebar_collapsed': 'sidebar_colapsado',
+            'cfg_breadcrumbs': 'mostrar_breadcrumbs',
+            'cfg_animations': 'animaciones'
+        },
+        sistema: {
+            'cfg_debug': 'debug_mode',
+            'cfg_maintenance': 'maintenance_mode',
+            'cfg_audit_log': 'audit_log',
+            'cfg_file_log': 'file_logging',
+            'cfg_cache_sessions': 'cache_sessions_segundos',
+            'cfg_cache_static': 'cache_static_dias'
+        }
+    };
+
+    // Recorrer todas las secciones y construir el mapa inverso
+    for (const seccion of Object.values(mapeoCampos)) {
+        for (const [inputId, configKey] of Object.entries(seccion)) {
+            mapaInverso[configKey] = inputId;
+        }
+    }
+
+    // Asignar valores a los inputs
+    for (const [configKey, valor] of Object.entries(CONFIG_INICIAL)) {
+        const inputId = mapaInverso[configKey];
+        if (inputId && valor !== undefined && valor !== null) {
+            const elemento = document.getElementById(inputId);
             if (elemento) {
                 if (elemento.type === 'checkbox') {
-                    elemento.checked = value === true || value === 'true';
+                    elemento.checked = (valor === true || valor === 'true');
                 } else if (elemento.type === 'number') {
-                    elemento.value = value || 0;
+                    elemento.value = valor;
                 } else {
-                    elemento.value = value || '';
+                    elemento.value = valor;
                 }
             }
+        }
+    }
+
+    // Manejo especial para servicios_activos y tiempos_respuesta (si existen)
+    if (CONFIG_INICIAL.servicios_activos) {
+        for (const [key, activo] of Object.entries(CONFIG_INICIAL.servicios_activos)) {
+            const checkbox = document.querySelector(`.svc-activo[data-key="${key}"]`);
+            if (checkbox) checkbox.checked = activo;
+        }
+    }
+    if (CONFIG_INICIAL.tiempos_respuesta) {
+        for (const [key, tiempo] of Object.entries(CONFIG_INICIAL.tiempos_respuesta)) {
+            const input = document.querySelector(`.svc-tiempo[data-key="${key}"]`);
+            if (input) input.value = tiempo;
         }
     }
 }
@@ -447,6 +539,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Cargar info del sistema
     cargarInfoSistema();
+    
+    // Cargar valores de configuración guardados en los campos del formulario
+    cargarConfiguracionInicial();
     
     // Configurar listeners para URLs de BD
     const sqlitePath = document.getElementById('cfg_sqlite_path');

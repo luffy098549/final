@@ -292,5 +292,17 @@
     "tipo": "eliminar_reporte",
     "descripcion": "Eliminó el reporte 'Reporte de Solicitudes'",
     "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-19T21:33:03.210005",
+    "tipo": "actualizar_solicitud",
+    "descripcion": "Solicitud SOL-260426-94230 actualizada a completado",
+    "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-19T21:50:43.372316",
+    "tipo": "guardar_configuracion",
+    "descripcion": "Configuración actualizada - Sección: general - 9 valores guardados",
+    "admin": "superadmin@cutupu.gob.do"
   }
 ]
