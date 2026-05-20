@@ -209,7 +209,7 @@ def generar_tabla_html_profesional(dataframe, titulo, estilos=None):
     for col in dataframe.columns:
         html += f'<th style="background-color:{color_encabezado}; color:{color_texto_encabezado}; padding:10px 12px; border:{border_style}; text-align:left; font-weight:600;">{col}</th>'
     
-    html += '</table></thead><tbody>'
+    html += '</tr></thead><tbody>'
     
     for i, (_, row) in enumerate(dataframe.iterrows()):
         bg = color_fila_par if i % 2 == 0 else color_fila_impar
@@ -221,7 +221,7 @@ def generar_tabla_html_profesional(dataframe, titulo, estilos=None):
             html += f'<td style="padding:8px 12px; border:{border_style}; color:#333; vertical-align:middle;">{valor}</td>'
         html += '</tr>'
     
-    html += '</tbody><table></div>'
+    html += '</tbody></table></div>'
     return html
 
 
