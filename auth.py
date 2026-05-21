@@ -25,7 +25,8 @@ google_bp = make_google_blueprint(
         'openid',
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile'
-    ]
+    ],
+    redirect_url='/login/google/authorized-check'
 )
 # ================================================================
 # SIGNAL: cuando Google autoriza exitosamente (solo guarda estado)
