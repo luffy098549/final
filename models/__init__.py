@@ -197,7 +197,6 @@ def init_db():
     
     # Migrar usuarios existentes (que tengan rol string pero no rol_id)
     from .usuario import Usuario
-    usuarios_migrados = 0
     for usuario in Usuario.query.all():
         if usuario.rol and not usuario.rol_id:
             rol_obj = Rol.query.filter_by(nombre=usuario.rol).first()

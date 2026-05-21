@@ -13,10 +13,10 @@ from werkzeug.utils import secure_filename
 auth = Blueprint('auth', __name__)
 
 # ================================================================
-# CONFIGURAR GOOGLE OAUTH
+# CONFIGURAR GOOGLE OAUTH CON REDIRECT PERSONALIZADO
 # ================================================================
-from flask_dance.contrib.google import make_google_blueprint, google
-from flask_dance.consumer import oauth_authorized
+from flask_dance.contrib.google import make_google_blueprint
+from flask_dance.consumer import oauth_authorized, oauth_error
 
 google_bp = make_google_blueprint(
     client_id=os.environ.get('GOOGLE_CLIENT_ID'),
@@ -27,9 +27,8 @@ google_bp = make_google_blueprint(
         'https://www.googleapis.com/auth/userinfo.profile'
     ]
 )
-
 # ================================================================
-# SIGNAL: cuando Google autoriza exitosamente
+# SIGNAL: cuando Google autoriza exitosamente (solo guarda estado)
 # ================================================================
 @oauth_authorized.connect_via(google_bp)
 def google_logged_in(blueprint, token):
@@ -61,7 +60,7 @@ def google_logged_in(blueprint, token):
     usuario = Usuario.query.filter_by(email=google_email).first()
 
     if not usuario:
-        # Si no existe, redirigir al registro con los datos de Google pre-cargados
+        # Guardar datos para registro incompleto y bandera
         session['google_registro_data'] = {
             'email': google_email,
             'nombre': google_nombre,
@@ -69,8 +68,9 @@ def google_logged_in(blueprint, token):
             'google_id': google_id,
             'foto': google_foto
         }
-        flash('📝 Completa tu registro con tus datos para continuar.', 'info')
-        return redirect(url_for('auth.registro_completo'))
+        session['google_needs_register'] = True
+        flash('📝 Completa tu registro para continuar.', 'info')
+        return False   # Solo guardamos estado, sin redirect
 
     if not usuario.activo:
         flash('❌ Tu cuenta está desactivada. Contacta al administrador.', 'error')
@@ -87,16 +87,46 @@ def google_logged_in(blueprint, token):
     usuario.ultimo_acceso = datetime.now()
     db.session.commit()
 
+    # Iniciar sesión (guardar en sesión de Flask)
+    nombre_usuario = usuario.nombre_completo or usuario.nombre
+
     session.clear()
     session['user'] = usuario.email
-    session['user_name'] = usuario.nombre_completo or usuario.nombre
+    session['user_name'] = nombre_usuario
     session['is_admin'] = usuario.tipo == 'admin' or usuario.rol in ['super_admin', 'admin', 'moderador']
     session['user_tipo'] = usuario.tipo
-    session['user_rol'] = usuario.rol or ''
+    session['user_rol'] = usuario.rol or ''   # Ajustar si usas rol_id
     session['foto_perfil'] = usuario.foto_perfil or ''
-
-    flash(f'✅ ¡Bienvenido de vuelta, {usuario.nombre}!', 'success')
+    session['google_login_message'] = f'✅ ¡Bienvenido, {nombre_usuario}!'
     return False
+
+
+# ================================================================
+# ENDPOINT PERSONALIZADO DESPUÉS DE OAUTH
+# ================================================================
+@auth.route('/login/google/authorized-check')
+def google_authorized_check():
+    """
+    Esta ruta recibe la redirección después de que Google completa el OAuth.
+    Decide si el usuario debe ir a registro_completo o ya está logueado.
+    """
+    # Verificar si hay token (la sesión de OAuth debe existir)
+    if not google_bp.session.authorized:
+        flash('Error al autenticar con Google.', 'error')
+        return redirect(url_for('auth.login'))
+
+    # Si el usuario necesita completar registro
+    if session.pop('google_needs_register', False):
+        # Los datos ya están en session['google_registro_data']
+        return redirect(url_for('auth.registro_completo'))
+
+    # Si el usuario ya existe y el signal ya inició sesión
+    if session.get('user'):
+        return redirect(url_for('index'))
+    else:
+        # Fallback por si algo falló
+        flash('No se pudo iniciar sesión correctamente.', 'error')
+        return redirect(url_for('auth.login'))
 
 
 # ================================================================
@@ -114,8 +144,6 @@ def get_user_rol():
         usuario = Usuario.query.filter_by(email=email).first()
         return usuario.rol if usuario else None
     return None
-
-# Nota: la función validar_cedula ha sido eliminada
 
 
 # ================================================================
@@ -311,6 +339,7 @@ def registro_completo():
     
     # Limpiar sesión de Google
     session.pop('google_registro_data', None)
+    session.pop('google_needs_register', None)
     
     # Iniciar sesión automáticamente
     session.clear()
@@ -375,7 +404,7 @@ def cambiar_password():
     usuario.password = password_nueva
     db.session.commit()
     flash("✅ ¡Contraseña actualizada! Ahora puedes iniciar sesión con tu contraseña.", "success")
-    return redirect(url_for("mi_cuenta"))
+    return redirect(request.referrer or url_for("mi_cuenta"))
 
 
 # ================================================================

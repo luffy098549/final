@@ -1,3 +1,8 @@
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # ← DEBE SER LA PRIMERA LÍNEA ANTES DE TODO
+
 # ================================================================
 # APP.PY - VILLA CUTUPÚ MUNICIPAL SYSTEM (VERSIÓN COMPLETA - CORREGIDA)
 # ================================================================
@@ -11,7 +16,6 @@ from flask import (
 )
 from auth import auth, login_required, admin_required
 from admin import admin_bp
-import os
 import json
 from datetime import datetime
 import uuid
@@ -19,10 +23,6 @@ from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 import sys
 import flask
-from dotenv import load_dotenv
-
-# Cargar variables de entorno
-load_dotenv()
 
 # ================================================================
 # 2. IMPORTS ADICIONALES
@@ -143,6 +143,41 @@ app.register_blueprint(auth)
 from auth import google_bp
 app.register_blueprint(google_bp, url_prefix='/login')
 app.register_blueprint(admin_bp)
+
+# ================================================================
+# MANEJO DE REDIRECCIONES POST-LOGIN CON GOOGLE (after_request)
+# ================================================================
+@app.after_request
+def manejar_redirect_google(response):
+    if request.path == '/login/google/authorized' and response.status_code == 302:
+        if session.get('google_needs_register'):
+            session.pop('google_needs_register', None)
+            return redirect(url_for('auth.registro_completo'))
+        if 'user' in session:
+            msg = session.pop('google_login_message', None)
+            if msg:
+                flash(msg, 'success')
+            if session.get('is_admin'):
+                return redirect(url_for('admin.dashboard'))
+            return redirect(url_for('index'))
+    return response
+
+# ================================================================
+# RUTA EXPLÍCITA PARA VERIFICAR REDIRECCIÓN POST-LOGIN CON GOOGLE
+# ================================================================
+@app.route('/login/google/authorized-check')
+def google_authorized_check():
+    if session.get('google_needs_register'):
+        session.pop('google_needs_register', None)
+        return redirect(url_for('auth.registro_completo'))
+    if 'user' in session:
+        msg = session.pop('google_login_message', None)
+        if msg:
+            flash(msg, 'success')
+        if session.get('is_admin'):
+            return redirect(url_for('admin.dashboard'))
+        return redirect(url_for('index'))
+    return redirect(url_for('auth.login'))
 
 # ================================================================
 # 10. DETECCIÓN DE REDIS
