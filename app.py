@@ -509,35 +509,56 @@ def inject_global_variables():
     from models.configuracion import Configuracion
     
     # VERIFICAR QUE LA SESIÓN SEA VÁLIDA
-    if "user" in session:
-        from models.usuario import Usuario
-        email = session.get("user")
-        if email:
-            usuario = Usuario.query.filter_by(email=email).first()
-            if not usuario:
-                # Usuario no existe en BD, limpiar sesión
-                session.clear()
+    try:
+        if "user" in session:
+            from models.usuario import Usuario
+            email = session.get("user")
+            if email:
+                usuario = Usuario.query.filter_by(email=email).first()
+                if not usuario:
+                    session.clear()
+    except Exception:
+        db.session.rollback()
     
-    config = {
-        'nombre_municipio': Configuracion.get('nombre_municipio', 'Villa Cutupú'),
-        'siglas': Configuracion.get('siglas', 'JDVC'),
-        'direccion': Configuracion.get('direccion', ''),
-        'telefono': Configuracion.get('telefono', ''),
-        'email_institucional': Configuracion.get('email_institucional', ''),
-        'sitio_web': Configuracion.get('sitio_web', ''),
-        'color_primario': Configuracion.get('color_primario', '#2d6a4f'),
-        'color_acento': Configuracion.get('color_acento', '#e9c46a'),
-        'color_sidebar': Configuracion.get('color_sidebar', '#1b4332'),
-        'sidebar_colapsado': Configuracion.get('sidebar_colapsado', False),
-        'zona_horaria': Configuracion.get('zona_horaria', 'America/Santo_Domingo'),
-        'formato_fecha': Configuracion.get('formato_fecha', 'DD/MM/YYYY'),
-        'maintenance_mode': Configuracion.get('maintenance_mode', False),
-        'mostrar_breadcrumbs': Configuracion.get('mostrar_breadcrumbs', True),
-        'animaciones': Configuracion.get('animaciones', True),
-    }
-    
-    # Obtener menú dinámico
-    menu = MenuItem.obtener_menu_completo()
+    try:
+        config = {
+            'nombre_municipio': Configuracion.get('nombre_municipio', 'Villa Cutupú'),
+            'siglas': Configuracion.get('siglas', 'JDVC'),
+            'direccion': Configuracion.get('direccion', ''),
+            'telefono': Configuracion.get('telefono', ''),
+            'email_institucional': Configuracion.get('email_institucional', ''),
+            'sitio_web': Configuracion.get('sitio_web', ''),
+            'color_primario': Configuracion.get('color_primario', '#2d6a4f'),
+            'color_acento': Configuracion.get('color_acento', '#e9c46a'),
+            'color_sidebar': Configuracion.get('color_sidebar', '#1b4332'),
+            'sidebar_colapsado': Configuracion.get('sidebar_colapsado', False),
+            'zona_horaria': Configuracion.get('zona_horaria', 'America/Santo_Domingo'),
+            'formato_fecha': Configuracion.get('formato_fecha', 'DD/MM/YYYY'),
+            'maintenance_mode': Configuracion.get('maintenance_mode', False),
+            'mostrar_breadcrumbs': Configuracion.get('mostrar_breadcrumbs', True),
+            'animaciones': Configuracion.get('animaciones', True),
+        }
+        menu = MenuItem.obtener_menu_completo()
+    except Exception:
+        db.session.rollback()
+        config = {
+            'nombre_municipio': 'Villa Cutupú',
+            'siglas': 'JDVC',
+            'direccion': '',
+            'telefono': '',
+            'email_institucional': '',
+            'sitio_web': '',
+            'color_primario': '#2d6a4f',
+            'color_acento': '#e9c46a',
+            'color_sidebar': '#1b4332',
+            'sidebar_colapsado': False,
+            'zona_horaria': 'America/Santo_Domingo',
+            'formato_fecha': 'DD/MM/YYYY',
+            'maintenance_mode': False,
+            'mostrar_breadcrumbs': True,
+            'animaciones': True,
+        }
+        menu = []
     
     return dict(
         now=datetime.now(),
@@ -555,7 +576,7 @@ def inject_global_variables():
         cache_enabled=True,
         debug_mode=app.debug,
         config=config,
-        menu=menu  # Menú dinámico para todos los templates
+        menu=menu
     )
 
 # ================================================================
