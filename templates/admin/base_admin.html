@@ -161,7 +161,6 @@
                     
                     <div class="nav-section">HERRAMIENTAS</div>
                     <ul>
-                        <!-- ✅ Enlace CORREGIDO: ahora apunta a reportes avanzados (admin.crear_reporte) -->
                         <li>
                             <a href="{{ url_for('admin.crear_reporte') }}" class="{{ 'active' if request.endpoint == 'admin.crear_reporte' else '' }}">
                                 <i class="fas fa-chart-line"></i>

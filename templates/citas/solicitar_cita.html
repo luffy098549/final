@@ -4,35 +4,134 @@
 
 {% block extra_css %}
 <style>
-    .cita-container{max-width:600px;margin:2rem auto;padding:0 1.5rem}
-    .cita-header{background:linear-gradient(135deg,#1a3b2e,#2e7d5e);border-radius:16px;padding:2rem;margin-bottom:2rem;color:white}
-    .cita-header h1{font-size:2rem;font-weight:700;margin-bottom:.5rem}
-    .form-group{margin-bottom:1.5rem}
-    .form-group label{display:block;font-weight:600;margin-bottom:.5rem;color:var(--gray-700)}
-    .form-control{width:100%;padding:.75rem;border:2px solid var(--gray-300);border-radius:8px;font-size:1rem}
-    .form-control:focus{border-color:#1a3b2e;outline:none}
-    .horarios-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.5rem}
-    .hora-btn{padding:.5rem;border:1px solid var(--gray-300);border-radius:6px;background:white;cursor:pointer;font-size:.9rem}
-    .hora-btn:hover{background:var(--gray-100)}
-    .hora-btn.selected{background:#1a3b2e;color:white;border-color:#1a3b2e}
-    .btn-submit{width:100%;padding:1rem;background:#1a3b2e;color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer}
-    .btn-submit:hover{background:#2e7d5e}
-    .loading{text-align:center;padding:1rem;color:var(--gray-500)}
+    .wrap {
+        max-width: 580px;
+        margin: 0 auto;
+        padding: calc(var(--header-h, 160px) + 2rem) 1.5rem 3rem;
+        font-family: var(--font-sans, sans-serif);
+    }
+    .cita-header {
+        background: linear-gradient(135deg, #1a3b2e 0%, #2e7d5e 100%);
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+        color: #fff;
+    }
+    .cita-header h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0 0 4px;
+        color: #fff;
+    }
+    .cita-header p {
+        margin: 0;
+        font-size: 0.875rem;
+        opacity: .8;
+    }
+    .field {
+        margin-bottom: 1.1rem;
+    }
+    .field label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray-700, #374151);
+        margin-bottom: 6px;
+    }
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 9px 12px;
+        border: 1.5px solid var(--gray-300, #d1d5db);
+        border-radius: 8px;
+        font-size: 0.9375rem;
+        font-family: inherit;
+        background: #fff;
+        color: #111;
+        transition: border-color .15s;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #2e7d5e;
+        box-shadow: 0 0 0 3px rgba(46,125,94,.15);
+    }
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+    .hora-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-top: 6px;
+    }
+    .hora-btn {
+        padding: 8px 4px;
+        border: 1.5px solid #d1d5db;
+        border-radius: 8px;
+        background: #fff;
+        color: #374151;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-family: inherit;
+        transition: background .15s, color .15s, border-color .15s;
+    }
+    .hora-btn:hover {
+        background: #f3f4f6;
+    }
+    .hora-btn.selected {
+        background: #1a3b2e;
+        color: #fff;
+        border-color: #1a3b2e;
+    }
+    .hint {
+        font-size: 0.875rem;
+        color: #6b7280;
+        padding: 10px 0;
+        margin: 0;
+    }
+    .btn-submit {
+        width: 100%;
+        padding: 11px;
+        background: #1a3b2e;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: .5rem;
+        transition: background .15s;
+    }
+    .btn-submit:hover {
+        background: #2e7d5e;
+    }
+    .loading {
+        font-size: 0.875rem;
+        color: #6b7280;
+        padding: 10px 0;
+        margin: 0;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="cita-container">
+<div class="wrap">
     <div class="cita-header">
         <h1><i class="fas fa-calendar-check"></i> Solicitar Cita</h1>
         <p>Selecciona servicio, fecha y hora disponible</p>
     </div>
 
     <form method="POST" id="citaForm">
-        <div class="form-group">
-            <label>Servicio *</label>
+        <div class="field">
+            <label for="servicio">Servicio *</label>
             <select name="servicio" id="servicio" class="form-control" required>
-                <option value="">-- Selecciona un servicio --</option>
+                <option value="">— Selecciona un servicio —</option>
                 <option value="asesoria_legal">Asesoría Legal</option>
                 <option value="catastro">Catastro</option>
                 <option value="licencias">Licencias</option>
@@ -44,23 +143,26 @@
             </select>
         </div>
 
-        <div class="form-group">
-            <label>Fecha *</label>
-            <input type="date" name="fecha" id="fecha" class="form-control" 
+        <div class="field">
+            <label for="fecha">Fecha *</label>
+            <input type="date" name="fecha" id="fecha" class="form-control"
                    min="{{ now.strftime('%Y-%m-%d') }}" required>
         </div>
 
-        <div class="form-group">
+        <div class="field">
             <label>Hora *</label>
             <input type="hidden" name="hora" id="hora" required>
-            <div id="horariosContainer" style="min-height:100px;">
-                <p class="loading">Selecciona servicio y fecha para ver horarios</p>
+            <div id="horariosContainer">
+                <p class="hint">
+                    <i class="fas fa-info-circle"></i>
+                    Selecciona servicio y fecha para ver horarios
+                </p>
             </div>
         </div>
 
-        <div class="form-group">
-            <label>Motivo (opcional)</label>
-            <textarea name="motivo" class="form-control" rows="3" 
+        <div class="field">
+            <label for="motivo">Motivo <span style="font-weight:400;opacity:.7">(opcional)</span></label>
+            <textarea name="motivo" id="motivo" class="form-control"
                       placeholder="Describe el motivo de tu cita"></textarea>
         </div>
 
@@ -73,69 +175,61 @@
 
 {% block extra_js %}
 <script>
-// Elementos del DOM
 const servicioSelect = document.getElementById('servicio');
-const fechaInput = document.getElementById('fecha');
+const fechaInput     = document.getElementById('fecha');
 const horariosContainer = document.getElementById('horariosContainer');
-const horaInput = document.getElementById('hora');
-const submitBtn = document.getElementById('submitBtn');
+const horaInput      = document.getElementById('hora');
 
-// Event listeners
 servicioSelect.addEventListener('change', cargarHorarios);
 fechaInput.addEventListener('change', cargarHorarios);
 
-// Función para cargar horarios
 async function cargarHorarios() {
     const servicio = servicioSelect.value;
-    const fecha = fechaInput.value;
-    
+    const fecha    = fechaInput.value;
+
     if (!servicio || !fecha) {
-        horariosContainer.innerHTML = '<p class="loading">Selecciona servicio y fecha para ver horarios</p>';
+        horariosContainer.innerHTML =
+            '<p class="hint"><i class="fas fa-info-circle"></i> Selecciona servicio y fecha para ver horarios</p>';
         return;
     }
-    
-    horariosContainer.innerHTML = '<p class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando horarios...</p>';
-    horaInput.value = ''; // Limpiar hora seleccionada
-    
+
+    horariosContainer.innerHTML =
+        '<p class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando horarios...</p>';
+    horaInput.value = '';
+
     try {
         const response = await fetch(`/api/horarios-disponibles?servicio=${servicio}&fecha=${fecha}`);
         const data = await response.json();
-        
+
         if (data.disponibles && data.disponibles.length > 0) {
-            let html = '<div class="horarios-grid">';
+            let html = '<div class="hora-grid">';
             data.disponibles.forEach(hora => {
-                html += `<button type="button" class="hora-btn" onclick="seleccionarHora('${hora}')">${hora}</button>`;
+                html += `<button type="button" class="hora-btn"
+                            onclick="seleccionarHora(this, '${hora}')">${hora}</button>`;
             });
             html += '</div>';
             horariosContainer.innerHTML = html;
         } else {
-            horariosContainer.innerHTML = '<p class="loading">No hay horarios disponibles para esta fecha</p>';
+            horariosContainer.innerHTML =
+                '<p class="hint">No hay horarios disponibles para esta fecha.</p>';
         }
     } catch (error) {
         console.error('Error:', error);
-        horariosContainer.innerHTML = '<p class="loading">Error al cargar horarios</p>';
+        horariosContainer.innerHTML =
+            '<p class="hint">Error al cargar horarios. Intenta de nuevo.</p>';
     }
 }
 
-// Función para seleccionar hora
-function seleccionarHora(hora) {
-    // Quitar clase selected de todos
-    document.querySelectorAll('.hora-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
-    
-    // Agregar clase selected al clickeado
-    event.target.classList.add('selected');
-    
-    // Guardar hora en input hidden
+function seleccionarHora(btn, hora) {
+    document.querySelectorAll('.hora-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
     horaInput.value = hora;
 }
 
-// Validar antes de enviar
 document.getElementById('citaForm').addEventListener('submit', function(e) {
     if (!horaInput.value) {
         e.preventDefault();
-        alert('Por favor selecciona una hora');
+        alert('Por favor selecciona una hora.');
     }
 });
 </script>

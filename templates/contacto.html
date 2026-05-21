@@ -98,7 +98,7 @@
                     <div class="cont-info-icon">🕒</div>
                     <div class="cont-info-content">
                         <h3>Horario de atencion</h3>
-                        <p>Lunes a Viernes: 8:00 AM - 4:00 PM<br>Sabados y Domingos: Cerrado</p>
+                        <p>Lunes a Viernes: 8:00 AM - 2:00 PM<br>Sabados y Domingos: Cerrado</p>
                     </div>
                 </div>
             </div>
@@ -190,6 +190,7 @@
 
 <script>
 (function() {
+    /* ─── VALIDACIÓN DEL FORMULARIO (íntegra, sin cambios) ─── */
     const form = document.getElementById('contactoForm');
     if (form) {
         const requiredFields = form.querySelectorAll('[required]');
@@ -200,7 +201,7 @@
             if (!err) {
                 err = document.createElement('span');
                 err.className = 'field-error';
-                err.style.cssText = 'font-size:0.75rem;color:#c0392b;font-weight:600;margin-top:2px;';
+                err.style.cssText = 'font-size:0.75rem;color:#c0392b;font-weight:600;margin-top:2px;display:block;';
                 input.parentNode.appendChild(err);
             }
             err.textContent = msg;
@@ -213,56 +214,255 @@
         }
         requiredFields.forEach(input => {
             input.addEventListener('blur', () => {
-                if (!input.value.trim()) {
-                    setError(input, 'Este campo es requerido.');
-                } else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
-                    setError(input, 'Ingrese un correo valido.');
-                } else {
-                    clearError(input);
-                }
+                if (!input.value.trim()) setError(input, 'Este campo es requerido.');
+                else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) setError(input, 'Ingrese un correo válido.');
+                else clearError(input);
             });
-            input.addEventListener('input', () => {
-                if (input.value.trim()) clearError(input);
-            });
+            input.addEventListener('input', () => { if (input.value.trim()) clearError(input); });
         });
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             let hasError = false;
             requiredFields.forEach(input => {
-                if (!input.value.trim()) {
-                    setError(input, 'Este campo es requerido.');
-                    hasError = true;
-                } else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
-                    setError(input, 'Ingrese un correo valido.');
-                    hasError = true;
-                }
+                if (!input.value.trim()) { setError(input, 'Este campo es requerido.'); hasError = true; }
+                else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) { setError(input, 'Ingrese un correo válido.'); hasError = true; }
             });
             if (hasError) {
                 e.preventDefault();
                 const firstError = form.querySelector('.field-error');
-                if (firstError) {
-                    firstError.closest('.cont-form-group').querySelector('input, textarea').focus();
-                }
+                if (firstError) firstError.closest('.cont-form-group').querySelector('input, textarea').focus();
             }
         });
     }
 
-    const animTargets = document.querySelectorAll('.cont-oficinas-grid, .cont-info-section, .cont-form-section, .cont-mapa-wrapper');
+    /* ─── SCROLL REVEAL (íntegro) ─── */
+    const animTargets = document.querySelectorAll('.cont-oficinas-grid,.cont-info-section,.cont-form-section,.cont-mapa-wrapper');
     if (animTargets.length) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, i) => {
                 if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('cont-visible');
-                    }, i * 100);
+                    setTimeout(() => entry.target.classList.add('cont-visible'), i * 100);
                     observer.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.1 });
-        animTargets.forEach(el => {
-            el.classList.add('cont-observe');
-            observer.observe(el);
-        });
+        animTargets.forEach(el => { el.classList.add('cont-observe'); observer.observe(el); });
     }
+
+    /* ══════════════════════════════════════════════════════════
+       SISTEMA DE MODALES — CONTACTO
+    ══════════════════════════════════════════════════════════ */
+
+    /* Inyectar estilos del modal */
+    const modalStyle = document.createElement('style');
+    modalStyle.textContent = `
+        .cont-modal-overlay {
+            position:fixed;inset:0;background:rgba(10,20,6,.85);z-index:999999;
+            display:flex;align-items:center;justify-content:center;padding:1.5rem;
+            opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;
+        }
+        .cont-modal-overlay.active { opacity:1;visibility:visible;backdrop-filter:blur(10px); }
+        .cont-modal {
+            background:#fff;border-radius:2rem;max-width:520px;width:100%;
+            position:relative;overflow:hidden;
+            box-shadow:0 40px 100px rgba(0,0,0,.4);
+            transform:scale(.88) translateY(30px);
+            transition:transform .45s cubic-bezier(0.2,0.9,0.4,1.1);
+            max-height:85vh;overflow-y:auto;
+        }
+        .cont-modal-overlay.active .cont-modal { transform:scale(1) translateY(0); }
+        .cont-modal::before {
+            content:'';position:absolute;top:0;left:0;right:0;height:4px;
+            background:linear-gradient(90deg,#2D5016,#C8960C,#3D6B20);
+            background-size:200%;animation:contModalFlow 3s linear infinite;z-index:2;
+        }
+        @keyframes contModalFlow { from{background-position:0%} to{background-position:200%} }
+        .cont-modal-close {
+            position:absolute;top:1.2rem;right:1.2rem;width:38px;height:38px;
+            border-radius:50%;border:none;background:#e8eee8;color:#5a6e5a;
+            cursor:pointer;display:flex;align-items:center;justify-content:center;
+            font-size:.95rem;z-index:10;transition:background .2s,color .2s,transform .3s;
+        }
+        .cont-modal-close:hover { background:#fee2e2;color:#dc2626;transform:rotate(90deg) scale(1.1); }
+        .cont-modal-body { padding:2rem;text-align:center; }
+        .cont-modal-icono {
+            width:70px;height:70px;margin:0 auto 1rem;
+            background:#EAF2DC;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            font-size:2rem;color:#2D5016;border:2px solid #C8960C;
+        }
+        .cont-modal-titulo { font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;color:#1A2410;margin-bottom:.5rem; }
+        .cont-modal-divider { width:50px;height:3px;background:linear-gradient(90deg,#2D5016,#C8960C);margin:1rem auto;border-radius:3px; }
+        .cont-modal-texto { color:#6B7280;font-size:.95rem;line-height:1.75;margin-bottom:1rem;text-align:left; }
+        .cont-modal-lista { list-style:none;padding:0;margin-top:1rem;text-align:left; }
+        .cont-modal-lista li { display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem;font-size:.85rem;color:#6B7280; }
+        .cont-modal-lista li i { color:#C8960C;width:20px; }
+        .cont-modal-boton {
+            display:inline-flex;align-items:center;gap:.6rem;
+            background:#2D5016;color:#fff;padding:.65rem 1.5rem;
+            border-radius:2rem;text-decoration:none;margin:.4rem .3rem 0;
+            transition:background .2s,transform .2s;font-weight:600;font-size:.85rem;
+        }
+        .cont-modal-boton:hover { background:#C8960C;transform:translateY(-2px); }
+        .cont-modal-boton.secondary { background:#f3f4f6;color:#1A2410; }
+        .cont-modal-boton.secondary:hover { background:#2D5016;color:#fff; }
+        @media(max-width:560px){.cont-modal-body{padding:1.5rem;}.cont-modal-titulo{font-size:1.3rem;}}
+    `;
+    document.head.appendChild(modalStyle);
+
+    /* Crear overlay del modal */
+    const overlay = document.createElement('div');
+    overlay.className = 'cont-modal-overlay';
+    overlay.innerHTML = `
+        <div class="cont-modal">
+            <button class="cont-modal-close" id="contModalClose">✕</button>
+            <div class="cont-modal-body">
+                <div class="cont-modal-icono" id="contModalIcono"></div>
+                <h3 class="cont-modal-titulo" id="contModalTitulo"></h3>
+                <div class="cont-modal-divider"></div>
+                <div id="contModalContenido"></div>
+            </div>
+        </div>`;
+    document.body.appendChild(overlay);
+
+    function openModal(iconoHtml, titulo, contenidoHtml) {
+        document.getElementById('contModalIcono').innerHTML = iconoHtml;
+        document.getElementById('contModalTitulo').textContent = titulo;
+        document.getElementById('contModalContenido').innerHTML = contenidoHtml;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    document.getElementById('contModalClose').addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    /* ── 1. STATS DEL HERO ── */
+    const statsData = {
+        'Respuesta rapida': {
+            icono: '📞',
+            titulo: 'Respuesta Rápida',
+            texto: 'Atendemos llamadas telefónicas de lunes a viernes de 8:00 AM a 4:00 PM. Para asuntos urgentes fuera del horario, puede enviarnos un mensaje por correo electrónico o redes sociales.',
+            detalles: ['Teléfono directo: (809) 691-7111', 'Tiempo promedio de respuesta: 1-2 horas', 'Lunes a Viernes, 8:00 AM – 2:00 PM'],
+            botones: `<a href="tel:+18096917111" class="cont-modal-boton">📞 Llamar ahora</a>
+                      <a href="https://wa.me/18096917111" target="_blank" class="cont-modal-boton secondary">💬 WhatsApp</a>`
+        },
+        '24h habiles': {
+            icono: '✉️',
+            titulo: '24 Horas Hábiles',
+            texto: 'Respondemos todos los correos electrónicos en un plazo máximo de 24 horas hábiles. Para consultas urgentes recomendamos llamar directamente a nuestra oficina.',
+            detalles: ['Correo: juntamunicipalrioverdearriba@gmail.com', 'Plazo máximo: 24 horas hábiles', 'Confirmación automática de recepción'],
+            botones: `<a href="mailto:juntamunicipalrioverdearriba@gmail.com" class="cont-modal-boton">✉️ Enviar correo</a>`
+        },
+        'Atencion personalizada': {
+            icono: '📍',
+            titulo: 'Atención Personalizada',
+            texto: 'Visítenos en nuestras instalaciones y reciba atención directa de nuestro equipo. Contamos con oficina administrativa, sala de reuniones y la Oficina de Acceso a la Información (OAI/M).',
+            detalles: ['Calle Principal, Villa Cutupú, La Vega', 'Lunes a Viernes: 8:00 AM – 2:00 PM', 'Sin cita previa en ventanilla general'],
+            botones: `<a href="#cont-mapa" class="cont-modal-boton" id="scrollToMapa">📍 Ver en el mapa</a>`
+        }
+    };
+
+    document.querySelectorAll('.cont-hero-stat').forEach(stat => {
+        stat.style.cursor = 'pointer';
+        stat.addEventListener('click', () => {
+            const texto = stat.textContent.trim();
+            const stats = [...document.querySelectorAll('.cont-hero-stat')];
+            const idx = stats.indexOf(stat);
+            const keys = Object.keys(statsData);
+            const info = statsData[keys[idx]];
+            if (!info) return;
+            const lista = info.detalles.map(d => `<li><i>✔</i> ${d}</li>`).join('');
+            openModal(info.icono, info.titulo,
+                `<p class="cont-modal-texto">${info.texto}</p>
+                 <ul class="cont-modal-lista">${lista}</ul>
+                 <div style="margin-top:1.2rem;">${info.botones}</div>`
+            );
+            document.getElementById('scrollToMapa')?.addEventListener('click', e => {
+                e.preventDefault(); closeModal();
+                setTimeout(() => document.querySelector('.cont-mapa')?.scrollIntoView({ behavior: 'smooth' }), 350);
+            });
+        });
+    });
+
+    /* ── 2. CARDS DE OFICINAS ── */
+    const oficinasData = [
+        {
+            icono: '📋',
+            titulo: 'Oficina Administrativa',
+            texto: 'La Oficina Administrativa es el punto de entrada para todas las gestiones ciudadanas que no estén disponibles en el portal digital. Aquí podrá realizar solicitudes, entregar documentos y recibir orientación sobre los trámites disponibles.',
+            detalles: ['Atención sin cita previa', 'Recepción de documentos y solicitudes', 'Orientación sobre trámites y servicios', 'Lunes a Viernes: 8:00 AM – 2:00 PM'],
+            botones: `<a href="/servicios" class="cont-modal-boton">Ver trámites disponibles</a>`
+        },
+        {
+            icono: '📢',
+            titulo: 'Oficina de Libre Acceso a la Información (OAI/M)',
+            texto: 'La OAI/M garantiza el derecho ciudadano de acceder a la información pública conforme a la Ley 200-04. Puede solicitar información, hacer seguimiento a sus peticiones y recibir documentos oficiales.',
+            detalles: ['Ley 200-04 · Decreto 130-05', 'Plazo de respuesta: 15 días hábiles', 'Acceso gratuito a la información', 'Formulario de solicitud disponible en línea'],
+            botones: `<a href="/transparencia" class="cont-modal-boton">Portal de Transparencia</a>
+                      <a href="mailto:juntamunicipalrioverdearriba@gmail.com?subject=Solicitud%20OAI/M" class="cont-modal-boton secondary">Solicitar info por correo</a>`
+        },
+        {
+            icono: '🏛️',
+            titulo: 'Salón de Reuniones',
+            texto: 'El Salón de Reuniones es el espacio oficial donde se celebran las sesiones del concejo municipal, reuniones de trabajo con la comunidad, presentación de proyectos y actividades administrativas institucionales.',
+            detalles: ['Capacidad para sesiones ordinarias y extraordinarias', 'Disponible para audiencias ciudadanas', 'Sesiones abiertas al público (previa convocatoria)', 'Consultar agenda de sesiones en Transparencia'],
+            botones: `<a href="/transparencia/actas" class="cont-modal-boton">Ver actas de sesiones</a>`
+        }
+    ];
+
+    document.querySelectorAll('.cont-oficina-card').forEach((card, i) => {
+        card.style.cursor = 'pointer';
+        const info = oficinasData[i];
+        if (!info) return;
+        card.addEventListener('click', () => {
+            const lista = info.detalles.map(d => `<li><i>✔</i> ${d}</li>`).join('');
+            openModal(info.icono, info.titulo,
+                `<p class="cont-modal-texto">${info.texto}</p>
+                 <ul class="cont-modal-lista">${lista}</ul>
+                 <div style="margin-top:1.2rem;">${info.botones}</div>`
+            );
+        });
+    });
+
+    /* ── 3. ITEMS DE INFO DE CONTACTO (dirección, tel, email, horario) ── */
+    document.querySelectorAll('.cont-info-item').forEach(item => {
+        const icon = item.querySelector('.cont-info-icon')?.textContent?.trim();
+        item.style.cursor = 'pointer';
+        item.addEventListener('click', e => {
+            if (e.target.tagName === 'A') return;
+            if (icon === '📍') {
+                document.querySelector('.cont-mapa')?.scrollIntoView({ behavior: 'smooth' });
+            } else if (icon === '📞') {
+                window.location.href = 'tel:+18096917111';
+            } else if (icon === '✉️') {
+                window.location.href = 'mailto:juntamunicipalrioverdearriba@gmail.com';
+            } else if (icon === '🕒') {
+                openModal('🕒', 'Horario de Atención',
+                    `<p class="cont-modal-texto">Atendemos al público de manera presencial y telefónica en el siguiente horario:</p>
+                     <ul class="cont-modal-lista">
+                         <li><i>✔</i> Lunes a Viernes: 8:00 AM – 2:00 PM</li>
+                         <li><i>✔</i> Sábados y Domingos: Cerrado</li>
+                         <li><i>✔</i> Días feriados: Cerrado</li>
+                         <li><i>✔</i> Correo electrónico: respuesta en 24h hábiles</li>
+                     </ul>
+                     <div style="margin-top:1.2rem;">
+                         <a href="tel:+18096917111" class="cont-modal-boton">📞 Llamar</a>
+                     </div>`
+                );
+            }
+        });
+    });
+
+    /* ── 4. PILLS DE REDES SOCIALES — efecto visual adicional ── */
+    document.querySelectorAll('.cont-social-pill').forEach(pill => {
+        pill.addEventListener('mousedown', function () { this.style.transform = 'scale(0.95)'; });
+        pill.addEventListener('mouseup', function () { this.style.transform = ''; });
+        pill.addEventListener('mouseleave', function () { this.style.transform = ''; });
+    });
+
 })();
 </script>
 

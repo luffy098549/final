@@ -1310,6 +1310,9 @@ def mis_tramites():
         for k, v in t.items():
             if isinstance(v, dt):
                 result[k] = v.strftime('%Y-%m-%d %H:%M:%S')
+            elif isinstance(v, str):
+                # Limpiar caracteres de control que rompen JSON
+                result[k] = v.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ')
             else:
                 result[k] = v
         return result
@@ -1992,7 +1995,7 @@ def api_usuario_responder_mensaje(folio):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # ================================================================
-# 30. ENCUESTAS
+# 30. ENCUESTAS - VERSIÓN CORREGIDA CON SOPORTE PARA CONTACTOS
 # ================================================================
 @app.route("/tramite/<folio>/encuesta", methods=["GET", "POST"])
 @login_required
@@ -2000,23 +2003,26 @@ def encuesta_tramite(folio):
     from models import Solicitud, Denuncia
     from models.cita import Cita
     from models.encuesta import Encuesta
-    
+    from models.mensaje import Mensaje
+
     email = session.get("user")
-    
+
     if not email:
         flash("No hay sesión activa.", "error")
         return redirect(url_for("auth.login"))
-    
+
     tramite = None
     tipo_tramite = None
-    
+
+    # 1. Buscar en Solicitudes
     solicitudes = Solicitud.buscar_por_usuario(email)
     for s in solicitudes:
         if s.folio == folio:
             tramite = s
             tipo_tramite = 'solicitud'
             break
-    
+
+    # 2. Buscar en Denuncias
     if not tramite:
         denuncias = Denuncia.cargar_todos()
         for d in denuncias:
@@ -2024,7 +2030,8 @@ def encuesta_tramite(folio):
                 tramite = d
                 tipo_tramite = 'denuncia'
                 break
-    
+
+    # 3. Buscar en Citas
     if not tramite:
         citas = Cita.buscar_por_usuario(email)
         for c in citas:
@@ -2032,28 +2039,57 @@ def encuesta_tramite(folio):
                 tramite = c
                 tipo_tramite = 'cita'
                 break
-    
+
+    # 4. Buscar en Contactos (Mensaje)
+    if not tramite:
+        contacto = Mensaje.query.filter_by(
+            tramite_folio=folio,
+            usuario_email=email,
+            tramite_tipo='consulta'
+        ).first()
+        if contacto:
+            tramite = contacto
+            tipo_tramite = 'contacto'
+
     if not tramite:
         flash("Trámite no encontrado.", "error")
         return redirect(url_for("mis_tramites"))
-    
-    estados_completados = ['completado', 'resuelto', 'completada', 'respondido']
-    if tramite.estado not in estados_completados:
-        flash("❌ Solo puedes evaluar trámites completados.", "error")
+
+    # ============================================================
+    # 🔥 CORRECCIÓN: Manejar estado para contactos (Mensaje)
+    # ============================================================
+    if tipo_tramite == 'contacto':
+        # El modelo Mensaje no tiene campo 'estado', se determina por si existe respuesta admin
+        from models.mensaje import Mensaje as MensajeModel
+        respuesta_admin = MensajeModel.query.filter_by(
+            tramite_folio=tramite.tramite_folio,
+            es_admin=True
+        ).first()
+        estado_actual = 'respondido' if respuesta_admin else 'pendiente'
+        estados_completados = ['respondido']
+    else:
+        estados_completados = ['completado', 'resuelto', 'completada', 'respondido']
+        estado_actual = tramite.estado
+
+    # Verificar que el trámite esté completado/respondido
+    if estado_actual not in estados_completados:
+        flash("❌ Solo puedes evaluar trámites completados o respondidos.", "error")
         return redirect(url_for("mis_tramites"))
-    
+
+    # Evitar evaluaciones duplicadas
     if Encuesta.buscar_por_tramite(folio):
         flash("✅ Ya has evaluado este trámite. ¡Gracias!", "info")
         return redirect(url_for("mis_tramites"))
-    
+
+    # Procesar el envío del formulario
     if request.method == "POST":
         calificacion = request.form.get("calificacion")
         comentario = request.form.get("comentario", "").strip()
-        
+
         if not calificacion:
             flash("❌ Por favor selecciona una calificación.", "error")
             return redirect(url_for("encuesta_tramite", folio=folio))
-        
+
         try:
             calif_int = int(calificacion)
             if calif_int < 1 or calif_int > 5:
@@ -2061,19 +2097,32 @@ def encuesta_tramite(folio):
         except:
             flash("❌ Calificación no válida.", "error")
             return redirect(url_for("encuesta_tramite", folio=folio))
-        
-        Encuesta.crear(
-            folio_tramite=folio,
-            tipo_tramite=tipo_tramite,
-            usuario_email=email,
-            usuario_nombre=session.get("user_name", "Ciudadano"),
-            calificacion=calif_int,
-            comentario=comentario
-        )
-        
+
+        # 🔥 CORRECCIÓN: pasar folio_contacto para encuestas de contacto
+        if tipo_tramite == 'contacto':
+            Encuesta.crear(
+                folio_tramite=folio,
+                tipo_tramite=tipo_tramite,
+                usuario_email=email,
+                usuario_nombre=session.get("user_name", "Ciudadano"),
+                calificacion=calif_int,
+                comentario=comentario,
+                folio_contacto=folio  # ← parámetro requerido por el modelo
+            )
+        else:
+            Encuesta.crear(
+                folio_tramite=folio,
+                tipo_tramite=tipo_tramite,
+                usuario_email=email,
+                usuario_nombre=session.get("user_name", "Ciudadano"),
+                calificacion=calif_int,
+                comentario=comentario
+            )
+
         flash("✅ ¡Gracias por tu evaluación! Tu opinión nos ayuda a mejorar.", "success")
         return redirect(url_for("mis_tramites"))
-    
+
+    # Preparar nombre del servicio para mostrar en la plantilla
     nombre_servicio = ""
     if hasattr(tramite, 'servicio_nombre'):
         nombre_servicio = tramite.servicio_nombre
@@ -2081,9 +2130,11 @@ def encuesta_tramite(folio):
         nombre_servicio = tramite.tipo_nombre
     elif hasattr(tramite, 'servicio'):
         nombre_servicio = SERVICIOS_CITAS.get(tramite.servicio, tramite.servicio)
-    
-    return render_template("encuestas/encuesta.html", 
-                          tramite=tramite, 
+    elif tipo_tramite == 'contacto':
+        nombre_servicio = "Consulta ciudadana"
+
+    return render_template("encuestas/encuesta.html",
+                          tramite=tramite,
                           tipo=tipo_tramite,
                           nombre_servicio=nombre_servicio,
                           folio=folio)

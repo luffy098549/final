@@ -1,461 +1,277 @@
 {% extends "base.html" %}
-
-{% block title %}Administrar Denuncias - Villa Cutupú{% endblock %}
+{% block title %}Gestión de Denuncias — Villa Cutupú{% endblock %}
 
 {% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --primary: #1a3b2e;
-        --primary-light: #2e7d5e;
-        --primary-soft: #e8f3ee;
-        --warning: #b85e00;
-        --warning-light: #fff1e0;
-        --success: #1e7b4c;
-        --success-light: #e1f7ed;
-        --danger: #b33c2f;
-        --danger-light: #fee9e7;
-        --info: #2563eb;
-        --info-light: #e0edff;
-        --purple: #6b21a5;
-        --purple-light: #f1e5ff;
-        --gray-50: #f9fafb;
-        --gray-100: #f2f4f7;
-        --gray-200: #e4e7ec;
-        --gray-300: #d0d5dd;
-        --gray-400: #98a2b3;
-        --gray-500: #667085;
-        --gray-600: #475467;
-        --gray-700: #344054;
-        --gray-800: #1d2939;
-        --gray-900: #101828;
-        --shadow-sm: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
-        --shadow-md: 0 4px 6px -2px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.1);
-        --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
-        --radius-sm: 8px;
-        --radius-md: 12px;
-        --radius-lg: 16px;
-        --radius-xl: 24px;
-    }
+:root {
+  --primary:#1a3b2e;--primary-light:#2e7d5e;--primary-soft:#e8f3ee;
+  --warn:#b85e00;--warn-light:#fff1e0;
+  --info:#2563eb;--info-light:#eff6ff;
+  --success:#1e7b4c;--success-light:#e1f7ed;
+  --danger:#b33c2f;--danger-light:#fee9e7;
+  --purple:#6b21a5;--purple-light:#f1e5ff;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;
+  --gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;
+  --gray-600:#4b5563;--gray-700:#374151;--gray-900:#111827;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 8px 24px rgba(0,0,0,.04);
+  --r:16px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-50);color:var(--gray-900)}
 
-    .admin-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem 1.5rem;
-    }
+.wrap{max-width:1340px;margin:0 auto;padding:calc(var(--header-h) + 2rem) 1.5rem 4rem}
 
-    .admin-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-        border-radius: var(--radius-xl);
-        padding: 2rem;
-        margin-bottom: 2rem;
-        color: white;
-        box-shadow: var(--shadow-lg);
-    }
+.hero{
+  background:linear-gradient(135deg,#b33c2f 0%,#c0392b 50%,#922b21 100%);
+  border-radius:20px;padding:2.5rem 2.5rem;margin-bottom:2rem;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;
+  position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
+.hero::after{content:'';position:absolute;right:60px;bottom:-80px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.04);pointer-events:none}
+.hero-left h1{font-family:'DM Serif Display',serif;font-size:2rem;font-weight:400;color:white;display:flex;align-items:center;gap:.65rem;margin-bottom:.35rem}
+.hero-left p{color:rgba(255,255,255,.78);font-size:.92rem}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white;border-radius:99px;padding:.5rem 1.1rem;font-size:.85rem;font-weight:500}
 
-    .admin-header h1 {
-        font-size: 2rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.75rem}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.kpi-grid{grid-template-columns:1fr}}
 
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
+.kpi{background:white;border-radius:var(--r);border:1px solid var(--gray-200);padding:1.4rem 1.5rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:1rem;transition:transform .2s,box-shadow .2s}
+.kpi:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.09)}
+.kpi-icon{width:52px;height:52px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.kpi-icon.total      {background:var(--danger-light);color:var(--danger)}
+.kpi-icon.pend       {background:var(--warn-light);color:var(--warn)}
+.kpi-icon.invest     {background:var(--purple-light);color:var(--purple)}
+.kpi-icon.done       {background:var(--success-light);color:var(--success)}
+.kpi-body label{display:block;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--gray-500);margin-bottom:.3rem}
+.kpi-num{font-size:2rem;font-weight:700;color:var(--gray-900);line-height:1}
 
-    .stat-card {
-        background: white;
-        border-radius: var(--radius-lg);
-        padding: 1.5rem;
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--gray-200);
-        display: flex;
-        align-items: center;
-        gap: 1.25rem;
-    }
+.toolbar{background:white;border-radius:var(--r);border:1px solid var(--gray-200);padding:1.25rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow);display:flex;gap:.85rem;flex-wrap:wrap;align-items:center}
+.tb-search{flex:2;min-width:260px;position:relative}
+.tb-search i{position:absolute;left:.95rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:.95rem}
+.tb-search input{width:100%;padding:.75rem 1rem .75rem 2.6rem;border:1.5px solid var(--gray-200);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.92rem;background:var(--gray-50);transition:all .2s}
+.tb-search input:focus{outline:none;border-color:var(--danger);background:white;box-shadow:0 0 0 3px rgba(179,60,47,.08)}
+.tb-select{padding:.75rem 1rem;border:1.5px solid var(--gray-200);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.92rem;background:var(--gray-50);color:var(--gray-700);cursor:pointer;min-width:170px;transition:all .2s}
+.tb-select:focus{outline:none;border-color:var(--danger)}
+.btn-filter{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.35rem;background:#b33c2f;color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-filter:hover{background:#922b21;transform:translateY(-1px)}
 
-    .stat-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-    }
+.tbl-card{background:white;border-radius:var(--r);border:1px solid var(--gray-200);box-shadow:var(--shadow);overflow:hidden}
+.tbl-head{padding:1rem 1.5rem;border-bottom:1px solid var(--gray-100);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;background:var(--gray-50)}
+.tbl-head h2{font-size:.95rem;font-weight:600;color:var(--gray-700);display:flex;align-items:center;gap:.5rem}
+.tbl-count{font-size:.8rem;color:var(--gray-400);background:var(--gray-200);padding:.2rem .65rem;border-radius:99px;font-weight:600}
 
-    .stat-icon.total { background: var(--primary-soft); color: var(--primary); }
-    .stat-icon.pendientes { background: var(--warning-light); color: var(--warning); }
-    .stat-icon.investigacion { background: var(--purple-light); color: var(--purple); }
-    .stat-icon.resueltas { background: var(--success-light); color: var(--success); }
+table{width:100%;border-collapse:collapse}
+thead th{padding:.85rem 1.25rem;text-align:left;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--gray-500);background:var(--gray-50);border-bottom:1.5px solid var(--gray-200)}
+tbody td{padding:1.1rem 1.25rem;border-bottom:1px solid var(--gray-100);color:var(--gray-700);font-size:.92rem;vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:#fafbfc}
 
-    .stat-content h3 {
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        color: var(--gray-500);
-        margin-bottom: 0.25rem;
-    }
+.folio-chip{font-family:'DM Mono',monospace;font-weight:700;font-size:.82rem;color:#b33c2f;background:var(--danger-light);padding:.2rem .6rem;border-radius:6px;display:inline-block}
+.user-block strong{display:block;font-size:.9rem;font-weight:600;color:var(--gray-900)}
+.user-block small{color:var(--gray-400);font-size:.78rem}
+.anonimo{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;background:var(--gray-200);color:var(--gray-600);border-radius:6px;font-size:.75rem;font-weight:600}
 
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--gray-900);
-    }
+.tipo-chip{display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .7rem;border-radius:6px;font-size:.78rem;font-weight:600;background:var(--danger-light);color:var(--danger)}
 
-    .filters-section {
-        background: white;
-        border-radius: var(--radius-lg);
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--gray-200);
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-        align-items: center;
-    }
+.badge{display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .8rem;border-radius:99px;font-size:.78rem;font-weight:600}
+.badge i{font-size:.45rem}
+.badge-pendiente       {background:var(--warn-light);color:var(--warn)}
+.badge-en_investigacion{background:var(--purple-light);color:var(--purple)}
+.badge-resuelto        {background:var(--success-light);color:var(--success)}
+.badge-rechazado       {background:var(--danger-light);color:var(--danger)}
+.badge-cancelado       {background:var(--gray-100);color:var(--gray-600)}
 
-    .search-box {
-        flex: 2;
-        min-width: 280px;
-        position: relative;
-    }
+.dir-text{max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.85rem;color:var(--gray-600)}
 
-    .search-box i {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--gray-400);
-    }
+.btn-ver{display:inline-flex;align-items:center;gap:.45rem;padding:.5rem 1.1rem;background:#b33c2f;color:white;text-decoration:none;border-radius:9px;font-size:.85rem;font-weight:600;transition:all .2s}
+.btn-ver:hover{background:#922b21;transform:translateY(-1px);box-shadow:0 4px 12px rgba(179,60,47,.3)}
 
-    .search-box input {
-        width: 100%;
-        padding: 0.875rem 1rem 0.875rem 2.75rem;
-        border: 1px solid var(--gray-300);
-        border-radius: var(--radius-md);
-        font-size: 0.95rem;
-        background: var(--gray-50);
-    }
+.geo-dot{display:inline-flex;align-items:center;gap:.3rem;font-size:.75rem;color:var(--success);font-weight:600}
+.geo-dot i{font-size:.7rem}
 
-    .filter-group {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        flex: 1;
-    }
+.empty{text-align:center;padding:4rem 2rem;background:white;border-radius:var(--r);border:2px dashed var(--gray-300)}
+.empty i{font-size:3.5rem;color:var(--gray-300);display:block;margin-bottom:1rem}
+.empty h3{color:var(--gray-500);font-weight:500;margin-bottom:.4rem}
+.empty p{color:var(--gray-400);font-size:.9rem}
 
-    .filter-select {
-        padding: 0.875rem 1rem;
-        border: 1px solid var(--gray-300);
-        border-radius: var(--radius-md);
-        font-size: 0.95rem;
-        background: var(--gray-50);
-        cursor: pointer;
-        min-width: 160px;
-    }
-
-    .btn-filter {
-        padding: 0.875rem 1.5rem;
-        background: var(--primary);
-        color: white;
-        border: none;
-        border-radius: var(--radius-md);
-        font-weight: 600;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .table-container {
-        background: white;
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--gray-200);
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
-
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .table th {
-        background: var(--gray-100);
-        padding: 1rem 1.5rem;
-        text-align: left;
-        font-weight: 600;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        color: var(--gray-600);
-        border-bottom: 1px solid var(--gray-200);
-    }
-
-    .table td {
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid var(--gray-200);
-        color: var(--gray-700);
-        font-size: 0.95rem;
-        vertical-align: middle;
-    }
-
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.35rem 0.9rem;
-        border-radius: 40px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        gap: 0.4rem;
-    }
-
-    .badge-pendiente { background: var(--warning-light); color: var(--warning); }
-    .badge-en_investigacion { background: var(--purple-light); color: var(--purple); }
-    .badge-resuelto { background: var(--success-light); color: var(--success); }
-    .badge-rechazado { background: var(--danger-light); color: var(--danger); }
-    .badge-cancelado { background: var(--gray-200); color: var(--gray-700); }
-
-    .btn-view {
-        padding: 0.5rem 1rem;
-        background: var(--primary);
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-view:hover {
-        background: var(--primary-light);
-    }
-
-    .anonimo-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        padding: 0.2rem 0.6rem;
-        background: var(--gray-200);
-        color: var(--gray-700);
-        border-radius: 40px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        margin-left: 0.5rem;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: white;
-        border-radius: var(--radius-lg);
-        border: 2px dashed var(--gray-300);
-    }
-
-    @media (max-width: 768px) {
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        .filter-group {
-            flex-direction: column;
-            width: 100%;
-        }
-        .filter-select {
-            width: 100%;
-        }
-    }
+@media(max-width:768px){
+  .hide-mobile{display:none}
+  thead th,tbody td{padding:.75rem .9rem}
+  .toolbar{flex-direction:column}
+  .tb-search,.tb-select{width:100%}
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="admin-container">
-    <div class="admin-header">
-        <h1>
-            <i class="fas fa-exclamation-triangle"></i>
-            Gestión de Denuncias
-        </h1>
-        <p>Administra todas las denuncias ciudadanas y dales seguimiento.</p>
-    </div>
+<div class="wrap">
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon total"><i class="fas fa-exclamation-triangle"></i></div>
-            <div class="stat-content">
-                <h3>Total Denuncias</h3>
-                <div class="stat-number">{{ stats.denuncias|default(0) }}</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon pendientes"><i class="fas fa-clock"></i></div>
-            <div class="stat-content">
-                <h3>Pendientes</h3>
-                <div class="stat-number">{{ stats.pendientes|default(0) }}</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon investigacion"><i class="fas fa-search"></i></div>
-            <div class="stat-content">
-                <h3>En Investigación</h3>
-                <div class="stat-number">{{ stats.en_investigacion|default(0) }}</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon resueltas"><i class="fas fa-check-circle"></i></div>
-            <div class="stat-content">
-                <h3>Resueltas</h3>
-                <div class="stat-number">{{ stats.resueltas|default(0) }}</div>
-            </div>
-        </div>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-left">
+      <h1><i class="fas fa-exclamation-triangle" style="font-size:1.5rem"></i> Gestión de Denuncias</h1>
+      <p>Administra, investiga y resuelve todas las denuncias ciudadanas.</p>
     </div>
+    <div class="hero-badge">
+      <i class="fas fa-circle" style="font-size:.5rem;color:#f1948a"></i>
+      {{ stats.denuncias|default(0) }} denuncias en total
+    </div>
+  </div>
 
-    <div class="filters-section">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Buscar por folio, dirección o descripción...">
-        </div>
-        <div class="filter-group">
-            <select id="estadoFilter" class="filter-select">
-                <option value="">Todos los estados</option>
-                {% for estado in estados %}
-                <option value="{{ estado }}">{{ estado|replace('_', ' ')|title }}</option>
-                {% endfor %}
-            </select>
-            <select id="tipoFilter" class="filter-select">
-                <option value="">Todos los tipos</option>
-                {% for id, nombre in tipos.items() %}
-                <option value="{{ id }}">{{ nombre }}</option>
-                {% endfor %}
-            </select>
-            <button class="btn-filter" onclick="aplicarFiltros()">
-                <i class="fas fa-filter"></i> Filtrar
-            </button>
-        </div>
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-icon total"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="kpi-body"><label>Total denuncias</label><div class="kpi-num">{{ stats.denuncias|default(0) }}</div></div>
     </div>
+    <div class="kpi">
+      <div class="kpi-icon pend"><i class="fas fa-clock"></i></div>
+      <div class="kpi-body"><label>Pendientes</label><div class="kpi-num">{{ stats.pendientes|default(0) }}</div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon invest"><i class="fas fa-search"></i></div>
+      <div class="kpi-body"><label>En investigación</label><div class="kpi-num">{{ stats.en_investigacion|default(0) }}</div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon done"><i class="fas fa-check-circle"></i></div>
+      <div class="kpi-body"><label>Resueltas</label><div class="kpi-num">{{ stats.resueltas|default(0) }}</div></div>
+    </div>
+  </div>
 
-    {% if denuncias %}
-    <div class="table-container">
-        <table class="table" id="denunciasTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Folio</th>
-                    <th>Usuario</th>
-                    <th>Tipo</th>
-                    <th>Dirección</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for d in denuncias %}
-                <tr>
-                    <td>{{ d.id }}</td>
-                    <td>
-                        <strong>{{ d.folio }}</strong>
-                        {% if d.anonimo %}
-                        <span class="anonimo-badge">
-                            <i class="fas fa-user-secret"></i> Anónimo
-                        </span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if not d.anonimo %}
-                        <div>
-                            <strong>{{ d.usuario_nombre }}</strong>
-                            <br><small>{{ d.usuario_email }}</small>
-                        </div>
-                        {% else %}
-                        <em class="text-muted">Anónimo</em>
-                        {% endif %}
-                    </td>
-                    <td>{{ tipos.get(d.tipo|string, d.tipo_nombre|default('Desconocido')) }}</td>
-                    <td title="{{ d.direccion }}">
-                        {% if d.direccion %}
-                            {{ d.direccion[:50] if d.direccion|length > 50 else d.direccion }}
-                            {% if d.direccion|length > 50 %}...{% endif %}
-                        {% else %}
-                            <span class="text-muted">No especificada</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <div>
-                            <span>
-                                {% if d.fecha_creacion %}
-                                    {% if d.fecha_creacion is string %}
-                                        {{ d.fecha_creacion[:10] }}
-                                    {% else %}
-                                        {{ d.fecha_creacion.strftime('%d/%m/%Y') }}
-                                    {% endif %}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </span>
-                            <br><small>
-                                {% if d.fecha_creacion and d.fecha_creacion is not string %}
-                                    {{ d.fecha_creacion.strftime('%H:%M') }}
-                                {% endif %}
-                            </small>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="badge badge-{{ d.estado }}">
-                            <i class="fas fa-circle" style="font-size: 0.4rem;"></i>
-                            {{ d.estado|replace('_', ' ')|title }}
-                        </span>
-                    </td>
-                    <td>
-                        <a href="{{ url_for('admin.detalle_denuncia', denuncia_id=d.id) }}" class="btn-view">
-                            <i class="fas fa-eye"></i> Ver
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="tb-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Buscar por folio, dirección o descripción...">
     </div>
-    {% else %}
-    <div class="empty-state">
-        <i class="fas fa-folder-open" style="font-size: 4rem; color: var(--gray-400);"></i>
-        <h3>No hay denuncias</h3>
-        <p>No se encontraron denuncias con los filtros actuales.</p>
+    <select id="estadoFilter" class="tb-select">
+      <option value="">Todos los estados</option>
+      {% for estado in estados %}
+      <option value="{{ estado }}">{{ estado|replace('_',' ')|title }}</option>
+      {% endfor %}
+    </select>
+    <select id="tipoFilter" class="tb-select">
+      <option value="">Todos los tipos</option>
+      {% for id, nombre in tipos.items() %}
+      <option value="{{ id }}">{{ nombre }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn-filter" onclick="aplicarFiltros()">
+      <i class="fas fa-filter"></i> Filtrar
+    </button>
+  </div>
+
+  {% if denuncias %}
+  <div class="tbl-card">
+    <div class="tbl-head">
+      <h2><i class="fas fa-list-ul" style="color:#b33c2f"></i> Listado de denuncias</h2>
+      <span class="tbl-count">{{ denuncias|length }} registros</span>
     </div>
-    {% endif %}
+    <div style="overflow-x:auto">
+      <table id="denunciasTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Folio</th>
+            <th>Usuario</th>
+            <th class="hide-mobile">Tipo</th>
+            <th class="hide-mobile">Dirección</th>
+            <th class="hide-mobile">Fecha</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in denuncias %}
+          <tr>
+            <td style="color:var(--gray-400);font-size:.8rem;font-weight:600">{{ d.id }}</td>
+            <td>
+              <span class="folio-chip">{{ d.folio }}</span>
+              {% if d.geolocalizada %}
+              <div class="geo-dot" style="margin-top:.3rem"><i class="fas fa-map-marker-alt"></i> Geo</div>
+              {% endif %}
+            </td>
+            <td>
+              {% if not d.anonimo %}
+              <div class="user-block">
+                <strong>{{ d.usuario_nombre }}</strong>
+                <small>{{ d.usuario_email }}</small>
+              </div>
+              {% else %}
+              <span class="anonimo"><i class="fas fa-user-secret"></i> Anónimo</span>
+              {% endif %}
+            </td>
+            <td class="hide-mobile">
+              <span class="tipo-chip">
+                <i class="fas fa-tag"></i>
+                {{ tipos.get(d.tipo|string, d.tipo_nombre|default('—')) }}
+              </span>
+            </td>
+            <td class="hide-mobile">
+              <span class="dir-text" title="{{ d.direccion }}">
+                {{ d.direccion[:45] if d.direccion and d.direccion|length > 45 else (d.direccion or '—') }}{% if d.direccion and d.direccion|length > 45 %}...{% endif %}
+              </span>
+            </td>
+            <td class="hide-mobile">
+              <div style="font-weight:500;font-size:.88rem">
+                {% if d.fecha_creacion %}
+                  {% if d.fecha_creacion is string %}{{ d.fecha_creacion[:10] }}
+                  {% else %}{{ d.fecha_creacion.strftime('%d/%m/%Y') }}{% endif %}
+                {% else %}—{% endif %}
+              </div>
+              <div style="color:var(--gray-400);font-size:.75rem">
+                {% if d.fecha_creacion and d.fecha_creacion is not string %}{{ d.fecha_creacion.strftime('%H:%M') }}{% endif %}
+              </div>
+            </td>
+            <td>
+              <span class="badge badge-{{ d.estado }}">
+                <i class="fas fa-circle"></i>
+                {{ d.estado|replace('_',' ')|title }}
+              </span>
+            </td>
+            <td>
+              <a href="{{ url_for('admin.detalle_denuncia', denuncia_id=d.id) }}" class="btn-ver">
+                <i class="fas fa-eye"></i> Ver
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="empty">
+    <i class="fas fa-folder-open"></i>
+    <h3>No hay denuncias</h3>
+    <p>No se encontraron denuncias con los filtros actuales.</p>
+  </div>
+  {% endif %}
+
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-function aplicarFiltros() {
-    const estado = document.getElementById('estadoFilter').value;
-    const tipo = document.getElementById('tipoFilter').value;
-    
-    let url = new URL(window.location.href);
-    url.searchParams.set('estado', estado);
-    url.searchParams.set('tipo', tipo);
-    
-    window.location.href = url.toString();
+function aplicarFiltros(){
+  const estado=document.getElementById('estadoFilter').value;
+  const tipo=document.getElementById('tipoFilter').value;
+  const url=new URL(window.location.href);
+  url.searchParams.set('estado',estado);
+  url.searchParams.set('tipo',tipo);
+  window.location.href=url.toString();
 }
 
-// Búsqueda en tiempo real
-const searchInput = document.getElementById('searchInput');
-if (searchInput) {
-    searchInput.addEventListener('keyup', function() {
-        const searchTerm = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#denunciasTable tbody tr');
-        
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchTerm) ? '' : 'none';
-        });
-    });
-}
+document.getElementById('searchInput').addEventListener('keyup',function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('#denunciasTable tbody tr').forEach(r=>{
+    r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';
+  });
+});
 </script>
 {% endblock %}

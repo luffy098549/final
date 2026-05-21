@@ -1,5 +1,3 @@
-# admin.py - VERSIÓN COMPLETA CON CORRECCIÓN EN ACTUALIZAR_SOLICITUD, GUARDAR REPORTE Y ESTILOS
-
 """
 Blueprint de administración profesional.
 Maneja todas las funciones exclusivas de administradores.
@@ -299,7 +297,7 @@ def admin_required(f):
 
 
 # ================================================================
-# DASHBOARD PRINCIPAL (sin cambios)
+# DASHBOARD PRINCIPAL (CORREGIDO: SE AGREGA ENCUESTAS_STATS)
 # ================================================================
 
 @admin_bp.route("/")
@@ -418,12 +416,22 @@ def dashboard():
         ultimas_solicitudes = sorted(solicitudes, key=get_fecha, reverse=True)[:5]
         ultimas_denuncias = sorted(denuncias, key=get_fecha, reverse=True)[:5]
 
+        # ========== CORRECCIÓN: CITAS Y ENCUESTAS ==========
         try:
             from models.cita import Cita
+            from models.encuesta import Encuesta   # ← Importante
             citas = Cita.query.all()
             citas_pendientes = len([c for c in citas if c.estado == 'pendiente'])
-        except:
+            encuestas_stats = Encuesta.obtener_estadisticas()
+        except Exception as e:
+            print(f"Error cargando citas/encuestas: {e}")
             citas_pendientes = 0
+            encuestas_stats = {
+                'total': 0, 'promedio': 0,
+                'por_calificacion': {1:0, 2:0, 3:0, 4:0, 5:0},
+                'por_tipo': {'solicitud': 0, 'denuncia': 0, 'cita': 0},
+                'ultimas': []
+            }
 
     except Exception as e:
         print(f"Error en dashboard: {e}")
@@ -438,6 +446,12 @@ def dashboard():
         ultimas_solicitudes = []
         ultimas_denuncias = []
         citas_pendientes = 0
+        encuestas_stats = {
+            'total': 0, 'promedio': 0,
+            'por_calificacion': {1:0, 2:0, 3:0, 4:0, 5:0},
+            'por_tipo': {'solicitud': 0, 'denuncia': 0, 'cita': 0},
+            'ultimas': []
+        }
 
     return render_template(
         "admin/dashboard.html",
@@ -447,6 +461,7 @@ def dashboard():
         servicios=NOMBRES_SERVICIOS,
         tipos_denuncia=NOMBRES_DENUNCIAS,
         citas_pendientes=citas_pendientes,
+        encuestas_stats=encuestas_stats,   # ← NUEVA VARIABLE
         now=datetime.now()
     )
 

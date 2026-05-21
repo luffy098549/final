@@ -337,7 +337,12 @@
 {% block extra_js %}
 <script>
 // ── Datos desde Python (fecha_creacion ya es string) ──────────────────────
-let tramitesData = JSON.parse('{{ tramites_json | default("[]") | safe }}');
+let tramitesData = [];
+try {
+    tramitesData = JSON.parse('{{ tramites_json | default("[]") | safe }}');
+} catch(e) {
+    console.error('Error parseando tramites:', e);
+}
 const MAX_DOCS = 5;
 const encuestasRealizadas = [];
 
@@ -499,6 +504,18 @@ function verDetalle(folio) {
 
     const hist = t.historial || [];
     let histHTML = '';
+
+    // ── Para contactos: agregar la respuesta del admin al historial visual ──
+    if (t.tipo === 'contacto' && t.respuesta) {
+        histHTML += `<div class="hist-item msg-admin">
+            <div class="hist-icon hi-admin"><i class="fas fa-headset"></i></div>
+            <div class="hist-body">
+                <div class="hist-desc">${escapeHtml(t.respuesta)}</div>
+                <div class="hist-meta"><i class="fas fa-clock"></i>${((t.fecha_actualizacion || t.fecha_creacion) || '').slice(0,16).replace('T',' ')}&nbsp;·&nbsp;<i class="fas fa-user"></i>Equipo Municipal</div>
+            </div>
+        </div>`;
+    }
+
     hist.forEach(h => {
         const info      = histInfo(h.tipo);
         const isAdmin   = h.tipo === 'mensaje_admin';
@@ -509,8 +526,8 @@ function verDetalle(folio) {
         histHTML += `<div class="hist-item ${msgClass}">
                         <div class="hist-icon ${info.cls}"><i class="fas ${info.icon}"></i></div>
                         <div class="hist-body">
-                            <div class="hist-desc">${h.descripcion || ''}</div>
-                            <div class="hist-meta"><i class="fas fa-clock"></i>${fecha}&nbsp;·&nbsp;<i class="fas fa-user"></i>${quien}</div>
+                            <div class="hist-desc">${escapeHtml(h.descripcion || '')}</div>
+                            <div class="hist-meta"><i class="fas fa-clock"></i>${fecha}&nbsp;·&nbsp;<i class="fas fa-user"></i>${escapeHtml(quien)}</div>
                         </div>
                     </div>`;
     });
@@ -542,7 +559,8 @@ function verDetalle(folio) {
 
     const estaCompletado   = ESTADOS_OK.includes(t.estado);
     const encuestaRealizada= encuestasRealizadas.includes(folio);
-    const encuestaHTML = (estaCompletado && !encuestaRealizada && (t.tipo === 'solicitud' || t.tipo === 'denuncia'))
+    // Mostrar encuesta para solicitudes, denuncias y contactos completados
+    const encuestaHTML = (estaCompletado && !encuestaRealizada && (t.tipo === 'solicitud' || t.tipo === 'denuncia' || t.tipo === 'contacto'))
         ? `<div class="encuesta-card">
                 <p><i class="fas fa-star"></i> <strong>¿Cómo fue tu experiencia con este trámite?</strong></p>
                 <a href="/tramite/${folio}/encuesta" class="btn-encuesta">
@@ -551,11 +569,11 @@ function verDetalle(folio) {
            </div>`
         : '';
 
-    // Respuesta de contacto
+    // Bloque adicional de respuesta (opcional, se puede mantener por si acaso)
     const respuestaHTML = (t.tipo === 'contacto' && t.respuesta)
         ? `<div style="margin-top:1rem;padding:1rem;background:var(--info-light);border-radius:var(--radius-sm);border-left:3px solid var(--info);">
                 <div style="font-size:.75rem;font-weight:600;color:var(--info);margin-bottom:.4rem;"><i class="fas fa-headset"></i> RESPUESTA DEL EQUIPO MUNICIPAL</div>
-                <div style="font-size:.9rem;color:var(--gray-800);">${t.respuesta}</div>
+                <div style="font-size:.9rem;color:var(--gray-800);">${escapeHtml(t.respuesta)}</div>
            </div>`
         : '';
 
@@ -563,15 +581,15 @@ function verDetalle(folio) {
         <div class="detail-grid">
             <div class="detail-item">
                 <div class="detail-label"><i class="fas fa-hashtag"></i> Folio</div>
-                <div class="detail-value">${t.folio}</div>
+                <div class="detail-value">${escapeHtml(t.folio)}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label"><i class="fas fa-tag"></i> Tipo</div>
-                <div class="detail-value">${tipoLabel}</div>
+                <div class="detail-value">${escapeHtml(tipoLabel)}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label"><i class="fas fa-concierge-bell"></i> Servicio / Nombre</div>
-                <div class="detail-value">${servicio}</div>
+                <div class="detail-value">${escapeHtml(servicio)}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label"><i class="fas fa-info-circle"></i> Estado</div>
@@ -579,16 +597,16 @@ function verDetalle(folio) {
             </div>
             <div class="detail-item">
                 <div class="detail-label"><i class="fas fa-calendar-alt"></i> Creado</div>
-                <div class="detail-value">${fechaDisplay}</div>
+                <div class="detail-value">${escapeHtml(fechaDisplay)}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label"><i class="fas fa-sync-alt"></i> Actualizado</div>
-                <div class="detail-value">${((t.fecha_actualizacion || t.fecha_creacion) || '—').slice(0,16).replace('T',' ')}</div>
+                <div class="detail-value">${escapeHtml(((t.fecha_actualizacion || t.fecha_creacion) || '—').slice(0,16).replace('T',' '))}</div>
             </div>
             ${t.descripcion
                 ? `<div class="detail-item" style="grid-column:1/-1">
                         <div class="detail-label"><i class="fas fa-align-left"></i> Descripción</div>
-                        <div class="detail-value" style="font-weight:400;font-size:.95rem;line-height:1.6;">${t.descripcion}</div>
+                        <div class="detail-value" style="font-weight:400;font-size:.95rem;line-height:1.6;">${escapeHtml(t.descripcion)}</div>
                    </div>`
                 : ''}
         </div>
@@ -608,6 +626,19 @@ function verDetalle(folio) {
 
     document.getElementById('detalleModal').classList.add('active');
     document.body.style.overflow = 'hidden';
+}
+
+// Función auxiliar para escapar HTML y prevenir XSS
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+        return c;
+    });
 }
 
 function cerrarModal() {
@@ -656,11 +687,11 @@ async function subirArchivosLista(files, folio) {
                     nuevoItem.innerHTML = `
                         <div class="doc-icon"><i class="fas ${iconoDoc(data.documento.extension)}"></i></div>
                         <div class="doc-info">
-                            <div class="doc-nombre">${data.documento.nombre}</div>
+                            <div class="doc-nombre">${escapeHtml(data.documento.nombre)}</div>
                             <div class="doc-meta"><i class="fas fa-clock"></i> Ahora</div>
                         </div>
                         <div class="doc-actions">
-                            <a href="/uploads/documentos/${data.documento.archivo}" target="_blank" class="btn-doc btn-doc-view"><i class="fas fa-eye"></i></a>
+                            <a href="/uploads/documentos/${escapeHtml(data.documento.archivo)}" target="_blank" class="btn-doc btn-doc-view"><i class="fas fa-eye"></i></a>
                             <button class="btn-doc btn-doc-delete" onclick="eliminarDoc('${folio}','${data.documento.id}')"><i class="fas fa-trash"></i></button>
                         </div>`;
                     listEl.appendChild(nuevoItem);
@@ -717,7 +748,7 @@ async function enviarMensaje(folio) {
             item.innerHTML = `
                 <div class="hist-icon hi-ciudadano"><i class="fas fa-user"></i></div>
                 <div class="hist-body">
-                    <div class="hist-desc">${texto}</div>
+                    <div class="hist-desc">${escapeHtml(texto)}</div>
                     <div class="hist-meta" style="justify-content:flex-end;"><i class="fas fa-clock"></i>${ahora}&nbsp;·&nbsp;<i class="fas fa-user"></i>Tú</div>
                 </div>`;
             lista?.appendChild(item);
