@@ -191,6 +191,20 @@ try:
 except Exception as e:
     print(f"⚠️ No se pudo limpiar caché: {e}")
 
+
+@app.route('/sitemap.xml')
+def sitemap():
+    xml = '''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url><loc>https://ayuntamientovillacutupu.com/</loc></url>
+    <url><loc>https://ayuntamientovillacutupu.com/municipio</loc></url>
+    <url><loc>https://ayuntamientovillacutupu.com/servicios</loc></url>
+    <url><loc>https://ayuntamientovillacutupu.com/transparencia</loc></url>
+    <url><loc>https://ayuntamientovillacutupu.com/noticias</loc></url>
+    <url><loc>https://ayuntamientovillacutupu.com/contacto</loc></url>
+</urlset>'''
+    return xml, 200, {'Content-Type': 'application/xml'}
+
 # ================================================================
 # 12. RATE LIMITING
 # ================================================================
