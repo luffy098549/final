@@ -617,24 +617,17 @@
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="cedula"><i class="fas fa-id-card"></i> Cédula *</label>
-                                <input type="text" id="cedula" name="cedula" placeholder="001-1234567-8" 
-                                       value="{{ request.form.cedula if request.form else '' }}" required>
-                                <small style="color: #666;">Formato: XXX-XXXXXXX-X</small>
-                            </div>
-                            <div class="form-group">
                                 <label for="telefono"><i class="fas fa-phone"></i> Teléfono *</label>
                                 <input type="tel" id="telefono" name="telefono" class="input-tel" 
                                        placeholder="809-555-1234" 
                                        value="{{ request.form.telefono if request.form else '' }}" required>
                                 <small style="color: #666;">Formato: XXX-XXX-XXXX</small>
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección</label>
-                            <textarea id="direccion" name="direccion" rows="2" 
-                                      placeholder="Calle, número, sector...">{{ request.form.direccion if request.form else '' }}</textarea>
+                            <div class="form-group">
+                                <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                                <textarea id="direccion" name="direccion" rows="2" 
+                                          placeholder="Calle, número, sector...">{{ request.form.direccion if request.form else '' }}</textarea>
+                            </div>
                         </div>
                     </div>
 
@@ -770,23 +763,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Validación de cédula (formato XXX-XXXXXXX-X)
-    const cedula = document.getElementById("cedula");
-    if (cedula) {
-        cedula.addEventListener("input", function(e) {
-            let value = this.value.replace(/[^0-9]/g, '');
-            if (value.length > 11) value = value.slice(0, 11);
-            
-            if (value.length >= 3) {
-                value = value.slice(0, 3) + '-' + value.slice(3);
-            }
-            if (value.length >= 11) {
-                value = value.slice(0, 11) + '-' + value.slice(11);
-            }
-            this.value = value;
-        });
-    }
-
     // Validación de teléfono (formato XXX-XXX-XXXX)
     const telefono = document.getElementById("telefono");
     if (telefono) {
@@ -904,16 +880,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('registroForm');
     if (form) {
         form.addEventListener('submit', function(e) {
-            // Validar cédula
-            const cedula = document.getElementById('cedula');
-            const cedulaRegex = /^\d{3}-\d{7}-\d{1}$/;
-            if (!cedulaRegex.test(cedula.value)) {
-                e.preventDefault();
-                alert('La cédula debe tener el formato: XXX-XXXXXXX-X');
-                cedula.focus();
-                return false;
-            }
-            
             // Validar teléfono
             const telefono = document.getElementById('telefono');
             const telefonoRegex = /^\d{3}-\d{3}-\d{4}$/;

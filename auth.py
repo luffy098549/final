@@ -1,5 +1,5 @@
 # ================================================================
-# auth.py - CON GOOGLE OAUTH + LOGIN NORMAL + REGISTRO CON CÉDULA
+# auth.py - CON GOOGLE OAUTH + LOGIN NORMAL + REGISTRO SIN CÉDULA
 # ================================================================
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
@@ -8,7 +8,6 @@ from datetime import datetime
 from models.usuario import Usuario
 from extensions import db
 import os
-import re
 from werkzeug.utils import secure_filename
 
 auth = Blueprint('auth', __name__)
@@ -70,7 +69,7 @@ def google_logged_in(blueprint, token):
             'google_id': google_id,
             'foto': google_foto
         }
-        flash('📝 Completa tu registro con tu cédula para continuar.', 'info')
+        flash('📝 Completa tu registro con tus datos para continuar.', 'info')
         return redirect(url_for('auth.registro_completo'))
 
     if not usuario.activo:
@@ -116,10 +115,7 @@ def get_user_rol():
         return usuario.rol if usuario else None
     return None
 
-def validar_cedula(cedula):
-    """Validar formato de cédula dominicana (XXX-XXXXXXX-X)"""
-    patron = r'^\d{3}-\d{7}-\d{1}$'
-    return re.match(patron, cedula) is not None
+# Nota: la función validar_cedula ha sido eliminada
 
 
 # ================================================================
@@ -194,7 +190,7 @@ def login():
 
 
 # ================================================================
-# REGISTRO NORMAL CON CÉDULA
+# REGISTRO NORMAL (SIN CÉDULA)
 # ================================================================
 @auth.route("/registro", methods=["GET", "POST"])
 def registro():
@@ -204,7 +200,6 @@ def registro():
         return render_template("registro.html")
     
     # POST - Procesar registro
-    cedula = request.form.get("cedula", "").strip()
     nombre = request.form.get("nombre", "").strip()
     apellidos = request.form.get("apellidos", "").strip()
     email = request.form.get("email", "").strip().lower()
@@ -214,9 +209,6 @@ def registro():
     
     # Validaciones
     errores = []
-    
-    if not cedula or not validar_cedula(cedula):
-        errores.append("La cédula debe tener el formato XXX-XXXXXXX-X")
     
     if not nombre:
         errores.append("El nombre es obligatorio")
@@ -230,9 +222,6 @@ def registro():
     if Usuario.query.filter_by(email=email).first():
         errores.append("Este email ya está registrado")
     
-    if Usuario.query.filter_by(cedula=cedula).first():
-        errores.append("Esta cédula ya está registrada")
-    
     if len(password) < 6:
         errores.append("La contraseña debe tener al menos 6 caracteres")
     
@@ -243,12 +232,11 @@ def registro():
         for error in errores:
             flash(f"❌ {error}", "error")
         return render_template("registro.html", 
-                             cedula=cedula, nombre=nombre, apellidos=apellidos,
+                             nombre=nombre, apellidos=apellidos,
                              email=email, telefono=telefono)
     
-    # Crear usuario
+    # Crear usuario (sin cédula)
     usuario = Usuario(
-        cedula=cedula,
         nombre=nombre,
         apellidos=apellidos,
         nombre_completo=f"{nombre} {apellidos}".strip(),
@@ -268,7 +256,7 @@ def registro():
 
 
 # ================================================================
-# REGISTRO COMPLETO CON DATOS DE GOOGLE
+# REGISTRO COMPLETO CON DATOS DE GOOGLE (SIN CÉDULA)
 # ================================================================
 @auth.route("/registro-completo", methods=["GET", "POST"])
 def registro_completo():
@@ -285,17 +273,10 @@ def registro_completo():
                              apellidos=google_data.get('apellidos'))
     
     # POST - Completar registro
-    cedula = request.form.get("cedula", "").strip()
     telefono = request.form.get("telefono", "").strip()
     
     # Validaciones
     errores = []
-    
-    if not cedula or not validar_cedula(cedula):
-        errores.append("La cédula debe tener el formato XXX-XXXXXXX-X")
-    
-    if Usuario.query.filter_by(cedula=cedula).first():
-        errores.append("Esta cédula ya está registrada")
     
     if Usuario.query.filter_by(email=google_data['email']).first():
         errores.append("Este email ya está registrado")
@@ -307,11 +288,10 @@ def registro_completo():
                              email=google_data.get('email'),
                              nombre=google_data.get('nombre'),
                              apellidos=google_data.get('apellidos'),
-                             cedula=cedula, telefono=telefono)
+                             telefono=telefono)
     
-    # Crear usuario con datos de Google
+    # Crear usuario con datos de Google (sin cédula)
     usuario = Usuario(
-        cedula=cedula,
         nombre=google_data.get('nombre', ''),
         apellidos=google_data.get('apellidos', ''),
         nombre_completo=f"{google_data.get('nombre', '')} {google_data.get('apellidos', '')}".strip(),
@@ -556,7 +536,7 @@ def editar_perfil():
 
 
 # ================================================================
-# CREAR USUARIOS POR DEFECTO (INCLUYE CÉDULA)
+# CREAR USUARIOS POR DEFECTO (CON CÉDULA, PARA ADMINISTRACIÓN)
 # ================================================================
 def crear_usuarios_por_defecto():
     usuarios_por_defecto = [
