@@ -31,7 +31,6 @@ google_bp = make_google_blueprint(
 # ================================================================
 # SIGNAL: cuando Google autoriza exitosamente (solo guarda estado)
 # ================================================================
-@oauth_authorized.connect_via(google_bp)
 def google_logged_in(blueprint, token):
     if not token:
         flash('Error al iniciar sesión con Google.', 'error')
