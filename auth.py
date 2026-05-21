@@ -106,28 +106,16 @@ def google_logged_in(blueprint, token):
 # ================================================================
 @auth.route('/login/google/authorized-check')
 def google_authorized_check():
-    """
-    Esta ruta recibe la redirección después de que Google completa el OAuth.
-    Decide si el usuario debe ir a registro_completo o ya está logueado.
-    """
-    # Verificar si hay token (la sesión de OAuth debe existir)
-    if not google_bp.session.authorized:
-        flash('Error al autenticar con Google.', 'error')
-        return redirect(url_for('auth.login'))
-
-    # Si el usuario necesita completar registro
+    print("SESSION:", dict(session))  # debug temporal
+    
     if session.pop('google_needs_register', False):
-        # Los datos ya están en session['google_registro_data']
         return redirect(url_for('auth.registro_completo'))
 
-    # Si el usuario ya existe y el signal ya inició sesión
     if session.get('user'):
         return redirect(url_for('index'))
-    else:
-        # Fallback por si algo falló
-        flash('No se pudo iniciar sesión correctamente.', 'error')
-        return redirect(url_for('auth.login'))
 
+    flash('No se pudo iniciar sesión correctamente.', 'error')
+    return redirect(url_for('auth.login'))
 
 # ================================================================
 # FUNCIONES AUXILIARES
