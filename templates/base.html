@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ config.nombre_municipio if config else 'Junta Distrital de Villa Cutupú' }}{% endblock %}</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/Adobe Express - file.png') }}">
+    <!-- FAVICON ACTUALIZADO: apunta a logo.png -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -185,7 +187,7 @@
         100% { transform: scale(1) rotate(0deg); }
     }
 
-    /* LOGO ENORME - Tamaño gigante (como la D de Distrital) */
+    /* LOGO ENORME - ahora apunta a logo.png */
     .header-logo {
         height: 140px;          /* Tamaño enorme */
         width: auto;
@@ -798,7 +800,8 @@
     <div class="header-container">
         <div class="logo">
             <a href="/">
-                <img src="{{ url_for('static', filename='img/Adobe Express - file.png') }}"
+                <!-- LOGO ACTUALIZADO: usa logo.png -->
+                <img src="{{ url_for('static', filename='img/logo.png') }}"
                      alt="Logo Villa Cutupú" class="header-logo">
             </a>
         </div>
