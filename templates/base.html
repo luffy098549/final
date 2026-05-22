@@ -790,6 +790,43 @@
 </head>
 <body>
 
+<!-- ALERTA EDUCATIVA -->
+<div id="edu-alert-banner" style="
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 9999;
+    background: #1a3a6b;
+    color: #e8f0fe;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 24px;
+">
+    <div style="display:flex; align-items:center; gap:10px;">
+        <i class="fas fa-graduation-cap" style="color:#93c5fd; font-size:16px;"></i>
+        <span>Este sitio web fue desarrollado con <strong style="color:#bfdbfe; font-weight:600;">fines educativos</strong>. No representa una entidad gubernamental oficial.</span>
+    </div>
+    <button onclick="
+        document.getElementById('edu-alert-banner').style.display='none';
+        document.documentElement.style.setProperty('--edu-banner-h','0px');
+        document.getElementById('mainHeader').style.top = '0px';
+        sessionStorage.setItem('edu-alert-dismissed','1');
+    " style="
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.3);
+        color: #bfdbfe;
+        font-size: 12px;
+        font-family: inherit;
+        padding: 4px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        white-space: nowrap;
+    ">Entendido</button>
+</div>
+
 <!-- CANVAS PARTÍCULAS GLOBALES -->
 <canvas id="particles-canvas"></canvas>
 
@@ -1164,6 +1201,36 @@
     }
     cargarConfig();
 
+})();
+</script>
+
+<!-- Script para manejar la persistencia del banner educativo y desplazar el header -->
+<script>
+(function(){
+    var banner = document.getElementById('edu-alert-banner');
+    if (!banner) return;
+    if (sessionStorage.getItem('edu-alert-dismissed')) {
+        banner.style.display = 'none';
+    } else {
+        /* Empuja el header hacia abajo para que no tape la alerta */
+        var bh = banner.offsetHeight;
+        var header = document.getElementById('mainHeader');
+        if (header) {
+            header.style.top = bh + 'px';
+        }
+        window.addEventListener('resize', function(){
+            if (banner.style.display !== 'none') {
+                var newBh = banner.offsetHeight;
+                if (header) {
+                    header.style.top = newBh + 'px';
+                }
+            } else {
+                if (header) {
+                    header.style.top = '0px';
+                }
+            }
+        });
+    }
 })();
 </script>
 
