@@ -2851,7 +2851,7 @@ def crear_reporte():
                 'estilos':                estilos,
                 'nombre_municipio':       cfg.get('general', 'nombre_municipio', 'Villa Cutupú'),
                 'usuario_genero':         session.get('user_name', 'Administrador'),
-                'logo_url':               estilos.get('logo_url') or url_for('static', filename='img/Adobe Express - file.png'),
+                'logo_url':               estilos.get('logo_url') or url_for('static', filename='img/logo.png'),
                 'tipo_reporte':           tipo,
                 'filtros_usados':         filtros_serializables,
                 'columnas_seleccionadas': columnas_seleccionadas or [],
@@ -2915,7 +2915,7 @@ def mostrar_reporte_generado():
     
     tabla_html = generar_tabla_html_profesional(df, estilos['titulo_personalizado'], estilos)
     
-    logo_url = estilos.get('logo_url', '') or url_for('static', filename='img/Adobe Express - file.png')
+    logo_url = estilos.get('logo_url', '') or url_for('static', filename='img/logo.png')
     
     return render_template("admin/reporte_generado.html",
                          titulo=estilos['titulo_personalizado'],
@@ -3044,7 +3044,7 @@ def ver_reporte_guardado(reporte_id):
         tabla_html = "<div class='alert alert-warning'>El reporte no contiene datos.</div>"
     
     # Logo por defecto si no se guardó ninguno
-    logo_url = estilos.get('logo_url', '') or url_for('static', filename='img/Adobe Express - file.png')
+    logo_url = estilos.get('logo_url', '') or url_for('static', filename='img/logo.png')
     
     return render_template("admin/reporte_generado.html",
                          titulo=estilos.get('titulo_personalizado', reporte.nombre),
