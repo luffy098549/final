@@ -124,7 +124,7 @@ def dataframe_desde_citas(citas, columnas_seleccionadas=None):
             'Hora': c.hora,
             'Motivo': c.motivo[:100] if c.motivo else '',
             'Estado': c.estado,
-            'Creación': c.fecha_creacion.strftime('%Y-%m-%d') if c.fecha_creacion else ''
+            'Creación': c.fecha_solicitud.strftime('%Y-%m-%d') if c.fecha_solicitud else ''
         }
         data.append(row)
     
