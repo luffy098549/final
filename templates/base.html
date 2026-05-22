@@ -790,7 +790,7 @@
 </head>
 <body>
 
-<!-- ALERTA EDUCATIVA -->
+<!-- ALERTA EDUCATIVA (SIEMPRE VISIBLE AL CARGAR LA PÁGINA) -->
 <div id="edu-alert-banner" style="
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -811,9 +811,7 @@
     </div>
     <button onclick="
         document.getElementById('edu-alert-banner').style.display='none';
-        document.documentElement.style.setProperty('--edu-banner-h','0px');
         document.getElementById('mainHeader').style.top = '0px';
-        sessionStorage.setItem('edu-alert-dismissed','1');
     " style="
         background: transparent;
         border: 1px solid rgba(255,255,255,0.3);
@@ -1201,36 +1199,20 @@
     }
     cargarConfig();
 
-})();
-</script>
-
-<!-- Script para manejar la persistencia del banner educativo y desplazar el header -->
-<script>
-(function(){
-    var banner = document.getElementById('edu-alert-banner');
-    if (!banner) return;
-    if (sessionStorage.getItem('edu-alert-dismissed')) {
-        banner.style.display = 'none';
-    } else {
-        /* Empuja el header hacia abajo para que no tape la alerta */
-        var bh = banner.offsetHeight;
-        var header = document.getElementById('mainHeader');
-        if (header) {
-            header.style.top = bh + 'px';
+    /* ── DESPLAZAR HEADER PARA QUE NO QUEDE TAPADO POR LA ALERTA ── */
+    function adjustHeaderForAlert() {
+        const banner = document.getElementById('edu-alert-banner');
+        const header = document.getElementById('mainHeader');
+        if (banner && header && banner.style.display !== 'none') {
+            header.style.top = banner.offsetHeight + 'px';
+        } else if (header) {
+            header.style.top = '0px';
         }
-        window.addEventListener('resize', function(){
-            if (banner.style.display !== 'none') {
-                var newBh = banner.offsetHeight;
-                if (header) {
-                    header.style.top = newBh + 'px';
-                }
-            } else {
-                if (header) {
-                    header.style.top = '0px';
-                }
-            }
-        });
     }
+    adjustHeaderForAlert();
+    window.addEventListener('resize', adjustHeaderForAlert);
+    // También al cargar, por si la imagen del banner tarda en renderizar
+    setTimeout(adjustHeaderForAlert, 100);
 })();
 </script>
 
