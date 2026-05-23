@@ -784,7 +784,7 @@ def eliminar_denuncia(denuncia_id):
 
 
 # ================================================================
-# GESTIÓN DE USUARIOS (sin cambios)
+# GESTIÓN DE USUARIOS (CORREGIDO: se agrega stats al render_template)
 # ================================================================
 
 @admin_bp.route("/usuarios")
@@ -827,11 +827,22 @@ def listar_usuarios():
             "notas_admin": u.notas_admin or ""
         })
 
+    # ========== CORRECCIÓN: AÑADIR stats ==========
+    # Estadísticas globales (sin aplicar filtros de búsqueda/tipo/rol)
+    stats = {
+        'total': Usuario.query.count(),
+        'activos': Usuario.query.filter_by(activo=True).count(),
+        'inactivos': Usuario.query.filter_by(activo=False).count(),
+        'admins': Usuario.query.filter(Usuario.rol.in_(['super_admin', 'admin', 'moderador'])).count(),
+        'ciudadanos': Usuario.query.filter(Usuario.tipo == 'ciudadano').count()
+    }
+
     return render_template(
         "admin/usuarios.html",
         usuarios=usuarios_lista,
         roles=obtener_roles(),
-        filtros={'q': busqueda, 'tipo': tipo, 'rol': rol}
+        filtros={'q': busqueda, 'tipo': tipo, 'rol': rol},
+        stats=stats   # ← SE PASA stats AL TEMPLATE
     )
 
 

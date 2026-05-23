@@ -1,11 +1,11 @@
 {% extends "admin/base_admin.html" %}
 
-{% block title %}Gestión de Citas - Villa Cutupú{% endblock %}
+{% block title %}Gestión de Usuarios - Villa Cutupú{% endblock %}
 
-{% block page_title %}Gestión de Citas{% endblock %}
+{% block page_title %}Gestión de Usuarios{% endblock %}
 
 {% block breadcrumbs %}
-<a href="{{ url_for('admin.dashboard') }}">Dashboard</a> / <span>Citas</span>
+<a href="{{ url_for('admin.dashboard') }}">Dashboard</a> / <span>Usuarios</span>
 {% endblock %}
 
 {% block content %}
@@ -46,6 +46,7 @@
   .stat-icon.amber { background: var(--amber-50); color: var(--amber-800); }
   .stat-icon.blue  { background: var(--blue-50);  color: var(--blue-800); }
   .stat-icon.gray  { background: var(--gray-50);  color: var(--gray-800); }
+  .stat-icon.red   { background: var(--red-50);   color: var(--red-800); }
 
   .stat-content h3 {
     font-size: 12px; font-weight: 500;
@@ -58,10 +59,39 @@
   .filters-section {
     display: flex; gap: 10px;
     margin-bottom: 1.25rem; flex-wrap: wrap;
+    align-items: center;
   }
 
   .search-box {
     position: relative; flex: 1; min-width: 180px;
+  }
+
+  .search-box input {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px 0 32px;
+    border: 0.5px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    color: #111827;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .15s;
+  }
+
+  .search-box input:focus {
+    border-color: #9ca3af;
+    box-shadow: 0 0 0 2px rgba(0,0,0,.05);
+  }
+
+  .search-box i {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: #9ca3af;
+    pointer-events: none;
   }
 
   .filter-select {
@@ -75,6 +105,25 @@
 
   .filter-select:focus { border-color: #9ca3af; }
 
+  .btn-crear {
+    height: 36px;
+    padding: 0 14px;
+    background: var(--green-600);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: opacity .15s;
+  }
+
+  .btn-crear:hover { opacity: .88; color: #fff; }
+
   .table-container {
     border: 0.5px solid #e5e7eb;
     border-radius: 12px;
@@ -83,7 +132,6 @@
 
   .table {
     width: 100%; border-collapse: collapse;
-    table-layout: fixed;
   }
 
   .table thead { background: #f9fafb; }
@@ -105,60 +153,45 @@
   .table tbody tr:last-child td { border-bottom: none; }
   .table tbody tr:hover { background: #f9fafb; }
 
-  .folio-code {
-    font-family: ui-monospace, monospace;
-    font-size: 12px;
-    background: #f3f4f6;
-    border: 0.5px solid #e5e7eb;
-    padding: 3px 8px; border-radius: 6px;
-    color: #6b7280; white-space: nowrap;
-    display: inline-block;
+  .avatar-circle {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--green-50);
+    color: var(--green-600);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    flex-shrink: 0;
   }
 
-  .usuario-nombre { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
-  .usuario-email  { font-size: 12px; color: #9ca3af; }
-
-  .servicio-badge {
-    font-size: 11.5px; font-weight: 500;
-    background: var(--blue-50); color: var(--blue-800);
-    border: 0.5px solid var(--blue-100);
-    padding: 3px 9px; border-radius: 8px;
-    display: inline-block; white-space: nowrap;
-  }
-
-  .fecha-cell { white-space: nowrap; }
-  .fecha-cell .fecha-date { font-size: 13px; margin-bottom: 2px; }
-  .fecha-cell .fecha-time { font-size: 12px; color: #9ca3af; }
-  .fecha-cell i { margin-right: 4px; opacity: .5; font-size: 12px; }
-
-  .motivo-cell {
-    font-size: 12.5px; color: #6b7280;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    overflow: hidden; line-height: 1.5;
-    font-style: italic; max-width: 200px;
-  }
+  .user-info { display: flex; align-items: center; gap: 10px; }
+  .user-nombre { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
+  .user-email  { font-size: 12px; color: #9ca3af; }
 
   .badge {
-    display: inline-flex; align-items: center; gap: 5px;
+    display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 10px; border-radius: 20px;
     font-size: 11.5px; font-weight: 500; white-space: nowrap;
   }
 
-  .badge-pendiente  { background: var(--amber-50); color: var(--amber-800); border: 0.5px solid var(--amber-100); }
-  .badge-confirmada { background: var(--green-50);  color: var(--green-600); border: 0.5px solid var(--green-100); }
-  .badge-cancelada  { background: var(--red-50);    color: var(--red-800);   border: 0.5px solid var(--red-100); }
-  .badge-completada { background: var(--blue-50);   color: var(--blue-800);  border: 0.5px solid var(--blue-100); }
+  .badge-admin      { background: var(--blue-50);  color: var(--blue-800);  border: 0.5px solid var(--blue-100); }
+  .badge-ciudadano  { background: var(--gray-50);  color: var(--gray-800);  border: 0.5px solid var(--gray-100); }
+  .badge-super_admin{ background: #fef3c7; color: #92400e; border: 0.5px solid #fde68a; }
+  .badge-moderador  { background: var(--green-50); color: var(--green-600); border: 0.5px solid var(--green-100); }
+
+  .badge-activo   { background: var(--green-50); color: var(--green-600); border: 0.5px solid var(--green-100); }
+  .badge-inactivo { background: var(--red-50);   color: var(--red-800);   border: 0.5px solid var(--red-100); }
+
+  .actions-cell { display: flex; gap: 6px; }
 
   .btn-icon {
-    width: 32px; height: 32px;
+    width: 30px; height: 30px;
     border: 0.5px solid #e5e7eb;
-    border-radius: 8px; background: #fff;
+    border-radius: 7px; background: #fff;
     cursor: pointer;
     display: inline-flex; align-items: center; justify-content: center;
-    color: #9ca3af;
+    color: #9ca3af; font-size: 13px;
     transition: background .15s, color .15s, border-color .15s;
-    font-size: 15px;
+    text-decoration: none;
   }
 
   .btn-icon:hover {
@@ -166,269 +199,162 @@
     border-color: #d1d5db;
   }
 
+  .btn-icon.danger:hover {
+    background: var(--red-50); color: var(--red-800);
+    border-color: var(--red-100);
+  }
+
   .empty-state { text-align: center; padding: 3rem; color: #9ca3af; }
   .empty-state i { font-size: 26px; display: block; margin-bottom: .6rem; opacity: .4; }
 
-  .modal {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.35);
-    align-items: center; justify-content: center;
-    z-index: 1000;
-  }
-
-  .modal.active { display: flex; }
-
-  .modal-content {
-    background: #fff;
-    border: 0.5px solid #e5e7eb;
-    border-radius: 12px;
-    width: 100%; max-width: 480px;
-    padding: 1.5rem;
-  }
-
-  .modal-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 1.25rem;
-  }
-
-  .modal-header h2 {
-    font-size: 15px; font-weight: 500;
-    display: flex; align-items: center; gap: 7px;
-    color: #111827;
-  }
-
-  .modal-close {
-    width: 30px; height: 30px; border: none;
-    background: none; cursor: pointer;
-    border-radius: 8px; color: #9ca3af;
-    font-size: 16px; display: flex;
-    align-items: center; justify-content: center;
-    transition: background .15s;
-  }
-
-  .modal-close:hover { background: #f3f4f6; color: #374151; }
-
-  .info-strip {
-    background: var(--green-50);
-    border: 0.5px solid var(--green-100);
-    border-radius: 8px;
-    padding: .6rem .85rem;
-    font-size: 12.5px; color: var(--green-600);
-    display: flex; align-items: center; gap: 7px;
-    margin-bottom: 1rem;
-  }
-
-  .motivo-box {
-    background: #f9fafb;
-    border: 0.5px solid #e5e7eb;
-    border-radius: 8px;
-    padding: .75rem .9rem;
-    margin-bottom: 1rem;
-  }
-
-  .motivo-box-label {
-    font-size: 11px; font-weight: 500;
-    text-transform: uppercase; letter-spacing: .5px;
-    color: #9ca3af; margin-bottom: .35rem;
-  }
-
-  .motivo-box-texto { font-size: 13px; color: #374151; line-height: 1.55; }
-
-  .form-label {
-    display: block; font-size: 12.5px;
-    color: #6b7280; font-weight: 500;
-    margin-bottom: .35rem;
-  }
-
-  .form-group { margin-bottom: 1rem; }
-
-  .form-control {
-    width: 100%;
-    border: 0.5px solid #d1d5db;
-    border-radius: 8px;
-    background: #fff; color: #111827;
-    font-size: 13px; outline: none;
-    transition: border-color .15s;
-  }
-
-  select.form-control  { height: 36px; padding: 0 10px; cursor: pointer; }
-  textarea.form-control { padding: 8px 10px; resize: vertical; }
-
-  .form-control:focus {
-    border-color: #9ca3af;
-    box-shadow: 0 0 0 2px rgba(0,0,0,.05);
-  }
-
-  .btn.btn-primary {
-    width: 100%; height: 38px;
-    background: var(--green-600); color: #fff;
-    border: none; border-radius: 8px;
-    font-size: 13.5px; font-weight: 500;
-    cursor: pointer; display: flex;
-    align-items: center; justify-content: center; gap: 7px;
-    transition: opacity .15s, transform .1s;
-  }
-
-  .btn.btn-primary:hover  { opacity: .88; }
-  .btn.btn-primary:active { transform: scale(.985); }
-
-  /* ── Fix lupa ── */
-  .filters-section .search-box input {
-    width: 100% !important;
-    height: 36px !important;
-    padding: 0 10px 0 32px !important;
-    border: 0.5px solid #d1d5db !important;
-    border-radius: 8px !important;
-    background: #fff !important;
-    color: #111827 !important;
-    font-size: 13px !important;
-    outline: none !important;
-    box-shadow: none !important;
-    transition: border-color .15s;
-  }
-
-  .filters-section .search-box input:focus {
-    border-color: #9ca3af !important;
-    box-shadow: 0 0 0 2px rgba(0,0,0,.05) !important;
-  }
-
-  .filters-section .search-box input::placeholder { color: #9ca3af; }
-
-  .filters-section .search-box i {
-    position: absolute !important;
-    left: 11px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    font-size: 13px !important;
-    color: #9ca3af !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
-  }
+  .fecha-text { font-size: 12px; color: #6b7280; }
 </style>
 
 <!-- Stats -->
 <div class="stats-grid">
   <div class="stat-card">
-    <div class="stat-icon gray"><i class="fas fa-calendar-alt"></i></div>
+    <div class="stat-icon gray"><i class="fas fa-users"></i></div>
     <div class="stat-content">
-      <h3>Total Citas</h3>
+      <h3>Total Usuarios</h3>
       <div class="stat-number">{{ stats.total }}</div>
     </div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon amber"><i class="fas fa-clock"></i></div>
+    <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
     <div class="stat-content">
-      <h3>Pendientes</h3>
-      <div class="stat-number">{{ stats.pendientes }}</div>
+      <h3>Activos</h3>
+      <div class="stat-number">{{ stats.activos }}</div>
     </div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+    <div class="stat-icon red"><i class="fas fa-user-times"></i></div>
     <div class="stat-content">
-      <h3>Confirmadas</h3>
-      <div class="stat-number">{{ stats.confirmadas }}</div>
+      <h3>Inactivos</h3>
+      <div class="stat-number">{{ stats.inactivos }}</div>
     </div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon blue"><i class="fas fa-calendar-day"></i></div>
+    <div class="stat-icon blue"><i class="fas fa-user-shield"></i></div>
     <div class="stat-content">
-      <h3>Citas Hoy</h3>
-      <div class="stat-number">{{ stats.hoy }}</div>
+      <h3>Administradores</h3>
+      <div class="stat-number">{{ stats.admins }}</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon amber"><i class="fas fa-user"></i></div>
+    <div class="stat-content">
+      <h3>Ciudadanos</h3>
+      <div class="stat-number">{{ stats.ciudadanos }}</div>
     </div>
   </div>
 </div>
 
 <!-- Filtros -->
-<div class="filters-section">
-  <div class="search-box">
-    <i class="fas fa-search"></i>
-    <input type="text" id="searchInput" placeholder="Buscar por folio, usuario, motivo..." autocomplete="off">
-  </div>
-  <div class="filter-group">
-    <select id="estadoFilter" class="filter-select">
-      <option value="todos">Todos los estados</option>
-      <option value="pendiente">Pendiente</option>
-      <option value="confirmada">Confirmada</option>
-      <option value="cancelada">Cancelada</option>
-      <option value="completada">Completada</option>
+<form method="GET" action="{{ url_for('admin.listar_usuarios') }}">
+  <div class="filters-section">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" name="q" value="{{ filtros.q }}" placeholder="Buscar por nombre o email..." autocomplete="off">
+    </div>
+    <select name="tipo" class="filter-select">
+      <option value="">Todos los tipos</option>
+      <option value="ciudadano" {{ 'selected' if filtros.tipo == 'ciudadano' }}>Ciudadano</option>
+      <option value="admin" {{ 'selected' if filtros.tipo == 'admin' }}>Admin</option>
     </select>
+    <select name="rol" class="filter-select">
+      <option value="">Todos los roles</option>
+      {% for rol in roles %}
+        <option value="{{ rol.id }}" {{ 'selected' if filtros.rol == rol.id }}>{{ rol.nombre }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn-crear">
+      <i class="fas fa-search"></i> Buscar
+    </button>
+    {% if session.get('user_rol') == 'super_admin' %}
+    <a href="{{ url_for('admin.crear_admin') }}" class="btn-crear">
+      <i class="fas fa-plus"></i> Nuevo Admin
+    </a>
+    {% endif %}
   </div>
-</div>
+</form>
 
 <!-- Tabla -->
 <div class="table-container">
-  <table class="table" id="citasTable">
+  <table class="table" id="usuariosTable">
     <thead>
       <tr>
-        <th style="width:110px">Folio</th>
-        <th style="width:180px">Usuario</th>
-        <th style="width:130px">Servicio</th>
-        <th style="width:120px">Fecha / Hora</th>
-        <th>Motivo</th>
-        <th style="width:120px">Estado</th>
-        <th style="width:60px"></th>
+        <th style="width:260px">Usuario</th>
+        <th style="width:110px">Teléfono</th>
+        <th style="width:110px">Tipo</th>
+        <th style="width:120px">Rol</th>
+        <th style="width:100px">Estado</th>
+        <th style="width:110px">Registro</th>
+        <th style="width:80px"></th>
       </tr>
     </thead>
     <tbody>
-      {% for cita in citas %}
-      <tr data-estado="{{ cita.estado }}" data-fecha="{{ cita.fecha }}">
+      {% for u in usuarios %}
+      <tr>
         <td>
-          <span class="folio-code">{{ cita.folio }}</span>
+          <div class="user-info">
+            <div class="avatar-circle">
+              {{ (u.nombre or u.email)[0]|upper }}
+            </div>
+            <div>
+              <div class="user-nombre">{{ u.nombre }} {{ u.apellidos }}</div>
+              <div class="user-email">{{ u.email }}</div>
+            </div>
+          </div>
         </td>
+        <td class="fecha-text">{{ u.telefono or '—' }}</td>
         <td>
-          <div class="usuario-nombre">{{ cita.usuario_nombre }}</div>
-          <div class="usuario-email">{{ cita.usuario_email }}</div>
-        </td>
-        <td>
-          <span class="servicio-badge">
-            {% if cita.servicio == 'asesoria_legal' %}Asesoría Legal
-            {% elif cita.servicio == 'catastro' %}Catastro
-            {% elif cita.servicio == 'licencias' %}Licencias
-            {% elif cita.servicio == 'atencion_ciudadana' %}Atención Ciudadana
-            {% elif cita.servicio == 'tesoreria' %}Tesorería
-            {% elif cita.servicio == 'planeamiento' %}Planeamiento
-            {% elif cita.servicio == 'oaim' %}OAI/M
-            {% elif cita.servicio == 'funeraria' %}Funeraria
-            {% else %}{{ cita.servicio }}
+          <span class="badge badge-{{ u.tipo }}">
+            {% if u.tipo == 'admin' %}<i class="fas fa-shield-alt"></i>
+            {% else %}<i class="fas fa-user"></i>
             {% endif %}
-          </span>
-        </td>
-        <td class="fecha-cell">
-          <div class="fecha-date"><i class="fas fa-calendar-alt"></i>{{ cita.fecha }}</div>
-          <div class="fecha-time"><i class="fas fa-clock"></i>{{ cita.hora }}</div>
-        </td>
-        <td>
-          <div class="motivo-cell">{{ cita.motivo or '—' }}</div>
-        </td>
-        <td>
-          <span class="badge badge-{{ cita.estado }}">
-            {% if cita.estado == 'pendiente' %}<i class="fas fa-hourglass-half"></i>
-            {% elif cita.estado == 'confirmada' %}<i class="fas fa-check"></i>
-            {% elif cita.estado == 'cancelada' %}<i class="fas fa-times"></i>
-            {% elif cita.estado == 'completada' %}<i class="fas fa-check-double"></i>
-            {% endif %}
-            {{ cita.estado|title }}
+            {{ u.tipo|title }}
           </span>
         </td>
         <td>
-          <button class="btn-icon"
-            data-id="{{ cita.id }}"
-            data-motivo="{{ cita.motivo or '' }}"
-            data-nombre="{{ cita.usuario_nombre }}"
-            data-folio="{{ cita.folio }}"
-            onclick="cambiarEstado(this)"
-            title="Gestionar cita">
-            <i class="fas fa-edit"></i>
-          </button>
+          {% if u.rol %}
+            <span class="badge badge-{{ u.rol }}">
+              {% if u.rol == 'super_admin' %}<i class="fas fa-crown"></i>
+              {% elif u.rol == 'admin' %}<i class="fas fa-shield-alt"></i>
+              {% else %}<i class="fas fa-user-shield"></i>
+              {% endif %}
+              {{ u.rol|replace('_', ' ')|title }}
+            </span>
+          {% else %}
+            <span class="fecha-text">—</span>
+          {% endif %}
+        </td>
+        <td>
+          <span class="badge {{ 'badge-activo' if u.activo else 'badge-inactivo' }}">
+            <i class="fas {{ 'fa-check-circle' if u.activo else 'fa-times-circle' }}"></i>
+            {{ 'Activo' if u.activo else 'Inactivo' }}
+          </span>
+        </td>
+        <td class="fecha-text">{{ u.fecha_registro or '—' }}</td>
+        <td>
+          <div class="actions-cell">
+            <a href="{{ url_for('admin.detalle_usuario', email=u.email) }}"
+               class="btn-icon" title="Ver detalle">
+              <i class="fas fa-eye"></i>
+            </a>
+            <a href="{{ url_for('admin.editar_usuario', email=u.email) }}"
+               class="btn-icon" title="Editar">
+              <i class="fas fa-edit"></i>
+            </a>
+          </div>
         </td>
       </tr>
       {% endfor %}
-      {% if not citas %}
+      {% if not usuarios %}
       <tr>
         <td colspan="7">
           <div class="empty-state">
-            <i class="fas fa-calendar-times"></i>
-            No hay citas registradas aún.
+            <i class="fas fa-users-slash"></i>
+            No se encontraron usuarios.
           </div>
         </td>
       </tr>
@@ -436,93 +362,16 @@
     </tbody>
   </table>
 </div>
-
-<!-- Modal -->
-<div class="modal" id="estadoModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2><i class="fas fa-calendar-check"></i> Gestionar Cita</h2>
-      <button class="modal-close" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
-    </div>
-
-    <div class="info-strip">
-      <i class="fas fa-info-circle"></i>
-      <span id="infoCita">—</span>
-    </div>
-
-    <div class="motivo-box" id="motivoBox" style="display:none">
-      <div class="motivo-box-label">
-        <i class="fas fa-comment-alt" style="margin-right:4px"></i>Motivo de la cita
-      </div>
-      <div class="motivo-box-texto" id="motivoTexto"></div>
-    </div>
-
-    <form method="POST" id="estadoForm">
-      <div class="form-group">
-        <label class="form-label">Nuevo Estado</label>
-        <select name="estado" class="form-control" required>
-          <option value="pendiente">⏳ Pendiente</option>
-          <option value="confirmada">✅ Confirmada</option>
-          <option value="cancelada">❌ Cancelada</option>
-          <option value="completada">✔️ Completada</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Notas para el ciudadano (opcional)</label>
-        <textarea name="notas" class="form-control" rows="3"
-          placeholder="Ej: Su cita ha sido confirmada. Preséntese con su cédula..."></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary">
-        <i class="fas fa-save"></i> Guardar Cambios
-      </button>
-    </form>
-  </div>
-</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-function cambiarEstado(btn) {
-  const citaId = btn.dataset.id;
-  const motivo = btn.dataset.motivo;
-  const nombre = btn.dataset.nombre;
-  const folio  = btn.dataset.folio;
-
-  document.getElementById('estadoForm').action = `/admin/citas/${citaId}/estado`;
-  document.getElementById('infoCita').textContent = `${folio} — ${nombre}`;
-
-  const box   = document.getElementById('motivoBox');
-  const texto = document.getElementById('motivoTexto');
-  if (motivo && motivo.trim()) {
-    texto.textContent = motivo;
-    box.style.display = 'block';
-  } else {
-    box.style.display = 'none';
-  }
-
-  document.getElementById('estadoModal').classList.add('active');
-}
-
-function cerrarModal() {
-  document.getElementById('estadoModal').classList.remove('active');
-}
-
-document.getElementById('estadoModal').addEventListener('click', function(e) {
-  if (e.target === this) cerrarModal();
-});
-
-document.getElementById('searchInput').addEventListener('keyup', filtrar);
-document.getElementById('estadoFilter').addEventListener('change', filtrar);
-
-function filtrar() {
-  const q      = document.getElementById('searchInput').value.toLowerCase();
-  const estado = document.getElementById('estadoFilter').value;
-  document.querySelectorAll('#citasTable tbody tr').forEach(row => {
-    if (row.querySelector('.empty-state')) return;
-    const okQ = !q || row.textContent.toLowerCase().includes(q);
-    const okE = estado === 'todos' || row.dataset.estado === estado;
-    row.style.display = (okQ && okE) ? '' : 'none';
+  // Búsqueda en tiempo real (cliente)
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('input[name="q"]');
+    if (searchInput) {
+      searchInput.focus();
+    }
   });
-}
 </script>
 {% endblock %}
