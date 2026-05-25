@@ -399,6 +399,33 @@ def registro_completo():
     db.session.add(usuario)
     db.session.commit()
 
+    # ✅ Correo de bienvenida
+    try:
+        from app import mail
+        msg = Message(
+            subject="✅ Cuenta creada — Villa Cutupú",
+            recipients=[usuario.email],
+            html=f"""
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:30px;
+                        border:1px solid #e0e0e0;border-radius:10px;">
+                <h2 style="color:#2d6a4f;">¡Bienvenido, {usuario.nombre}!</h2>
+                <p>Tu cuenta en el portal de <strong>Villa Cutupú</strong> fue creada exitosamente.</p>
+                <p>Ya puedes acceder a todos los servicios municipales disponibles.</p>
+                <a href="https://ayuntamientovillacutupu.com/login"
+                   style="display:inline-block;background:#2d6a4f;color:white;
+                   padding:12px 24px;border-radius:6px;text-decoration:none;
+                   font-weight:bold;margin:16px 0;">
+                    Ir al portal
+                </a>
+                <p style="color:#888;font-size:13px;">Si no creaste esta cuenta, ignora este mensaje.</p>
+            </div>
+            """
+        )
+        mail.send(msg)
+        print(f"✅ Correo de bienvenida enviado a {usuario.email}")
+    except Exception as e:
+        print(f"⚠️ No se pudo enviar correo de bienvenida: {e}")
+
     # Limpiar datos temporales e iniciar sesión directamente
     session.pop('google_registro_data', None)
     session['user'] = usuario.email
