@@ -20,6 +20,9 @@ migraciones = [
     "CREATE TABLE IF NOT EXISTS roles (id SERIAL PRIMARY KEY, nombre VARCHAR(50) NOT NULL UNIQUE, descripcion VARCHAR(200))",
     "CREATE TABLE IF NOT EXISTS permisos (id SERIAL PRIMARY KEY, nombre VARCHAR(100) NOT NULL UNIQUE, descripcion VARCHAR(200), modulo VARCHAR(50))",
     "CREATE TABLE IF NOT EXISTS roles_permisos (id SERIAL PRIMARY KEY, rol_id INTEGER REFERENCES roles(id), permiso_id INTEGER REFERENCES permisos(id))",
+    "ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS email_verificado BOOLEAN DEFAULT FALSE",
+    "ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS token_verificacion VARCHAR(200)",
+    "ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS token_expiracion TIMESTAMP",
 ]
 
 with engine.connect() as conn:
