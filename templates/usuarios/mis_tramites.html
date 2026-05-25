@@ -4,761 +4,857 @@
 
 {% block extra_css %}
 <style>
-    :root {
-        --primary:#1a3b2e;--primary-light:#2e7d5e;--primary-soft:#e8f3ee;
-        --warning:#b85e00;--warning-light:#fff1e0;--success:#1e7b4c;
-        --success-light:#e1f7ed;--danger:#b33c2f;--danger-light:#fee9e7;
-        --info:#2563eb;--info-light:#e0edff;--purple:#6b21a5;--purple-light:#f1e5ff;
-        --gray-50:#f9fafb;--gray-100:#f2f4f7;--gray-200:#e4e7ec;--gray-300:#d0d5dd;
-        --gray-400:#98a2b3;--gray-500:#667085;--gray-600:#475467;--gray-700:#344054;
-        --gray-800:#1d2939;--gray-900:#101828;
-        --shadow-sm:0 1px 3px rgba(0,0,0,0.1);--shadow-md:0 4px 6px -2px rgba(0,0,0,0.05),0 10px 15px -3px rgba(0,0,0,0.1);
-        --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1);
-        --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px;
-    }
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{background:var(--gray-50);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-    .tramites-container{max-width:1280px;margin:0 auto;padding:2rem 1.5rem}
-    .tramites-header{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);border-radius:var(--radius-xl);padding:2.5rem 2rem;margin-bottom:2.5rem;color:white;box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
-    .tramites-header::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%)}
-    .tramites-header h1{font-size:2.2rem;font-weight:700;margin-bottom:.75rem;position:relative;display:flex;align-items:center;gap:.75rem}
-    .tramites-header p{font-size:1.05rem;opacity:.9;max-width:600px;position:relative;line-height:1.6}
-    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin-bottom:2.5rem}
-    .stat-card{background:white;border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow-sm);transition:all .3s;border:1px solid var(--gray-200);display:flex;align-items:center;gap:1.25rem}
-    .stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:#2e7d5e}
-    .stat-icon{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem}
-    .stat-icon.solicitudes{background:var(--primary-soft);color:var(--primary)}
-    .stat-icon.denuncias{background:var(--warning-light);color:var(--warning)}
-    .stat-icon.pendientes{background:var(--info-light);color:var(--info)}
-    .stat-icon.completadas{background:var(--success-light);color:var(--success)}
-    .stat-content h3{font-size:.85rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-500);margin-bottom:.25rem}
-    .stat-number{font-size:2rem;font-weight:700;color:var(--gray-900);line-height:1.2}
-    .filters-section{background:white;border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:2rem;box-shadow:var(--shadow-sm);border:1px solid var(--gray-200);display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
-    .search-box{flex:2;min-width:280px;position:relative}
-    .search-box i{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--gray-400)}
-    .search-box input{width:100%;padding:.875rem 1rem .875rem 2.75rem;border:1px solid var(--gray-300);border-radius:var(--radius-md);font-size:.95rem;transition:all .2s;background:var(--gray-50)}
-    .search-box input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(26,59,46,.1);background:white}
-    .filter-group{display:flex;gap:.75rem;flex-wrap:wrap;flex:1}
-    .filter-select{padding:.875rem 1rem;border:1px solid var(--gray-300);border-radius:var(--radius-md);font-size:.95rem;background:var(--gray-50);cursor:pointer;min-width:160px;transition:all .2s}
-    .filter-select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(26,59,46,.1);background:white}
-    .type-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
-    .type-tab{padding:.75rem 1.5rem;border-radius:40px;font-weight:600;font-size:.95rem;cursor:pointer;transition:all .2s;border:1px solid var(--gray-300);background:white;color:var(--gray-700);display:flex;align-items:center;gap:.5rem}
-    .type-tab.active{background:var(--primary);color:white;border-color:var(--primary)}
-    .type-tab:hover:not(.active){background:var(--gray-100);border-color:var(--gray-400)}
-    .table-container{background:white;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--gray-200);overflow:hidden;margin-bottom:2rem}
-    .table{width:100%;border-collapse:collapse}
-    .table th{background:var(--gray-100);padding:1rem 1.5rem;text-align:left;font-weight:600;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-600);border-bottom:1px solid var(--gray-200)}
-    .table td{padding:1.25rem 1.5rem;border-bottom:1px solid var(--gray-200);color:var(--gray-700);font-size:.95rem;vertical-align:middle}
-    .table tr:last-child td{border-bottom:none}
-    .table tbody tr{transition:all .2s;cursor:pointer}
-    .table tbody tr:hover{background:var(--gray-50)}
-    .badge{display:inline-flex;align-items:center;padding:.35rem .9rem;border-radius:40px;font-size:.8rem;font-weight:600;letter-spacing:.02em;gap:.4rem}
-    .badge-pendiente{background:var(--warning-light);color:var(--warning);border:1px solid #ffd9b0}
-    .badge-en_proceso{background:var(--info-light);color:var(--info);border:1px solid #b8d3ff}
-    .badge-en_investigacion{background:var(--purple-light);color:var(--purple);border:1px solid #d9c9ff}
-    .badge-completado{background:var(--success-light);color:var(--success);border:1px solid #b0e5c0}
-    .badge-completada{background:var(--success-light);color:var(--success);border:1px solid #b0e5c0}
-    .badge-resuelto{background:var(--success-light);color:var(--success);border:1px solid #b0e5c0}
-    .badge-respondido{background:var(--success-light);color:var(--success);border:1px solid #b0e5c0}
-    .badge-rechazado{background:var(--danger-light);color:var(--danger);border:1px solid #ffcfc9}
-    .badge-cancelado{background:var(--gray-200);color:var(--gray-700);border:1px solid var(--gray-300)}
-    .badge-cancelada{background:var(--gray-200);color:var(--gray-700);border:1px solid var(--gray-300)}
-    .badge-archivado{background:var(--gray-200);color:var(--gray-700);border:1px solid var(--gray-300)}
-    .tipo-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .75rem;border-radius:40px;font-size:.8rem;font-weight:500}
-    .tipo-solicitud{background:var(--primary-soft);color:var(--primary)}
-    .tipo-denuncia{background:var(--warning-light);color:var(--warning)}
-    .tipo-cita{background:var(--purple-light);color:var(--purple)}
-    .tipo-contacto{background:var(--info-light);color:var(--info)}
-    .action-buttons{display:flex;gap:.5rem}
-    .btn-icon{width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;color:var(--gray-600);background:var(--gray-100);border:1px solid var(--gray-200);cursor:pointer;text-decoration:none}
-    .btn-icon:hover{background:var(--primary);color:white;border-color:var(--primary);transform:translateY(-2px)}
-    .btn-primary{display:inline-flex;align-items:center;gap:.75rem;padding:.875rem 2rem;background:var(--primary);color:white;text-decoration:none;border-radius:var(--radius-md);font-weight:600;transition:all .3s;border:none;cursor:pointer}
-    .btn-primary:hover{background:var(--primary-light);transform:translateY(-2px);box-shadow:var(--shadow-md)}
-    .empty-state{text-align:center;padding:4rem 2rem;background:white;border-radius:var(--radius-lg);border:2px dashed var(--gray-300)}
-    .empty-state i{font-size:4rem;color:var(--gray-400);margin-bottom:1.5rem}
-    .empty-state h3{font-size:1.5rem;color:var(--gray-700);margin-bottom:.75rem}
-    .empty-state p{color:var(--gray-500);margin-bottom:2rem;max-width:400px;margin-left:auto;margin-right:auto}
-    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-    .modal.active{display:flex}
-    .modal-content{background:white;border-radius:var(--radius-xl);max-width:780px;width:92%;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-xl)}
-    .modal-header{padding:1.5rem 2rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:white;z-index:2;border-radius:var(--radius-xl) var(--radius-xl) 0 0}
-    .modal-header h2{font-size:1.3rem;color:var(--gray-900);display:flex;align-items:center;gap:.75rem}
-    .modal-close{background:none;border:none;width:32px;height:32px;border-radius:8px;font-size:1.1rem;cursor:pointer;color:var(--gray-400);transition:all .2s;display:flex;align-items:center;justify-content:center}
-    .modal-close:hover{background:var(--gray-100);color:var(--gray-700)}
-    .modal-body{padding:2rem}
-    .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;margin-bottom:1.75rem}
-    .detail-item{border-bottom:1px solid var(--gray-200);padding-bottom:.9rem}
-    .detail-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-500);margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem;font-weight:600}
-    .detail-value{font-size:1rem;font-weight:600;color:var(--gray-900)}
-    .section-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--gray-500);margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;padding-top:1.5rem;border-top:1px solid var(--gray-200)}
-    .section-title:first-of-type{border-top:none;padding-top:0}
-    .progress-track{display:flex;align-items:flex-start;position:relative;margin-bottom:1.5rem}
-    .progress-track::before{content:'';position:absolute;top:18px;left:18px;right:18px;height:2px;background:var(--gray-200);z-index:0}
-    .progress-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:.45rem;position:relative;z-index:1}
-    .step-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;border:2px solid var(--gray-300);background:white;transition:all .3s;flex-shrink:0}
-    .step-circle.done{background:var(--success);border-color:var(--success);color:white}
-    .step-circle.active{background:var(--primary);border-color:var(--primary);color:white;box-shadow:0 0 0 4px rgba(26,59,46,.15)}
-    .step-circle.bad{background:var(--danger);border-color:var(--danger);color:white}
-    .step-name{font-size:.72rem;font-weight:600;color:var(--gray-400);text-align:center;line-height:1.3;max-width:72px}
-    .step-name.done{color:var(--success)}.step-name.active{color:var(--primary);font-weight:700}.step-name.bad{color:var(--danger)}
-    .step-connector{flex:1;height:2px;background:var(--gray-200);margin-top:17px;z-index:0;transition:background .3s}
-    .step-connector.done{background:var(--success)}
-    .alert-tramite{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border-radius:var(--radius-sm);font-size:.85rem;margin-top:.75rem}
-    .alert-tramite.rechazado{background:var(--danger-light);color:var(--danger);border:1px solid rgba(179,60,47,.15)}
-    .alert-tramite.cancelado{background:var(--gray-100);color:var(--gray-600);border:1px solid var(--gray-300)}
-    .alert-tramite.cancelada{background:var(--gray-100);color:var(--gray-600);border:1px solid var(--gray-300)}
-    .historial-list{display:flex;flex-direction:column}
-    .hist-item{display:flex;gap:.9rem;padding:.8rem 0;border-bottom:1px solid var(--gray-100);align-items:flex-start}
-    .hist-item:last-child{border-bottom:none}
-    .hist-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;margin-top:1px}
-    .hi-default{background:var(--gray-100);color:var(--gray-500)}
-    .hi-creada{background:var(--primary-soft);color:var(--primary)}
-    .hi-cambio{background:var(--primary-soft);color:var(--primary)}
-    .hi-admin{background:var(--info-light);color:var(--info)}
-    .hi-ciudadano{background:var(--primary-soft);color:var(--primary)}
-    .hi-asignada{background:var(--purple-light);color:var(--purple)}
-    .hi-doc{background:#fff8e1;color:#e65100}
-    .hist-body{flex:1;min-width:0}
-    .hist-desc{font-size:.88rem;color:var(--gray-700);line-height:1.5;margin-bottom:.2rem}
-    .hist-meta{font-size:.72rem;color:var(--gray-400);display:flex;align-items:center;gap:.35rem}
-    .msg-admin .hist-desc{background:var(--info-light);border-radius:0 10px 10px 10px;padding:.6rem .9rem;display:inline-block;max-width:88%;color:var(--gray-800)}
-    .msg-ciudadano .hist-desc{background:var(--primary-soft);border-radius:10px 0 10px 10px;padding:.6rem .9rem;display:inline-block;max-width:88%;color:var(--gray-800)}
-    .msg-ciudadano{flex-direction:row-reverse}
-    .msg-ciudadano .hist-meta{justify-content:flex-end}
-    .chat-box{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--gray-200)}
-    .chat-wrap{display:flex;gap:.75rem;align-items:flex-end}
-    .chat-textarea{flex:1;padding:.75rem 1rem;border:1.5px solid var(--gray-300);border-radius:var(--radius-md);font-family:'Inter',sans-serif;font-size:.9rem;resize:none;height:44px;min-height:44px;max-height:120px;line-height:1.5;transition:all .2s;overflow:hidden}
-    .chat-textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,59,46,.1)}
-    .btn-send{height:44px;padding:0 1.25rem;background:var(--primary);color:white;border:none;border-radius:var(--radius-md);font-weight:600;font-size:.88rem;cursor:pointer;display:flex;align-items:center;gap:.4rem;transition:all .2s;white-space:nowrap;flex-shrink:0}
-    .btn-send:hover{background:var(--primary-light);transform:translateY(-1px)}
-    .btn-send:disabled{opacity:.5;cursor:default;transform:none}
-    .chat-note{font-size:.72rem;color:var(--gray-400);margin-top:.5rem}
-    .chat-sending{display:none;align-items:center;gap:.5rem;font-size:.82rem;color:var(--gray-400);margin-top:.5rem}
-    .chat-sending.visible{display:flex}
-    .chat-locked{padding:.75rem 1rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:.85rem;color:var(--gray-500);display:flex;align-items:center;gap:.5rem;margin-top:1rem}
-    .docs-upload-area{border:2px dashed var(--gray-300);border-radius:var(--radius-md);padding:1.25rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--gray-50);position:relative}
-    .docs-upload-area:hover,.docs-upload-area.drag-over{border-color:var(--primary);background:var(--primary-soft)}
-    .docs-upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-    .docs-upload-icon{font-size:1.6rem;color:var(--gray-400);margin-bottom:.4rem}
-    .docs-upload-area:hover .docs-upload-icon{color:var(--primary)}
-    .docs-upload-text{font-size:.85rem;color:var(--gray-500);font-weight:500}
-    .docs-upload-sub{font-size:.72rem;color:var(--gray-400);margin-top:.25rem}
-    .docs-upload-progress{display:none;margin-top:.75rem;height:4px;background:var(--gray-200);border-radius:2px;overflow:hidden}
-    .docs-upload-progress.visible{display:block}
-    .docs-progress-bar{height:100%;background:var(--primary);width:0%;transition:width .3s;border-radius:2px}
-    .docs-list{display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem}
-    .doc-item{display:flex;align-items:center;gap:.75rem;padding:.7rem .9rem;background:white;border:1px solid var(--gray-200);border-radius:var(--radius-sm);transition:all .2s}
-    .doc-item:hover{border-color:var(--primary);box-shadow:var(--shadow-sm)}
-    .doc-icon{font-size:1.2rem;flex-shrink:0;width:28px;text-align:center}
-    .fa-file-pdf{color:#e53e3e}.fa-file-word{color:#2b6cb0}.fa-file-image{color:#38a169}
-    .doc-info{flex:1;min-width:0}
-    .doc-nombre{font-size:.85rem;font-weight:600;color:var(--gray-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .doc-meta{font-size:.72rem;color:var(--gray-400);margin-top:.1rem}
-    .doc-actions{display:flex;gap:.35rem;flex-shrink:0}
-    .btn-doc{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.75rem;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
-    .btn-doc-view{background:var(--info-light);color:var(--info)}.btn-doc-view:hover{background:var(--info);color:white}
-    .btn-doc-delete{background:var(--danger-light);color:var(--danger)}.btn-doc-delete:hover{background:var(--danger);color:white}
-    .docs-empty{font-size:.85rem;color:var(--gray-400);text-align:center;padding:.75rem}
-    .docs-counter{font-size:.72rem;color:var(--gray-400);text-align:right;margin-top:.4rem}
-    .docs-counter.lleno{color:var(--warning);font-weight:600}
-    .encuesta-card{margin-top:1.5rem;padding:1.5rem;background:linear-gradient(135deg,#1a3b2e,#2e7d5e);border-radius:var(--radius-md);color:white;text-align:center}
-    .encuesta-card p{margin-bottom:1rem;font-size:1rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
-    .encuesta-card p i{color:#ffd966}
-    .btn-encuesta{display:inline-block;background:white;color:#1a3b2e;padding:.7rem 2rem;border-radius:40px;text-decoration:none;font-weight:700;font-size:.9rem;transition:all .3s;border:2px solid transparent}
-    .btn-encuesta:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2);background:#f8f9fa}
-    @media(max-width:768px){.tramites-header h1{font-size:1.8rem}.stats-grid{grid-template-columns:repeat(2,1fr)}.table th,.table td{padding:1rem}.detail-grid{grid-template-columns:1fr}.filter-group{flex-direction:column}.filter-select{width:100%}}
-    @media(max-width:480px){.stats-grid{grid-template-columns:1fr}}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+*{box-sizing:border-box;}
+
+:root {
+  --tr-green:#1a3b2e;--tr-green-mid:#2e7d5e;--tr-green-light:#e8f3ee;
+  --tr-warn:#b85e00;--tr-warn-light:#fff1e0;
+  --tr-ok:#1e7b4c;--tr-ok-light:#e1f7ed;
+  --tr-danger:#b33c2f;--tr-danger-light:#fee9e7;
+  --tr-info:#2563eb;--tr-info-light:#e0edff;
+  --tr-purple:#6b21a5;--tr-purple-light:#f1e5ff;
+  --tr-gray-50:#f9fafb;--tr-gray-100:#f2f4f7;--tr-gray-200:#e4e7ec;
+  --tr-gray-300:#d0d5dd;--tr-gray-400:#98a2b3;--tr-gray-500:#667085;
+  --tr-gray-600:#475467;--tr-gray-700:#344054;--tr-gray-800:#1d2939;
+  --tr-shadow-sm:0 1px 3px rgba(0,0,0,.08);
+  --tr-shadow-md:0 4px 16px rgba(0,0,0,.1);
+  --tr-shadow-lg:0 10px 30px rgba(0,0,0,.12);
+  --tr-radius-sm:8px;--tr-radius-md:12px;--tr-radius-lg:16px;--tr-radius-xl:20px;
+  --tr-font:'DM Sans',system-ui,sans-serif;
+}
+
+/* ── PÁGINA ── */
+.tramites-page {
+  min-height: 85vh;
+  background: var(--tr-gray-50);
+  padding: 11rem 0 4rem;
+  font-family: var(--tr-font);
+}
+
+.tramites-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ── HEADER BANNER ── */
+.tramites-header {
+  background: linear-gradient(135deg, var(--tr-green) 0%, var(--tr-green-mid) 100%);
+  border-radius: var(--tr-radius-xl);
+  padding: 2.5rem 2rem;
+  margin-bottom: 2rem;
+  color: white;
+  box-shadow: var(--tr-shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+.tramites-header::before {
+  content:'';
+  position:absolute;top:-50%;right:-50%;
+  width:200%;height:200%;
+  background:radial-gradient(circle,rgba(255,255,255,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.tramites-header h1 {
+  font-size: clamp(1.8rem,3vw,2.2rem) !important;
+  font-weight: 800 !important;
+  margin-bottom: .6rem !important;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  color: white !important;
+}
+.tramites-header p {
+  font-size: .97rem !important;
+  opacity: .88;
+  max-width: 560px;
+  position: relative;
+  line-height: 1.6;
+  color: white !important;
+  margin: 0 !important;
+}
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+.stat-card {
+  background: white;
+  border-radius: var(--tr-radius-lg);
+  padding: 1.4rem;
+  box-shadow: var(--tr-shadow-sm);
+  border: 1px solid var(--tr-gray-200);
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--tr-shadow-md);
+  border-color: var(--tr-green-mid);
+}
+.stat-icon {
+  width: 56px;height: 56px;
+  border-radius: 14px;
+  display: flex;align-items: center;justify-content: center;
+  font-size: 1.5rem;flex-shrink: 0;
+}
+.stat-icon.solicitudes { background: var(--tr-green-light); color: var(--tr-green); }
+.stat-icon.denuncias   { background: var(--tr-warn-light);  color: var(--tr-warn);  }
+.stat-icon.pendientes  { background: var(--tr-info-light);  color: var(--tr-info);  }
+.stat-icon.completadas { background: var(--tr-ok-light);    color: var(--tr-ok);    }
+.stat-content h3 {
+  font-size: .78rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--tr-gray-500) !important;
+  margin-bottom: .2rem !important;
+}
+.stat-number {
+  font-size: 1.9rem !important;
+  font-weight: 800 !important;
+  color: var(--tr-gray-800) !important;
+  line-height: 1.1 !important;
+}
+
+/* ── FILTROS ── */
+.filters-section {
+  background: white;
+  border-radius: var(--tr-radius-lg);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--tr-shadow-sm);
+  border: 1px solid var(--tr-gray-200);
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.search-box { flex: 2; min-width: 260px; position: relative; }
+.search-box i { position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--tr-gray-400); }
+.search-box input {
+  width: 100%;
+  padding: .8rem 1rem .8rem 2.6rem;
+  border: 1.5px solid var(--tr-gray-300);
+  border-radius: var(--tr-radius-md);
+  font-size: .93rem;
+  font-family: var(--tr-font);
+  background: var(--tr-gray-50);
+  color: var(--tr-gray-800);
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+}
+.search-box input:focus {
+  border-color: var(--tr-green);
+  box-shadow: 0 0 0 3px rgba(26,59,46,.1);
+  background: white;
+}
+.filter-group { display:flex;gap:.75rem;flex-wrap:wrap;flex:1; }
+.filter-select {
+  padding: .8rem 1rem;
+  border: 1.5px solid var(--tr-gray-300);
+  border-radius: var(--tr-radius-md);
+  font-size: .93rem;
+  font-family: var(--tr-font);
+  background: var(--tr-gray-50);
+  color: var(--tr-gray-700);
+  cursor: pointer;
+  min-width: 150px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.filter-select:focus {
+  border-color: var(--tr-green);
+  box-shadow: 0 0 0 3px rgba(26,59,46,.1);
+  background: white;
+}
+
+/* ── TABS ── */
+.type-tabs { display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap; }
+.type-tab {
+  padding: .65rem 1.35rem;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: .88rem;
+  font-family: var(--tr-font);
+  cursor: pointer;
+  transition: all .2s;
+  border: 1.5px solid var(--tr-gray-300);
+  background: white;
+  color: var(--tr-gray-700);
+  display: flex;align-items: center;gap: .45rem;
+}
+.type-tab.active { background: var(--tr-green); color: white; border-color: var(--tr-green); }
+.type-tab:hover:not(.active) { background: var(--tr-gray-100); border-color: var(--tr-gray-400); }
+
+/* ── TABLA ── */
+.table-container {
+  background: white;
+  border-radius: var(--tr-radius-lg);
+  box-shadow: var(--tr-shadow-sm);
+  border: 1px solid var(--tr-gray-200);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+.table { width:100%;border-collapse:collapse; }
+.table th {
+  background: var(--tr-gray-100);
+  padding: .9rem 1.4rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--tr-gray-600);
+  border-bottom: 1px solid var(--tr-gray-200);
+}
+.table td {
+  padding: 1.1rem 1.4rem;
+  border-bottom: 1px solid var(--tr-gray-200);
+  color: var(--tr-gray-700);
+  font-size: .92rem;
+  vertical-align: middle;
+}
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr { transition: background .15s; cursor: pointer; }
+.table tbody tr:hover { background: #f6f8ff; }
+
+/* ── BADGES ESTADO ── */
+.badge {
+  display: inline-flex;align-items: center;gap: .35rem;
+  padding: .3rem .85rem;border-radius: 40px;
+  font-size: .75rem;font-weight: 700;letter-spacing: .02em;
+  white-space: nowrap;
+}
+.badge-pendiente         { background: var(--tr-warn-light);   color: var(--tr-warn);   border:1px solid #ffd9b0; }
+.badge-en_proceso        { background: var(--tr-info-light);   color: var(--tr-info);   border:1px solid #b8d3ff; }
+.badge-en_investigacion  { background: var(--tr-purple-light); color: var(--tr-purple); border:1px solid #d9c9ff; }
+.badge-completado,
+.badge-completada        { background: var(--tr-ok-light);     color: var(--tr-ok);     border:1px solid #b0e5c0; }
+.badge-resuelto,
+.badge-respondido        { background: var(--tr-ok-light);     color: var(--tr-ok);     border:1px solid #b0e5c0; }
+.badge-rechazado         { background: var(--tr-danger-light); color: var(--tr-danger); border:1px solid #ffcfc9; }
+.badge-cancelado,
+.badge-cancelada,
+.badge-archivado         { background: var(--tr-gray-100);     color: var(--tr-gray-600);border:1px solid var(--tr-gray-300); }
+
+/* ── TIPO BADGE ── */
+.tipo-badge {
+  display: inline-flex;align-items: center;gap: .4rem;
+  padding: .25rem .75rem;border-radius: 40px;
+  font-size: .78rem;font-weight: 600;
+}
+.tipo-solicitud { background: var(--tr-green-light); color: var(--tr-green); }
+.tipo-denuncia  { background: var(--tr-warn-light);  color: var(--tr-warn);  }
+.tipo-cita      { background: var(--tr-purple-light);color: var(--tr-purple);}
+.tipo-contacto  { background: var(--tr-info-light);  color: var(--tr-info);  }
+
+/* ── BOTONES ACCIÓN ── */
+.action-buttons { display:flex;gap:.5rem; }
+.btn-icon {
+  width: 34px;height: 34px;border-radius: 9px;
+  display: inline-flex;align-items: center;justify-content: center;
+  transition: all .2s;
+  color: var(--tr-gray-600);
+  background: var(--tr-gray-100);
+  border: 1px solid var(--tr-gray-200);
+  cursor: pointer;text-decoration: none;
+}
+.btn-icon:hover { background: var(--tr-green); color: white; border-color: var(--tr-green); transform: translateY(-2px); }
+
+.btn-primary {
+  display: inline-flex;align-items: center;gap: .65rem;
+  padding: .8rem 1.75rem;
+  background: var(--tr-green);color: white;
+  text-decoration: none;border-radius: var(--tr-radius-md);
+  font-weight: 700;font-family: var(--tr-font);
+  transition: all .2s;border: none;cursor: pointer;
+  box-shadow: 0 4px 14px rgba(26,59,46,.25);
+}
+.btn-primary:hover { background: var(--tr-green-mid); transform: translateY(-2px); color: white !important; text-decoration: none !important; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: var(--tr-radius-lg);
+  border: 2px dashed var(--tr-gray-300);
+  margin-bottom: 2rem;
+}
+.empty-state i { font-size: 3.5rem; color: var(--tr-gray-300); margin-bottom: 1.25rem; }
+.empty-state h3 { font-size: 1.4rem !important; font-weight: 800 !important; color: var(--tr-gray-700) !important; margin-bottom: .6rem !important; }
+.empty-state p  { color: var(--tr-gray-500) !important; font-size: .97rem !important; max-width: 400px; margin: 0 auto 1.5rem !important; }
+
+/* ── MODAL ── */
+.modal { display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px); }
+.modal.active { display:flex; }
+.modal-content { background:white;border-radius:var(--tr-radius-xl);max-width:780px;width:92%;max-height:92vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.2); }
+.modal-header { padding:1.4rem 1.75rem;border-bottom:1px solid var(--tr-gray-200);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:white;z-index:2;border-radius:var(--tr-radius-xl) var(--tr-radius-xl) 0 0; }
+.modal-header h2 { font-size:1.2rem !important;color:var(--tr-gray-800) !important;display:flex;align-items:center;gap:.65rem; }
+.modal-close { background:none;border:none;width:32px;height:32px;border-radius:8px;font-size:1rem;cursor:pointer;color:var(--tr-gray-400);transition:all .2s;display:flex;align-items:center;justify-content:center; }
+.modal-close:hover { background:var(--tr-gray-100);color:var(--tr-gray-700); }
+.modal-body { padding:1.75rem; }
+
+/* ── DETAIL GRID ── */
+.detail-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;margin-bottom:1.5rem; }
+.detail-item { border-bottom:1px solid var(--tr-gray-200);padding-bottom:.85rem; }
+.detail-label { font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tr-gray-500);margin-bottom:.35rem;display:flex;align-items:center;gap:.4rem;font-weight:700; }
+.detail-value { font-size:.97rem;font-weight:600;color:var(--tr-gray-800); }
+.section-title { font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tr-gray-500);margin-bottom:1.1rem;display:flex;align-items:center;gap:.5rem;padding-top:1.4rem;border-top:1px solid var(--tr-gray-200); }
+.section-title:first-of-type { border-top:none;padding-top:0; }
+
+/* ── TIMELINE ── */
+.progress-track { display:flex;align-items:flex-start;position:relative;margin-bottom:1.25rem; }
+.progress-track::before { content:'';position:absolute;top:18px;left:18px;right:18px;height:2px;background:var(--tr-gray-200);z-index:0; }
+.progress-step { flex:1;display:flex;flex-direction:column;align-items:center;gap:.4rem;position:relative;z-index:1; }
+.step-circle { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;border:2px solid var(--tr-gray-300);background:white;transition:all .3s;flex-shrink:0; }
+.step-circle.done   { background:var(--tr-ok);border-color:var(--tr-ok);color:white; }
+.step-circle.active { background:var(--tr-green);border-color:var(--tr-green);color:white;box-shadow:0 0 0 4px rgba(26,59,46,.15); }
+.step-circle.bad    { background:var(--tr-danger);border-color:var(--tr-danger);color:white; }
+.step-name { font-size:.7rem;font-weight:600;color:var(--tr-gray-400);text-align:center;line-height:1.3;max-width:72px; }
+.step-name.done   { color:var(--tr-ok); }
+.step-name.active { color:var(--tr-green);font-weight:700; }
+.step-name.bad    { color:var(--tr-danger); }
+.step-connector { flex:1;height:2px;background:var(--tr-gray-200);margin-top:17px;z-index:0;transition:background .3s; }
+.step-connector.done { background:var(--tr-ok); }
+
+/* ── ALERTS MODAL ── */
+.alert-tramite { display:flex;align-items:center;gap:.6rem;padding:.7rem 1rem;border-radius:var(--tr-radius-sm);font-size:.85rem;margin-top:.75rem; }
+.alert-tramite.rechazado { background:var(--tr-danger-light);color:var(--tr-danger);border:1px solid rgba(179,60,47,.15); }
+.alert-tramite.cancelado,
+.alert-tramite.cancelada { background:var(--tr-gray-100);color:var(--tr-gray-600);border:1px solid var(--tr-gray-300); }
+
+/* ── HISTORIAL ── */
+.historial-list { display:flex;flex-direction:column; }
+.hist-item { display:flex;gap:.85rem;padding:.75rem 0;border-bottom:1px solid var(--tr-gray-100);align-items:flex-start; }
+.hist-item:last-child { border-bottom:none; }
+.hist-icon { width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;margin-top:1px; }
+.hi-default   { background:var(--tr-gray-100);color:var(--tr-gray-500); }
+.hi-creada    { background:var(--tr-green-light);color:var(--tr-green); }
+.hi-cambio    { background:var(--tr-green-light);color:var(--tr-green); }
+.hi-admin     { background:var(--tr-info-light);color:var(--tr-info); }
+.hi-ciudadano { background:var(--tr-green-light);color:var(--tr-green); }
+.hi-asignada  { background:var(--tr-purple-light);color:var(--tr-purple); }
+.hi-doc       { background:#fff8e1;color:#e65100; }
+.hist-body { flex:1;min-width:0; }
+.hist-desc { font-size:.87rem;color:var(--tr-gray-700);line-height:1.5;margin-bottom:.2rem; }
+.hist-meta { font-size:.7rem;color:var(--tr-gray-400);display:flex;align-items:center;gap:.35rem; }
+.msg-admin .hist-desc { background:var(--tr-info-light);border-radius:0 10px 10px 10px;padding:.55rem .9rem;display:inline-block;max-width:88%;color:var(--tr-gray-800); }
+.msg-ciudadano .hist-desc { background:var(--tr-green-light);border-radius:10px 0 10px 10px;padding:.55rem .9rem;display:inline-block;max-width:88%;color:var(--tr-gray-800); }
+.msg-ciudadano { flex-direction:row-reverse; }
+.msg-ciudadano .hist-meta { justify-content:flex-end; }
+
+/* ── CHAT ── */
+.chat-box { margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--tr-gray-200); }
+.chat-wrap { display:flex;gap:.75rem;align-items:flex-end; }
+.chat-textarea { flex:1;padding:.7rem 1rem;border:1.5px solid var(--tr-gray-300);border-radius:var(--tr-radius-md);font-family:var(--tr-font);font-size:.88rem;resize:none;height:44px;min-height:44px;max-height:120px;line-height:1.5;transition:all .2s;overflow:hidden;outline:none; }
+.chat-textarea:focus { border-color:var(--tr-green);box-shadow:0 0 0 3px rgba(26,59,46,.1); }
+.btn-send { height:44px;padding:0 1.2rem;background:var(--tr-green);color:white;border:none;border-radius:var(--tr-radius-md);font-weight:700;font-size:.88rem;font-family:var(--tr-font);cursor:pointer;display:flex;align-items:center;gap:.4rem;transition:all .2s;white-space:nowrap;flex-shrink:0; }
+.btn-send:hover { background:var(--tr-green-mid);transform:translateY(-1px); }
+.btn-send:disabled { opacity:.5;cursor:default;transform:none; }
+.chat-note { font-size:.7rem;color:var(--tr-gray-400);margin-top:.5rem; }
+.chat-sending { display:none;align-items:center;gap:.5rem;font-size:.8rem;color:var(--tr-gray-400);margin-top:.5rem; }
+.chat-sending.visible { display:flex; }
+.chat-locked { padding:.7rem 1rem;background:var(--tr-gray-50);border-radius:var(--tr-radius-sm);border:1px solid var(--tr-gray-200);font-size:.83rem;color:var(--tr-gray-500);display:flex;align-items:center;gap:.5rem;margin-top:.75rem; }
+
+/* ── DOCUMENTOS ── */
+.docs-upload-area { border:2px dashed var(--tr-gray-300);border-radius:var(--tr-radius-md);padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--tr-gray-50);position:relative; }
+.docs-upload-area:hover,.docs-upload-area.drag-over { border-color:var(--tr-green);background:var(--tr-green-light); }
+.docs-upload-area input[type="file"] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
+.docs-upload-icon { font-size:1.5rem;color:var(--tr-gray-400);margin-bottom:.35rem; }
+.docs-upload-area:hover .docs-upload-icon { color:var(--tr-green); }
+.docs-upload-text { font-size:.83rem;color:var(--tr-gray-500);font-weight:600; }
+.docs-upload-sub { font-size:.7rem;color:var(--tr-gray-400);margin-top:.2rem; }
+.docs-upload-progress { display:none;margin-top:.7rem;height:4px;background:var(--tr-gray-200);border-radius:2px;overflow:hidden; }
+.docs-upload-progress.visible { display:block; }
+.docs-progress-bar { height:100%;background:var(--tr-green);width:0%;transition:width .3s;border-radius:2px; }
+.docs-list { display:flex;flex-direction:column;gap:.45rem;margin-top:.65rem; }
+.doc-item { display:flex;align-items:center;gap:.7rem;padding:.65rem .9rem;background:white;border:1px solid var(--tr-gray-200);border-radius:var(--tr-radius-sm);transition:all .2s; }
+.doc-item:hover { border-color:var(--tr-green);box-shadow:var(--tr-shadow-sm); }
+.doc-icon { font-size:1.1rem;flex-shrink:0;width:26px;text-align:center; }
+.fa-file-pdf { color:#e53e3e; }.fa-file-word { color:#2b6cb0; }.fa-file-image { color:#38a169; }
+.doc-info { flex:1;min-width:0; }
+.doc-nombre { font-size:.83rem;font-weight:600;color:var(--tr-gray-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.doc-meta { font-size:.7rem;color:var(--tr-gray-400);margin-top:.1rem; }
+.doc-actions { display:flex;gap:.3rem;flex-shrink:0; }
+.btn-doc { width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.72rem;cursor:pointer;border:none;transition:all .2s;text-decoration:none; }
+.btn-doc-view { background:var(--tr-info-light);color:var(--tr-info); }.btn-doc-view:hover { background:var(--tr-info);color:white; }
+.btn-doc-delete { background:var(--tr-danger-light);color:var(--tr-danger); }.btn-doc-delete:hover { background:var(--tr-danger);color:white; }
+.docs-empty { font-size:.83rem;color:var(--tr-gray-400);text-align:center;padding:.65rem; }
+.docs-counter { font-size:.7rem;color:var(--tr-gray-400);text-align:right;margin-top:.35rem; }
+.docs-counter.lleno { color:var(--tr-warn);font-weight:700; }
+
+/* ── ENCUESTA ── */
+.encuesta-card { margin-top:1.4rem;padding:1.4rem;background:linear-gradient(135deg,#1a3b2e,#2e7d5e);border-radius:var(--tr-radius-md);color:white;text-align:center; }
+.encuesta-card p { margin-bottom:.9rem;font-size:.97rem !important;display:flex;align-items:center;justify-content:center;gap:.5rem; }
+.encuesta-card p i { color:#ffd966; }
+.btn-encuesta { display:inline-block;background:white;color:#1a3b2e;padding:.65rem 1.75rem;border-radius:40px;text-decoration:none;font-weight:700;font-size:.88rem;transition:all .3s; }
+.btn-encuesta:hover { transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2);color:#1a3b2e !important;text-decoration:none !important; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .tramites-page { padding:9rem 0 3rem; }
+  .tramites-header h1 { font-size:1.7rem !important; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .table th,.table td { padding:.85rem 1rem; }
+  .detail-grid { grid-template-columns:1fr; }
+  .filter-group { flex-direction:column; }
+  .filter-select { width:100%; }
+}
+@media(max-width:480px){
+  .stats-grid { grid-template-columns:1fr; }
+  .type-tabs { gap:.35rem; }
+  .type-tab { font-size:.8rem;padding:.55rem 1rem; }
+}
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="tramites-page">
 <div class="tramites-container">
 
-    <div class="tramites-header">
-        <h1><i class="fas fa-clipboard-list"></i> Mis Trámites</h1>
-        <p>Consulta el estado de tus solicitudes, adjunta documentos y comunícate con el equipo municipal.</p>
-    </div>
+  <div class="tramites-header">
+    <h1><i class="fas fa-clipboard-list"></i> Mis Trámites</h1>
+    <p>Consulta el estado de tus solicitudes, adjunta documentos y comunícate con el equipo municipal.</p>
+  </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon solicitudes"><i class="fas fa-file-alt"></i></div>
-            <div class="stat-content"><h3>Solicitudes</h3><div class="stat-number">{{ stats.solicitudes|default(0) }}</div></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon denuncias"><i class="fas fa-exclamation-triangle"></i></div>
-            <div class="stat-content"><h3>Denuncias</h3><div class="stat-number">{{ stats.denuncias|default(0) }}</div></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon pendientes"><i class="fas fa-clock"></i></div>
-            <div class="stat-content"><h3>En proceso</h3><div class="stat-number">{{ stats.pendientes|default(0) }}</div></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon completadas"><i class="fas fa-check-circle"></i></div>
-            <div class="stat-content"><h3>Completados</h3><div class="stat-number">{{ stats.completados|default(0) }}</div></div>
-        </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon solicitudes"><i class="fas fa-file-alt"></i></div>
+      <div class="stat-content"><h3>Solicitudes</h3><div class="stat-number">{{ stats.solicitudes|default(0) }}</div></div>
     </div>
+    <div class="stat-card">
+      <div class="stat-icon denuncias"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="stat-content"><h3>Denuncias</h3><div class="stat-number">{{ stats.denuncias|default(0) }}</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon pendientes"><i class="fas fa-clock"></i></div>
+      <div class="stat-content"><h3>En proceso</h3><div class="stat-number">{{ stats.pendientes|default(0) }}</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon completadas"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-content"><h3>Completados</h3><div class="stat-number">{{ stats.completados|default(0) }}</div></div>
+    </div>
+  </div>
 
-    <div class="filters-section">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Buscar por folio, servicio o descripción..." autocomplete="off">
-        </div>
-        <div class="filter-group">
-            <select id="tipoFilter" class="filter-select">
-                <option value="todos">Todos los tipos</option>
-                <option value="solicitud">Solicitudes</option>
-                <option value="denuncia">Denuncias</option>
-                <option value="cita">Citas</option>
-                <option value="contacto">Contactos</option>
-            </select>
-            <select id="estadoFilter" class="filter-select">
-                <option value="todos">Todos los estados</option>
-                <option value="pendiente">Pendiente</option>
-                <option value="en_proceso">En proceso</option>
-                <option value="en_investigacion">En investigación</option>
-                <option value="completado">Completado</option>
-                <option value="resuelto">Resuelto</option>
-                <option value="respondido">Respondido</option>
-                <option value="rechazado">Rechazado</option>
-                <option value="cancelado">Cancelado</option>
-            </select>
-        </div>
+  <div class="filters-section">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Buscar por folio, servicio o descripción..." autocomplete="off">
     </div>
+    <div class="filter-group">
+      <select id="tipoFilter" class="filter-select">
+        <option value="todos">Todos los tipos</option>
+        <option value="solicitud">Solicitudes</option>
+        <option value="denuncia">Denuncias</option>
+        <option value="cita">Citas</option>
+        <option value="contacto">Contactos</option>
+      </select>
+      <select id="estadoFilter" class="filter-select">
+        <option value="todos">Todos los estados</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="en_proceso">En proceso</option>
+        <option value="en_investigacion">En investigación</option>
+        <option value="completado">Completado</option>
+        <option value="resuelto">Resuelto</option>
+        <option value="respondido">Respondido</option>
+        <option value="rechazado">Rechazado</option>
+        <option value="cancelado">Cancelado</option>
+      </select>
+    </div>
+  </div>
 
-    <div class="type-tabs">
-        <button class="type-tab active" data-tipo="todos"><i class="fas fa-th-large"></i> Todos</button>
-        <button class="type-tab" data-tipo="solicitud"><i class="fas fa-file-alt"></i> Solicitudes</button>
-        <button class="type-tab" data-tipo="denuncia"><i class="fas fa-exclamation-triangle"></i> Denuncias</button>
-        <button class="type-tab" data-tipo="cita"><i class="fas fa-calendar-alt"></i> Citas</button>
-        <button class="type-tab" data-tipo="contacto"><i class="fas fa-envelope"></i> Contactos</button>
-    </div>
+  <div class="type-tabs">
+    <button class="type-tab active" data-tipo="todos"><i class="fas fa-th-large"></i> Todos</button>
+    <button class="type-tab" data-tipo="solicitud"><i class="fas fa-file-alt"></i> Solicitudes</button>
+    <button class="type-tab" data-tipo="denuncia"><i class="fas fa-exclamation-triangle"></i> Denuncias</button>
+    <button class="type-tab" data-tipo="cita"><i class="fas fa-calendar-alt"></i> Citas</button>
+    <button class="type-tab" data-tipo="contacto"><i class="fas fa-envelope"></i> Contactos</button>
+  </div>
 
-    {% if tramites %}
-    <div class="table-container">
-        <table class="table" id="tramitesTable">
-            <thead>
-                <tr>
-                    <th>Folio</th>
-                    <th>Tipo</th>
-                    <th>Descripción</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in tramites %}
-                <tr data-tipo="{{ item.tipo }}" data-estado="{{ item.estado }}" data-folio="{{ item.folio }}" onclick="verDetalle('{{ item.folio }}')">
-                    <td><strong style="font-family:monospace;font-size:.9rem;">{{ item.folio }}</strong></td>
-                    <td>
-                        {% if item.tipo == 'solicitud' %}
-                            <span class="tipo-badge tipo-solicitud"><i class="fas fa-file-alt"></i> Solicitud</span>
-                        {% elif item.tipo == 'denuncia' %}
-                            <span class="tipo-badge tipo-denuncia"><i class="fas fa-exclamation-triangle"></i> Denuncia</span>
-                        {% elif item.tipo == 'cita' %}
-                            <span class="tipo-badge tipo-cita"><i class="fas fa-calendar-alt"></i> Cita</span>
-                        {% else %}
-                            <span class="tipo-badge tipo-contacto"><i class="fas fa-envelope"></i> Contacto</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <div style="max-width:280px;">
-                            <strong>{{ item.nombre }}</strong>
-                            <div style="color:var(--gray-500);font-size:.82rem;margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                                {{ item.descripcion[:55] }}{% if item.descripcion|length > 55 %}...{% endif %}
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        {# fecha_creacion siempre llega como string desde app.py #}
-                        {% if item.fecha_creacion %}
-                            <span style="font-weight:500;">{{ item.fecha_creacion[:10] }}</span>
-                            <div style="color:var(--gray-400);font-size:.78rem;">
-                                {% if item.fecha_creacion|length > 11 %}{{ item.fecha_creacion[11:16] }}{% endif %}
-                            </div>
-                        {% else %}
-                            <span style="font-weight:500;">-</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <span class="badge badge-{{ item.estado }}">
-                            <i class="fas fa-circle" style="font-size:.35rem;"></i>
-                            {{ item.estado|replace('_',' ')|title }}
-                        </span>
-                        {% if item.documentos and item.documentos|length > 0 %}
-                            <span style="font-size:.7rem;color:var(--gray-400);margin-left:.4rem;">
-                                <i class="fas fa-paperclip"></i> {{ item.documentos|length }}
-                            </span>
-                        {% endif %}
-                    </td>
-                    <td onclick="event.stopPropagation()">
-                        <div class="action-buttons">
-                            <button class="btn-icon" onclick="verDetalle('{{ item.folio }}')" title="Ver detalle">
-                                <i class="fas fa-comments"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+  {% if tramites %}
+  <div class="table-container">
+    <table class="table" id="tramitesTable">
+      <thead>
+        <tr>
+          <th>Folio</th>
+          <th>Tipo</th>
+          <th>Descripción</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in tramites %}
+        <tr data-tipo="{{ item.tipo }}" data-estado="{{ item.estado }}" data-folio="{{ item.folio }}" onclick="verDetalle('{{ item.folio }}')">
+          <td><strong style="font-family:monospace;font-size:.88rem;">{{ item.folio }}</strong></td>
+          <td>
+            {% if item.tipo == 'solicitud' %}
+              <span class="tipo-badge tipo-solicitud"><i class="fas fa-file-alt"></i> Solicitud</span>
+            {% elif item.tipo == 'denuncia' %}
+              <span class="tipo-badge tipo-denuncia"><i class="fas fa-exclamation-triangle"></i> Denuncia</span>
+            {% elif item.tipo == 'cita' %}
+              <span class="tipo-badge tipo-cita"><i class="fas fa-calendar-alt"></i> Cita</span>
+            {% else %}
+              <span class="tipo-badge tipo-contacto"><i class="fas fa-envelope"></i> Contacto</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="max-width:280px;">
+              <strong>{{ item.nombre }}</strong>
+              <div style="color:var(--tr-gray-500);font-size:.8rem;margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                {{ item.descripcion[:55] }}{% if item.descripcion|length > 55 %}...{% endif %}
+              </div>
+            </div>
+          </td>
+          <td>
+            {% if item.fecha_creacion %}
+              <span style="font-weight:600;">{{ item.fecha_creacion[:10] }}</span>
+              <div style="color:var(--tr-gray-400);font-size:.75rem;">
+                {% if item.fecha_creacion|length > 11 %}{{ item.fecha_creacion[11:16] }}{% endif %}
+              </div>
+            {% else %}
+              <span>—</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge badge-{{ item.estado }}">
+              <i class="fas fa-circle" style="font-size:.3rem;"></i>
+              {{ item.estado|replace('_',' ')|title }}
+            </span>
+            {% if item.documentos and item.documentos|length > 0 %}
+              <span style="font-size:.7rem;color:var(--tr-gray-400);margin-left:.4rem;">
+                <i class="fas fa-paperclip"></i> {{ item.documentos|length }}
+              </span>
+            {% endif %}
+          </td>
+          <td onclick="event.stopPropagation()">
+            <div class="action-buttons">
+              <button class="btn-icon" onclick="verDetalle('{{ item.folio }}')" title="Ver detalle">
+                <i class="fas fa-comments"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-folder-open"></i>
+    <h3>No tienes trámites registrados</h3>
+    <p>Crea una solicitud de servicio o realiza una denuncia desde nuestra sección de servicios.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <a href="{{ url_for('servicios') }}" class="btn-primary"><i class="fas fa-plus-circle"></i> Solicitar servicio</a>
+      <a href="{{ url_for('servicios') }}#denuncias" class="btn-primary" style="background:var(--tr-warn);box-shadow:0 4px 14px rgba(184,94,0,.25);">
+        <i class="fas fa-exclamation-triangle"></i> Hacer denuncia
+      </a>
     </div>
-    {% else %}
-    <div class="empty-state">
-        <i class="fas fa-folder-open"></i>
-        <h3>No tienes trámites registrados</h3>
-        <p>Crea una solicitud de servicio o realiza una denuncia desde nuestra sección de servicios.</p>
-        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-            <a href="{{ url_for('servicios') }}" class="btn-primary"><i class="fas fa-plus-circle"></i> Solicitar servicio</a>
-            <a href="{{ url_for('servicios') }}#denuncias" class="btn-primary" style="background:var(--warning);"><i class="fas fa-exclamation-triangle"></i> Hacer denuncia</a>
-        </div>
-    </div>
-    {% endif %}
+  </div>
+  {% endif %}
 
+</div>
 </div>
 
 {# ── MODAL DETALLE ── #}
 <div class="modal" id="detalleModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2><i class="fas fa-file-alt" id="modalIcon"></i><span id="modalTitle">Detalle del Trámite</span></h2>
-            <button class="modal-close" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body" id="modalBody">
-            <div style="text-align:center;padding:3rem;color:var(--gray-400);">
-                <i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i>
-                <p style="margin-top:1rem;">Cargando...</p>
-            </div>
-        </div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-file-alt" id="modalIcon"></i><span id="modalTitle">Detalle del Trámite</span></h2>
+      <button class="modal-close" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
     </div>
+    <div class="modal-body" id="modalBody">
+      <div style="text-align:center;padding:3rem;color:var(--tr-gray-400);">
+        <i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i>
+        <p style="margin-top:1rem;">Cargando...</p>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// ── Datos desde Python (fecha_creacion ya es string) ──────────────────────
 let tramitesData = [];
-try {
-    tramitesData = JSON.parse('{{ tramites_json | default("[]") | safe }}');
-} catch(e) {
-    console.error('Error parseando tramites:', e);
-}
+try { tramitesData = JSON.parse('{{ tramites_json | default("[]") | safe }}'); }
+catch(e) { console.error('Error parseando tramites:', e); }
 const MAX_DOCS = 5;
 const encuestasRealizadas = [];
 
-// ── Filtros ───────────────────────────────────────────────────────────────
 document.getElementById('searchInput')?.addEventListener('keyup', filtrar);
 document.getElementById('tipoFilter')?.addEventListener('change', filtrar);
 document.getElementById('estadoFilter')?.addEventListener('change', filtrar);
 document.querySelectorAll('.type-tab').forEach(btn => {
-    btn.addEventListener('click', function () {
-        document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        document.getElementById('tipoFilter').value = this.dataset.tipo;
-        filtrar();
-    });
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('tipoFilter').value = this.dataset.tipo;
+    filtrar();
+  });
 });
 
 function filtrar() {
-    const q     = document.getElementById('searchInput')?.value.toLowerCase() || '';
-    const tipo  = document.getElementById('tipoFilter')?.value  || 'todos';
-    const estado= document.getElementById('estadoFilter')?.value || 'todos';
-    document.querySelectorAll('#tramitesTable tbody tr').forEach(row => {
-        const okQ = !q    || row.textContent.toLowerCase().includes(q);
-        const okT = tipo  === 'todos' || row.dataset.tipo   === tipo;
-        const okE = estado=== 'todos' || row.dataset.estado === estado;
-        row.style.display = (okQ && okT && okE) ? '' : 'none';
-    });
+  const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
+  const tipo = document.getElementById('tipoFilter')?.value || 'todos';
+  const estado = document.getElementById('estadoFilter')?.value || 'todos';
+  document.querySelectorAll('#tramitesTable tbody tr').forEach(row => {
+    const okQ = !q || row.textContent.toLowerCase().includes(q);
+    const okT = tipo === 'todos' || row.dataset.tipo === tipo;
+    const okE = estado === 'todos' || row.dataset.estado === estado;
+    row.style.display = (okQ && okT && okE) ? '' : 'none';
+  });
 }
 
-// ── Timeline ──────────────────────────────────────────────────────────────
 const PASOS = {
-    solicitud:[{key:'pendiente',label:'Recibida'},{key:'en_proceso',label:'En revisión'},{key:'completado',label:'Completada'}],
-    denuncia: [{key:'pendiente',label:'Recibida'},{key:'en_investigacion',label:'En investigación'},{key:'resuelto',label:'Resuelta'}],
-    cita:     [{key:'pendiente',label:'Solicitada'},{key:'confirmada',label:'Confirmada'},{key:'completada',label:'Completada'}],
-    contacto: [{key:'pendiente',label:'Recibido'},{key:'respondido',label:'Respondido'}],
+  solicitud:[{key:'pendiente',label:'Recibida'},{key:'en_proceso',label:'En revisión'},{key:'completado',label:'Completada'}],
+  denuncia: [{key:'pendiente',label:'Recibida'},{key:'en_investigacion',label:'En investigación'},{key:'resuelto',label:'Resuelta'}],
+  cita:     [{key:'pendiente',label:'Solicitada'},{key:'confirmada',label:'Confirmada'},{key:'completada',label:'Completada'}],
+  contacto: [{key:'pendiente',label:'Recibido'},{key:'respondido',label:'Respondido'}],
 };
 const ESTADOS_OK  = ['completado','resuelto','completada','respondido'];
 const ESTADOS_BAD = ['rechazado','cancelado','cancelada','archivado'];
 
 function buildTimeline(t) {
-    const pasos  = PASOS[t.tipo] || PASOS.solicitud;
-    const isBad  = ESTADOS_BAD.includes(t.estado);
-    const isOk   = ESTADOS_OK.includes(t.estado);
-    let activeIdx = 0;
-    if (isOk) activeIdx = pasos.length - 1;
-    else if (!isBad) { for (let i = 0; i < pasos.length; i++) { if (pasos[i].key === t.estado) { activeIdx = i; break; } } }
-
-    let html = '<div class="progress-track">';
-    pasos.forEach((paso, i) => {
-        let cc = '', nc = '', icon = String(i + 1);
-        if (isBad && i === 0)            { cc = 'done'; nc = 'done'; icon = '<i class="fas fa-check"></i>'; }
-        else if (!isBad && i < activeIdx){ cc = 'done'; nc = 'done'; icon = '<i class="fas fa-check"></i>'; }
-        else if (!isBad && i === activeIdx){ cc = 'active'; nc = 'active'; }
-        html += `<div class="progress-step"><div class="step-circle ${cc}">${icon}</div><span class="step-name ${nc}">${paso.label}</span></div>`;
-        if (i < pasos.length - 1) html += `<div class="step-connector ${(!isBad && i < activeIdx) ? 'done' : ''}"></div>`;
-    });
-    html += '</div>';
-    if (isBad) html += `<div class="alert-tramite ${t.estado}"><i class="fas fa-times-circle"></i><span>Este trámite fue <strong>${t.estado}</strong>.</span></div>`;
-    return html;
+  const pasos = PASOS[t.tipo] || PASOS.solicitud;
+  const isBad = ESTADOS_BAD.includes(t.estado);
+  const isOk  = ESTADOS_OK.includes(t.estado);
+  let activeIdx = 0;
+  if (isOk) activeIdx = pasos.length - 1;
+  else if (!isBad) { for (let i = 0; i < pasos.length; i++) { if (pasos[i].key === t.estado) { activeIdx = i; break; } } }
+  let html = '<div class="progress-track">';
+  pasos.forEach((paso, i) => {
+    let cc = '', nc = '', icon = String(i + 1);
+    if (isBad && i === 0)             { cc='done'; nc='done'; icon='<i class="fas fa-check"></i>'; }
+    else if (!isBad && i < activeIdx) { cc='done'; nc='done'; icon='<i class="fas fa-check"></i>'; }
+    else if (!isBad && i === activeIdx){ cc='active'; nc='active'; }
+    html += `<div class="progress-step"><div class="step-circle ${cc}">${icon}</div><span class="step-name ${nc}">${paso.label}</span></div>`;
+    if (i < pasos.length - 1) html += `<div class="step-connector ${(!isBad && i < activeIdx) ? 'done' : ''}"></div>`;
+  });
+  html += '</div>';
+  if (isBad) html += `<div class="alert-tramite ${t.estado}"><i class="fas fa-times-circle"></i><span>Este trámite fue <strong>${t.estado}</strong>.</span></div>`;
+  return html;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────
 function histInfo(tipo) {
-    const m = {
-        creada:              {cls:'hi-creada',   icon:'fa-plus-circle'},
-        estado_cambiado:     {cls:'hi-cambio',   icon:'fa-exchange-alt'},
-        comentario:          {cls:'hi-admin',    icon:'fa-comment'},
-        asignada:            {cls:'hi-asignada', icon:'fa-user-tag'},
-        respuesta:           {cls:'hi-admin',    icon:'fa-reply'},
-        mensaje_admin:       {cls:'hi-admin',    icon:'fa-headset'},
-        mensaje_ciudadano:   {cls:'hi-ciudadano',icon:'fa-user'},
-        documento:           {cls:'hi-doc',      icon:'fa-paperclip'},
-        documento_eliminado: {cls:'hi-doc',      icon:'fa-trash'},
-    };
-    return m[tipo] || {cls:'hi-default', icon:'fa-circle'};
+  const m = {
+    creada:{cls:'hi-creada',icon:'fa-plus-circle'},
+    estado_cambiado:{cls:'hi-cambio',icon:'fa-exchange-alt'},
+    comentario:{cls:'hi-admin',icon:'fa-comment'},
+    asignada:{cls:'hi-asignada',icon:'fa-user-tag'},
+    respuesta:{cls:'hi-admin',icon:'fa-reply'},
+    mensaje_admin:{cls:'hi-admin',icon:'fa-headset'},
+    mensaje_ciudadano:{cls:'hi-ciudadano',icon:'fa-user'},
+    documento:{cls:'hi-doc',icon:'fa-paperclip'},
+    documento_eliminado:{cls:'hi-doc',icon:'fa-trash'},
+  };
+  return m[tipo] || {cls:'hi-default',icon:'fa-circle'};
 }
 
 function iconoDoc(ext) {
-    const m = {pdf:'fa-file-pdf',doc:'fa-file-word',docx:'fa-file-word',jpg:'fa-file-image',jpeg:'fa-file-image',png:'fa-file-image'};
-    return m[(ext||'').toLowerCase()] || 'fa-file';
+  const m = {pdf:'fa-file-pdf',doc:'fa-file-word',docx:'fa-file-word',jpg:'fa-file-image',jpeg:'fa-file-image',png:'fa-file-image'};
+  return m[(ext||'').toLowerCase()] || 'fa-file';
 }
 
 function fechaRel(iso) {
-    if (!iso) return '';
-    const diff = Date.now() - new Date(iso);
-    const min = Math.floor(diff / 60000), h = Math.floor(diff / 3600000), d = Math.floor(diff / 86400000);
-    if (min < 1)  return 'Ahora';
-    if (min < 60) return `Hace ${min} min`;
-    if (h < 24)   return `Hace ${h}h`;
-    if (d < 7)    return `Hace ${d}d`;
-    return new Date(iso).toLocaleDateString('es', {day:'numeric', month:'short'});
+  if (!iso) return '';
+  const diff = Date.now() - new Date(iso);
+  const min=Math.floor(diff/60000), h=Math.floor(diff/3600000), d=Math.floor(diff/86400000);
+  if (min < 1) return 'Ahora';
+  if (min < 60) return `Hace ${min} min`;
+  if (h < 24) return `Hace ${h}h`;
+  if (d < 7) return `Hace ${d}d`;
+  return new Date(iso).toLocaleDateString('es',{day:'numeric',month:'short'});
 }
 
-// ── Documentos ────────────────────────────────────────────────────────────
 function renderDocs(docs, folio, puedeSubir) {
-    const total = docs.length, lleno = total >= MAX_DOCS;
-    let html = '<div class="docs-section">';
-    if (puedeSubir && !lleno) {
-        html += `<div class="docs-upload-area" id="uploadArea-${folio}"
-                    ondragover="event.preventDefault();this.classList.add('drag-over')"
-                    ondragleave="this.classList.remove('drag-over')"
-                    ondrop="handleDrop(event,'${folio}')">
-                    <input type="file" id="fileInput-${folio}" multiple
-                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                        onchange="subirArchivos(this,'${folio}')">
-                    <div class="docs-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                    <div class="docs-upload-text">Arrastra archivos o haz clic para seleccionar</div>
-                    <div class="docs-upload-sub">PDF, JPG, PNG, DOC, DOCX · Máx. 10 MB por archivo</div>
-                    <div class="docs-upload-progress" id="uploadProgress-${folio}">
-                        <div class="docs-progress-bar" id="progressBar-${folio}"></div>
-                    </div>
-                </div>`;
-    } else if (puedeSubir && lleno) {
-        html += `<div class="chat-locked"><i class="fas fa-lock"></i> Límite de ${MAX_DOCS} documentos alcanzado.</div>`;
-    } else {
-        html += `<div class="chat-locked"><i class="fas fa-lock"></i> Solo puedes adjuntar documentos en trámites activos.</div>`;
-    }
-    html += `<div class="docs-list" id="docsList-${folio}">`;
-    if (!docs.length) {
-        html += '<div class="docs-empty"><i class="fas fa-paperclip" style="opacity:.3;margin-right:.4rem;"></i> Sin documentos adjuntos.</div>';
-    } else {
-        docs.forEach(doc => {
-            const ext = doc.extension || (doc.nombre || '').split('.').pop();
-            html += `<div class="doc-item" id="doc-${doc.id}">
-                        <div class="doc-icon"><i class="fas ${iconoDoc(ext)}"></i></div>
-                        <div class="doc-info">
-                            <div class="doc-nombre">${doc.nombre || doc.archivo}</div>
-                            <div class="doc-meta"><i class="fas fa-clock"></i> ${fechaRel(doc.fecha)}</div>
-                        </div>
-                        <div class="doc-actions">
-                            <a href="/uploads/documentos/${doc.archivo}" target="_blank" class="btn-doc btn-doc-view"><i class="fas fa-eye"></i></a>
-                            ${puedeSubir ? `<button class="btn-doc btn-doc-delete" onclick="eliminarDoc('${folio}','${doc.id}')"><i class="fas fa-trash"></i></button>` : ''}
-                        </div>
-                    </div>`;
-        });
-    }
-    html += '</div>';
-    html += `<div class="docs-counter ${lleno ? 'lleno' : ''}">${total} / ${MAX_DOCS} documentos</div>`;
-    html += '</div>';
-    return html;
+  const total = docs.length, lleno = total >= MAX_DOCS;
+  let html = '<div class="docs-section">';
+  if (puedeSubir && !lleno) {
+    html += `<div class="docs-upload-area" id="uploadArea-${folio}"
+        ondragover="event.preventDefault();this.classList.add('drag-over')"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="handleDrop(event,'${folio}')">
+        <input type="file" id="fileInput-${folio}" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="subirArchivos(this,'${folio}')">
+        <div class="docs-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+        <div class="docs-upload-text">Arrastra archivos o haz clic para seleccionar</div>
+        <div class="docs-upload-sub">PDF, JPG, PNG, DOC, DOCX · Máx. 10 MB</div>
+        <div class="docs-upload-progress" id="uploadProgress-${folio}"><div class="docs-progress-bar" id="progressBar-${folio}"></div></div>
+      </div>`;
+  } else if (puedeSubir && lleno) {
+    html += `<div class="chat-locked"><i class="fas fa-lock"></i> Límite de ${MAX_DOCS} documentos alcanzado.</div>`;
+  } else {
+    html += `<div class="chat-locked"><i class="fas fa-lock"></i> Solo puedes adjuntar documentos en trámites activos.</div>`;
+  }
+  html += `<div class="docs-list" id="docsList-${folio}">`;
+  if (!docs.length) {
+    html += '<div class="docs-empty"><i class="fas fa-paperclip" style="opacity:.3;margin-right:.4rem;"></i> Sin documentos adjuntos.</div>';
+  } else {
+    docs.forEach(doc => {
+      const ext = doc.extension || (doc.nombre||'').split('.').pop();
+      html += `<div class="doc-item" id="doc-${doc.id}">
+        <div class="doc-icon"><i class="fas ${iconoDoc(ext)}"></i></div>
+        <div class="doc-info"><div class="doc-nombre">${doc.nombre||doc.archivo}</div><div class="doc-meta"><i class="fas fa-clock"></i> ${fechaRel(doc.fecha)}</div></div>
+        <div class="doc-actions">
+          <a href="/uploads/documentos/${doc.archivo}" target="_blank" class="btn-doc btn-doc-view"><i class="fas fa-eye"></i></a>
+          ${puedeSubir ? `<button class="btn-doc btn-doc-delete" onclick="eliminarDoc('${folio}','${doc.id}')"><i class="fas fa-trash"></i></button>` : ''}
+        </div></div>`;
+    });
+  }
+  html += `</div><div class="docs-counter ${lleno?'lleno':''}">${total} / ${MAX_DOCS} documentos</div></div>`;
+  return html;
 }
 
-// ── Modal detalle ─────────────────────────────────────────────────────────
 function verDetalle(folio) {
-    const t = tramitesData.find(x => x.folio === folio);
-    if (!t) { alert('No se encontró información.'); return; }
-
-    document.getElementById('modalTitle').textContent = t.folio;
-    document.getElementById('modalIcon').className =
-        t.tipo === 'solicitud' ? 'fas fa-file-alt' :
-        t.tipo === 'denuncia'  ? 'fas fa-flag' :
-        t.tipo === 'cita'      ? 'fas fa-calendar-alt' : 'fas fa-envelope';
-
-    const servicio   = t.nombre || t.servicio_nombre || t.tipo_nombre || '—';
-    const tipoLabel  = {solicitud:'Solicitud', denuncia:'Denuncia', cita:'Cita', contacto:'Contacto'}[t.tipo] || t.tipo;
-    const estadoBadge= `<span class="badge badge-${t.estado}"><i class="fas fa-circle" style="font-size:.35rem;"></i> ${(t.estado||'—').replace(/_/g,' ')}</span>`;
-
-    // fecha_creacion ya es string porque la normalizamos en Python
-    const fechaDisplay = (t.fecha_creacion || '—').slice(0, 16).replace('T', ' ');
-
-    const hist = t.historial || [];
-    let histHTML = '';
-
-    // ── Para contactos: agregar la respuesta del admin al historial visual ──
-    if (t.tipo === 'contacto' && t.respuesta) {
-        histHTML += `<div class="hist-item msg-admin">
-            <div class="hist-icon hi-admin"><i class="fas fa-headset"></i></div>
-            <div class="hist-body">
-                <div class="hist-desc">${escapeHtml(t.respuesta)}</div>
-                <div class="hist-meta"><i class="fas fa-clock"></i>${((t.fecha_actualizacion || t.fecha_creacion) || '').slice(0,16).replace('T',' ')}&nbsp;·&nbsp;<i class="fas fa-user"></i>Equipo Municipal</div>
-            </div>
-        </div>`;
-    }
-
-    hist.forEach(h => {
-        const info      = histInfo(h.tipo);
-        const isAdmin   = h.tipo === 'mensaje_admin';
-        const isCiudad  = h.tipo === 'mensaje_ciudadano';
-        const msgClass  = isAdmin ? 'msg-admin' : (isCiudad ? 'msg-ciudadano' : '');
-        const fecha     = (h.fecha || '').slice(0, 16).replace('T', ' ');
-        const quien     = h.nombre || h.usuario || 'Sistema';
-        histHTML += `<div class="hist-item ${msgClass}">
-                        <div class="hist-icon ${info.cls}"><i class="fas ${info.icon}"></i></div>
-                        <div class="hist-body">
-                            <div class="hist-desc">${escapeHtml(h.descripcion || '')}</div>
-                            <div class="hist-meta"><i class="fas fa-clock"></i>${fecha}&nbsp;·&nbsp;<i class="fas fa-user"></i>${escapeHtml(quien)}</div>
-                        </div>
-                    </div>`;
-    });
-    if (!histHTML) histHTML = '<p style="color:var(--gray-400);font-size:.88rem;">Sin actividad registrada.</p>';
-
-    const estadosAbiertos = ['pendiente', 'en_proceso', 'en_investigacion', 'confirmada'];
-    const puedeChat = estadosAbiertos.includes(t.estado);
-
-    const chatHTML = puedeChat
-        ? `<div class="chat-box">
-                <p class="section-title"><i class="fas fa-comments"></i> Enviar mensaje al equipo municipal</p>
-                <div class="chat-wrap">
-                    <textarea class="chat-textarea" id="chatInput-${folio}"
-                        placeholder="Escribe tu consulta..." rows="1"
-                        oninput="autoResize(this)" maxlength="500"></textarea>
-                    <button class="btn-send" id="chatBtn-${folio}" onclick="enviarMensaje('${folio}')">
-                        <i class="fas fa-paper-plane"></i> Enviar
-                    </button>
-                </div>
-                <div class="chat-sending" id="chatSending-${folio}">
-                    <i class="fas fa-spinner fa-spin"></i> Enviando...
-                </div>
-                <p class="chat-note"><i class="fas fa-info-circle"></i> El equipo responderá a la brevedad.</p>
-           </div>`
-        : `<div class="chat-locked"><i class="fas fa-lock"></i> Mensajes disponibles solo en trámites activos.</div>`;
-
-    const docs  = t.documentos || [];
-    const docsHTML = renderDocs(docs, folio, puedeChat);
-
-    const estaCompletado   = ESTADOS_OK.includes(t.estado);
-    const encuestaRealizada= encuestasRealizadas.includes(folio);
-    // Mostrar encuesta para solicitudes, denuncias y contactos completados
-    const encuestaHTML = (estaCompletado && !encuestaRealizada && (t.tipo === 'solicitud' || t.tipo === 'denuncia' || t.tipo === 'contacto'))
-        ? `<div class="encuesta-card">
-                <p><i class="fas fa-star"></i> <strong>¿Cómo fue tu experiencia con este trámite?</strong></p>
-                <a href="/tramite/${folio}/encuesta" class="btn-encuesta">
-                    <i class="fas fa-star"></i> Evaluar este trámite
-                </a>
-           </div>`
-        : '';
-
-    // Bloque adicional de respuesta (opcional, se puede mantener por si acaso)
-    const respuestaHTML = (t.tipo === 'contacto' && t.respuesta)
-        ? `<div style="margin-top:1rem;padding:1rem;background:var(--info-light);border-radius:var(--radius-sm);border-left:3px solid var(--info);">
-                <div style="font-size:.75rem;font-weight:600;color:var(--info);margin-bottom:.4rem;"><i class="fas fa-headset"></i> RESPUESTA DEL EQUIPO MUNICIPAL</div>
-                <div style="font-size:.9rem;color:var(--gray-800);">${escapeHtml(t.respuesta)}</div>
-           </div>`
-        : '';
-
-    document.getElementById('modalBody').innerHTML = `
-        <div class="detail-grid">
-            <div class="detail-item">
-                <div class="detail-label"><i class="fas fa-hashtag"></i> Folio</div>
-                <div class="detail-value">${escapeHtml(t.folio)}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label"><i class="fas fa-tag"></i> Tipo</div>
-                <div class="detail-value">${escapeHtml(tipoLabel)}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label"><i class="fas fa-concierge-bell"></i> Servicio / Nombre</div>
-                <div class="detail-value">${escapeHtml(servicio)}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label"><i class="fas fa-info-circle"></i> Estado</div>
-                <div class="detail-value">${estadoBadge}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label"><i class="fas fa-calendar-alt"></i> Creado</div>
-                <div class="detail-value">${escapeHtml(fechaDisplay)}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label"><i class="fas fa-sync-alt"></i> Actualizado</div>
-                <div class="detail-value">${escapeHtml(((t.fecha_actualizacion || t.fecha_creacion) || '—').slice(0,16).replace('T',' '))}</div>
-            </div>
-            ${t.descripcion
-                ? `<div class="detail-item" style="grid-column:1/-1">
-                        <div class="detail-label"><i class="fas fa-align-left"></i> Descripción</div>
-                        <div class="detail-value" style="font-weight:400;font-size:.95rem;line-height:1.6;">${escapeHtml(t.descripcion)}</div>
-                   </div>`
-                : ''}
-        </div>
-
-        <p class="section-title"><i class="fas fa-route"></i> Progreso del trámite</p>
-        ${buildTimeline(t)}
-        ${encuestaHTML}
-        ${respuestaHTML}
-
-        <p class="section-title"><i class="fas fa-paperclip"></i> Documentos adjuntos</p>
-        ${docsHTML}
-
-        <p class="section-title"><i class="fas fa-history"></i> Historial de actividad</p>
-        <div class="historial-list" id="histList-${folio}">${histHTML}</div>
-        ${chatHTML}
-    `;
-
-    document.getElementById('detalleModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
+  const t = tramitesData.find(x => x.folio === folio);
+  if (!t) { alert('No se encontró información.'); return; }
+  document.getElementById('modalTitle').textContent = t.folio;
+  document.getElementById('modalIcon').className =
+    t.tipo==='solicitud' ? 'fas fa-file-alt' :
+    t.tipo==='denuncia'  ? 'fas fa-flag' :
+    t.tipo==='cita'      ? 'fas fa-calendar-alt' : 'fas fa-envelope';
+  const servicio = t.nombre||t.servicio_nombre||t.tipo_nombre||'—';
+  const tipoLabel = {solicitud:'Solicitud',denuncia:'Denuncia',cita:'Cita',contacto:'Contacto'}[t.tipo]||t.tipo;
+  const estadoBadge = `<span class="badge badge-${t.estado}"><i class="fas fa-circle" style="font-size:.3rem;"></i> ${(t.estado||'—').replace(/_/g,' ')}</span>`;
+  const fechaDisplay = (t.fecha_creacion||'—').slice(0,16).replace('T',' ');
+  const hist = t.historial||[];
+  let histHTML = '';
+  if (t.tipo==='contacto' && t.respuesta) {
+    histHTML += `<div class="hist-item msg-admin"><div class="hist-icon hi-admin"><i class="fas fa-headset"></i></div><div class="hist-body"><div class="hist-desc">${escapeHtml(t.respuesta)}</div><div class="hist-meta"><i class="fas fa-clock"></i>${((t.fecha_actualizacion||t.fecha_creacion)||'').slice(0,16).replace('T',' ')}&nbsp;·&nbsp;<i class="fas fa-user"></i>Equipo Municipal</div></div></div>`;
+  }
+  hist.forEach(h => {
+    const info = histInfo(h.tipo);
+    const isAdmin = h.tipo==='mensaje_admin', isCiudad = h.tipo==='mensaje_ciudadano';
+    const msgClass = isAdmin?'msg-admin':(isCiudad?'msg-ciudadano':'');
+    histHTML += `<div class="hist-item ${msgClass}"><div class="hist-icon ${info.cls}"><i class="fas ${info.icon}"></i></div><div class="hist-body"><div class="hist-desc">${escapeHtml(h.descripcion||'')}</div><div class="hist-meta"><i class="fas fa-clock"></i>${(h.fecha||'').slice(0,16).replace('T',' ')}&nbsp;·&nbsp;<i class="fas fa-user"></i>${escapeHtml(h.nombre||h.usuario||'Sistema')}</div></div></div>`;
+  });
+  if (!histHTML) histHTML = '<p style="color:var(--tr-gray-400);font-size:.85rem;">Sin actividad registrada.</p>';
+  const estadosAbiertos = ['pendiente','en_proceso','en_investigacion','confirmada'];
+  const puedeChat = estadosAbiertos.includes(t.estado);
+  const chatHTML = puedeChat
+    ? `<div class="chat-box"><p class="section-title"><i class="fas fa-comments"></i> Enviar mensaje al equipo municipal</p><div class="chat-wrap"><textarea class="chat-textarea" id="chatInput-${folio}" placeholder="Escribe tu consulta..." rows="1" oninput="autoResize(this)" maxlength="500"></textarea><button class="btn-send" id="chatBtn-${folio}" onclick="enviarMensaje('${folio}')"><i class="fas fa-paper-plane"></i> Enviar</button></div><div class="chat-sending" id="chatSending-${folio}"><i class="fas fa-spinner fa-spin"></i> Enviando...</div><p class="chat-note"><i class="fas fa-info-circle"></i> El equipo responderá a la brevedad.</p></div>`
+    : `<div class="chat-locked"><i class="fas fa-lock"></i> Mensajes disponibles solo en trámites activos.</div>`;
+  const docs = t.documentos||[];
+  const docsHTML = renderDocs(docs, folio, puedeChat);
+  const estaCompletado = ESTADOS_OK.includes(t.estado);
+  const encuestaHTML = (estaCompletado && !encuestasRealizadas.includes(folio) && ['solicitud','denuncia','contacto'].includes(t.tipo))
+    ? `<div class="encuesta-card"><p><i class="fas fa-star"></i> <strong>¿Cómo fue tu experiencia?</strong></p><a href="/tramite/${folio}/encuesta" class="btn-encuesta"><i class="fas fa-star"></i> Evaluar este trámite</a></div>` : '';
+  const respuestaHTML = (t.tipo==='contacto' && t.respuesta)
+    ? `<div style="margin-top:1rem;padding:1rem;background:var(--tr-info-light);border-radius:var(--tr-radius-sm);border-left:3px solid var(--tr-info);"><div style="font-size:.72rem;font-weight:700;color:var(--tr-info);margin-bottom:.4rem;"><i class="fas fa-headset"></i> RESPUESTA DEL EQUIPO MUNICIPAL</div><div style="font-size:.88rem;color:var(--tr-gray-800);">${escapeHtml(t.respuesta)}</div></div>` : '';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label"><i class="fas fa-hashtag"></i> Folio</div><div class="detail-value">${escapeHtml(t.folio)}</div></div>
+      <div class="detail-item"><div class="detail-label"><i class="fas fa-tag"></i> Tipo</div><div class="detail-value">${escapeHtml(tipoLabel)}</div></div>
+      <div class="detail-item"><div class="detail-label"><i class="fas fa-concierge-bell"></i> Servicio</div><div class="detail-value">${escapeHtml(servicio)}</div></div>
+      <div class="detail-item"><div class="detail-label"><i class="fas fa-info-circle"></i> Estado</div><div class="detail-value">${estadoBadge}</div></div>
+      <div class="detail-item"><div class="detail-label"><i class="fas fa-calendar-alt"></i> Creado</div><div class="detail-value">${escapeHtml(fechaDisplay)}</div></div>
+      <div class="detail-item"><div class="detail-label"><i class="fas fa-sync-alt"></i> Actualizado</div><div class="detail-value">${escapeHtml(((t.fecha_actualizacion||t.fecha_creacion)||'—').slice(0,16).replace('T',' '))}</div></div>
+      ${t.descripcion ? `<div class="detail-item" style="grid-column:1/-1"><div class="detail-label"><i class="fas fa-align-left"></i> Descripción</div><div class="detail-value" style="font-weight:400;font-size:.93rem;line-height:1.6;">${escapeHtml(t.descripcion)}</div></div>` : ''}
+    </div>
+    <p class="section-title"><i class="fas fa-route"></i> Progreso del trámite</p>
+    ${buildTimeline(t)}${encuestaHTML}${respuestaHTML}
+    <p class="section-title"><i class="fas fa-paperclip"></i> Documentos adjuntos</p>
+    ${docsHTML}
+    <p class="section-title"><i class="fas fa-history"></i> Historial de actividad</p>
+    <div class="historial-list" id="histList-${folio}">${histHTML}</div>
+    ${chatHTML}`;
+  document.getElementById('detalleModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
 
-// Función auxiliar para escapar HTML y prevenir XSS
 function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-        return c;
-    });
+  if (!str) return '';
+  return str.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;');
 }
 
-function cerrarModal() {
-    document.getElementById('detalleModal').classList.remove('active');
-    document.body.style.overflow = '';
-}
-window.addEventListener('click', e => {
-    if (e.target === document.getElementById('detalleModal')) cerrarModal();
-});
+function cerrarModal() { document.getElementById('detalleModal').classList.remove('active'); document.body.style.overflow = ''; }
+window.addEventListener('click', e => { if (e.target === document.getElementById('detalleModal')) cerrarModal(); });
 
-// ── Subir documentos ──────────────────────────────────────────────────────
 function handleDrop(event, folio) {
-    event.preventDefault();
-    document.getElementById(`uploadArea-${folio}`)?.classList.remove('drag-over');
-    const files = event.dataTransfer?.files;
-    if (files && files.length) subirArchivosLista(files, folio);
+  event.preventDefault();
+  document.getElementById(`uploadArea-${folio}`)?.classList.remove('drag-over');
+  if (event.dataTransfer?.files?.length) subirArchivosLista(event.dataTransfer.files, folio);
 }
-function subirArchivos(input, folio) {
-    if (input.files && input.files.length) subirArchivosLista(input.files, folio);
-}
+function subirArchivos(input, folio) { if (input.files?.length) subirArchivosLista(input.files, folio); }
 
 async function subirArchivosLista(files, folio) {
-    const progressWrap = document.getElementById(`uploadProgress-${folio}`);
-    const progressBar  = document.getElementById(`progressBar-${folio}`);
-    for (const file of files) {
-        const t = tramitesData.find(x => x.folio === folio);
-        if ((t?.documentos || []).length >= MAX_DOCS) { alert(`Límite de ${MAX_DOCS} documentos alcanzado.`); break; }
-        progressWrap?.classList.add('visible');
-        if (progressBar) progressBar.style.width = '30%';
-        const formData = new FormData();
-        formData.append('archivo', file);
-        try {
-            if (progressBar) progressBar.style.width = '60%';
-            const res  = await fetch(`/api/tramite/${folio}/documentos`, {method:'POST', body:formData});
-            const data = await res.json();
-            if (progressBar) progressBar.style.width = '100%';
-            setTimeout(() => { progressWrap?.classList.remove('visible'); if (progressBar) progressBar.style.width = '0%'; }, 600);
-            if (data.success) {
-                if (t) { if (!t.documentos) t.documentos = []; t.documentos.push(data.documento); }
-                const listEl = document.getElementById(`docsList-${folio}`);
-                if (listEl) {
-                    const empty = listEl.querySelector('.docs-empty'); if (empty) empty.remove();
-                    const nuevoItem = document.createElement('div');
-                    nuevoItem.className = 'doc-item';
-                    nuevoItem.id = `doc-${data.documento.id}`;
-                    nuevoItem.innerHTML = `
-                        <div class="doc-icon"><i class="fas ${iconoDoc(data.documento.extension)}"></i></div>
-                        <div class="doc-info">
-                            <div class="doc-nombre">${escapeHtml(data.documento.nombre)}</div>
-                            <div class="doc-meta"><i class="fas fa-clock"></i> Ahora</div>
-                        </div>
-                        <div class="doc-actions">
-                            <a href="/uploads/documentos/${escapeHtml(data.documento.archivo)}" target="_blank" class="btn-doc btn-doc-view"><i class="fas fa-eye"></i></a>
-                            <button class="btn-doc btn-doc-delete" onclick="eliminarDoc('${folio}','${data.documento.id}')"><i class="fas fa-trash"></i></button>
-                        </div>`;
-                    listEl.appendChild(nuevoItem);
-                    const counter = listEl.closest('.docs-section')?.querySelector('.docs-counter');
-                    if (counter) { counter.textContent = `${t.documentos.length} / ${MAX_DOCS} documentos`; if (t.documentos.length >= MAX_DOCS) counter.classList.add('lleno'); }
-                    if (data.restantes === 0) {
-                        const area = document.getElementById(`uploadArea-${folio}`);
-                        if (area) area.innerHTML = `<div class="chat-locked" style="margin:0;"><i class="fas fa-lock"></i> Límite de ${MAX_DOCS} documentos alcanzado.</div>`;
-                    }
-                }
-            } else { alert(data.error || 'Error al subir.'); }
-        } catch { alert('Error de conexión.'); progressWrap?.classList.remove('visible'); }
-    }
-    const inp = document.getElementById(`fileInput-${folio}`); if (inp) inp.value = '';
+  const pw = document.getElementById(`uploadProgress-${folio}`), pb = document.getElementById(`progressBar-${folio}`);
+  for (const file of files) {
+    const t = tramitesData.find(x => x.folio === folio);
+    if ((t?.documentos||[]).length >= MAX_DOCS) { alert(`Límite de ${MAX_DOCS} documentos.`); break; }
+    pw?.classList.add('visible'); if (pb) pb.style.width = '30%';
+    const fd = new FormData(); fd.append('archivo', file);
+    try {
+      if (pb) pb.style.width = '60%';
+      const res = await fetch(`/api/tramite/${folio}/documentos`, {method:'POST',body:fd});
+      const data = await res.json();
+      if (pb) pb.style.width = '100%';
+      setTimeout(() => { pw?.classList.remove('visible'); if (pb) pb.style.width='0%'; }, 600);
+      if (data.success) {
+        if (t) { if (!t.documentos) t.documentos=[]; t.documentos.push(data.documento); }
+        const listEl = document.getElementById(`docsList-${folio}`);
+        if (listEl) {
+          listEl.querySelector('.docs-empty')?.remove();
+          const item = document.createElement('div'); item.className='doc-item'; item.id=`doc-${data.documento.id}`;
+          item.innerHTML = `<div class="doc-icon"><i class="fas ${iconoDoc(data.documento.extension)}"></i></div><div class="doc-info"><div class="doc-nombre">${escapeHtml(data.documento.nombre)}</div><div class="doc-meta"><i class="fas fa-clock"></i> Ahora</div></div><div class="doc-actions"><a href="/uploads/documentos/${escapeHtml(data.documento.archivo)}" target="_blank" class="btn-doc btn-doc-view"><i class="fas fa-eye"></i></a><button class="btn-doc btn-doc-delete" onclick="eliminarDoc('${folio}','${data.documento.id}')"><i class="fas fa-trash"></i></button></div>`;
+          listEl.appendChild(item);
+          const counter = listEl.closest('.docs-section')?.querySelector('.docs-counter');
+          if (counter) { counter.textContent=`${t.documentos.length} / ${MAX_DOCS} documentos`; if (t.documentos.length>=MAX_DOCS) counter.classList.add('lleno'); }
+        }
+      } else { alert(data.error||'Error al subir.'); }
+    } catch { alert('Error de conexión.'); pw?.classList.remove('visible'); }
+  }
+  const inp = document.getElementById(`fileInput-${folio}`); if (inp) inp.value='';
 }
 
 async function eliminarDoc(folio, docId) {
-    if (!confirm('¿Eliminar este documento?')) return;
-    try {
-        const res  = await fetch(`/api/tramite/${folio}/documentos/${docId}`, {method:'DELETE'});
-        const data = await res.json();
-        if (data.success) {
-            document.getElementById(`doc-${docId}`)?.remove();
-            const t = tramitesData.find(x => x.folio === folio);
-            if (t) t.documentos = (t.documentos || []).filter(d => d.id !== docId);
-            const listEl = document.getElementById(`docsList-${folio}`);
-            if (listEl && t) {
-                const counter = listEl.closest('.docs-section')?.querySelector('.docs-counter');
-                if (counter) { counter.textContent = `${t.documentos.length} / ${MAX_DOCS} documentos`; counter.classList.remove('lleno'); }
-                if (t.documentos.length === 0) listEl.innerHTML = '<div class="docs-empty"><i class="fas fa-paperclip" style="opacity:.3;margin-right:.4rem;"></i> Sin documentos adjuntos.</div>';
-            }
-        } else { alert(data.error || 'Error al eliminar.'); }
-    } catch { alert('Error de conexión.'); }
+  if (!confirm('¿Eliminar este documento?')) return;
+  try {
+    const data = await (await fetch(`/api/tramite/${folio}/documentos/${docId}`,{method:'DELETE'})).json();
+    if (data.success) {
+      document.getElementById(`doc-${docId}`)?.remove();
+      const t = tramitesData.find(x => x.folio===folio);
+      if (t) t.documentos=(t.documentos||[]).filter(d=>d.id!==docId);
+      const listEl = document.getElementById(`docsList-${folio}`);
+      if (listEl && t) {
+        const counter = listEl.closest('.docs-section')?.querySelector('.docs-counter');
+        if (counter) { counter.textContent=`${t.documentos.length} / ${MAX_DOCS} documentos`; counter.classList.remove('lleno'); }
+        if (!t.documentos.length) listEl.innerHTML='<div class="docs-empty"><i class="fas fa-paperclip" style="opacity:.3;margin-right:.4rem;"></i> Sin documentos adjuntos.</div>';
+      }
+    } else { alert(data.error||'Error al eliminar.'); }
+  } catch { alert('Error de conexión.'); }
 }
 
-// ── Chat ──────────────────────────────────────────────────────────────────
-function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
 
 async function enviarMensaje(folio) {
-    const inputEl   = document.getElementById(`chatInput-${folio}`);
-    const btnEl     = document.getElementById(`chatBtn-${folio}`);
-    const sendingEl = document.getElementById(`chatSending-${folio}`);
-    const texto     = inputEl?.value?.trim();
-    if (!texto || texto.length < 3) { inputEl.style.borderColor = 'var(--danger)'; setTimeout(() => inputEl.style.borderColor = '', 2000); return; }
-    btnEl.disabled = true; sendingEl.classList.add('visible');
-    try {
-        const res  = await fetch(`/api/tramite/${folio}/mensaje`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({texto})});
-        const data = await res.json();
-        if (data.success) {
-            const lista = document.getElementById(`histList-${folio}`);
-            const ahora = new Date().toISOString().slice(0, 16).replace('T', ' ');
-            const item  = document.createElement('div');
-            item.className = 'hist-item msg-ciudadano';
-            item.innerHTML = `
-                <div class="hist-icon hi-ciudadano"><i class="fas fa-user"></i></div>
-                <div class="hist-body">
-                    <div class="hist-desc">${escapeHtml(texto)}</div>
-                    <div class="hist-meta" style="justify-content:flex-end;"><i class="fas fa-clock"></i>${ahora}&nbsp;·&nbsp;<i class="fas fa-user"></i>Tú</div>
-                </div>`;
-            lista?.appendChild(item);
-            item.scrollIntoView({behavior:'smooth', block:'nearest'});
-            const t = tramitesData.find(x => x.folio === folio);
-            if (t) { if (!t.historial) t.historial = []; t.historial.push(data.mensaje); }
-            inputEl.value = ''; inputEl.style.height = '44px';
-        } else { alert(data.error || 'Error al enviar.'); }
-    } catch { alert('Error de conexión.'); }
-    finally { btnEl.disabled = false; sendingEl.classList.remove('visible'); }
+  const inputEl=document.getElementById(`chatInput-${folio}`), btnEl=document.getElementById(`chatBtn-${folio}`), sendingEl=document.getElementById(`chatSending-${folio}`);
+  const texto=inputEl?.value?.trim();
+  if (!texto||texto.length<3) { inputEl.style.borderColor='var(--tr-danger)'; setTimeout(()=>inputEl.style.borderColor='',2000); return; }
+  btnEl.disabled=true; sendingEl.classList.add('visible');
+  try {
+    const data=await (await fetch(`/api/tramite/${folio}/mensaje`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({texto})})).json();
+    if (data.success) {
+      const lista=document.getElementById(`histList-${folio}`), ahora=new Date().toISOString().slice(0,16).replace('T',' ');
+      const item=document.createElement('div'); item.className='hist-item msg-ciudadano';
+      item.innerHTML=`<div class="hist-icon hi-ciudadano"><i class="fas fa-user"></i></div><div class="hist-body"><div class="hist-desc">${escapeHtml(texto)}</div><div class="hist-meta" style="justify-content:flex-end;"><i class="fas fa-clock"></i>${ahora}&nbsp;·&nbsp;<i class="fas fa-user"></i>Tú</div></div>`;
+      lista?.appendChild(item); item.scrollIntoView({behavior:'smooth',block:'nearest'});
+      const t=tramitesData.find(x=>x.folio===folio);
+      if (t) { if (!t.historial) t.historial=[]; t.historial.push(data.mensaje); }
+      inputEl.value=''; inputEl.style.height='44px';
+    } else { alert(data.error||'Error al enviar.'); }
+  } catch { alert('Error de conexión.'); }
+  finally { btnEl.disabled=false; sendingEl.classList.remove('visible'); }
 }
 </script>
 {% endblock %}

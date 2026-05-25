@@ -1,0 +1,829 @@
+<!-- ================================================================
+     SECCIÓN: EQUIPO DE DESARROLLADORES
+     Archivo: templates/components/developers.html
+================================================================ -->
+
+<section class="dev-section" id="desarrolladores">
+
+    <!-- Fondo decorativo -->
+    <div class="dev-bg">
+        <div class="dev-bg-orb da"></div>
+        <div class="dev-bg-orb db"></div>
+        <div class="dev-bg-dots"></div>
+    </div>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="dev-header">
+            <div class="dev-eyebrow anim">
+                <i class="fas fa-code"></i>
+                <span>Equipo Técnico · 2025–2026</span>
+            </div>
+            <h2 class="dev-title anim">
+                Nuestro <em class="dev-accent">Equipo</em><br>de Desarrolladores
+            </h2>
+            <p class="dev-subtitle anim">
+                Este sitio web fue creado por estudiantes del
+                <strong>Politecnico Manuel Acevedo Serrano</strong>
+                como proyecto educativo de Técnico en Informática.
+            </p>
+            <div class="dev-divider anim">
+                <span></span><i class="fas fa-laptop-code"></i><span></span>
+            </div>
+        </div>
+
+        <!-- GRID -->
+        <div class="dev-grid">
+
+            <!-- Sebastián Durán Peralta -->
+            <div class="dev-card anim"
+                 data-nombre="Sebastián Durán Peralta"
+                 data-cargo="Desarrollador Web Junior · Líder del Proyecto"
+                 data-num="01"
+                 data-iniciales="SD"
+                 data-foto="{{ url_for('static', filename='img/desarrolladores/sebastian.jpeg') }}"
+                 data-bio="Desarrollador principal del proyecto. Responsable del diseño y construcción del sistema web utilizando Python y Flask, integración de bases de datos, diseño de paneles administrativos, formularios dinámicos y control de versiones con Git y GitHub."
+                 data-tags="Python,Flask,Git,SQL,HTML,CSS">
+                <div class="dev-avatar-wrap">
+                    <div class="dev-avatar">
+                        <img src="{{ url_for('static', filename='img/desarrolladores/sebastian.jpeg') }}"
+                             alt="Sebastián Durán"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <span style="display:none">SD</span>
+                    </div>
+                    <div class="dev-ring"></div>
+                    <div class="dev-num">01</div>
+                    <!-- Badge de líder ELIMINADO de Sebastián -->
+                </div>
+                <div class="dev-info">
+                    <div class="dev-name">Sebastián Durán Peralta</div>
+                    <div class="dev-role"><i class="fas fa-star"></i> Desarrollador Web Junior</div>
+                </div>
+                <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
+            </div>
+
+            <!-- Perla Mercedes Serrano Tobía -->
+            <div class="dev-card anim"
+                 data-nombre="Perla Mercedes Serrano Tobía"
+                 data-cargo="Técnica en Informática"
+                 data-num="02"
+                 data-iniciales="PS"
+                 data-foto=""
+                 data-bio="Técnica en Informática con conocimientos en bases de datos, XAMPP y programación en Python. Participó en el diseño y estructura de la información del sistema, apoyando en la organización y gestión de datos del proyecto."
+                 data-tags="Python,XAMPP,Bases de Datos">
+                <div class="dev-avatar-wrap">
+                    <div class="dev-avatar">
+                        <span>PS</span>
+                    </div>
+                    <div class="dev-ring"></div>
+                    <div class="dev-num">02</div>
+                    <div class="dev-lead-badge">Líder</div>  <!-- Badge de líder AGREGADO a Perla -->
+                </div>
+                <div class="dev-info">
+                    <div class="dev-name">Perla Mercedes Serrano Tobía</div>
+                    <div class="dev-role"><i class="fas fa-star"></i> Técnica en Informática</div>
+                </div>
+                <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
+            </div>
+
+            <!-- Cristian Evaristo Peña Mera -->
+            <div class="dev-card anim"
+                 data-nombre="Cristian Evaristo Peña Mera"
+                 data-cargo="Técnico en Informática"
+                 data-num="03"
+                 data-iniciales="CP"
+                 data-foto=""
+                 data-bio="Técnico en Informática con conocimientos en desarrollo web y programación. Participó en la construcción de vistas y funcionalidades del sistema, aportando en el desarrollo front-end y back-end del proyecto."
+                 data-tags="Desarrollo Web,Programación">
+                <div class="dev-avatar-wrap">
+                    <div class="dev-avatar">
+                        <span>CP</span>
+                    </div>
+                    <div class="dev-ring"></div>
+                    <div class="dev-num">03</div>
+                </div>
+                <div class="dev-info">
+                    <div class="dev-name">Cristian Evaristo Peña Mera</div>
+                    <div class="dev-role"><i class="fas fa-star"></i> Técnico en Informática</div>
+                </div>
+                <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
+            </div>
+
+           <!-- Allan Enmanuel Rosario Suárez -->
+<div class="dev-card anim"
+     data-nombre="Allan Enmanuel Rosario Suárez"
+     data-cargo="Técnico en Informática"
+     data-num="04"
+     data-iniciales="AR"
+     data-foto="{{ url_for('static', filename='img/desarrolladores/allan.png') }}"
+     data-bio="Técnico en Informática con conocimientos en hardware y ciberseguridad básica. Responsable del soporte técnico, configuración del entorno y aspectos de seguridad del sistema durante el desarrollo del proyecto."
+     data-tags="Hardware,Ciberseguridad,Soporte Técnico">
+    <div class="dev-avatar-wrap">
+        <div class="dev-avatar">
+            <img src="{{ url_for('static', filename='img/desarrolladores/allan.png') }}"
+                 alt="Allan Enmanuel Rosario Suárez"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <span style="display:none">AR</span>
+        </div>
+        <div class="dev-ring"></div>
+        <div class="dev-num">04</div>
+    </div>
+    <div class="dev-info">
+        <div class="dev-name">Allan Enmanuel Rosario Suárez</div>
+        <div class="dev-role"><i class="fas fa-star"></i> Técnico en Informática</div>
+    </div>
+    <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
+</div>
+
+            <!-- Raimy Junior Delgado Marte -->
+            <div class="dev-card anim"
+                 data-nombre="Raimy Junior Delgado Marte"
+                 data-cargo="Técnico en Informática"
+                 data-num="05"
+                 data-iniciales="RD"
+                 data-foto=""
+                 data-bio="Técnico en Informática con participación activa en el desarrollo, pruebas y documentación del sistema. Apoyó en la validación de funcionalidades y en la revisión de la experiencia de usuario del proyecto."
+                 data-tags="Testing,Documentación,QA">
+                <div class="dev-avatar-wrap">
+                    <div class="dev-avatar">
+                        <span>RD</span>
+                    </div>
+                    <div class="dev-ring"></div>
+                    <div class="dev-num">05</div>
+                </div>
+                <div class="dev-info">
+                    <div class="dev-name">Raimy Junior Delgado Marte</div>
+                    <div class="dev-role"><i class="fas fa-star"></i> Técnico en Informática</div>
+                </div>
+                <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
+            </div>
+
+            <!-- Anthony Baldera Tavarez -->
+            <div class="dev-card anim"
+                 data-nombre="Anthony Baldera Tavarez"
+                 data-cargo="Técnico en Informática"
+                 data-num="06"
+                 data-iniciales="AB"
+                 data-foto=""
+                 data-bio="Técnico en Informática con contribución en el diseño visual, pruebas del sistema y verificación de la experiencia de usuario. Participó en la revisión del diseño y en las pruebas finales del proyecto educativo."
+                 data-tags="Diseño UI,Pruebas,UX">
+                <div class="dev-avatar-wrap">
+                    <div class="dev-avatar">
+                        <span>AB</span>
+                    </div>
+                    <div class="dev-ring"></div>
+                    <div class="dev-num">06</div>
+                </div>
+                <div class="dev-info">
+                    <div class="dev-name">Anthony Baldera Tavarez</div>
+                    <div class="dev-role"><i class="fas fa-star"></i> Técnico en Informática</div>
+                </div>
+                <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER BANNER -->
+        <div class="dev-footer-banner anim">
+            <div class="dfb-left">
+                <div class="dfb-icon"><i class="fas fa-graduation-cap"></i></div>
+            </div>
+            <div class="dfb-center">
+                <p>Proyecto académico desarrollado en el <strong>Politecnico Manuel Acevedo Serrano</strong> · La Vega, República Dominicana · 2025–2026</p>
+            </div>
+            <div class="dfb-right">
+                <div class="dfb-badge">
+                    <span class="dfb-num">6</span>
+                    <span class="dfb-label">Desarrolladores<br>activos</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<style>
+/* ================================================================
+   DESARROLLADORES — estilos
+================================================================ */
+.dev-section {
+    padding: 7rem 0;
+    background: white;
+    position: relative;
+    overflow: visible;
+    z-index: 1;
+}
+
+/* Fondo decorativo */
+.dev-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.dev-bg-orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); opacity: .05;
+}
+.dev-bg-orb.da {
+    width: 450px; height: 450px;
+    background: var(--verde);
+    top: -150px; right: -150px;
+    animation: devOrbA 18s ease-in-out infinite;
+}
+.dev-bg-orb.db {
+    width: 350px; height: 350px;
+    background: var(--dorado);
+    bottom: -100px; left: -100px;
+    animation: devOrbB 22s ease-in-out infinite;
+}
+.dev-bg-dots {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(30,58,15,.06) 1px, transparent 1px);
+    background-size: 30px 30px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 50%, black, transparent);
+}
+@keyframes devOrbA { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-25px,20px) scale(1.07)} }
+@keyframes devOrbB { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-20px) scale(1.09)} }
+
+/* HEADER */
+.dev-header { text-align: center; margin-bottom: 3.5rem; }
+
+.dev-eyebrow {
+    display: inline-flex; align-items: center; gap: .65rem;
+    background: var(--verde-xlight);
+    border: 1px solid rgba(74,122,40,.2);
+    padding: .42rem 1.2rem;
+    border-radius: var(--r-pill);
+    font-size: .75rem; font-weight: 700;
+    color: var(--verde);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 1.3rem;
+}
+
+.dev-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-weight: 700; color: var(--texto);
+    line-height: 1.08; margin-bottom: 1rem;
+}
+.dev-accent {
+    font-style: italic; color: var(--verde);
+    position: relative; display: inline-block;
+}
+.dev-accent::after {
+    content: ''; position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--dorado), transparent);
+    border-radius: 3px;
+}
+
+.dev-subtitle {
+    color: var(--gris-500); font-size: .93rem;
+    max-width: 620px; margin: 0 auto 2rem; line-height: 1.7;
+}
+
+.dev-divider {
+    display: flex; align-items: center; justify-content: center;
+    gap: 1rem; margin: 0 auto; max-width: 280px;
+}
+.dev-divider span {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--verde-soft));
+}
+.dev-divider span:last-child {
+    background: linear-gradient(90deg, var(--verde-soft), transparent);
+}
+.dev-divider i {
+    color: var(--dorado); font-size: .9rem;
+    animation: devIconPulse 3s ease-in-out infinite;
+}
+@keyframes devIconPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+
+/* GRID */
+.dev-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem;
+    margin-bottom: 3rem;
+}
+
+/* CARD */
+.dev-card {
+    position: relative;
+    background: var(--crema);
+    border-radius: var(--r-block);
+    padding: 1.4rem 1rem 1.2rem;
+    border: 1px solid var(--gris-100);
+    display: flex; flex-direction: column;
+    align-items: center; gap: .9rem;
+    text-align: center; overflow: hidden;
+    transition: transform .38s var(--spring), box-shadow .38s, border-color .25s, background .25s;
+    cursor: pointer;
+}
+.dev-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--verde), var(--dorado));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .4s var(--spring);
+}
+.dev-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--sh-md);
+    border-color: rgba(74,122,40,.2);
+    background: white;
+}
+.dev-card:hover::before { transform: scaleX(1); }
+
+/* AVATAR */
+.dev-avatar-wrap {
+    position: relative; width: 72px; height: 72px; flex-shrink: 0;
+}
+.dev-avatar {
+    position: relative; z-index: 1;
+    width: 100%; height: 100%;
+    background: var(--verde-xlight);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    transition: background .3s, transform .4s var(--spring);
+}
+.dev-avatar img {
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: 50%;
+    object-position: top;
+}
+
+.dev-avatar span {
+    font-weight: 800; font-size: 1.15rem;
+    color: var(--verde);
+    font-family: 'Cormorant Garamond', serif;
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+}
+.dev-card:hover .dev-avatar {
+    background: var(--verde);
+    transform: scale(1.08) rotate(-4deg);
+}
+.dev-card:hover .dev-avatar span { color: white; }
+
+.dev-ring {
+    position: absolute; inset: -4px; border-radius: 50%;
+    border: 2px dashed var(--verde-soft);
+    opacity: .4;
+    transition: opacity .3s, border-color .3s;
+    animation: devRingSpin 12s linear infinite;
+}
+.dev-card:hover .dev-ring { opacity: 1; border-color: var(--dorado); border-style: solid; }
+@keyframes devRingSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+.dev-num {
+    position: absolute; top: -6px; right: -2px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: .65rem; font-weight: 700;
+    color: white; background: var(--dorado);
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(184,134,11,.35);
+    z-index: 2;
+    transition: transform .3s var(--spring);
+}
+.dev-card:hover .dev-num { transform: scale(1.15); }
+
+.dev-lead-badge {
+    position: absolute; bottom: -8px; left: 50%;
+    transform: translateX(-50%);
+    font-size: .55rem; font-weight: 800;
+    color: #1a1000; background: var(--dorado);
+    padding: .15rem .5rem; border-radius: var(--r-pill);
+    white-space: nowrap; z-index: 3;
+    letter-spacing: .05em; text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(184,134,11,.35);
+}
+
+.dev-info { flex: 1; }
+.dev-name {
+    font-weight: 700; font-size: .88rem;
+    color: var(--texto); margin-bottom: .3rem;
+    line-height: 1.2; transition: color .25s;
+}
+.dev-card:hover .dev-name { color: var(--verde); }
+.dev-role {
+    font-size: .68rem; color: var(--gris-500);
+    font-weight: 600; text-transform: uppercase;
+    letter-spacing: .8px;
+    display: flex; align-items: center; justify-content: center; gap: .3rem;
+    transition: color .25s;
+}
+.dev-role i { color: var(--dorado); font-size: .55rem; transition: transform .3s var(--spring); }
+.dev-card:hover .dev-role { color: var(--verde); }
+.dev-card:hover .dev-role i { transform: scale(1.4) rotate(15deg); }
+
+.dev-arrow {
+    color: var(--gris-300); font-size: .75rem;
+    transition: color .25s, transform .3s var(--spring);
+}
+.dev-card:hover .dev-arrow { color: var(--verde); transform: translateX(3px); }
+
+/* FOOTER BANNER */
+.dev-footer-banner {
+    background: linear-gradient(135deg, var(--verde-xlight) 0%, #FFF9EE 100%);
+    border: 1px solid rgba(74,122,40,.15);
+    border-radius: var(--r-block);
+    padding: 2rem 2.5rem;
+    display: flex; align-items: center; gap: 2rem;
+    position: relative; overflow: hidden;
+    transition: transform .35s var(--spring), box-shadow .35s;
+}
+.dev-footer-banner:hover { transform: translateY(-3px); box-shadow: var(--sh-sm); }
+.dev-footer-banner::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; width: 4px; height: 100%;
+    background: linear-gradient(to bottom, var(--verde), var(--dorado));
+}
+.dfb-left { flex-shrink: 0; }
+.dfb-icon {
+    width: 56px; height: 56px;
+    background: var(--verde); border-radius: var(--r-card);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 1.3rem;
+    box-shadow: 0 4px 18px rgba(30,58,15,.3);
+    animation: dfbPulse 3.5s ease-in-out infinite;
+}
+@keyframes dfbPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+.dfb-center { flex: 1; }
+.dfb-center p { color: var(--gris-700); font-size: .9rem; line-height: 1.7; margin: 0; }
+.dfb-center strong { color: var(--verde); }
+.dfb-right { flex-shrink: 0; }
+.dfb-badge {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--verde); border-radius: var(--r-card);
+    padding: 1rem 1.4rem;
+    box-shadow: 0 4px 18px rgba(30,58,15,.25);
+    min-width: 80px; text-align: center;
+}
+.dfb-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem; font-weight: 700;
+    color: white; line-height: 1;
+}
+.dfb-label {
+    font-size: .65rem; color: rgba(255,255,255,.75);
+    font-weight: 600; text-transform: uppercase;
+    letter-spacing: .8px; margin-top: .2rem; line-height: 1.3;
+}
+
+/* ================================================================
+   MODAL DE DESARROLLADOR
+================================================================ */
+.dev-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,18,6,.75);
+    z-index: 999999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+    opacity: 0; visibility: hidden;
+    transition: opacity .35s, visibility .35s;
+}
+.dev-modal-overlay.active { opacity: 1; visibility: visible; }
+
+.dev-modal {
+    background: white; border-radius: 2rem;
+    max-width: 720px; width: 100%;
+    position: relative; overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,.35);
+    transform: scale(.88) translateY(30px);
+    transition: transform .45s var(--spring);
+}
+.dev-modal-overlay.active .dev-modal { transform: scale(1) translateY(0); }
+
+.dev-modal::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--verde), var(--dorado), var(--verde));
+    background-size: 200%;
+    animation: dmBorderFlow 3s linear infinite;
+    z-index: 2;
+}
+@keyframes dmBorderFlow { from{background-position:0% 50%} to{background-position:200% 50%} }
+
+.dm-close {
+    position: absolute; top: 1.2rem; right: 1.2rem;
+    width: 40px; height: 40px; border-radius: 50%;
+    border: none; background: var(--gris-100);
+    color: var(--gris-600); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; z-index: 10;
+    transition: background .2s, color .2s, transform .3s var(--spring);
+}
+.dm-close:hover { background: #fee2e2; color: #dc2626; transform: rotate(90deg) scale(1.1); }
+
+.dm-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 2px solid var(--gris-200);
+    background: white; color: var(--verde);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; z-index: 10;
+    transition: all .25s var(--spring); box-shadow: var(--sh-sm);
+}
+.dm-prev { left: 1rem; }
+.dm-next { right: 1rem; }
+.dm-nav:hover {
+    background: var(--verde); color: white; border-color: var(--verde);
+    transform: translateY(-50%) scale(1.12);
+    box-shadow: 0 6px 20px rgba(30,58,15,.3);
+}
+
+.dm-body {
+    display: flex; gap: 2.5rem;
+    padding: 3rem 3rem 2.5rem;
+    align-items: center;
+}
+.dm-body.animating {
+    animation: dmSlideIn .3s var(--spring) both;
+}
+@keyframes dmSlideIn { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+
+.dm-foto-wrap {
+    position: relative; flex-shrink: 0;
+    width: 180px; height: 180px;
+}
+.dm-foto-ring {
+    position: absolute; inset: -8px; border-radius: 50%;
+    border: 2px dashed var(--verde-soft);
+    opacity: .5; animation: devRingSpin 10s linear infinite;
+}
+.dm-foto-inner {
+    width: 100%; height: 100%; border-radius: 50%;
+    overflow: hidden; background: var(--verde-xlight);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem; font-weight: 800; color: var(--verde);
+    border: 4px solid white;
+    box-shadow: 0 8px 32px rgba(30,58,15,.2);
+}
+.dm-foto-inner img {
+    width: 100%; height: 100%; object-fit: cover;
+    object-position: top;
+    cursor: zoom-in;
+    transition: transform .4s var(--spring);
+}
+.dm-foto-inner img:hover { transform: scale(1.06); }
+.dm-num-badge {
+    position: absolute; bottom: 4px; right: 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: .85rem; font-weight: 700;
+    color: white; background: var(--dorado);
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 3px 10px rgba(184,134,11,.4);
+    border: 2px solid white; z-index: 2;
+}
+
+.dm-info { flex: 1; }
+.dm-eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--verde-xlight);
+    border: 1px solid rgba(74,122,40,.2);
+    padding: .3rem .9rem; border-radius: var(--r-pill);
+    font-size: .7rem; font-weight: 700; color: var(--verde);
+    text-transform: uppercase; letter-spacing: 1.2px;
+    margin-bottom: .9rem;
+}
+.dm-eyebrow i { color: var(--dorado); font-size: .65rem; }
+.dm-nombre {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 700;
+    color: var(--texto); line-height: 1.1; margin-bottom: .8rem;
+}
+.dm-divider {
+    width: 48px; height: 3px;
+    background: linear-gradient(90deg, var(--verde), var(--dorado));
+    border-radius: 3px; margin-bottom: 1rem;
+}
+.dm-bio {
+    color: var(--gris-600); font-size: .9rem;
+    line-height: 1.75; margin-bottom: 1.2rem;
+}
+.dm-tags {
+    display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.2rem;
+}
+.dm-tags span {
+    font-size: .7rem; font-weight: 600;
+    padding: .2rem .7rem; border-radius: var(--r-pill);
+    background: var(--verde-xlight); color: var(--verde);
+    border: 1px solid rgba(30,58,15,.12);
+}
+.dm-dots { display: flex; gap: .5rem; align-items: center; }
+.dm-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gris-300);
+    transition: all .3s var(--spring);
+    cursor: pointer; border: none; padding: 0;
+}
+.dm-dot.active { background: var(--verde); width: 24px; border-radius: 4px; }
+.dm-dot:hover:not(.active) { background: var(--verde-soft); }
+
+/* Lightbox */
+.dm-lightbox {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.92);
+    z-index: 9999999;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity .3s, visibility .3s;
+    cursor: zoom-out;
+}
+.dm-lightbox.active { opacity: 1; visibility: visible; }
+.dm-lightbox img {
+    max-width: 90vw; max-height: 90vh;
+    border-radius: 1rem;
+    box-shadow: 0 30px 80px rgba(0,0,0,.6);
+    transform: scale(.85);
+    transition: transform .4s var(--spring);
+    object-fit: contain;
+}
+.dm-lightbox.active img { transform: scale(1); }
+.dm-lightbox-close {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    color: white; font-size: 1.1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, transform .3s var(--spring);
+}
+.dm-lightbox-close:hover { background: rgba(255,255,255,.25); transform: rotate(90deg) scale(1.1); }
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .dev-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    .dev-section { padding: 5rem 0; }
+    .dev-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .dev-footer-banner { flex-direction: column; text-align: center; padding: 1.75rem 1.5rem; }
+    .dev-footer-banner::before { width: 100%; height: 4px; }
+    .dm-body { flex-direction: column; padding: 2.5rem 1.75rem 2rem; text-align: center; }
+    .dm-foto-wrap { width: 140px; height: 140px; }
+    .dm-foto-inner { font-size: 2.8rem; }
+    .dm-divider { margin: 0 auto 1rem; }
+    .dm-tags { justify-content: center; }
+    .dm-dots { justify-content: center; }
+    .dm-prev { left: .5rem; }
+    .dm-next { right: .5rem; }
+    .dm-nombre { font-size: 1.6rem; }
+}
+@media (max-width: 480px) {
+    .dev-grid { grid-template-columns: 1fr; }
+    .dev-card { flex-direction: row; text-align: left; padding: 1rem 1.2rem; }
+    .dev-card:hover { transform: translateX(6px); }
+    .dev-role { justify-content: flex-start; }
+}
+</style>
+
+<script>
+(function () {
+    function ready(fn) {
+        if (document.readyState !== 'loading') fn();
+        else document.addEventListener('DOMContentLoaded', fn);
+    }
+
+    ready(function () {
+        const cards = document.querySelectorAll('.dev-card[data-nombre]');
+        if (!cards.length) return;
+
+        // MODAL
+        const overlay = document.createElement('div');
+        overlay.className = 'dev-modal-overlay';
+        overlay.innerHTML = `
+            <div class="dev-modal">
+                <button class="dm-close" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+                <button class="dm-nav dm-prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+                <button class="dm-nav dm-next" aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>
+                <div class="dm-body">
+                    <div class="dm-foto-wrap">
+                        <div class="dm-foto-ring"></div>
+                        <div class="dm-foto-inner" id="dmFotoInner"></div>
+                        <div class="dm-num-badge" id="dmNumBadge">01</div>
+                    </div>
+                    <div class="dm-info">
+                        <div class="dm-eyebrow"><i class="fas fa-code"></i><span id="dmCargo">Técnico</span></div>
+                        <h3 class="dm-nombre" id="dmNombre">Nombre</h3>
+                        <div class="dm-divider"></div>
+                        <p class="dm-bio" id="dmBio"></p>
+                        <div class="dm-tags" id="dmTags"></div>
+                        <div class="dm-dots" id="dmDots"></div>
+                    </div>
+                </div>
+            </div>`;
+        document.body.appendChild(overlay);
+
+        const dmFoto  = overlay.querySelector('#dmFotoInner');
+        const dmNum   = overlay.querySelector('#dmNumBadge');
+        const dmCargo = overlay.querySelector('#dmCargo');
+        const dmNom   = overlay.querySelector('#dmNombre');
+        const dmBio   = overlay.querySelector('#dmBio');
+        const dmTags  = overlay.querySelector('#dmTags');
+        const dmDots  = overlay.querySelector('#dmDots');
+        const dmBody  = overlay.querySelector('.dm-body');
+
+        let current = 0;
+
+        // Lightbox
+        const lb = document.createElement('div');
+        lb.className = 'dm-lightbox';
+        lb.innerHTML = '<button class="dm-lightbox-close"><i class="fas fa-times"></i></button><img src="" alt="">';
+        document.body.appendChild(lb);
+        const lbImg = lb.querySelector('img');
+        lb.querySelector('.dm-lightbox-close').onclick = () => lb.classList.remove('active');
+        lb.onclick = e => { if (e.target === lb || e.target === lbImg) lb.classList.remove('active'); };
+
+        function buildDots() {
+            dmDots.innerHTML = '';
+            cards.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'dm-dot' + (i === current ? ' active' : '');
+                btn.onclick = () => goTo(i);
+                dmDots.appendChild(btn);
+            });
+        }
+
+        function fill(idx) {
+            const d = cards[idx].dataset;
+            // Foto o iniciales
+            if (d.foto && d.foto.trim()) {
+                dmFoto.innerHTML = `<img src="${d.foto}" alt="${d.nombre}">`;
+                const imgEl = dmFoto.querySelector('img');
+                if (imgEl) {
+                    imgEl.onclick = () => {
+                        lbImg.src = d.foto;
+                        lb.classList.add('active');
+                    };
+                }
+            } else {
+                dmFoto.textContent = d.iniciales || '?';
+            }
+            dmNum.textContent  = d.num || String(idx+1).padStart(2,'0');
+            dmCargo.textContent = d.cargo || '';
+            dmNom.textContent  = d.nombre || '';
+            dmBio.textContent  = d.bio || '';
+            // Tags
+            dmTags.innerHTML = '';
+            (d.tags || '').split(',').filter(Boolean).forEach(t => {
+                const sp = document.createElement('span');
+                sp.textContent = t.trim();
+                dmTags.appendChild(sp);
+            });
+            // Dots activo
+            dmDots.querySelectorAll('.dm-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === idx);
+            });
+        }
+
+        function goTo(idx) {
+            current = (idx + cards.length) % cards.length;
+            fill(current);
+            dmBody.classList.remove('animating');
+            void dmBody.offsetHeight;
+            dmBody.classList.add('animating');
+            setTimeout(() => dmBody.classList.remove('animating'), 350);
+        }
+
+        function open(idx) {
+            current = idx;
+            buildDots();
+            fill(current);
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function close() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            lb.classList.remove('active');
+        }
+
+        cards.forEach((card, i) => { card.onclick = () => open(i); });
+        overlay.querySelector('.dm-close').onclick = close;
+        overlay.querySelector('.dm-prev').onclick = () => goTo(current - 1);
+        overlay.querySelector('.dm-next').onclick = () => goTo(current + 1);
+        overlay.onclick = e => { if (e.target === overlay) close(); };
+
+        document.addEventListener('keydown', e => {
+            if (!overlay.classList.contains('active')) return;
+            if (e.key === 'Escape') close();
+            if (e.key === 'ArrowRight') goTo(current + 1);
+            if (e.key === 'ArrowLeft') goTo(current - 1);
+        });
+
+        // Swipe móvil
+        let tx = 0;
+        const modal = overlay.querySelector('.dev-modal');
+        modal.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+        modal.addEventListener('touchend', e => {
+            const diff = tx - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
+        });
+    });
+})();
+</script>

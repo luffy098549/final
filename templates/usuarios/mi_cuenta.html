@@ -2,1085 +2,585 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil — Junta Distrital Villa Cutupú</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Mi Perfil | Junta Distrital Villa Cutupú</title>
+    
+    <!-- Google Fonts + Font Awesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+    <!-- Favicon (mismo que la base) -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <meta name="google-site-verification" content="C825aIIW1OPz7yx6QOpwkGZMydoB0mFMUvEOEaaW8Ow" />
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* ================================================================
+           VARIABLES GLOBALES (desde configuración / fallback elegante)
+        ================================================================ */
+        :root {
+            --verde:        {{ config.color_primario       if config and config.color_primario       else '#1E3A0F' }};
+            --verde-med:    {{ config.color_primario_med   if config and config.color_primario_med   else '#2D5016' }};
+            --verde-light:  {{ config.color_primario_light if config and config.color_primario_light else '#4A7A28' }};
+            --verde-soft:   {{ config.color_primario_soft  if config and config.color_primario_soft  else '#7AAD4F' }};
+            --verde-xlight: {{ config.color_primario_xlight if config and config.color_primario_xlight else '#E8F3DA' }};
+            --dorado:       {{ config.color_acento         if config and config.color_acento         else '#B8860B' }};
+            --dorado-light: {{ config.color_acento_light   if config and config.color_acento_light   else '#F0D070' }};
+            --dorado-claro: #F5DFA0;
+            --crema:        {{ config.color_crema          if config and config.color_crema          else '#FAF6EE' }};
+            --texto:        {{ config.color_texto          if config and config.color_texto          else '#131A0D' }};
+            --sidebar:      {{ config.color_sidebar        if config and config.color_sidebar        else '#111827' }};
+            --gris-50: #F9FAFB; --gris-100: #F3F4F6; --gris-200: #E5E7EB;
+            --gris-300: #D1D5DB; --gris-400: #9CA3AF; --gris-500: #6B7280;
+            --gris-600: #4B5563; --gris-700: #374151; --gris-800: #1F2937;
+            --sh-xs: 0 1px 3px rgba(0,0,0,.06);
+            --sh-sm: 0 4px 14px rgba(0,0,0,.08);
+            --sh-md: 0 10px 36px rgba(0,0,0,.11);
+            --sh-lg: 0 24px 50px rgba(0,0,0,.14);
+            --sh-xl: 0 40px 80px rgba(0,0,0,.18);
+            --r-sm: .5rem; --r-card: 1rem; --r-block: 1.75rem; --r-pill: 9999px;
+            --spring:  cubic-bezier(.34,1.56,.64,1);
+            --smooth:  cubic-bezier(.2,.9,.4,1);
+            --header-h: 160px;
         }
 
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 1rem); }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
+            font-family: 'Outfit', sans-serif;
+            background: var(--crema);
+            color: var(--texto);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
-
-        /* Header */
-        .main-header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .main-header .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-logo {
-            height: 60px;
-        }
-
-        .main-nav ul {
-            display: flex;
-            gap: 1.5rem;
-            list-style: none;
-            align-items: center;
-        }
-
-        .main-nav a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-        }
-
-        /* Footer */
-        footer {
-            background: #1a1a1a;
-            color: white;
-            padding: 3rem 0 1rem;
-            margin-top: 4rem;
-        }
-
-        footer .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-info h3, .footer-links h3, .footer-contact h3 {
-            color: #2e7d5e;
-            margin-bottom: 1rem;
-        }
-
-        .footer-info a, .footer-links a, .footer-contact a {
-            color: #ccc;
-            text-decoration: none;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #333;
-            color: #666;
-        }
-
-        /* Page Perfil */
-        .page-perfil {
-            background: #f5f7fa;
-            min-height: calc(100vh - 90px);
-            padding: 2.5rem 0 4rem;
-        }
-
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-            font-size: .82rem;
-            color: #999;
-            margin-bottom: 2rem;
-        }
-
-        .breadcrumb a {
-            color: #999;
-            text-decoration: none;
-        }
-
-        .breadcrumb a:hover {
-            color: #1a3b2e;
-        }
-
-        /* Banner */
-        .profile-banner {
-            background: linear-gradient(135deg, #1a3b2e 0%, #3a5732 55%, #2B6A9E 100%);
-            border-radius: 24px;
-            padding: 2.25rem 2.5rem;
-            margin-bottom: 1.75rem;
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        }
-
-        .banner-avatar-wrap {
-            position: relative;
-            z-index: 1;
-            flex-shrink: 0;
-        }
-
-        .banner-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.22);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: #fff;
-            background: rgba(255,255,255,0.12);
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .banner-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .avatar-edit-btn {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: white;
-            color: #1a3b2e;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: .65rem;
-            cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.5);
-            transition: all .2s;
-        }
-
-        .avatar-edit-btn:hover {
-            background: #1a3b2e;
-            color: #fff;
-        }
-
-        .banner-info {
-            position: relative;
-            z-index: 1;
-            flex: 1;
-        }
-
-        .banner-nombre {
-            font-size: 1.55rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: .3rem;
-        }
-
-        .banner-email {
-            font-size: .85rem;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: .85rem;
-        }
-
-        .banner-tags {
-            display: flex;
-            gap: .45rem;
-            flex-wrap: wrap;
-        }
-
-        .tag {
-            padding: .28rem .8rem;
-            border-radius: 50px;
-            font-size: .7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .tag-ciudadano {
-            background: rgba(255,255,255,0.12);
-            color: rgba(255,255,255,0.85);
-        }
-
-        .tag-admin {
-            background: rgba(196,150,58,0.22);
-            color: #e8c87a;
-        }
-
-        .tag-superadmin {
-            background: linear-gradient(90deg, rgba(196,150,58,0.3), rgba(176,48,32,0.25));
-            color: #f0d49a;
-        }
-
-        .tag-activo {
-            background: rgba(76,175,80,0.18);
-            color: #a5d6a7;
-        }
-
-        .banner-meta {
-            position: relative;
-            z-index: 1;
-            text-align: right;
-            color: rgba(255,255,255,0.5);
-            font-size: .78rem;
-            flex-shrink: 0;
-        }
-
-        .banner-meta strong {
-            display: block;
-            color: rgba(255,255,255,0.85);
-            font-size: .92rem;
-            font-weight: 700;
-        }
-
-        /* Layout */
-        .perfil-layout {
-            display: grid;
-            grid-template-columns: 290px 1fr;
-            gap: 1.5rem;
-            align-items: start;
-        }
-
-        .perfil-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
-
-        .perfil-main {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
-
-        /* Cards */
-        .pcard {
-            background: white;
-            border-radius: 20px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            overflow: hidden;
-        }
-
-        .pcard-header {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-            gap: .7rem;
-        }
-
-        .pcard-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 7px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: .75rem;
-        }
-
-        .pi-green {
-            background: #e8f5e9;
-            color: #2e7d5e;
-        }
-
-        .pi-blue {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .pi-red {
-            background: #ffebee;
-            color: #c0392b;
-        }
-
-        .pcard-title {
-            font-size: .88rem;
-            font-weight: 700;
-            color: #333;
-            flex: 1;
-        }
-
-        .pcard-body {
-            padding: 1.5rem;
-        }
-
-        .pcard-body-sm {
-            padding: 1.1rem 1.5rem;
-        }
-
-        /* Foto */
-        .foto-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            padding: .5rem 0;
-        }
-
-        .foto-preview-grande {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            border: 3px solid #e0e0e0;
-            overflow: hidden;
-            background: #e8f5e9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #2e7d5e;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .foto-preview-grande img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .foto-overlay {
-            position: absolute;
+        body.menu-open { overflow: hidden; }
+        img { max-width:100%; height:auto; display:block; }
+        .container { max-width:1280px; margin:0 auto; padding:0 2rem; width:100%; }
+        h1,h2,h3,h4,.serif { font-family:'Cormorant Garamond',Georgia,serif; line-height:1.2; }
+        
+        /* CANVAS PARTÍCULAS */
+        #particles-canvas {
+            position: fixed;
             inset: 0;
-            background: rgba(26,46,26,0.5);
-            border-radius: 50%;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.45;
+        }
+        main { position:relative; z-index:1; animation:pageFadeIn .7s .1s both; }
+        @keyframes pageFadeIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+        
+        /* ========== HEADER ESTILOS (fijo + menú) ========== */
+        .main-header {
+            position: fixed;
+            top:0; left:0; right:0;
+            height: var(--header-h);
+            background: rgba(250,246,238,.92);
+            backdrop-filter: blur(16px) saturate(1.8);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(30,58,15,.08);
+            transition: height .35s var(--smooth), background .35s, box-shadow .35s;
+        }
+        .main-header.scrolled { height: 100px; background: rgba(250,246,238,.98); box-shadow: 0 2px 28px rgba(30,58,15,.10); border-bottom: 2px solid transparent; border-image: linear-gradient(90deg, var(--verde), var(--dorado), var(--verde)) 1; }
+        .header-container { display:flex; justify-content:space-between; align-items:center; max-width:1280px; height:100%; margin:0 auto; padding:0 2rem; }
+        .logo a { display:flex; align-items:center; text-decoration:none; }
+        .header-logo { height: 140px; width: auto; transition: all .45s var(--spring); filter: drop-shadow(0 3px 10px rgba(0,0,0,.12)); }
+        .main-header.scrolled .header-logo { height: 90px; }
+        
+        .main-nav ul { display:flex; list-style:none; gap:.2rem; align-items:center; }
+        .main-nav a, .dropdown-btn {
+            text-decoration:none; color: var(--texto); font-weight:500; font-size:.89rem;
+            padding:.4rem .72rem; border-radius:.45rem; transition: color .18s, background .18s;
+        }
+        .main-nav a:hover, .dropdown-btn:hover { color:var(--verde); background: var(--verde-xlight); }
+        .dropdown { position: relative; }
+        .dropdown-btn { background:transparent; border:none; cursor:pointer; display:flex; align-items:center; gap:0.6rem; }
+        .dropdown-menu {
+            position: absolute; top: calc(100% + 0.5rem); right:0; min-width: 240px;
+            background: white; border-radius: 1rem; box-shadow: var(--sh-lg); padding: 0.6rem 0;
+            opacity:0; visibility:hidden; transform: translateY(-10px); transition: all 0.3s var(--spring);
+            z-index: 1000; border:1px solid rgba(0,0,0,0.05);
+        }
+        .dropdown.active .dropdown-menu { opacity:1; visibility:visible; transform:translateY(0); }
+        .dropdown-menu a { display:flex; align-items:center; gap:.75rem; padding:.7rem 1.2rem; text-decoration:none; color: var(--texto); font-size:.85rem; }
+        .dropdown-menu a:hover { background: var(--verde-xlight); padding-left:1.5rem; }
+        .btn-login { border:1.5px solid var(--verde) !important; color:var(--verde) !important; border-radius:var(--r-pill) !important; font-weight:600 !important; }
+        .btn-registro-nav { background:var(--verde) !important; color:white !important; border-radius:var(--r-pill) !important; }
+        .menu-toggle { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; }
+        .mobile-menu { position:fixed; top:0; right:-110%; width:80%; max-width:320px; height:100dvh; background:white; z-index:1100; padding:5.5rem 1.5rem 2rem; transition:right .4s var(--spring); overflow-y:auto; }
+        .mobile-menu.active { right:0; }
+        .overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); z-index:1099; opacity:0; visibility:hidden; transition:opacity .3s; backdrop-filter:blur(2px); }
+        .overlay.active { opacity:1; visibility:visible; }
+        
+        /* ========== PERFIL: ESTILOS PROPIOS MEJORADOS ========== */
+        .page-perfil { padding: calc(var(--header-h) + 2.5rem) 0 4rem; }
+        .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--gris-500); margin-bottom: 1.8rem; }
+        .breadcrumb a { color: var(--gris-500); text-decoration: none; transition: color .2s; }
+        .breadcrumb a:hover { color: var(--verde); }
+        
+        /* Banner mejorado con gradiente institucional */
+        .profile-banner {
+            background: linear-gradient(135deg, var(--verde) 0%, var(--verde-med) 45%, var(--dorado) 100%);
+            border-radius: 28px;
+            padding: 2rem 2.2rem;
+            margin-bottom: 2rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity .2s;
-            color: #fff;
-            font-size: .8rem;
-            font-weight: 600;
-            gap: .4rem;
-        }
-
-        .foto-preview-grande:hover .foto-overlay {
-            opacity: 1;
-        }
-
-        .foto-input-hidden {
-            display: none;
-        }
-
-        .foto-acciones {
-            display: flex;
-            gap: .5rem;
+            gap: 2rem;
             flex-wrap: wrap;
-            justify-content: center;
+            box-shadow: var(--sh-lg);
+            transition: transform 0.3s var(--spring);
         }
-
-        .btn-foto-subir {
-            height: 36px;
-            padding: 0 1rem;
-            background: #1a3b2e;
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: .8rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
+        .banner-avatar-wrap { position: relative; flex-shrink:0; }
+        .banner-avatar {
+            width: 90px; height: 90px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.35);
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.15); font-size: 2rem; font-weight: 800; color: white;
+            cursor: pointer; overflow: hidden; transition: transform 0.2s;
+        }
+        .banner-avatar:hover { transform: scale(1.02); }
+        .avatar-edit-btn {
+            position: absolute; bottom: 0; right: 0; width: 30px; height: 30px;
+            background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: var(--verde); font-size: 0.75rem; cursor: pointer; border: 2px solid rgba(255,255,255,0.6);
             transition: all .2s;
         }
-
-        .btn-foto-subir:hover {
-            background: #2e7d5e;
-            transform: translateY(-1px);
+        .avatar-edit-btn:hover { background: var(--dorado); color: white; }
+        .banner-info { flex:1; }
+        .banner-nombre { font-size: 1.8rem; font-weight: 800; color: white; margin-bottom: 0.3rem; letter-spacing: -0.3px; }
+        .banner-email { font-size: 0.85rem; color: rgba(255,255,255,0.75); margin-bottom: 0.8rem; }
+        .banner-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .tag {
+            padding: 0.25rem 0.9rem; border-radius: 50px; font-size: 0.7rem; font-weight: 700;
+            background: rgba(255,255,255,0.15); color: white; backdrop-filter: blur(4px);
         }
-
-        .btn-foto-eliminar {
-            height: 36px;
-            padding: 0 1rem;
-            background: #ffebee;
-            color: #c0392b;
-            border: 1px solid rgba(192,57,43,0.2);
-            border-radius: 12px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: .8rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            transition: all .2s;
+        .banner-meta { text-align: right; color: rgba(255,255,255,0.65); font-size: 0.75rem; }
+        .banner-meta strong { display: block; color: white; font-size: 0.9rem; }
+        
+        /* Layout 2 columnas */
+        .perfil-layout { display: grid; grid-template-columns: 300px 1fr; gap: 1.8rem; align-items: start; }
+        
+        /* Tarjetas elegantes */
+        .profile-card {
+            background: white; border-radius: 24px; border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: var(--sh-sm); overflow: hidden; transition: transform 0.2s var(--spring), box-shadow 0.2s;
         }
-
-        .btn-foto-eliminar:hover {
-            background: #c0392b;
-            color: #fff;
+        .profile-card:hover { transform: translateY(-3px); box-shadow: var(--sh-md); }
+        .card-header {
+            padding: 1rem 1.5rem; border-bottom: 1px solid var(--gris-200);
+            display: flex; align-items: center; gap: 0.7rem;
         }
-
-        .foto-hint {
-            font-size: .72rem;
-            color: #999;
-            text-align: center;
+        .card-icon {
+            width: 34px; height: 34px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+            background: var(--verde-xlight); color: var(--verde); font-size: 0.9rem;
         }
-
-        /* Formulario */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+        .card-title { font-weight: 700; color: var(--gris-800); letter-spacing: -0.2px; flex:1; }
+        .card-body { padding: 1.6rem; }
+        .card-body-sm { padding: 1.2rem 1.5rem; }
+        
+        /* Foto circular grande */
+        .foto-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+        .foto-preview-grande {
+            width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--verde-soft);
+            display: flex; align-items: center; justify-content: center; background: var(--verde-xlight);
+            font-size: 2.8rem; font-weight: 800; color: var(--verde); position: relative; cursor: pointer;
+            overflow: hidden; transition: all .2s;
         }
-
-        .fgroup {
-            display: flex;
-            flex-direction: column;
-            gap: .35rem;
+        .foto-preview-grande img { width:100%; height:100%; object-fit:cover; }
+        .foto-overlay {
+            position: absolute; inset:0; background: rgba(0,0,0,0.5); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; opacity:0; transition: opacity .2s;
+            color:white; gap:0.3rem; font-size:0.8rem;
         }
-
-        .fgroup.full {
-            grid-column: 1/-1;
+        .foto-preview-grande:hover .foto-overlay { opacity:1; }
+        .btn-foto-subir, .btn-foto-eliminar {
+            padding: 0.5rem 1.2rem; border-radius: 40px; font-weight: 600; font-size: 0.75rem;
+            display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; transition: all .2s;
         }
-
-        .flabel {
-            font-size: .68rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .07em;
-            color: #666;
-        }
-
+        .btn-foto-subir { background: var(--verde); color: white; border: none; }
+        .btn-foto-subir:hover { background: var(--verde-med); transform: translateY(-2px); }
+        .btn-foto-eliminar { background: #ffebee; color: #c0392b; border: 1px solid #f5c6cb; }
+        .btn-foto-eliminar:hover { background: #c0392b; color: white; }
+        
+        /* Formularios */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .fgroup { display: flex; flex-direction: column; gap: 0.4rem; }
+        .fgroup.full { grid-column: 1/-1; }
+        .flabel { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gris-600); }
         .finput {
-            height: 42px;
-            padding: 0 .9rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: .88rem;
-            color: #333;
-            background: white;
-            width: 100%;
+            height: 46px; padding: 0 1rem; border: 2px solid var(--gris-200); border-radius: 16px;
+            font-family: 'Outfit', sans-serif; font-size: 0.9rem; background: white; transition: all .2s;
         }
-
-        .finput:focus {
-            outline: none;
-            border-color: #2e7d5e;
-        }
-
-        .finput[readonly] {
-            background: #f5f5f5;
-            color: #999;
-            cursor: default;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: .65rem;
-            justify-content: flex-end;
-            margin-top: 1.25rem;
-            padding-top: 1.1rem;
-            border-top: 1px solid #e0e0e0;
-        }
-
+        .finput:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px var(--verde-xlight); }
+        .finput[readonly] { background: var(--gris-50); color: var(--gris-600); cursor: default; }
+        .btn-row { display: flex; gap: 0.8rem; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--gris-200); }
         .btn-primary {
-            background: #1a3b2e;
-            color: white;
-            border: none;
-            padding: 0.6rem 1.3rem;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
+            background: var(--verde); color: white; border: none; padding: 0.6rem 1.6rem;
+            border-radius: 40px; font-weight: 600; cursor: pointer; transition: all .2s var(--spring);
         }
-
-        .btn-primary:hover {
-            background: #2e7d5e;
-        }
-
-        .btn-sm {
-            height: 38px;
-            padding: 0 1.3rem;
-            font-size: .82rem;
-        }
-
-        /* Flash messages */
-        .flash-messages {
-            max-width: 1280px;
-            margin: 1rem auto 0;
-            padding: 0 2rem;
-        }
-
-        .flash-message {
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .flash-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .flash-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .flash-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            margin-left: auto;
-            color: inherit;
-        }
-
-        /* Stats */
-        .stats-duo {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: .65rem;
-        }
-
-        .stat-box {
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: .9rem;
-            text-align: center;
-        }
-
-        .stat-num {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #1a3b2e;
-            line-height: 1;
-        }
-
-        .stat-lbl {
-            font-size: .68rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #999;
-        }
-
-        /* Quick nav */
-        .qnav {
-            display: flex;
-            flex-direction: column;
-            gap: .25rem;
-        }
-
+        .btn-primary:hover { background: var(--verde-med); transform: translateY(-2px); box-shadow: var(--sh-sm); }
+        .stats-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+        .stat-box { background: var(--gris-50); border-radius: 20px; padding: 1rem; text-align: center; }
+        .stat-num { font-size: 2rem; font-weight: 800; color: var(--verde); line-height: 1; }
+        .qnav { display: flex; flex-direction: column; gap: 0.2rem; }
         .qnav-item {
-            display: flex;
-            align-items: center;
-            gap: .7rem;
-            padding: .7rem .9rem;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #666;
-            font-size: .85rem;
-            font-weight: 500;
-            transition: all .2s;
+            display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1rem; border-radius: 16px;
+            text-decoration: none; color: var(--gris-700); font-weight: 500; transition: all 0.2s;
         }
-
-        .qnav-item:hover {
-            background: #e8f5e9;
-            color: #1a3b2e;
-        }
-
-        @media (max-width: 768px) {
-            .perfil-layout {
-                grid-template-columns: 1fr;
-            }
-            .main-nav ul {
-                display: none;
-            }
-            .footer-grid {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-        }
+        .qnav-item:hover { background: var(--verde-xlight); color: var(--verde); transform: translateX(5px); }
+        hr { margin: 0.5rem 0; border-color: var(--gris-200); }
+        
+        /* Responsive */
+        @media (max-width: 900px) { .perfil-layout { grid-template-columns: 1fr; } .profile-banner { flex-direction: column; text-align: center; } .banner-meta { text-align: center; } .main-nav { display: none; } .menu-toggle { display: flex; } .header-logo { height: 100px; } .main-header { height: 120px; } }
+        @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .container { padding: 0 1.2rem; } }
+        
+      /* ================================================================
+   FOOTER COMPLETO (igual al base)
+================================================================ */
+footer {
+    background:linear-gradient(160deg,#0E1A08 0%,#131A0D 100%);
+    color:white;
+    padding:4rem 0 1.75rem;
+    margin-top:4rem;
+    position:relative;
+    overflow:hidden;
+    z-index:1;
+}
+footer::before {
+    content:'';
+    position:absolute; top:-80px; right:-80px;
+    width:300px; height:300px; border-radius:50%;
+    background:radial-gradient(circle,rgba(184,134,11,.09) 0%,transparent 70%);
+    pointer-events:none;
+    animation:footerGlow1 8s ease-in-out infinite;
+}
+footer::after {
+    content:'';
+    position:absolute; bottom:-60px; left:-60px;
+    width:250px; height:250px; border-radius:50%;
+    background:radial-gradient(circle,rgba(74,122,40,.07) 0%,transparent 70%);
+    pointer-events:none;
+    animation:footerGlow2 10s ease-in-out infinite;
+}
+@keyframes footerGlow1 {
+    0%,100% { transform:scale(1) translate(0,0); opacity:.9; }
+    50%      { transform:scale(1.15) translate(-10px,10px); opacity:1; }
+}
+@keyframes footerGlow2 {
+    0%,100% { transform:scale(1) translate(0,0); opacity:.8; }
+    50%      { transform:scale(1.2) translate(8px,-8px); opacity:1; }
+}
+.footer-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:2.5rem;
+    margin-bottom:2.5rem;
+    position:relative; z-index:1;
+}
+.footer-info, .footer-links, .footer-contact {
+    transition:transform .35s var(--spring);
+}
+.footer-info:hover, .footer-links:hover, .footer-contact:hover { transform:translateY(-5px); }
+.footer-info h3, .footer-links h3, .footer-contact h3 {
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.25rem; font-weight:600;
+    margin-bottom:1.25rem;
+    color:var(--dorado);
+    position:relative; padding-bottom:.6rem;
+}
+.footer-info h3::after, .footer-links h3::after, .footer-contact h3::after {
+    content:'';
+    position:absolute; bottom:0; left:0;
+    width:30px; height:2px;
+    background:linear-gradient(90deg,var(--dorado),transparent);
+    border-radius:2px;
+    transition:width .4s var(--spring);
+}
+.footer-info:hover h3::after,
+.footer-links:hover h3::after,
+.footer-contact:hover h3::after { width:60px; }
+.footer-info p, .footer-contact p {
+    margin:.55rem 0; opacity:.78; font-size:.86rem; line-height:1.6;
+}
+.footer-info a, .footer-contact a {
+    color:white; text-decoration:none;
+    transition:color .18s;
+}
+.footer-info a:hover, .footer-contact a:hover { color:var(--dorado); }
+.footer-links ul { list-style:none; }
+.footer-links li { margin:.5rem 0; }
+.footer-links a {
+    color:rgba(255,255,255,.75); text-decoration:none; font-size:.86rem;
+    display:inline-flex; align-items:center; gap:.5rem;
+    position:relative;
+    transition:color .18s, transform .2s var(--spring);
+}
+.footer-links a::before {
+    content:'›'; font-size:1.05rem; color:var(--dorado);
+    opacity:0; transform:translateX(-6px);
+    transition:opacity .18s, transform .25s var(--spring);
+}
+.footer-links a:hover { color:white; transform:translateX(7px); }
+.footer-links a:hover::before { opacity:1; transform:translateX(0); }
+.social-links { display:flex; gap:.7rem; margin-top:1.25rem; }
+.social-link {
+    color:white;
+    background:rgba(255,255,255,.08);
+    width:38px; height:38px; border-radius:50%;
+    border:1px solid rgba(255,255,255,.12);
+    display:flex; align-items:center; justify-content:center;
+    font-size:.88rem;
+    transition:background .2s, border-color .2s, transform .3s var(--spring), box-shadow .2s;
+    text-decoration:none;
+}
+.social-link:hover {
+    background:var(--dorado); border-color:var(--dorado);
+    transform:translateY(-5px) scale(1.12);
+    box-shadow:0 6px 20px rgba(184,134,11,.45);
+}
+.footer-bottom {
+    text-align:center;
+    padding-top:1.75rem;
+    border-top:1px solid rgba(255,255,255,.07);
+    font-size:.76rem; opacity:.5;
+    position:relative; z-index:1;
+}
+.back-to-top {
+    position:fixed; bottom:2rem; right:2rem;
+    width:50px; height:50px;
+    background:var(--verde);
+    color:white; border:none; border-radius:50%;
+    cursor:pointer; z-index:900;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1rem;
+    box-shadow:0 4px 22px rgba(30,58,15,.32);
+    opacity:0; visibility:hidden;
+    transition:opacity .3s, visibility .3s, background .2s, transform .3s var(--spring), box-shadow .2s;
+}
+.back-to-top.visible { opacity:1; visibility:visible; }
+.back-to-top:hover {
+    background:var(--dorado);
+    transform:translateY(-5px) scale(1.1);
+    box-shadow:0 8px 28px rgba(184,134,11,.45);
+}
     </style>
 </head>
 <body>
 
-<!-- Flash messages -->
-<div class="flash-messages">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <div class="flash-message flash-{{ category }}">
-                <i class="fas {% if category == 'success' %}fa-check-circle{% elif category == 'error' %}fa-times-circle{% else %}fa-info-circle{% endif %}"></i>
-                <span>{{ message }}</span>
-                <button class="flash-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
-            </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+<!-- ALERTA EDUCATIVA (estilo base) -->
+<div id="edu-alert-banner" style="position:fixed; top:0; left:0; right:0; z-index:9999; background:#1a3a6b; color:#e8f0fe; font-family:'Outfit',sans-serif; font-size:13px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 24px;">
+    <div style="display:flex; align-items:center; gap:10px;"><i class="fas fa-graduation-cap" style="color:#93c5fd;"></i><span>Este sitio web fue desarrollado con <strong style="color:#bfdbfe;">fines educativos</strong>. No representa una entidad gubernamental oficial.</span></div>
+    <button onclick="document.getElementById('edu-alert-banner').style.display='none';document.getElementById('mainHeader').style.top='0px';" style="background:transparent; border:1px solid rgba(255,255,255,0.3); color:#bfdbfe; padding:4px 14px; border-radius:4px; cursor:pointer;">Entendido</button>
 </div>
 
-<!-- Header -->
-<header class="main-header">
-    <div class="container">
-        <div class="logo">
-            <a href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="header-logo">
-            </a>
-        </div>
+<canvas id="particles-canvas"></canvas>
+
+<!-- HEADER FIJO (con menú dinámico) -->
+<header class="main-header" id="mainHeader">
+    <div class="header-container">
+        <div class="logo"><a href="/"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Villa Cutupú" class="header-logo"></a></div>
+        <button class="menu-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
         <nav class="main-nav">
             <ul>
-                <li><a href="{{ url_for('index') }}">Inicio</a></li>
-                <li><a href="{{ url_for('municipio') }}">Municipio</a></li>
-                <li><a href="{{ url_for('servicios') }}">Servicios</a></li>
-                <li><a href="{{ url_for('transparencia') }}">Transparencia</a></li>
-                <li><a href="{{ url_for('noticias') }}">Noticias</a></li>
-                <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
-                {% if session.get('user') %}
-                    <li><a href="{{ url_for('mi_cuenta') }}">Mi Cuenta</a></li>
-                    <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
+                {% if menu and menu|length > 0 %}
+                    {% for item in menu if item.activo and not item.parent_id %}
+                        <li><a href="{{ item.url }}" class="nav-link">{% if item.icono %}<i class="{{ item.icono }}"></i>{% endif %} {{ item.titulo }}</a></li>
+                    {% endfor %}
                 {% else %}
-                    <li><a href="{{ url_for('auth.login') }}">Iniciar sesión</a></li>
-                    <li><a href="{{ url_for('auth.registro') }}">Registrarse</a></li>
+                    <li><a href="/">Inicio</a></li><li><a href="/municipio">Municipio</a></li><li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/transparencia">Transparencia</a></li><li><a href="/noticias">Noticias</a></li><li><a href="/contacto">Contacto</a></li>
+                {% endif %}
+                {% if logged %}
+                <li class="dropdown" id="userDropdown">
+                    <button class="dropdown-btn btn-login" id="userDropdownBtn"><i class="fas fa-user-circle"></i> Mi Cuenta <i class="fas fa-chevron-down"></i></button>
+                    <div class="dropdown-menu">
+                        <a href="/solicitar-cita"><i class="fas fa-calendar-plus"></i> Solicitar Cita</a>
+                        <a href="/mis-tramites"><i class="fas fa-file-alt"></i> Mis Trámites</a>
+                        <a href="/mis-servicios"><i class="fas fa-concierge-bell"></i> Mis Servicios</a>
+                        <a href="/perfil"><i class="fas fa-id-card"></i> Mi Perfil</a>
+                        {% if is_admin %}<a href="/admin/dashboard" class="admin-link"><i class="fas fa-shield-alt"></i> Panel Admin</a>{% endif %}
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout" class="logout-link"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                    </div>
+                </li>
+                {% else %}
+                <li><a href="/login" class="btn-login">Iniciar sesión</a></li><li><a href="/registro" class="btn-registro-nav">Registrarse</a></li>
                 {% endif %}
             </ul>
         </nav>
     </div>
 </header>
+<div class="mobile-menu" id="mobileMenu"><ul>{% for item in menu if item.activo and not item.parent_id %}<li><a href="{{ item.url }}">{{ item.titulo }}</a></li>{% endfor %}{% if logged %}<li><a href="/solicitar-cita">Solicitar Cita</a></li><li><a href="/perfil">Mi Perfil</a></li><li><a href="/logout">Cerrar Sesión</a></li>{% else %}<li><a href="/login">Iniciar sesión</a></li><li><a href="/registro">Registrarse</a></li>{% endif %}</ul></div>
+<div class="overlay" id="overlay"></div>
 
-<!-- Contenido -->
-<div class="page-perfil">
-    <div class="container">
+<!-- FLASH MESSAGES (del sistema) -->
+<main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}<div class="flash-messages" style="position:fixed; top:calc(var(--header-h) + 1rem); right:1.5rem; z-index:9999; max-width:380px;">{% for category, message in messages %}<div class="flash-message flash-{{ category }}"><i class="fas fa-{% if category=='success' %}check-circle{% else %}exclamation-circle{% endif %}"></i><span>{{ message }}</span><button class="flash-close" onclick="this.parentElement.remove()">&times;</button></div>{% endfor %}</div>{% endif %}
+    {% endwith %}
 
-        <nav class="breadcrumb">
-            <a href="{{ url_for('index') }}">Inicio</a>
-            <i class="fas fa-chevron-right"></i>
-            <span>Mi perfil</span>
-        </nav>
+    <!-- CONTENIDO PRINCIPAL DEL PERFIL (migrado y mejorado) -->
+    <div class="page-perfil">
+        <div class="container">
+            <nav class="breadcrumb"><a href="/">Inicio</a><i class="fas fa-chevron-right"></i><span>Mi perfil</span></nav>
 
-        <!-- Banner con foto -->
-        <div class="profile-banner">
-            <div class="banner-avatar-wrap">
-                <div class="banner-avatar" onclick="document.getElementById('fotoInputBanner').click()">
-                    {% if usuario.foto_perfil %}
-                        <img src="{{ usuario.foto_perfil }}" alt="Foto">
-                    {% else %}
-                        {{ usuario.nombre[0]|upper if usuario.nombre else usuario.email[0]|upper }}
-                    {% endif %}
-                </div>
-                <div class="avatar-edit-btn" onclick="document.getElementById('fotoInputBanner').click()">
-                    <i class="fas fa-camera"></i>
-                </div>
-            </div>
-
-            <div class="banner-info">
-                <h1 class="banner-nombre">
-                    {{ usuario.nombre_completo or ((usuario.nombre or '') ~ ' ' ~ (usuario.apellidos or ''))|trim or 'Sin nombre' }}
-                </h1>
-                <p class="banner-email"><i class="fas fa-envelope"></i> {{ usuario.email }}</p>
-                <div class="banner-tags">
-                    {% if usuario.rol == 'super_admin' %}
-                        <span class="tag tag-superadmin">Super administrador</span>
-                    {% elif usuario.rol == 'admin' %}
-                        <span class="tag tag-admin">Administrador</span>
-                    {% else %}
-                        <span class="tag tag-ciudadano">Ciudadano</span>
-                    {% endif %}
-                    {% if usuario.activo %}
-                        <span class="tag tag-activo">Activo</span>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="banner-meta">
-                <strong>{{ usuario.fecha_registro or 'N/D' }}</strong>
-                Miembro desde
-                {% if usuario.ultimo_acceso %}
-                <br><br>
-                <strong>{{ usuario.ultimo_acceso[:10] }}</strong>
-                Último acceso
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Formulario oculto banner -->
-        <form id="formFotoBanner" action="{{ url_for('subir_foto_perfil') }}"
-              method="POST" enctype="multipart/form-data" style="display:none;">
-            <input type="file" id="fotoInputBanner" name="foto_perfil"
-                   accept="image/png,image/jpeg,image/gif,image/webp"
-                   onchange="this.form.submit();">
-        </form>
-
-        <!-- VISTA CIUDADANO -->
-        {% if not is_admin %}
-        <div class="perfil-layout">
-
-            <!-- Sidebar -->
-            <aside class="perfil-sidebar">
-
-                <!-- Foto de perfil card -->
-                <div class="pcard">
-                    <div class="pcard-header">
-                        <div class="pcard-icon pi-green"><i class="fas fa-camera"></i></div>
-                        <span class="pcard-title">Foto de perfil</span>
+            <!-- BANNER CON FOTO -->
+            <div class="profile-banner">
+                <div class="banner-avatar-wrap">
+                    <div class="banner-avatar" onclick="document.getElementById('fotoInputBanner').click()">
+                        {% if usuario.foto_perfil %}<img src="{{ usuario.foto_perfil }}" alt="foto">{% else %}{{ usuario.nombre[0]|upper if usuario.nombre else usuario.email[0]|upper }}{% endif %}
                     </div>
-                    <div class="pcard-body-sm">
-                        <div class="foto-wrap">
-                            <div class="foto-preview-grande" onclick="document.getElementById('fotoInputCard').click()">
-                                {% if usuario.foto_perfil %}
-                                    <img src="{{ usuario.foto_perfil }}" alt="Foto">
-                                {% else %}
-                                    <span>{{ usuario.nombre[0]|upper if usuario.nombre else usuario.email[0]|upper }}</span>
-                                {% endif %}
-                                <div class="foto-overlay">
-                                    <i class="fas fa-camera"></i> Cambiar
+                    <div class="avatar-edit-btn" onclick="document.getElementById('fotoInputBanner').click()"><i class="fas fa-camera"></i></div>
+                </div>
+                <div class="banner-info">
+                    <h1 class="banner-nombre">{{ usuario.nombre_completo or ((usuario.nombre or '') ~ ' ' ~ (usuario.apellidos or ''))|trim or 'Sin nombre' }}</h1>
+                    <p class="banner-email"><i class="fas fa-envelope"></i> {{ usuario.email }}</p>
+                    <div class="banner-tags">
+                        {% if usuario.rol == 'super_admin' %}<span class="tag">Super administrador</span>{% elif usuario.rol == 'admin' %}<span class="tag">Administrador</span>{% else %}<span class="tag">Ciudadano</span>{% endif %}
+                        {% if usuario.activo %}<span class="tag">Activo</span>{% endif %}
+                    </div>
+                </div>
+                <div class="banner-meta"><strong>{{ usuario.fecha_registro or 'N/D' }}</strong> Miembro desde<br><br><strong>{{ usuario.ultimo_acceso[:10] if usuario.ultimo_acceso else '—' }}</strong> Último acceso</div>
+            </div>
+            <form id="formFotoBanner" action="{{ url_for('subir_foto_perfil') }}" method="POST" enctype="multipart/form-data" style="display:none;"><input type="file" id="fotoInputBanner" name="foto_perfil" accept="image/png,image/jpeg,image/gif,image/webp" onchange="this.form.submit();"></form>
+
+            {% if not is_admin %}
+            <!-- VISTA CIUDADANO -->
+            <div class="perfil-layout">
+                <aside class="perfil-sidebar">
+                    <!-- Foto de perfil card -->
+                    <div class="profile-card">
+                        <div class="card-header"><div class="card-icon"><i class="fas fa-camera"></i></div><span class="card-title">Foto de perfil</span></div>
+                        <div class="card-body-sm">
+                            <div class="foto-wrap">
+                                <div class="foto-preview-grande" onclick="document.getElementById('fotoInputCard').click()">
+                                    {% if usuario.foto_perfil %}<img src="{{ usuario.foto_perfil }}" alt="Foto">{% else %}<span>{{ usuario.nombre[0]|upper if usuario.nombre else usuario.email[0]|upper }}</span>{% endif %}
+                                    <div class="foto-overlay"><i class="fas fa-camera"></i> Cambiar</div>
                                 </div>
-                            </div>
-
-                            <form id="formFotoCard" action="{{ url_for('subir_foto_perfil') }}"
-                                  method="POST" enctype="multipart/form-data">
-                                <input type="file" id="fotoInputCard" name="foto_perfil"
-                                       class="foto-input-hidden"
-                                       accept="image/png,image/jpeg,image/gif,image/webp"
-                                       onchange="this.form.submit();">
-
-                                <div class="foto-acciones">
-                                    <button type="button" class="btn-foto-subir"
-                                            onclick="document.getElementById('fotoInputCard').click()">
-                                        <i class="fas fa-upload"></i>
-                                        {% if usuario.foto_perfil %}Cambiar foto{% else %}Subir foto{% endif %}
-                                    </button>
-                                    {% if usuario.foto_perfil %}
-                                    <button type="button" class="btn-foto-eliminar"
-                                            onclick="if(confirm('¿Eliminar tu foto de perfil?')){ fetch('{{ url_for('eliminar_foto_perfil') }}', {method:'POST'}).then(() => location.reload()); }">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </button>
-                                    {% endif %}
-                                </div>
-                            </form>
-
-                            <p class="foto-hint">PNG, JPG o WEBP · Máx. 5 MB</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Stats -->
-                <div class="pcard">
-                    <div class="pcard-header">
-                        <div class="pcard-icon pi-green"><i class="fas fa-chart-bar"></i></div>
-                        <span class="pcard-title">Actividad</span>
-                    </div>
-                    <div class="pcard-body-sm">
-                        <div class="stats-duo">
-                            <div class="stat-box">
-                                <div class="stat-num">{{ usuario.solicitudes_count or 0 }}</div>
-                                <div class="stat-lbl">Solicitudes</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-num">{{ usuario.denuncias_count or 0 }}</div>
-                                <div class="stat-lbl">Denuncias</div>
+                                <form id="formFotoCard" action="{{ url_for('subir_foto_perfil') }}" method="POST" enctype="multipart/form-data"><input type="file" id="fotoInputCard" name="foto_perfil" class="foto-input-hidden" accept="image/png,image/jpeg,image/gif,image/webp" onchange="this.form.submit();"></form>
+                                <div class="foto-acciones"><button type="button" class="btn-foto-subir" onclick="document.getElementById('fotoInputCard').click()"><i class="fas fa-upload"></i> {% if usuario.foto_perfil %}Cambiar foto{% else %}Subir foto{% endif %}</button>
+                                {% if usuario.foto_perfil %}<button type="button" class="btn-foto-eliminar" onclick="if(confirm('¿Eliminar foto de perfil?')){ fetch('{{ url_for('eliminar_foto_perfil') }}', {method:'POST'}).then(() => location.reload()); }"><i class="fas fa-trash-alt"></i> Eliminar</button>{% endif %}</div>
+                                <p class="foto-hint" style="font-size:0.7rem; color:var(--gris-500);">PNG, JPG, WEBP · Máx. 5 MB</p>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Accesos rápidos -->
-                <div class="pcard">
-                    <div class="pcard-header">
-                        <div class="pcard-icon pi-green"><i class="fas fa-th-large"></i></div>
-                        <span class="pcard-title">Accesos rápidos</span>
-                    </div>
-                    <div class="pcard-body-sm">
-                        <nav class="qnav">
-                            <a href="/mis-tramites" class="qnav-item">
-                                <i class="fas fa-folder-open"></i> Mis trámites
-                            </a>
-                            <a href="/servicios" class="qnav-item">
-                                <i class="fas fa-file-alt"></i> Solicitar servicio
-                            </a>
-                            <a href="/servicios" class="qnav-item">
-                                <i class="fas fa-flag"></i> Hacer denuncia
-                            </a>
-                        </nav>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main -->
-            <main class="perfil-main">
-
-                <!-- Datos personales -->
-                <div class="pcard">
-                    <div class="pcard-header">
-                        <div class="pcard-icon pi-green"><i class="fas fa-user-edit"></i></div>
-                        <span class="pcard-title">Datos personales</span>
-                    </div>
-                    <div class="pcard-body">
-                        <form action="/editar-perfil" method="POST">
-                            <div class="form-grid">
-                                <div class="fgroup">
-                                    <label class="flabel">Nombre(s)</label>
-                                    <input type="text" name="nombre" class="finput" value="{{ usuario.nombre }}" required>
-                                </div>
-                                <div class="fgroup">
-                                    <label class="flabel">Apellidos</label>
-                                    <input type="text" name="apellidos" class="finput" value="{{ usuario.apellidos }}" required>
-                                </div>
-                                <div class="fgroup">
-                                    <label class="flabel">Correo electrónico</label>
-                                    <input type="email" class="finput" value="{{ usuario.email }}" readonly>
-                                    <span class="fhint">No puede modificarse</span>
-                                </div>
-                                <div class="fgroup">
-                                    <label class="flabel">Teléfono</label>
-                                    <input type="text" name="telefono" class="finput" value="{{ usuario.telefono }}">
-                                </div>
-                                <div class="fgroup full">
-                                    <label class="flabel">Dirección</label>
-                                    <input type="text" name="direccion" class="finput" value="{{ usuario.direccion }}">
-                                </div>
-                            </div>
-                            <div class="btn-row">
-                                <button type="submit" class="btn-primary btn-sm">
-                                    <i class="fas fa-save"></i> Guardar cambios
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Seguridad -->
-                <div class="pcard">
-                    <div class="pcard-header">
-                        <div class="pcard-icon pi-red"><i class="fas fa-lock"></i></div>
-                        <span class="pcard-title">Seguridad</span>
-                    </div>
-                    <div class="pcard-body">
-                        <form action="/cambiar-password" method="POST">
-                            <div class="form-grid">
-                                <div class="fgroup full">
-                                    <label class="flabel">Contraseña actual</label>
-                                    <input type="password" name="password_actual" class="finput" required>
-                                </div>
-                                <div class="fgroup">
-                                    <label class="flabel">Nueva contraseña</label>
-                                    <input type="password" name="password_nueva" class="finput" required>
-                                </div>
-                                <div class="fgroup">
-                                    <label class="flabel">Confirmar contraseña</label>
-                                    <input type="password" name="password_confirmar" class="finput" required>
-                                </div>
-                            </div>
-                            <div class="btn-row">
-                                <button type="submit" class="btn-primary btn-sm">
-                                    <i class="fas fa-key"></i> Actualizar contraseña
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </main>
+                    <!-- Estadísticas -->
+                    <div class="profile-card"><div class="card-header"><div class="card-icon"><i class="fas fa-chart-bar"></i></div><span class="card-title">Actividad</span></div><div class="card-body-sm"><div class="stats-duo"><div class="stat-box"><div class="stat-num">{{ usuario.solicitudes_count or 0 }}</div><div class="stat-lbl">Solicitudes</div></div><div class="stat-box"><div class="stat-num">{{ usuario.denuncias_count or 0 }}</div><div class="stat-lbl">Denuncias</div></div></div></div></div>
+                    <!-- Accesos rápidos -->
+                    <div class="profile-card"><div class="card-header"><div class="card-icon"><i class="fas fa-th-large"></i></div><span class="card-title">Accesos rápidos</span></div><div class="card-body-sm"><nav class="qnav"><a href="/mis-tramites" class="qnav-item"><i class="fas fa-folder-open"></i> Todos mis trámites</a><a href="/mis-solicitudes" class="qnav-item"><i class="fas fa-file-alt"></i> Mis solicitudes</a><a href="/mis-denuncias" class="qnav-item"><i class="fas fa-exclamation-triangle"></i> Mis denuncias</a><a href="/mis-citas" class="qnav-item"><i class="fas fa-calendar-check"></i> Mis citas</a><hr><a href="/servicios" class="qnav-item"><i class="fas fa-plus-circle"></i> Solicitar servicio</a><a href="/servicios" class="qnav-item"><i class="fas fa-flag"></i> Hacer denuncia</a></nav></div></div>
+                </aside>
+                <main class="perfil-main">
+                    <div class="profile-card"><div class="card-header"><div class="card-icon"><i class="fas fa-user-edit"></i></div><span class="card-title">Datos personales</span></div><div class="card-body"><form action="/editar-perfil" method="POST"><div class="form-grid"><div class="fgroup"><label class="flabel">Nombre(s)</label><input type="text" name="nombre" class="finput" value="{{ usuario.nombre }}" required></div><div class="fgroup"><label class="flabel">Apellidos</label><input type="text" name="apellidos" class="finput" value="{{ usuario.apellidos }}" required></div><div class="fgroup"><label class="flabel">Correo electrónico</label><input type="email" class="finput" value="{{ usuario.email }}" readonly></div><div class="fgroup"><label class="flabel">Teléfono</label><input type="text" name="telefono" class="finput" value="{{ usuario.telefono }}"></div><div class="fgroup full"><label class="flabel">Dirección</label><input type="text" name="direccion" class="finput" value="{{ usuario.direccion }}"></div></div><div class="btn-row"><button type="submit" class="btn-primary btn-sm"><i class="fas fa-save"></i> Guardar cambios</button></div></form></div></div>
+                    <div class="profile-card"><div class="card-header"><div class="card-icon"><i class="fas fa-lock"></i></div><span class="card-title">Seguridad</span></div><div class="card-body"><form action="/cambiar-password" method="POST"><div class="form-grid"><div class="fgroup full"><label class="flabel">Contraseña actual</label><input type="password" name="password_actual" class="finput" required></div><div class="fgroup"><label class="flabel">Nueva contraseña</label><input type="password" name="password_nueva" class="finput" required></div><div class="fgroup"><label class="flabel">Confirmar contraseña</label><input type="password" name="password_confirmar" class="finput" required></div></div><div class="btn-row"><button type="submit" class="btn-primary btn-sm"><i class="fas fa-key"></i> Actualizar contraseña</button></div></form></div></div>
+                </main>
+            </div>
+            {% else %}
+            <!-- VISTA ADMINISTRADOR: mismo estilo pero con panel de admin -->
+            <div class="perfil-layout">
+                <aside class="perfil-sidebar">
+                    <div class="profile-card"><div class="card-header"><div class="card-icon"><i class="fas fa-shield-alt"></i></div><span class="card-title">Panel de administrador</span></div><div class="card-body-sm"><nav class="qnav"><a href="/admin/dashboard" class="qnav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a><a href="/admin/solicitudes" class="qnav-item"><i class="fas fa-file-alt"></i> Solicitudes</a><a href="/admin/denuncias" class="qnav-item"><i class="fas fa-flag"></i> Denuncias</a><a href="/admin/usuarios" class="qnav-item"><i class="fas fa-users"></i> Usuarios</a><a href="/admin/noticias" class="qnav-item"><i class="fas fa-newspaper"></i> Noticias</a><a href="/admin/transparencia" class="qnav-item"><i class="fas fa-file-contract"></i> Transparencia</a><a href="/admin/contenido" class="qnav-item"><i class="fas fa-edit"></i> Contenido</a><a href="/admin/menu" class="qnav-item"><i class="fas fa-bars"></i> Menú</a><a href="/admin/configuracion" class="qnav-item"><i class="fas fa-cog"></i> Configuración</a><hr><a href="/mis-solicitudes" class="qnav-item"><i class="fas fa-file-alt"></i> Mis solicitudes</a><a href="/mis-denuncias" class="qnav-item"><i class="fas fa-exclamation-triangle"></i> Mis denuncias</a><a href="/mis-citas" class="qnav-item"><i class="fas fa-calendar-check"></i> Mis citas</a></nav></div></div>
+                </aside>
+                <main class="perfil-main">
+                    <div class="profile-card"><div class="card-header"><div class="card-icon"><i class="fas fa-user-edit"></i></div><span class="card-title">Datos personales</span></div><div class="card-body"><form action="/editar-perfil" method="POST"><div class="form-grid"><div class="fgroup"><label class="flabel">Nombre(s)</label><input type="text" name="nombre" class="finput" value="{{ usuario.nombre }}"></div><div class="fgroup"><label class="flabel">Apellidos</label><input type="text" name="apellidos" class="finput" value="{{ usuario.apellidos }}"></div><div class="fgroup"><label class="flabel">Correo</label><input type="email" class="finput" value="{{ usuario.email }}" readonly></div><div class="fgroup"><label class="flabel">Teléfono</label><input type="text" name="telefono" class="finput" value="{{ usuario.telefono }}"></div><div class="fgroup full"><label class="flabel">Dirección</label><input type="text" name="direccion" class="finput" value="{{ usuario.direccion }}"></div></div><div class="btn-row"><a href="/admin/dashboard" class="btn-primary btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;"><i class="fas fa-arrow-left"></i> Volver al panel</a><button type="submit" class="btn-primary btn-sm"><i class="fas fa-save"></i> Guardar</button></div></form></div></div>
+                    <div class="profile-card"><div class="card-header"><div class="card-icon"><i class="fas fa-lock"></i></div><span class="card-title">Cambiar contraseña</span></div><div class="card-body"><form action="/cambiar-password" method="POST"><div class="form-grid"><div class="fgroup full"><label class="flabel">Contraseña actual</label><input type="password" name="password_actual" class="finput" required></div><div class="fgroup"><label class="flabel">Nueva contraseña</label><input type="password" name="password_nueva" class="finput" required></div><div class="fgroup"><label class="flabel">Confirmar</label><input type="password" name="password_confirmar" class="finput" required></div></div><div class="btn-row"><button type="submit" class="btn-primary btn-sm"><i class="fas fa-key"></i> Actualizar</button></div></form></div></div>
+                </main>
+            </div>
+            {% endif %}
         </div>
-
-        {% else %}
-        <!-- VISTA ADMINISTRADOR -->
-        <div class="perfil-layout">
-            <aside class="perfil-sidebar">
-                <div class="pcard">
-                    <div class="pcard-header">
-                        <div class="pcard-icon pi-green"><i class="fas fa-shield-alt"></i></div>
-                        <span class="pcard-title">Panel de administrador</span>
-                    </div>
-                    <div class="pcard-body-sm">
-                        <nav class="qnav">
-                            <a href="/admin/dashboard" class="qnav-item">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
-                            </a>
-                            <a href="/admin/solicitudes" class="qnav-item">
-                                <i class="fas fa-file-alt"></i> Solicitudes
-                            </a>
-                            <a href="/admin/denuncias" class="qnav-item">
-                                <i class="fas fa-flag"></i> Denuncias
-                            </a>
-                            <a href="/admin/usuarios" class="qnav-item">
-                                <i class="fas fa-users"></i> Usuarios
-                            </a>
-                            <a href="/admin/noticias" class="qnav-item">
-                                <i class="fas fa-newspaper"></i> Noticias
-                            </a>
-                            <a href="/admin/transparencia" class="qnav-item">
-                                <i class="fas fa-file-contract"></i> Transparencia
-                            </a>
-                            <a href="/admin/contenido" class="qnav-item">
-                                <i class="fas fa-edit"></i> Contenido
-                            </a>
-                            <a href="/admin/menu" class="qnav-item">
-                                <i class="fas fa-bars"></i> Menú
-                            </a>
-                            <a href="/admin/configuracion" class="qnav-item">
-                                <i class="fas fa-cog"></i> Configuración
-                            </a>
-                        </nav>
-                    </div>
-                </div>
-            </aside>
-
-            <main class="perfil-main">
-                <div class="pcard">
-                    <div class="pcard-header">
-                        <div class="pcard-icon pi-green"><i class="fas fa-user-edit"></i></div>
-                        <span class="pcard-title">Datos personales</span>
-                    </div>
-                    <div class="pcard-body">
-                        <form action="/editar-perfil" method="POST">
-                            <div class="form-grid">
-                                <div class="fgroup">
-                                    <label class="flabel">Nombre(s)</label>
-                                    <input type="text" name="nombre" class="finput" value="{{ usuario.nombre }}">
-                                </div>
-                                <div class="fgroup">
-                                    <label class="flabel">Apellidos</label>
-                                    <input type="text" name="apellidos" class="finput" value="{{ usuario.apellidos }}">
-                                </div>
-                                <div class="fgroup">
-                                    <label class="flabel">Correo</label>
-                                    <input type="email" class="finput" value="{{ usuario.email }}" readonly>
-                                </div>
-                                <div class="fgroup">
-                                    <label class="flabel">Teléfono</label>
-                                    <input type="text" name="telefono" class="finput" value="{{ usuario.telefono }}">
-                                </div>
-                                <div class="fgroup full">
-                                    <label class="flabel">Dirección</label>
-                                    <input type="text" name="direccion" class="finput" value="{{ usuario.direccion }}">
-                                </div>
-                            </div>
-                            <div class="btn-row">
-                                <a href="/admin/dashboard" class="btn-primary btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;">
-                                    <i class="fas fa-arrow-left"></i> Volver al panel
-                                </a>
-                                <button type="submit" class="btn-primary btn-sm">
-                                    <i class="fas fa-save"></i> Guardar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="pcard">
-                    <div class="pcard-header">
-                        <div class="pcard-icon pi-red"><i class="fas fa-lock"></i></div>
-                        <span class="pcard-title">Cambiar contraseña</span>
-                    </div>
-                    <div class="pcard-body">
-                        <form action="/cambiar-password" method="POST">
-                            <div class="form-grid">
-                                <div class="fgroup full">
-                                    <label class="flabel">Contraseña actual</label>
-                                    <input type="password" name="password_actual" class="finput" required>
-                                </div>
-                                <div class="fgroup">
-                                    <label class="flabel">Nueva contraseña</label>
-                                    <input type="password" name="password_nueva" class="finput" required>
-                                </div>
-                                <div class="fgroup">
-                                    <label class="flabel">Confirmar</label>
-                                    <input type="password" name="password_confirmar" class="finput" required>
-                                </div>
-                            </div>
-                            <div class="btn-row">
-                                <button type="submit" class="btn-primary btn-sm">
-                                    <i class="fas fa-key"></i> Actualizar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </main>
-        </div>
-        {% endif %}
-
     </div>
-</div>
+</main>
 
-<!-- Footer -->
 <footer>
     <div class="container">
         <div class="footer-grid">
             <div class="footer-info">
-                <h3>Junta Distrital Villa Cutupú</h3>
-                <p>Villa Cutupú, Río Verde Arriba<br>La Vega, República Dominicana</p>
+                <h3>Junta Distrital de Villa Cutupú</h3>
+                <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
+                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" rel="noopener" class="social-link" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
             </div>
+
             <div class="footer-links">
-                <h3>Enlaces</h3>
+                <h3>Enlaces rápidos</h3>
                 <ul>
-                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
-                    <li><a href="{{ url_for('municipio') }}">Municipio</a></li>
-                    <li><a href="{{ url_for('servicios') }}">Servicios</a></li>
-                    <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                    {% if menu and menu|length > 0 %}
+                        {% for item in menu if item.activo and not item.parent_id %}
+                        <li><a href="{{ item.url }}">{{ item.titulo }}</a></li>
+                        {% endfor %}
+                    {% else %}
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/municipio">Municipio</a></li>
+                        <li><a href="/servicios">Servicios</a></li>
+                        <li><a href="/transparencia">Transparencia</a></li>
+                        <li><a href="/noticias">Noticias</a></li>
+                        <li><a href="/contacto">Contacto</a></li>
+                    {% endif %}
                 </ul>
             </div>
+
             <div class="footer-contact">
-                <h3>Contacto</h3>
-                <p><i class="fas fa-phone"></i> <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p><i class="fas fa-envelope"></i> <a href="mailto:info@cutupu.gob.do">info@cutupu.gob.do</a></p>
+                <h3>Horario de Atención</h3>
+                <p>🕐 Lunes a Viernes<br>8:00 AM – 4:00 PM</p>
+                <p>📍 Oficina Central: Calle Principal, Cutupú</p>
+                <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
             </div>
         </div>
+
         <div class="footer-bottom">
-            <p>&copy; 2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
+            <p>© 2025-2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
+<button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
 
 <script>
-    // Cerrar flash messages automáticamente
-    setTimeout(() => {
-        document.querySelectorAll('.flash-message').forEach(el => {
-            setTimeout(() => {
-                el.style.opacity = '0';
-                setTimeout(() => el.remove(), 300);
-            }, 4000);
-        });
-    }, 100);
+    (function(){
+        // Partículas (igual al base)
+        const canvas = document.getElementById('particles-canvas');
+        if(canvas){
+            const ctx = canvas.getContext('2d');
+            function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            resize(); window.addEventListener('resize',resize);
+            const pts = Array.from({length:Math.min(45,Math.floor(window.innerWidth/24))},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+0.5,vx:(Math.random()-.5)*0.35,vy:(Math.random()-.5)*0.35,color:Math.random()>.5?'46,107,47':'201,160,61',alpha:Math.random()*0.18+0.03}));
+            function draw(){
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){ let d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y); if(d<120){ ctx.beginPath(); ctx.strokeStyle=`rgba(${pts[i].color},${0.06*(1-d/120)})`; ctx.lineWidth=0.6; ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); } }
+                pts.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(${p.color},${p.alpha})`; ctx.fill(); p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        // Scroll header y back to top
+        const header = document.getElementById('mainHeader');
+        window.addEventListener('scroll',()=>{ header.classList.toggle('scrolled',window.scrollY>12); document.getElementById('backToTop').classList.toggle('visible',window.scrollY>320); });
+        document.getElementById('backToTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+        // Mobile menu
+        const toggle = document.querySelector('.menu-toggle'), mMenu = document.getElementById('mobileMenu'), overlay = document.getElementById('overlay');
+        function openMenu(){ toggle.classList.add('active'); mMenu.classList.add('active'); overlay.classList.add('active'); document.body.classList.add('menu-open'); }
+        function closeMenu(){ toggle.classList.remove('active'); mMenu.classList.remove('active'); overlay.classList.remove('active'); document.body.classList.remove('menu-open'); }
+        toggle.addEventListener('click',()=> mMenu.classList.contains('active') ? closeMenu() : openMenu());
+        overlay.addEventListener('click',closeMenu);
+        // Dropdown usuario
+        const dropdown = document.getElementById('userDropdown'), btn = document.getElementById('userDropdownBtn');
+        if(dropdown && btn){ btn.addEventListener('click',(e)=>{ e.stopPropagation(); dropdown.classList.toggle('active'); }); document.addEventListener('click',()=>dropdown.classList.remove('active')); }
+        // Ajuste top por alerta educativa
+        const alertBanner = document.getElementById('edu-alert-banner');
+        if(alertBanner && header){ header.style.top = alertBanner.offsetHeight + 'px'; }
+        window.addEventListener('resize',()=>{ if(alertBanner && header && alertBanner.style.display!=='none') header.style.top = alertBanner.offsetHeight+'px'; else header.style.top='0px'; });
+        // Auto cerrar flash
+        setTimeout(()=>{ document.querySelectorAll('.flash-message').forEach(el=>{ el.style.opacity='0'; setTimeout(()=>el.remove(),300); }); },5000);
+    })();
 </script>
 </body>
 </html>

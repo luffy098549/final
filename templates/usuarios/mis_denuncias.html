@@ -1,32 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Mis Denuncias{% endblock %}
+{% block title %}Mis Denuncias — Villa Cutupú{% endblock %}
 
 {% block content %}
-<section class="section-light" style="min-height: 80vh; padding: var(--space-7) 0;">
-  <div class="container" style="max-width: 1100px;">
+<section class="md-page">
+  <div class="container md-container">
 
-    <div style="margin-bottom: var(--space-5);">
-      <p style="font-size: 0.85rem; font-weight: 700; color: var(--green-dark); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem;">
-        Panel de usuario
-      </p>
-      <h1 style="font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 800; color: var(--text); letter-spacing: -0.025em; margin-bottom: 0.5rem;">
-        Mis Denuncias
-      </h1>
-      <p style="color: var(--text-light); font-size: 1rem;">
-        Revisa el estado de todas las denuncias que has presentado ante el municipio.
-      </p>
+    <!-- Encabezado -->
+    <div class="md-encabezado">
+      <p class="md-eyebrow">Panel de usuario</p>
+      <h1 class="md-titulo">Mis Denuncias</h1>
+      <p class="md-subtitulo">Revisa el estado de todas las denuncias que has presentado ante el municipio.</p>
     </div>
 
     {% if denuncias %}
-    <div style="margin-bottom: var(--space-4);">
-      <span style="background: var(--green-xlight); color: var(--green-dark); font-size: 0.85rem; font-weight: 700; padding: 0.3rem 1rem; border-radius: var(--radius-full);">
+    <div class="md-contador">
+      <span class="md-badge-total">
         {{ denuncias | length }} denuncia{{ 's' if denuncias | length != 1 else '' }} registrada{{ 's' if denuncias | length != 1 else '' }}
       </span>
     </div>
     {% endif %}
 
     {% if denuncias %}
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-4);">
+    <div class="md-grid">
 
       {% for denuncia in denuncias %}
 
@@ -37,37 +32,23 @@
       {% set label_estado = 'Resuelta' if es_resuelta else 'En proceso' if es_en_proceso else 'Rechazada' if es_rechazada else denuncia.estado | capitalize %}
       {% set label_pie    = 'Completada' if es_resuelta else 'En revisión' if es_en_proceso else 'No procedió' if es_rechazada else denuncia.estado | capitalize %}
 
-      {# Clase CSS según estado — sin colores inline #}
-      {% set clase_estado = 'estado-resuelta' if es_resuelta else 'estado-en-proceso' if es_en_proceso else 'estado-rechazada' if es_rechazada else 'estado-otro' %}
+      {% set clase_estado = 'resuelta' if es_resuelta else 'proceso' if es_en_proceso else 'rechazada' if es_rechazada else 'otro' %}
 
-      <div class="den-card"
-           onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-md)'"
-           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-xs)'">
+      <div class="den-card">
+        <div class="den-barra den-barra--{{ clase_estado }}"></div>
+        <div class="den-body">
 
-        <div class="den-barra {{ clase_estado }}-barra"></div>
-
-        <div style="padding: var(--space-4);">
-
-          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; margin-bottom: var(--space-2);">
-            <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text); margin: 0; line-height: 1.35; flex: 1;">
-              {{ denuncia.titulo | default('Sin título') }}
-            </h3>
-            <span class="den-badge {{ clase_estado }}-badge">
-              {{ label_estado }}
-            </span>
+          <div class="den-top">
+            <h3 class="den-titulo">{{ denuncia.titulo | default('Sin título') }}</h3>
+            <span class="den-estado den-estado--{{ clase_estado }}">{{ label_estado }}</span>
           </div>
 
-          <p style="font-size: 0.93rem; color: var(--text-soft); line-height: 1.65; margin: 0 0 var(--space-3); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-            {{ denuncia.descripcion | default('Sin descripción proporcionada.') }}
-          </p>
+          <p class="den-desc">{{ denuncia.descripcion | default('Sin descripción proporcionada.') }}</p>
 
-          <div style="border-top: 1px solid var(--border); padding-top: var(--space-2); display: flex; align-items: center; justify-content: space-between;">
-
-            <div style="display: flex; flex-direction: column; gap: 0.15rem;">
-              <span style="font-size: 0.78rem; color: var(--text-light); font-weight: 600;">
-                Denuncia #{{ denuncia.id }}
-              </span>
-              <span style="font-size: 0.8rem; color: var(--text-light);">
+          <div class="den-pie">
+            <div class="den-meta">
+              <span class="den-id">Denuncia #{{ denuncia.id }}</span>
+              <span class="den-fecha">
                 📅
                 {% if denuncia.fecha %}
                   {{ denuncia.fecha.strftime('%d/%m/%Y') if denuncia.fecha is not string else denuncia.fecha }}
@@ -76,15 +57,12 @@
                 {% endif %}
               </span>
             </div>
-
-            <div style="display: flex; align-items: center; gap: 0.35rem;">
-              <div class="den-punto {{ clase_estado }}-punto"></div>
-              <span class="den-label-pie {{ clase_estado }}-texto">
-                {{ label_pie }}
-              </span>
+            <div class="den-status">
+              <div class="den-punto den-punto--{{ clase_estado }}"></div>
+              <span class="den-label den-label--{{ clase_estado }}">{{ label_pie }}</span>
             </div>
-
           </div>
+
         </div>
       </div>
       {% endfor %}
@@ -92,82 +70,286 @@
     </div>
 
     {% else %}
-    <div style="text-align: center; padding: var(--space-7) var(--space-4); background: var(--white); border-radius: var(--radius-block); box-shadow: var(--shadow-sm);">
-      <div style="font-size: 3.5rem; margin-bottom: var(--space-3);">🔍</div>
-      <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">No tienes denuncias registradas</h2>
-      <p style="color: var(--text-light); font-size: 1rem; max-width: 420px; margin: 0 auto var(--space-4);">
-        Si tienes un problema que reportar en tu comunidad, puedes presentar una denuncia desde aquí.
-      </p>
-      <a href="{{ url_for('servicios') }}" class="btn btn-primary">Presentar una denuncia</a>
+    <div class="md-empty">
+      <div class="md-empty-icon">🔍</div>
+      <h2 class="md-empty-titulo">No tienes denuncias registradas</h2>
+      <p class="md-empty-sub">Si tienes un problema que reportar en tu comunidad, puedes presentar una denuncia desde aquí.</p>
+      <a href="{{ url_for('servicios') }}" class="md-btn-primary">Presentar una denuncia</a>
     </div>
     {% endif %}
 
-    <div style="margin-top: var(--space-4);">
-      <a href="{{ url_for('mi_cuenta') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--green-dark); text-decoration: none; font-weight: 600; font-size: 0.95rem;">
-        ← Volver a mi cuenta
+    <div class="md-footer">
+      <a href="{{ url_for('mi_cuenta') }}" class="md-back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Volver a mi cuenta
       </a>
     </div>
 
   </div>
 </section>
 
-{# ── Estilos estáticos: cero {{ }} dentro de CSS ── #}
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+*{box-sizing:border-box;}
+
+/* ── PÁGINA ── */
+.md-page {
+  min-height: 85vh;
+  padding: 11rem 0 4rem;
+  background: #f8f9fa;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.md-container {
+  max-width: 1100px !important;
+}
+
+/* ── ENCABEZADO ── */
+.md-encabezado { margin-bottom: 1.5rem; }
+
+.md-eyebrow {
+  font-size: .72rem !important;
+  font-weight: 700 !important;
+  color: #1a3b2e !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+  margin-bottom: .4rem !important;
+}
+
+.md-titulo {
+  font-size: clamp(1.8rem, 3vw, 2.4rem) !important;
+  font-weight: 800 !important;
+  color: #1d2939 !important;
+  letter-spacing: -.025em !important;
+  margin-bottom: .4rem !important;
+  line-height: 1.2 !important;
+}
+
+.md-subtitulo {
+  color: #667085 !important;
+  font-size: .97rem !important;
+  margin: 0 !important;
+}
+
+/* ── CONTADOR ── */
+.md-contador { margin-bottom: 1.5rem; }
+
+.md-badge-total {
+  display: inline-block;
+  background: #e8f3ee;
+  color: #1a3b2e;
+  font-size: .85rem;
+  font-weight: 700;
+  padding: .35rem 1rem;
+  border-radius: 999px;
+}
+
+/* ── GRID ── */
+.md-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+/* ── CARD ── */
 .den-card {
-  background: var(--white);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-xs);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
   overflow: hidden;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: transform .2s, box-shadow .2s;
+}
+
+.den-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0,0,0,.12);
 }
 
 .den-barra {
-  height: 4px;
+  height: 5px;
   width: 100%;
 }
 
-.den-badge {
+.den-barra--resuelta  { background: linear-gradient(90deg,#1A7A42,#2ECC71); }
+.den-barra--proceso   { background: linear-gradient(90deg,#E6A800,#F5D020); }
+.den-barra--rechazada { background: linear-gradient(90deg,#C0392B,#E74C3C); }
+.den-barra--otro      { background: linear-gradient(90deg,#667085,#98a2b3); }
+
+.den-body { padding: 1.25rem 1.4rem; }
+
+.den-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: .75rem;
+}
+
+.den-titulo {
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  color: #1d2939 !important;
+  margin: 0 !important;
+  line-height: 1.35 !important;
+  flex: 1;
+}
+
+.den-estado {
   flex-shrink: 0;
-  font-size: 0.75rem;
+  font-size: .73rem;
   font-weight: 700;
-  padding: 0.3rem 0.75rem;
-  border-radius: var(--radius-full);
+  padding: .28rem .75rem;
+  border-radius: 999px;
   white-space: nowrap;
+}
+
+.den-estado--resuelta  { background: #EAF7EF; color: #1A7A42; }
+.den-estado--proceso   { background: #FFF8E6; color: #9A6E00; }
+.den-estado--rechazada { background: #FDECEA; color: #922B21; }
+.den-estado--otro      { background: #f2f4f6; color: #475467; }
+
+.den-desc {
+  font-size: .9rem !important;
+  color: #475467 !important;
+  line-height: 1.65 !important;
+  margin: 0 0 1rem !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.den-pie {
+  border-top: 1px solid #e4e7ec;
+  padding-top: .85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.den-meta {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+
+.den-id {
+  font-size: .75rem !important;
+  color: #98a2b3 !important;
+  font-weight: 600 !important;
+}
+
+.den-fecha {
+  font-size: .78rem !important;
+  color: #667085 !important;
+}
+
+.den-status {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
 }
 
 .den-punto {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.den-label-pie {
-  font-size: 0.78rem;
+.den-punto--resuelta  { background: #1A7A42; }
+.den-punto--proceso   { background: #E6A800; }
+.den-punto--rechazada { background: #C0392B; }
+.den-punto--otro      { background: #98a2b3; }
+
+.den-label {
+  font-size: .78rem !important;
+  font-weight: 600 !important;
+}
+
+.den-label--resuelta  { color: #1A7A42 !important; }
+.den-label--proceso   { color: #9A6E00 !important; }
+.den-label--rechazada { color: #922B21 !important; }
+.den-label--otro      { color: #667085 !important; }
+
+/* ── EMPTY STATE ── */
+.md-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 20px rgba(0,0,0,.06);
+  margin-bottom: 2rem;
+}
+
+.md-empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.md-empty-titulo {
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  color: #1d2939 !important;
+  margin-bottom: .75rem !important;
+}
+
+.md-empty-sub {
+  color: #667085 !important;
+  font-size: .97rem !important;
+  max-width: 420px;
+  margin: 0 auto 1.5rem !important;
+  line-height: 1.6 !important;
+}
+
+.md-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .8rem 1.8rem;
+  font-size: .95rem;
+  font-weight: 700;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #1a3b2e;
+  color: #fff !important;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none !important;
+  box-shadow: 0 4px 14px rgba(26,59,46,.3);
+  transition: background .2s, transform .2s;
+}
+
+.md-btn-primary:hover {
+  background: #2e7d5e;
+  transform: translateY(-2px);
+  text-decoration: none !important;
+}
+
+/* ── FOOTER ── */
+.md-footer { margin-top: 1.5rem; }
+
+.md-back {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  color: #1a3b2e !important;
+  text-decoration: none !important;
   font-weight: 600;
+  font-size: .95rem;
+  transition: gap .15s;
 }
 
-/* ── Resuelta ── */
-.estado-resuelta-barra   { background: linear-gradient(90deg, #1A7A42, #2ECC71); }
-.estado-resuelta-badge   { background: #EAF7EF; color: #1A7A42; }
-.estado-resuelta-punto   { background: #1A7A42; }
-.estado-resuelta-texto   { color: #1A7A42; }
+.md-back:hover { gap: .65rem; text-decoration: none !important; }
 
-/* ── En proceso ── */
-.estado-en-proceso-barra  { background: linear-gradient(90deg, #E6A800, #F5D020); }
-.estado-en-proceso-badge  { background: #FFF8E6; color: #9A6E00; }
-.estado-en-proceso-punto  { background: #E6A800; }
-.estado-en-proceso-texto  { color: #9A6E00; }
-
-/* ── Rechazada ── */
-.estado-rechazada-barra  { background: linear-gradient(90deg, #C0392B, #E74C3C); }
-.estado-rechazada-badge  { background: #FDECEA; color: #922B21; }
-.estado-rechazada-punto  { background: #C0392B; }
-.estado-rechazada-texto  { color: #922B21; }
-
-/* ── Otro/desconocido ── */
-.estado-otro-barra  { background: linear-gradient(90deg, var(--green), var(--green-light)); }
-.estado-otro-badge  { background: var(--gray-100); color: var(--gray-600); }
-.estado-otro-punto  { background: var(--gray-400); }
-.estado-otro-texto  { color: var(--text-light); }
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .md-page { padding: 9rem 0 3rem; }
+  .md-grid { grid-template-columns: 1fr; }
+}
 </style>
 {% endblock %}

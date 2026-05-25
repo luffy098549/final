@@ -1265,17 +1265,49 @@ def api_plantillas_lista():
 def admin_mapa_incidencias():
     try:
         denuncias = Denuncia.query.all()
-        denuncias_geo = [d for d in denuncias if d.geolocalizada]
-        
+
+        denuncias_geo = []
+        for d in denuncias:
+            if not getattr(d, 'geolocalizada', False):
+                continue
+            try:
+                lat = float(d.lat) if d.lat else None
+                lng = float(d.lng) if d.lng else None
+            except (ValueError, TypeError):
+                lat, lng = None, None
+
+            if not lat or not lng:
+                continue
+
+            denuncias_geo.append({
+                'id':            d.id,
+                'folio':         d.folio,
+                'tipo':          d.tipo,
+                'tipo_nombre':   getattr(d, 'tipo_nombre', None) or NOMBRES_DENUNCIAS.get(d.tipo, d.tipo),
+                'estado':        d.estado,
+                'descripcion':   (d.descripcion or '')[:200],
+                'ubicacion':     d.ubicacion or '',
+                'direccion':     d.ubicacion or '',
+                'usuario_nombre': getattr(d, 'usuario_nombre', None) or 'Anónimo',
+                'lat':           lat,
+                'lng':           lng,
+                'fecha':         d.fecha_creacion.isoformat()
+                                 if hasattr(d.fecha_creacion, 'isoformat')
+                                 else str(d.fecha_creacion or ''),
+            })
+
+        stats = {
+            'total':          len(denuncias),
+            'geolocalizadas': len(denuncias_geo),
+            'pendientes':     len([d for d in denuncias
+                                   if d.estado in ['pendiente', 'en_investigacion']]),
+        }
+
         return render_template(
             "admin/mapa_admin.html",
             denuncias=denuncias_geo,
             tipos=NOMBRES_DENUNCIAS,
-            stats={
-                'total': len(denuncias),
-                'geolocalizadas': len(denuncias_geo),
-                'pendientes': len([d for d in denuncias if d.estado in ['pendiente', 'en_investigacion']])
-            }
+            stats=stats
         )
     except Exception as e:
         flash(f"Error al cargar mapa: {str(e)}", "error")

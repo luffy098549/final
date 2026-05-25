@@ -1,488 +1,599 @@
 {% extends "base.html" %}
-{% block title %}Denuncia — {{ nombre_denuncia }} — Villa Cutupú{% endblock %}
+
+{% block title %}Denuncia — {{ nombre_servicio }} — Villa Cutupú{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+*{box-sizing:border-box;}
+
+:root{
+  --red:#B83B2C;--red-dark:#8C2A1E;--red-light:#FAECE7;
+  --green:#1a3b2e;--green-mid:#2e7d5e;--green-light:#e8f3ee;
+  --gray-50:#f9fafb;--gray-100:#f2f4f6;--gray-200:#e4e7ec;--gray-300:#d0d5dd;
+  --gray-400:#98a2b3;--gray-500:#667085;--gray-600:#475467;--gray-700:#344054;--gray-800:#1d2939;
+  --radius:12px;--radius-sm:8px;
+  --shadow:0 1px 4px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.06);
+  --font:'DM Sans',system-ui,sans-serif;
+}
+
+body{font-family:var(--font);}
+
+.dn-wrap{
+  max-width:760px;
+padding: 11rem 1.25rem 3rem;
+}
+
+/* BREADCRUMB */
+.breadcrumb{font-size:.78rem;color:var(--gray-500);margin-bottom:1.25rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;}
+.breadcrumb a{color:var(--green);font-weight:600;text-decoration:none;}
+.breadcrumb a:hover{text-decoration:underline;}
+.breadcrumb span{color:var(--gray-400);}
+
+/* PAGE HEADER */
+.eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:.35rem;}
+.page-title{font-size:1.9rem;font-weight:700;color:var(--gray-800);letter-spacing:-.025em;line-height:1.2;margin-bottom:.35rem;}
+.page-sub{font-size:.95rem;color:var(--gray-500);margin-bottom:1.5rem;}
+
+/* FLASH MESSAGES */
+.alert{padding:.9rem 1rem;border-radius:var(--radius);margin-bottom:1.25rem;font-size:.9rem;}
+.alert-error{background:var(--red-light);color:var(--red-dark);border:1px solid var(--red);}
+.alert-success{background:#e1f7ed;color:#1e7b4c;border:1px solid #1e7b4c;}
+
+/* CARD */
+.card{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:.75rem;}
+
+/* CARD HEADER */
+.card-header{background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 100%);padding:1.25rem 1.5rem;color:white;display:flex;align-items:center;gap:.85rem;}
+.card-icon{width:44px;height:44px;background:rgba(255,255,255,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-header-label{font-size:.65rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.8;margin-bottom:.2rem;}
+.card-header-title{font-size:1.1rem;font-weight:700;line-height:1.3;}
+
+/* ALERTS */
+.form-alert{display:flex;align-items:flex-start;gap:.6rem;padding:.85rem 1.5rem;font-size:.88rem;line-height:1.6;border-bottom:1px solid transparent;}
+.form-alert--shield{background:#EAF7EF;color:#1A4D2E;border-color:rgba(26,122,66,.12);}
+.form-alert--info{background:#EFF6FF;color:#1a4f75;border-color:rgba(43,106,158,.12);}
+.alert-icon{flex-shrink:0;margin-top:2px;}
+
+/* FORM BODY */
+.form-body{padding:1.5rem;}
+
+.section-label{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-400);margin:1.5rem 0 .85rem;padding-bottom:.5rem;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:.4rem;}
+.section-label:first-child{margin-top:0;}
+
+.fg{margin-bottom:1.1rem;}
+.fg label{display:flex;align-items:center;gap:.35rem;font-size:.85rem;font-weight:600;color:var(--gray-700);margin-bottom:.4rem;}
+.req{color:var(--red);font-weight:700;}
+.opt{font-size:.7rem;font-weight:600;background:var(--gray-100);color:var(--gray-500);padding:.1rem .5rem;border-radius:20px;}
+.hint{font-size:.75rem;color:var(--gray-400);margin-top:.3rem;line-height:1.4;}
+
+/* INPUTS */
+.fi{width:100%;padding:.7rem 1rem;border:1.5px solid var(--gray-300);border-radius:var(--radius-sm);font-size:.93rem;font-family:var(--font);color:var(--gray-800);background:#fff;transition:border-color .15s,box-shadow .15s;outline:none;appearance:none;}
+.fi:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(184,59,44,.1);}
+.fi:disabled{background:var(--gray-50);color:var(--gray-400);cursor:not-allowed;border-color:var(--gray-200);}
+textarea.fi{resize:vertical;min-height:110px;line-height:1.6;}
+
+.fi-icon-wrap{position:relative;}
+.fi-icon-wrap .fi{padding-left:2.4rem;}
+.fi-icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gray-400);pointer-events:none;display:flex;}
+
+/* AUTOCOMPLETE */
+.autocomplete-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--gray-200);border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,.1);max-height:210px;overflow-y:auto;z-index:9999;display:none;}
+.autocomplete-list.open{display:block;}
+.ac-item{padding:.6rem .9rem;cursor:pointer;font-size:.85rem;color:var(--gray-700);display:flex;align-items:flex-start;gap:.55rem;border-bottom:1px solid var(--gray-100);transition:background .1s;}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:hover,.ac-item.active{background:var(--green-light);}
+.ac-main{font-weight:600;font-size:.83rem;color:var(--gray-800);}
+.ac-sub{font-size:.72rem;color:var(--gray-400);margin-top:.1rem;}
+
+/* MAP */
+.map-wrapper{border-radius:var(--radius-sm);overflow:hidden;border:1.5px solid var(--gray-200);margin-top:.7rem;display:none;}
+.map-wrapper.visible{display:block;}
+.map-badge{background:var(--green-light);color:var(--green);font-size:.73rem;font-weight:600;padding:.4rem .85rem;display:flex;align-items:center;gap:.4rem;}
+#miniMap{height:200px;}
+.coords-row{display:flex;justify-content:space-between;align-items:center;margin-top:.35rem;font-size:.72rem;color:var(--green);background:var(--green-light);padding:.35rem .75rem;border-radius:6px;}
+.coords-row button{background:none;border:none;color:var(--red);cursor:pointer;font-size:.72rem;font-weight:600;font-family:var(--font);}
+
+.btn-map{display:inline-flex;align-items:center;gap:.35rem;background:var(--green);color:white;border:none;padding:.5rem 1rem;border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .15s,transform .15s;margin-top:.55rem;}
+.btn-map:hover{background:var(--green-mid);transform:translateY(-1px);}
+.btn-map:disabled{opacity:.6;cursor:not-allowed;}
+
+/* ANON TOGGLE */
+.anon-row{display:flex;align-items:center;gap:.65rem;padding:.7rem 1rem;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-sm);cursor:pointer;margin-bottom:1rem;transition:background .15s;}
+.anon-row:hover{background:var(--green-light);}
+.anon-row input[type=checkbox]{width:1rem;height:1rem;accent-color:var(--green);flex-shrink:0;cursor:pointer;}
+.anon-row label{font-size:.88rem;color:var(--gray-700);cursor:pointer;margin:0;}
+
+/* FILE UPLOAD */
+.upload-zone{border:2px dashed var(--gray-300);border-radius:var(--radius-sm);padding:1.25rem 1rem;text-align:center;position:relative;cursor:pointer;background:var(--gray-50);transition:border-color .15s,background .15s;}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--green);background:var(--green-light);}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-title{font-size:.88rem;font-weight:600;color:var(--gray-600);margin-top:.4rem;}
+.upload-sub{font-size:.73rem;color:var(--gray-400);margin-top:.2rem;}
+
+.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:.5rem;margin-top:.6rem;}
+.file-thumb{position:relative;border-radius:8px;overflow:hidden;background:var(--gray-100);aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:1px solid var(--gray-200);}
+.file-thumb img{width:100%;height:100%;object-fit:cover;}
+.ficon{display:flex;flex-direction:column;align-items:center;gap:.15rem;color:var(--gray-400);}
+.ficon span{font-size:.55rem;font-weight:700;color:var(--gray-500);text-transform:uppercase;}
+.rm-btn{position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(184,59,44,.85);color:white;border:none;border-radius:50%;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* ACTIONS */
+.form-actions{display:flex;gap:.85rem;margin-top:1.5rem;flex-wrap:wrap;padding-top:1.25rem;border-top:1px solid var(--gray-100);}
+.btn-cancel{flex:1;min-width:110px;padding:.8rem 1.25rem;border-radius:var(--radius-sm);font-size:.9rem;font-weight:600;cursor:pointer;border:1.5px solid var(--gray-300);background:#fff;color:var(--gray-600);transition:all .15s;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:.4rem;font-family:var(--font);}
+.btn-cancel:hover{background:var(--gray-100);}
+.btn-submit{flex:2;min-width:180px;background:var(--red);color:white;border:none;padding:.8rem 1.75rem;border-radius:var(--radius-sm);font-size:.93rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.5rem;font-family:var(--font);}
+.btn-submit:hover:not(:disabled){background:var(--red-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(184,59,44,.3);}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-submit .spinner{width:15px;height:15px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;display:none;}
+.btn-submit.loading .spinner{display:block;}
+.btn-submit.loading .btn-text{display:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.disclaimer{font-size:.73rem;color:var(--gray-400);text-align:center;margin-top:.85rem;line-height:1.5;}
+
+@media(max-width:540px){
+  .form-body{padding:1.1rem;}
+  .card-header{padding:1rem 1.1rem;}
+  .form-alert{padding:.75rem 1.1rem;}
+  .form-actions{flex-direction:column-reverse;}
+  .btn-cancel,.btn-submit{width:100%;min-width:unset;}
+  .page-title{font-size:1.5rem;}
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<section style="min-height: 85vh; padding: var(--space-7) 0; background: var(--gray-50);">
-  <div class="container" style="max-width: 780px;">
+<div class="dn-wrap">
 
-    <!-- Breadcrumb -->
-    <nav style="margin-bottom: var(--space-4);">
-      <span style="font-size: 0.85rem; color: var(--text-light);">
-        <a href="{{ url_for('index') }}" style="color: var(--green-dark); text-decoration: none; font-weight: 600;">Inicio</a>
-        <span style="margin: 0 0.5rem; color: var(--gray-400);">›</span>
-        <a href="{{ url_for('servicios') }}" style="color: var(--green-dark); text-decoration: none; font-weight: 600;">Servicios</a>
-        <span style="margin: 0 0.5rem; color: var(--gray-400);">›</span>
-        <span style="color: var(--text-light);">{{ nombre_denuncia }}</span>
-      </span>
-    </nav>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a href="{{ url_for('index') }}">Inicio</a>
+    <span>›</span>
+    <a href="{{ url_for('servicios') }}">Servicios</a>
+    <span>›</span>
+    <span>{{ nombre_servicio }}</span>
+  </nav>
 
-    <!-- Encabezado -->
-    <div style="margin-bottom: var(--space-5);">
-      <p style="font-size: 0.82rem; font-weight: 700; color: #922B21; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem;">
-        Denuncias ciudadanas
-      </p>
-      <h1 style="font-size: clamp(1.7rem, 3vw, 2.2rem); font-weight: 800; color: var(--text); letter-spacing: -0.025em; margin-bottom: 0.5rem; line-height: 1.2;">
-        Presentar denuncia
-      </h1>
-      <p style="color: var(--text-light); font-size: 1rem;">
-        Su identidad está protegida. Todos los campos marcados son obligatorios.
-      </p>
+  <!-- Page header -->
+  <p class="eyebrow">Denuncias ciudadanas</p>
+  <h1 class="page-title">Presentar denuncia</h1>
+  <p class="page-sub">Su identidad está protegida. Los campos marcados con <span style="color:var(--red);font-weight:700">*</span> son obligatorios.</p>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message|safe }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="card">
+
+    <!-- Card header -->
+    <div class="card-header">
+      <div class="card-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <div>
+        <p class="card-header-label">Tipo de denuncia</p>
+        <h2 class="card-header-title">{{ nombre_servicio }}</h2>
+      </div>
     </div>
 
-    <!-- Tarjeta principal -->
-    <div class="form-card">
-
-      <!-- Header -->
-      <div class="form-card-header form-card-header--red">
-        <div style="display: flex; align-items: center; gap: 1rem;">
-          <div class="form-card-icon form-card-icon--red">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-          </div>
-          <div>
-            <p style="font-size: 0.75rem; font-weight: 600; opacity: 0.8; margin: 0; text-transform: uppercase; letter-spacing: 0.08em;">Tipo de denuncia</p>
-            <h2 style="font-size: 1.15rem; font-weight: 800; margin: 0; line-height: 1.3;">{{ nombre_denuncia }}</h2>
-          </div>
-        </div>
-      </div>
-
-      <!-- Alerta confidencialidad -->
-      <div class="form-alert form-alert--shield">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+    <!-- Alerta confidencialidad -->
+    <div class="form-alert form-alert--shield">
+      <div class="alert-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1A4D2E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
-        <span><strong>Confidencialidad garantizada:</strong> Su identidad será protegida. Las denuncias se investigan en un plazo máximo de <strong>10 días hábiles</strong>.</span>
       </div>
+      <span><strong>Confidencialidad garantizada:</strong> Su identidad será protegida. Las denuncias se investigan en un plazo máximo de <strong>10 días hábiles</strong>.</span>
+    </div>
 
-      <!-- Alerta específica por tipo -->
-      {% if tipo == 'policia' %}
-      <div class="form-alert form-alert--info">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+    <!-- Alerta específica por tipo -->
+    {% if servicio == 'policia' %}
+    <div class="form-alert form-alert--info">
+      <div class="alert-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1a4f75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
-        <span><strong>Emergencias:</strong> Si es urgente, llame al <strong>911</strong>. Para situaciones no urgentes, complete este formulario.</span>
       </div>
-      {% elif tipo == 'basura' %}
-      <div class="form-alert form-alert--info">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+      <span><strong>Emergencias:</strong> Si es urgente, llame al <strong>911</strong>. Para situaciones no urgentes, complete este formulario.</span>
+    </div>
+    {% elif servicio == 'basura' %}
+    <div class="form-alert form-alert--info">
+      <div class="alert-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1a4f75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
-        <span>Indique los días y horarios en que ocurre el problema, si hay contenedores dañados o acumulación irregular.</span>
       </div>
-      {% elif tipo == 'alumbrado' %}
-      <div class="form-alert form-alert--info">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+      <span>Indique los días y horarios en que ocurre el problema, si hay contenedores dañados o acumulación irregular.</span>
+    </div>
+    {% elif servicio == 'alumbrado' %}
+    <div class="form-alert form-alert--info">
+      <div class="alert-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1a4f75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
-        <span>Indique el poste o zona afectada y cuántos días lleva sin servicio. Incluya referencias cercanas.</span>
       </div>
-      {% endif %}
+      <span>Indique el poste o zona afectada y cuántos días lleva sin servicio. Incluya referencias cercanas.</span>
+    </div>
+    {% endif %}
 
-      <!-- Formulario -->
-      <form method="POST" action="{{ url_for('procesar_denuncia') }}" class="form-body">
-        <input type="hidden" name="tipo" value="{{ tipo }}">
+    <!-- FORM -->
+    <form method="POST"
+          action="{{ url_for('denunciar', tipo=servicio) }}"
+          enctype="multipart/form-data"
+          id="denunciaForm">
 
-        <!-- Tipo de denuncia (solo lectura) -->
-        <div class="form-group">
-          <label class="form-label">Tipo de denuncia</label>
-          <input type="text" class="form-input form-input--disabled" value="{{ nombre_denuncia }}" disabled>
+      <div class="form-body">
+
+        <!-- SECCIÓN: IDENTIFICACIÓN -->
+        <p class="section-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Identificación
+        </p>
+
+        <div class="fg">
+          <label for="nombre">Tu nombre completo</label>
+          <input type="text" id="nombre" name="nombre" class="fi" placeholder="Ej: Juan Pérez">
+          <p class="hint">Opcional si activas la denuncia anónima.</p>
         </div>
 
-        <!-- Ubicación con mapa -->
-        <div class="form-group">
-          <label class="form-label">
-            Ubicación del incidente
-            <span class="form-required">*</span>
-          </label>
-          <div style="position: relative;">
-            <span style="position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--text-light); pointer-events: none;">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-              </svg>
-            </span>
-            <input type="text" class="form-input" name="ubicacion" id="ubicacionInput" required
-                   style="padding-left: 2.4rem;"
-                   placeholder="Ej: Calle Principal #45, frente a la farmacia"
-                   autocomplete="off">
+        <div class="anon-row" onclick="toggleAnonimo()">
+          <input type="checkbox" id="anonimo" name="anonimo">
+          <label for="anonimo">🕵️ Hacer denuncia anónima (tu nombre no será visible)</label>
+        </div>
+
+        <!-- SECCIÓN: UBICACIÓN -->
+        <p class="section-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Ubicación del incidente
+        </p>
+
+        <div class="fg">
+          <label for="direccion">Dirección del incidente <span class="req">*</span></label>
+          <div style="position:relative;">
+            <div class="fi-icon-wrap">
+              <span class="fi-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </span>
+              <input type="text" id="direccion" name="direccion" class="fi"
+                     placeholder="Ej: Calle Principal, Cutupú, La Vega"
+                     autocomplete="off" required>
+            </div>
+            <div class="autocomplete-list" id="autocompleteList"></div>
           </div>
-          <span class="form-hint">Indique la dirección exacta o un punto de referencia claro.</span>
+          <p class="hint">Escribe la dirección y selecciona una sugerencia para ubicarla en el mapa.</p>
 
-          <!-- Campos ocultos para coordenadas -->
-          <input type="hidden" name="lat" id="latInput">
-          <input type="hidden" name="lng" id="lngInput">
+          <input type="hidden" id="latitud" name="latitud">
+          <input type="hidden" id="longitud" name="longitud">
+          <input type="hidden" id="direccion_normalizada" name="direccion_normalizada">
 
-          <!-- Botón buscar en mapa -->
-          <button type="button" id="btnBuscarMapa" onclick="buscarEnMapa()"
-                  style="margin-top:.6rem;display:inline-flex;align-items:center;gap:.4rem;
-                         background:#1a3b2e;color:white;border:none;padding:.5rem 1.1rem;
-                         border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
+          <button type="button" class="btn-map" id="btnMap" onclick="buscarEnMapa()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             Ubicar en mapa
           </button>
 
-          <!-- Mini mapa de preview -->
-          <div id="mapaPreviewWrapper" style="display:none;margin-top:.8rem;">
-            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-            <div id="mapaPreview" style="height:220px;border-radius:10px;border:1.5px solid #d1fae5;overflow:hidden;"></div>
-            <div id="coordsConfirm" style="margin-top:.4rem;font-size:.78rem;color:#1a4d2e;background:#eafaf1;
-                                            padding:.4rem .8rem;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
+          <div class="map-wrapper" id="mapPreviewWrapper">
+            <div class="map-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span id="mapBadgeText">Ubicación confirmada</span>
+            </div>
+            <div id="miniMap"></div>
+            <div class="coords-row">
               <span id="coordsLabel">📍 Sin coordenadas</span>
-              <button type="button" onclick="limpiarUbicacion()"
-                      style="background:none;border:none;color:#922B21;cursor:pointer;font-size:.78rem;font-weight:600;">
-                ✕ Quitar pin
-              </button>
+              <button type="button" onclick="limpiarUbicacion()">✕ Quitar pin</button>
             </div>
           </div>
         </div>
 
-        <!-- Descripción -->
-        <div class="form-group">
-          <label class="form-label">
-            Descripción de la denuncia
-            <span class="form-required">*</span>
-          </label>
-          <textarea class="form-input form-textarea" name="descripcion" rows="6" required
-                    placeholder="Describa detalladamente lo ocurrido. Incluya fechas, horarios y cualquier dato relevante..."></textarea>
-          <span class="form-hint">Cuanto más detallada sea su descripción, más rápido podremos actuar.</span>
+        <!-- SECCIÓN: DESCRIPCIÓN -->
+        <p class="section-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Descripción
+        </p>
+
+        <div class="fg">
+          <label for="descripcion">Descripción detallada <span class="req">*</span></label>
+          <textarea id="descripcion" name="descripcion" class="fi" rows="6"
+                    placeholder="Describa detalladamente lo ocurrido. Incluya fechas, horarios y cualquier dato relevante..."
+                    required></textarea>
+          <p class="hint">Cuanto más detallada sea su descripción, más rápido podremos actuar.</p>
         </div>
 
-        <!-- Evidencia -->
-        <div class="form-group">
-          <label class="form-label">
-            Evidencia disponible
-            <span class="form-optional">Opcional</span>
-          </label>
-          <textarea class="form-input form-textarea" name="evidencia" rows="3"
-                    placeholder="Mencione si tiene fotos, videos, nombres de testigos u otro tipo de evidencia..."></textarea>
-          <span class="form-hint">No adjunte archivos aquí; solo describa qué evidencia tiene disponible.</span>
-        </div>
+        <!-- SECCIÓN: EVIDENCIA -->
+        <p class="section-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          Evidencia
+          <span class="opt">Opcional</span>
+        </p>
 
-        <!-- Botones -->
-        <div class="form-actions">
-          <a href="{{ url_for('servicios') }}" class="btn-form btn-form--secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        <div class="fg">
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="evidencias" name="evidencias"
+                   multiple accept="image/*,video/*,.pdf,.doc,.docx">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
+            <p class="upload-title">Arrastra archivos o haz clic para seleccionar</p>
+            <p class="upload-sub">Fotos, videos, PDF · Máx. 5 archivos · 10 MB c/u</p>
+          </div>
+          <div class="file-grid" id="filePreviewGrid"></div>
+        </div>
+
+        <!-- ACCIONES -->
+        <div class="form-actions">
+          <a href="javascript:history.back()" class="btn-cancel">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             Cancelar
           </a>
-          <button type="submit" class="btn-form btn-form--danger">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-            </svg>
-            Enviar denuncia
+          <button type="submit" class="btn-submit" id="btnSubmit">
+            <div class="spinner"></div>
+            <span class="btn-text">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:.3rem"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Enviar denuncia
+            </span>
           </button>
         </div>
-      </form>
 
-    </div>
+        <p class="disclaimer">Al enviar este formulario, acepta que sus datos serán procesados con fines de gestión municipal conforme a la normativa vigente.</p>
 
-    <p style="text-align: center; font-size: 0.82rem; color: var(--text-light); margin-top: var(--space-4);">
-      Al enviar este formulario, acepta que sus datos serán procesados con fines de gestión municipal conforme a la normativa vigente.
-    </p>
+      </div>
+    </form>
 
   </div>
-</section>
+</div>
+{% endblock %}
 
-<style>
-.form-card {
-  background: var(--white);
-  border-radius: var(--radius-block);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  margin-bottom: var(--space-3);
-}
-
-.form-card-header {
-  padding: var(--space-4) var(--space-5);
-  color: white;
-}
-
-.form-card-header--red {
-  background: linear-gradient(135deg, #922B21 0%, #C0392B 100%);
-}
-
-.form-card-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: var(--radius-card);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.form-card-icon--red {
-  background: rgba(255,255,255,0.2);
-  color: white;
-}
-
-.form-alert {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: var(--space-3) var(--space-5);
-  font-size: 0.93rem;
-  line-height: 1.6;
-  border-bottom: 1px solid transparent;
-}
-
-.form-alert--shield {
-  background: #EAF7EF;
-  color: #1A4D2E;
-  border-color: rgba(26,122,66,0.15);
-}
-
-.form-alert--info {
-  background: var(--blue-sky-light);
-  color: #1a4f75;
-  border-color: rgba(43,106,158,0.15);
-}
-
-.form-body {
-  padding: var(--space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.form-label {
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.form-required { color: #C0392B; font-weight: 700; }
-
-.form-optional {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-light);
-  background: var(--gray-100);
-  padding: 0.15rem 0.6rem;
-  border-radius: var(--radius-full);
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 0.97rem;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  color: var(--text);
-  background: var(--white);
-  border: 1.5px solid var(--gray-300);
-  border-radius: var(--radius-card);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  outline: none;
-  appearance: none;
-}
-
-.form-input:focus {
-  border-color: #C0392B;
-  box-shadow: 0 0 0 3px rgba(192,57,43,0.12);
-}
-
-.form-input--disabled {
-  background: var(--gray-50);
-  color: var(--text-light);
-  cursor: not-allowed;
-  border-color: var(--gray-200);
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 120px;
-  line-height: 1.6;
-}
-
-.form-hint {
-  font-size: 0.8rem;
-  color: var(--text-light);
-  line-height: 1.4;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--border);
-  margin-top: var(--space-2);
-}
-
-.btn-form {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.6rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  border-radius: var(--radius-card);
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  transition: transform var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.btn-form--danger {
-  background: #C0392B;
-  color: white;
-  box-shadow: var(--shadow-xs);
-}
-
-.btn-form--danger:hover {
-  background: #922B21;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-.btn-form--secondary {
-  background: transparent;
-  color: var(--text-soft);
-  border: 1.5px solid var(--gray-300);
-}
-
-.btn-form--secondary:hover {
-  border-color: var(--gray-500);
-  color: var(--text);
-  transform: translateY(-2px);
-}
-
-@media (max-width: 540px) {
-  .form-body { padding: var(--space-4); }
-  .form-card-header { padding: var(--space-3) var(--space-4); }
-  .form-alert { padding: var(--space-3) var(--space-4); }
-  .form-actions { flex-direction: column-reverse; }
-  .btn-form { width: 100%; justify-content: center; }
-}
-</style>
-
+{% block extra_js %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-let mapaPreview = null;
-let pinMarker = null;
+let miniMap = null;
+let miniMarker = null;
+let selectedFiles = [];
+let searchTimeout = null;
+let currentFocus = -1;
 
-async function buscarEnMapa() {
-  const direccion = document.getElementById('ubicacionInput').value.trim();
-  if (!direccion) {
-    alert('⚠️ Escribe una dirección primero.');
+/* ── AUTOCOMPLETE ── */
+const direccionInput = document.getElementById('direccion');
+const autocompleteList = document.getElementById('autocompleteList');
+
+direccionInput.addEventListener('input', function () {
+  clearTimeout(searchTimeout);
+  const query = this.value.trim();
+  if (query.length < 3) { closeAutocomplete(); return; }
+  searchTimeout = setTimeout(() => buscarDirecciones(query), 350);
+});
+
+async function buscarDirecciones(query) {
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?` +
+      `q=${encodeURIComponent(query + ', República Dominicana')}&` +
+      `format=json&limit=6&countrycodes=do&accept-language=es&addressdetails=1`;
+    const res = await fetch(url, { headers: { 'Accept-Language': 'es' } });
+    renderAutocomplete(await res.json());
+  } catch (e) { console.error('Error buscando direcciones:', e); }
+}
+
+function renderAutocomplete(results) {
+  autocompleteList.innerHTML = '';
+  currentFocus = -1;
+
+  if (!results.length) {
+    autocompleteList.innerHTML = `
+      <div class="ac-item" style="cursor:default;color:var(--gray-400)">
+        <div><div class="ac-main">Sin resultados</div>
+        <div class="ac-sub">Intenta con más detalles (calle, sector, ciudad)</div></div>
+      </div>`;
+    autocompleteList.classList.add('open');
     return;
   }
 
-  const btn = document.getElementById('btnBuscarMapa');
-  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Buscando...';
+  results.forEach(r => {
+    const addr = r.address || {};
+    const main = addr.road || addr.neighbourhood || addr.suburb || r.display_name.split(',')[0];
+    const sub = [addr.city || addr.town || addr.village, addr.state, 'Rep. Dominicana'].filter(Boolean).join(', ');
+    const item = document.createElement('div');
+    item.className = 'ac-item';
+    item.innerHTML = `
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+      </svg>
+      <div><div class="ac-main">${main}</div><div class="ac-sub">${sub}</div></div>`;
+    item.addEventListener('click', () => seleccionarDireccion(r));
+    autocompleteList.appendChild(item);
+  });
+  autocompleteList.classList.add('open');
+}
+
+function seleccionarDireccion(result) {
+  const lat = parseFloat(result.lat);
+  const lng = parseFloat(result.lon);
+  const addr = result.address || {};
+  const legible = [
+    addr.road || addr.neighbourhood,
+    addr.house_number,
+    addr.suburb || addr.village || addr.city_district,
+    addr.city || addr.town || addr.village,
+    addr.state
+  ].filter(Boolean).join(', ');
+
+  direccionInput.value = legible || result.display_name.split(',').slice(0, 3).join(',').trim();
+  document.getElementById('latitud').value = lat;
+  document.getElementById('longitud').value = lng;
+  document.getElementById('direccion_normalizada').value = result.display_name;
+  closeAutocomplete();
+  mostrarMiniMapa(lat, lng, legible || result.display_name);
+}
+
+function closeAutocomplete() {
+  autocompleteList.classList.remove('open');
+  autocompleteList.innerHTML = '';
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.fi-icon-wrap')) closeAutocomplete();
+});
+
+direccionInput.addEventListener('keydown', function (e) {
+  const items = autocompleteList.querySelectorAll('.ac-item');
+  if (!items.length) return;
+  if (e.key === 'ArrowDown') currentFocus = Math.min(currentFocus + 1, items.length - 1);
+  else if (e.key === 'ArrowUp') currentFocus = Math.max(currentFocus - 1, 0);
+  else if (e.key === 'Escape') { closeAutocomplete(); return; }
+  else return;
+  e.preventDefault();
+  items.forEach((el, i) => el.classList.toggle('active', i === currentFocus));
+  if (currentFocus >= 0) items[currentFocus].scrollIntoView({ block: 'nearest' });
+});
+
+/* ── MAPA ── */
+async function buscarEnMapa() {
+  const dir = direccionInput.value.trim();
+  if (!dir) { alert('⚠️ Escribe una dirección primero.'); return; }
+  const btn = document.getElementById('btnMap');
+  btn.innerHTML = '⏳ Buscando...';
   btn.disabled = true;
-
   try {
-    // Geocodificar con Nominatim
-    const query = encodeURIComponent(direccion + ', República Dominicana');
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`, {
-      headers: { 'Accept-Language': 'es' }
-    });
+    const q = encodeURIComponent(dir + ', República Dominicana');
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, { headers: { 'Accept-Language': 'es' } });
     const data = await res.json();
-
-    const wrapper = document.getElementById('mapaPreviewWrapper');
-    wrapper.style.display = 'block';
-
-    let lat, lng, label;
-
+    document.getElementById('mapPreviewWrapper').classList.add('visible');
     if (data && data.length > 0) {
-      lat = parseFloat(data[0].lat);
-      lng = parseFloat(data[0].lon);
-      label = data[0].display_name;
+      mostrarMiniMapa(parseFloat(data[0].lat), parseFloat(data[0].lon), data[0].display_name);
     } else {
-      // Fallback: centrar en Cutupú para que el usuario coloque el pin manualmente
-      lat = 19.3169;
-      lng = -70.5418;
-      label = 'No encontrado — haz clic en el mapa para colocar el pin manualmente';
+      mostrarMiniMapa(19.3169, -70.5418, 'Haz clic en el mapa para colocar el pin manualmente');
     }
-
-    mostrarMiniMapa(lat, lng, label);
-
   } catch (e) {
-    console.error(e);
-    // Fallback offline
-    const wrapper = document.getElementById('mapaPreviewWrapper');
-    wrapper.style.display = 'block';
     mostrarMiniMapa(19.3169, -70.5418, 'Haz clic en el mapa para indicar la ubicación');
   } finally {
-    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Ubicar en mapa';
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Ubicar en mapa`;
     btn.disabled = false;
   }
 }
 
 function mostrarMiniMapa(lat, lng, label) {
-  if (!mapaPreview) {
-    mapaPreview = L.map('mapaPreview').setView([lat, lng], 16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
-    }).addTo(mapaPreview);
-
-    // Permitir clic para reubicar el pin
-    mapaPreview.on('click', function(e) {
-      colocarPin(e.latlng.lat, e.latlng.lng, 'Ubicación seleccionada manualmente');
-    });
+  document.getElementById('mapPreviewWrapper').classList.add('visible');
+  document.getElementById('mapBadgeText').textContent = `📍 ${label.substring(0, 55)}${label.length > 55 ? '…' : ''}`;
+  if (!miniMap) {
+    miniMap = L.map('miniMap', { zoomControl: true, scrollWheelZoom: false }).setView([lat, lng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(miniMap);
+    miniMap.on('click', e => colocarPin(e.latlng.lat, e.latlng.lng, 'Ubicación seleccionada manualmente'));
   } else {
-    mapaPreview.setView([lat, lng], 16);
+    miniMap.setView([lat, lng], 16);
   }
-
   colocarPin(lat, lng, label);
 }
 
 function colocarPin(lat, lng, label) {
-  if (pinMarker) mapaPreview.removeLayer(pinMarker);
-
-  const icono = L.divIcon({
+  if (miniMarker) miniMap.removeLayer(miniMarker);
+  const icon = L.divIcon({
     className: '',
-    html: `<div style="
-      width:28px;height:28px;background:#C0392B;border-radius:50% 50% 50% 0;
-      transform:rotate(-45deg);border:3px solid white;
-      box-shadow:0 2px 8px rgba(192,57,43,0.5);">
-    </div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 28],
-    popupAnchor: [0, -28]
+    html: `<div style="width:26px;height:26px;background:#B83B2C;border:3px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(184,59,44,.5)"></div>`,
+    iconSize: [26, 26], iconAnchor: [13, 26], popupAnchor: [0, -26]
   });
-
-  pinMarker = L.marker([lat, lng], { icon: icono, draggable: true }).addTo(mapaPreview);
-
-  // Actualizar coordenadas al arrastrar el pin
-  pinMarker.on('dragend', function(e) {
-    const pos = e.target.getLatLng();
-    guardarCoordenadas(pos.lat, pos.lng);
-  });
-
+  miniMarker = L.marker([lat, lng], { icon, draggable: true }).addTo(miniMap);
+  miniMarker.on('dragend', e => { const p = e.target.getLatLng(); guardarCoordenadas(p.lat, p.lng); });
   guardarCoordenadas(lat, lng);
-  pinMarker.bindPopup(`<strong>📍 Ubicación del incidente</strong><br><small>${label.substring(0, 80)}</small>`).openPopup();
+  miniMarker.bindPopup(`<strong>📍 Ubicación del incidente</strong><br><small>${label.substring(0, 70)}</small>`).openPopup();
 }
 
 function guardarCoordenadas(lat, lng) {
-  document.getElementById('latInput').value = lat.toFixed(7);
-  document.getElementById('lngInput').value = lng.toFixed(7);
-  document.getElementById('coordsLabel').textContent =
-    `📍 Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)} — Pin arrastrable para ajustar`;
+  document.getElementById('latitud').value = lat.toFixed(7);
+  document.getElementById('longitud').value = lng.toFixed(7);
+  document.getElementById('coordsLabel').textContent = `📍 Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)} — Pin arrastrable`;
 }
 
 function limpiarUbicacion() {
-  if (pinMarker && mapaPreview) mapaPreview.removeLayer(pinMarker);
-  pinMarker = null;
-  document.getElementById('latInput').value = '';
-  document.getElementById('lngInput').value = '';
+  if (miniMarker && miniMap) miniMap.removeLayer(miniMarker);
+  miniMarker = null;
+  document.getElementById('latitud').value = '';
+  document.getElementById('longitud').value = '';
   document.getElementById('coordsLabel').textContent = '📍 Sin coordenadas';
-  document.getElementById('mapaPreviewWrapper').style.display = 'none';
+  document.getElementById('mapPreviewWrapper').classList.remove('visible');
 }
+
+/* ── TOGGLE ANÓNIMO ── */
+function toggleAnonimo() {
+  const cb = document.getElementById('anonimo');
+  const nombreInput = document.getElementById('nombre');
+  cb.checked = !cb.checked;
+  if (cb.checked) {
+    nombreInput.value = '';
+    nombreInput.disabled = true;
+    nombreInput.placeholder = 'Denuncia anónima';
+  } else {
+    nombreInput.disabled = false;
+    nombreInput.placeholder = 'Ej: Juan Pérez';
+  }
+}
+
+/* ── FILE UPLOAD ── */
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('evidencias');
+const previewGrid = document.getElementById('filePreviewGrid');
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('dragover'); agregarArchivos(e.dataTransfer.files); });
+fileInput.addEventListener('change', function () { agregarArchivos(this.files); this.value = ''; });
+
+function agregarArchivos(files) {
+  const MAX = 5, MAX_SIZE = 10 * 1024 * 1024;
+  for (const file of files) {
+    if (selectedFiles.length >= MAX) { alert(`Máximo ${MAX} archivos permitidos.`); break; }
+    if (file.size > MAX_SIZE) { alert(`"${file.name}" supera el límite de 10 MB.`); continue; }
+    if (selectedFiles.find(f => f.name === file.name && f.size === file.size)) continue;
+    selectedFiles.push(file);
+    renderThumb(file, selectedFiles.length - 1);
+  }
+  sincronizarFileInput();
+}
+
+function renderThumb(file, idx) {
+  const thumb = document.createElement('div');
+  thumb.className = 'file-thumb';
+  thumb.dataset.idx = idx;
+  if (file.type.startsWith('image/')) {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    thumb.appendChild(img);
+  } else {
+    const ext = file.name.split('.').pop().toUpperCase();
+    thumb.innerHTML = `<div class="ficon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <span>${ext}</span>
+    </div>`;
+  }
+  const rb = document.createElement('button');
+  rb.className = 'rm-btn'; rb.type = 'button'; rb.textContent = '✕';
+  rb.onclick = () => { selectedFiles.splice(idx, 1); thumb.remove(); previewGrid.querySelectorAll('.file-thumb').forEach((el, i) => el.dataset.idx = i); sincronizarFileInput(); };
+  thumb.appendChild(rb);
+  previewGrid.appendChild(thumb);
+}
+
+function sincronizarFileInput() {
+  const dt = new DataTransfer();
+  selectedFiles.forEach(f => dt.items.add(f));
+  fileInput.files = dt.files;
+}
+
+/* ── ENVÍO ── */
+document.getElementById('denunciaForm').addEventListener('submit', function () {
+  const btn = document.getElementById('btnSubmit');
+  btn.classList.add('loading');
+  btn.disabled = true;
+});
 </script>
 {% endblock %}

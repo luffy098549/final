@@ -575,3 +575,5 @@ def test_auth():
         "user": session.get("user"),
         "message": "Auth funcionando correctamente"
     }
+print("🔑 GOOGLE_CLIENT_ID:", os.environ.get('GOOGLE_CLIENT_ID', 'NO ENCONTRADO'))
+print("🔑 GOOGLE_CLIENT_SECRET:", os.environ.get('GOOGLE_CLIENT_SECRET', 'NO ENCONTRADO')[:10] if os.environ.get('GOOGLE_CLIENT_SECRET') else 'NO ENCONTRADO')
