@@ -9,6 +9,7 @@ from models.usuario import Usuario
 from extensions import db
 import os
 import secrets
+import re
 from werkzeug.utils import secure_filename
 from flask_mail import Message
 
@@ -128,6 +129,19 @@ def get_user_rol():
         return usuario.rol if usuario else None
     return None
 
+def validar_password(password):
+    """Valida que la contraseña cumpla los requisitos de seguridad"""
+    errores = []
+    if len(password) < 8:
+        errores.append("La contraseña debe tener al menos 8 caracteres")
+    if not re.search(r'[A-Z]', password):
+        errores.append("La contraseña debe tener al menos una letra mayúscula")
+    if not re.search(r'[0-9]', password):
+        errores.append("La contraseña debe tener al menos un número")
+    if not re.search(r'[^a-zA-Z0-9]', password):
+        errores.append("La contraseña debe tener al menos un símbolo (!@#$%...)")
+    return errores
+
 
 # ================================================================
 # CONTEXTO GLOBAL
@@ -201,7 +215,7 @@ def login():
 
 
 # ================================================================
-# REGISTRO CON VERIFICACIÓN POR CORREO (REEMPLAZADO)
+# REGISTRO CON VERIFICACIÓN POR CORREO
 # ================================================================
 @auth.route("/registro", methods=["GET", "POST"])
 def registro():
@@ -227,8 +241,11 @@ def registro():
         errores.append("Email inválido")
     if Usuario.query.filter_by(email=email).first():
         errores.append("Este email ya está registrado")
-    if len(password) < 6:
-        errores.append("La contraseña debe tener al menos 6 caracteres")
+
+    # Validar contraseña con requisitos fuertes
+    errores_password = validar_password(password)
+    errores.extend(errores_password)
+
     if password != confirmar_password:
         errores.append("Las contraseñas no coinciden")
 
@@ -251,7 +268,7 @@ def registro():
         telefono=telefono,
         password=password,
         tipo='ciudadano',
-        activo=False,  # Inactivo hasta verificar
+        activo=False,
         email_verificado=False,
         token_verificacion=token,
         token_expiracion=expiracion,
@@ -263,14 +280,14 @@ def registro():
 
     # Enviar correo de verificación
     try:
-        from app import mail  # Asegurar que mail esté disponible
+        from app import mail
         link = url_for('auth.verificar_email', token=token, _external=True)
         msg = Message(
             subject="✅ Verifica tu correo — Villa Cutupú",
             recipients=[email],
             html=f"""
             <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #e0e0e0;border-radius:10px;">
-                <h2 style="color:#2d6a4f;">Bienvenido, {nombre}!</h2>
+                <h2 style="color:#2d6a4f;">¡Bienvenido, {nombre}!</h2>
                 <p>Gracias por registrarte en el portal de <strong>Villa Cutupú</strong>.</p>
                 <p>Para activar tu cuenta haz clic en el botón:</p>
                 <a href="{link}" style="display:inline-block;background:#2d6a4f;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0;">
@@ -282,7 +299,7 @@ def registro():
             """
         )
         mail.send(msg)
-        flash(f"✅ Te enviamos un correo a <strong>{email}</strong>. Revisa tu bandeja y confirma tu cuenta.", "success")
+        flash(f"✅ Te enviamos un correo a {email}. Revisa tu bandeja y confirma tu cuenta.", "success")
     except Exception as e:
         print(f"❌ Error enviando correo: {e}")
         flash("⚠️ Cuenta creada pero no se pudo enviar el correo. Contacta al administrador.", "warning")
@@ -291,7 +308,7 @@ def registro():
 
 
 # ================================================================
-# VERIFICACIÓN DE EMAIL (NUEVA RUTA)
+# VERIFICACIÓN DE EMAIL
 # ================================================================
 @auth.route("/verificar-email/<token>")
 def verificar_email(token):
@@ -318,7 +335,7 @@ def verificar_email(token):
 
 
 # ================================================================
-# REGISTRO COMPLETO CON DATOS DE GOOGLE (SIN CÉDULA)
+# REGISTRO COMPLETO CON DATOS DE GOOGLE
 # ================================================================
 @auth.route("/registro-completo", methods=["GET", "POST"])
 def registro_completo():
@@ -367,7 +384,6 @@ def registro_completo():
     db.session.commit()
 
     session.pop('google_registro_data', None)
-
     session.clear()
     session['user'] = usuario.email
     session['user_name'] = usuario.nombre_completo
@@ -423,8 +439,14 @@ def cambiar_password():
             flash("❌ La contraseña actual es incorrecta.", "error")
             return redirect(request.referrer or url_for("mi_cuenta"))
 
-    if len(password_nueva) < 6 or password_nueva != password_confirmar:
-        flash("❌ La contraseña nueva no es válida o no coincide.", "error")
+    errores_password = validar_password(password_nueva)
+    if errores_password:
+        for error in errores_password:
+            flash(f"❌ {error}", "error")
+        return redirect(request.referrer or url_for("mi_cuenta"))
+
+    if password_nueva != password_confirmar:
+        flash("❌ Las contraseñas no coinciden.", "error")
         return redirect(request.referrer or url_for("mi_cuenta"))
 
     usuario.password = password_nueva
@@ -603,7 +625,7 @@ def crear_usuarios_por_defecto():
         },
         {
             "email": "ciudadano@email.com",
-            "password": "123456",
+            "password": "Ciudadano1*",
             "nombre": "Juan",
             "apellidos": "Pérez",
             "nombre_completo": "Juan Pérez",
