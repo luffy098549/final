@@ -21,6 +21,8 @@ auth = Blueprint('auth', __name__)
 from flask_dance.contrib.google import make_google_blueprint
 from flask_dance.consumer import oauth_authorized, oauth_error
 
+IS_PRODUCTION = bool(os.environ.get('RENDER'))
+
 google_bp = make_google_blueprint(
     client_id=os.environ.get('GOOGLE_CLIENT_ID'),
     client_secret=os.environ.get('GOOGLE_CLIENT_SECRET'),
@@ -28,7 +30,8 @@ google_bp = make_google_blueprint(
         'openid',
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile'
-    ]
+    ],
+    redirect_url="https://ayuntamientovillacutupu.com/login/google/authorized" if IS_PRODUCTION else None
 )
 
 # ================================================================
