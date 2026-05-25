@@ -146,7 +146,7 @@ def load_user(user_id):
 # 9. CONFIGURACIÓN DE LA APLICACIÓN
 # ================================================================
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
-
+app.config['PREFERRED_URL_SCHEME'] = 'https'
 # Uploads
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -182,19 +182,7 @@ def manejar_redirect_google(response):
 # ================================================================
 # RUTA EXPLÍCITA PARA VERIFICAR REDIRECCIÓN POST-LOGIN CON GOOGLE
 # ================================================================
-@app.route('/login/google/authorized-check')
-def google_authorized_check():
-    if session.get('google_needs_register'):
-        session.pop('google_needs_register', None)
-        return redirect(url_for('auth.registro_completo'))
-    if 'user' in session:
-        msg = session.pop('google_login_message', None)
-        if msg:
-            flash(msg, 'success')
-        if session.get('is_admin'):
-            return redirect(url_for('admin.dashboard'))
-        return redirect(url_for('index'))
-    return redirect(url_for('auth.login'))
+
 
 # ================================================================
 # 10. DETECCIÓN DE REDIS
