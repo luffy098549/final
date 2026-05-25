@@ -69,13 +69,16 @@
                  data-cargo="Técnica en Informática"
                  data-num="02"
                  data-iniciales="PS"
-                 data-foto=""
+             data-foto="{{ url_for('static', filename='img/desarrolladores/perla.jpeg') }}"
                  data-bio="Técnica en Informática con conocimientos en bases de datos, XAMPP y programación en Python. Participó en el diseño y estructura de la información del sistema, apoyando en la organización y gestión de datos del proyecto."
                  data-tags="Python,XAMPP,Bases de Datos">
                 <div class="dev-avatar-wrap">
-                    <div class="dev-avatar">
-                        <span>PS</span>
-                    </div>
+                   <div class="dev-avatar">
+    <img src="{{ url_for('static', filename='img/desarrolladores/perla.jpeg') }}"
+         alt="Perla Serrano"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <span style="display:none">PS</span>
+</div>
                     <div class="dev-ring"></div>
                     <div class="dev-num">02</div>
                     <div class="dev-lead-badge">Líder</div>  <!-- Badge de líder AGREGADO a Perla -->
