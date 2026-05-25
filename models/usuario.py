@@ -1,6 +1,5 @@
-# ============================================================
 # models/usuario.py
-# MODELO USUARIO COMPLETO CON INTEGRACIÓN DE ROLES
+# MODELO USUARIO COMPLETO CON INTEGRACIÓN DE ROLES Y VERIFICACIÓN DE EMAIL
 # ============================================================
 
 from extensions import db
@@ -53,6 +52,12 @@ class Usuario(db.Model, UserMixin):
     google_id = db.Column(db.String(100), nullable=True, unique=True)
     
     activo = db.Column(db.Boolean, default=True)
+    
+    # Verificación de email
+    email_verificado = db.Column(db.Boolean, default=False)
+    token_verificacion = db.Column(db.String(200), nullable=True)
+    token_expiracion = db.Column(db.DateTime, nullable=True)
+    
     notas_admin = db.Column(db.Text)
     
     # Notificaciones
@@ -282,6 +287,7 @@ class Usuario(db.Model, UserMixin):
             'rol_id': self.rol_id,
             'rol_nivel': self.obtener_nivel_rol(),
             'activo': self.activo,
+            'email_verificado': self.email_verificado,
             'foto_perfil': self.obtener_foto_perfil(),
             'foto_perfil_url': self.foto_perfil_url,
             'google_id': self.google_id,

@@ -1,14 +1,16 @@
 # ================================================================
-# auth.py - CON GOOGLE OAUTH + LOGIN NORMAL + REGISTRO SIN CÉDULA
+# auth.py - CON GOOGLE OAUTH + LOGIN NORMAL + REGISTRO CON VERIFICACIÓN POR CORREO
 # ================================================================
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
 from models.usuario import Usuario
 from extensions import db
 import os
+import secrets
 from werkzeug.utils import secure_filename
+from flask_mail import Message
 
 auth = Blueprint('auth', __name__)
 
@@ -199,7 +201,7 @@ def login():
 
 
 # ================================================================
-# REGISTRO NORMAL (SIN CÉDULA)
+# REGISTRO CON VERIFICACIÓN POR CORREO (REEMPLAZADO)
 # ================================================================
 @auth.route("/registro", methods=["GET", "POST"])
 def registro():
@@ -237,6 +239,10 @@ def registro():
                                nombre=nombre, apellidos=apellidos,
                                email=email, telefono=telefono)
 
+    # Generar token de verificación
+    token = secrets.token_urlsafe(32)
+    expiracion = datetime.now() + timedelta(hours=24)
+
     usuario = Usuario(
         nombre=nombre,
         apellidos=apellidos,
@@ -245,14 +251,69 @@ def registro():
         telefono=telefono,
         password=password,
         tipo='ciudadano',
-        activo=True,
+        activo=False,  # Inactivo hasta verificar
+        email_verificado=False,
+        token_verificacion=token,
+        token_expiracion=expiracion,
         fecha_registro=datetime.now()
     )
 
     db.session.add(usuario)
     db.session.commit()
 
-    flash(f"✅ ¡Registro exitoso! Ahora puedes iniciar sesión, {nombre}.", "success")
+    # Enviar correo de verificación
+    try:
+        from app import mail  # Asegurar que mail esté disponible
+        link = url_for('auth.verificar_email', token=token, _external=True)
+        msg = Message(
+            subject="✅ Verifica tu correo — Villa Cutupú",
+            recipients=[email],
+            html=f"""
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #e0e0e0;border-radius:10px;">
+                <h2 style="color:#2d6a4f;">Bienvenido, {nombre}!</h2>
+                <p>Gracias por registrarte en el portal de <strong>Villa Cutupú</strong>.</p>
+                <p>Para activar tu cuenta haz clic en el botón:</p>
+                <a href="{link}" style="display:inline-block;background:#2d6a4f;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0;">
+                    Verificar mi correo
+                </a>
+                <p style="color:#888;font-size:13px;">Este enlace expira en 24 horas.</p>
+                <p style="color:#888;font-size:13px;">Si no creaste esta cuenta, ignora este mensaje.</p>
+            </div>
+            """
+        )
+        mail.send(msg)
+        flash(f"✅ Te enviamos un correo a <strong>{email}</strong>. Revisa tu bandeja y confirma tu cuenta.", "success")
+    except Exception as e:
+        print(f"❌ Error enviando correo: {e}")
+        flash("⚠️ Cuenta creada pero no se pudo enviar el correo. Contacta al administrador.", "warning")
+
+    return redirect(url_for("auth.login"))
+
+
+# ================================================================
+# VERIFICACIÓN DE EMAIL (NUEVA RUTA)
+# ================================================================
+@auth.route("/verificar-email/<token>")
+def verificar_email(token):
+    usuario = Usuario.query.filter_by(token_verificacion=token).first()
+
+    if not usuario:
+        flash("❌ Enlace de verificación inválido.", "error")
+        return redirect(url_for("auth.login"))
+
+    if usuario.token_expiracion and datetime.now() > usuario.token_expiracion:
+        flash("❌ El enlace expiró. Regístrate nuevamente.", "error")
+        db.session.delete(usuario)
+        db.session.commit()
+        return redirect(url_for("auth.registro"))
+
+    usuario.activo = True
+    usuario.email_verificado = True
+    usuario.token_verificacion = None
+    usuario.token_expiracion = None
+    db.session.commit()
+
+    flash(f"✅ ¡Correo verificado! Ya puedes iniciar sesión, {usuario.nombre}.", "success")
     return redirect(url_for("auth.login"))
 
 
@@ -575,5 +636,6 @@ def test_auth():
         "user": session.get("user"),
         "message": "Auth funcionando correctamente"
     }
+
 print("🔑 GOOGLE_CLIENT_ID:", os.environ.get('GOOGLE_CLIENT_ID', 'NO ENCONTRADO'))
 print("🔑 GOOGLE_CLIENT_SECRET:", os.environ.get('GOOGLE_CLIENT_SECRET', 'NO ENCONTRADO')[:10] if os.environ.get('GOOGLE_CLIENT_SECRET') else 'NO ENCONTRADO')

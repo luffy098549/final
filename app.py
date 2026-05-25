@@ -6,7 +6,7 @@ import urllib.request
 load_dotenv()  # ← DEBE SER LA PRIMERA LÍNEA ANTES DE TODO
 
 # ================================================================
-# APP.PY - VILLA CUTUPÚ MUNICIPAL SYSTEM (VERSIÓN COMPLETA + GEOJSON)
+# APP.PY - VILLA CUTUPÚ MUNICIPAL SYSTEM (VERSIÓN COMPLETA + GEOJSON + MAIL)
 # ================================================================
 
 # ================================================================
@@ -40,6 +40,11 @@ import hashlib
 # ================================================================
 from config_manager import get_flask_config, init_production_config, is_production
 from extensions import db, login_manager, migrate
+
+# ========== NUEVO: FLASK-MAIL ==========
+from flask_mail import Mail
+mail = Mail()
+# =======================================
 
 # ================================================================
 # 4. IMPORTS PARA CLOUDINARY
@@ -115,6 +120,16 @@ else:
 db.init_app(app)
 login_manager.init_app(app)
 migrate.init_app(app, db)
+
+# ========== NUEVO: CONFIGURACIÓN DE CORREO ==========
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
+mail.init_app(app)
+# ====================================================
 
 @login_manager.user_loader
 def load_user(user_id):
