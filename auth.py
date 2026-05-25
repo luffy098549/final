@@ -103,7 +103,13 @@ def google_logged_in(blueprint, token):
 # ================================================================
 # ENDPOINT PERSONALIZADO DESPUÉS DE OAUTH
 # ================================================================
-
+@auth.route("/login/google/authorized")
+def google_authorized_redirect():
+    if 'google_registro_data' in session:
+        return redirect(url_for('auth.registro_completo'))
+    if 'user' in session:
+        return redirect(url_for('index'))
+    return redirect(url_for('auth.login'))
 
 
 # ================================================================
