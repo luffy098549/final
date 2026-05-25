@@ -183,6 +183,14 @@ def manejar_redirect_google(response):
 # RUTA EXPLÍCITA PARA VERIFICAR REDIRECCIÓN POST-LOGIN CON GOOGLE
 # ================================================================
 
+@app.route("/debug-oauth")
+def debug_oauth():
+    import os
+    return jsonify({
+        "redirect_uri": url_for('google.authorized', _external=True),
+        "render_env": os.environ.get('RENDER'),
+    })
+
 
 # ================================================================
 # 10. DETECCIÓN DE REDIS
