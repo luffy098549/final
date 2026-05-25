@@ -334,7 +334,7 @@ def verificar_email(token):
 
 
 # ================================================================
-# REGISTRO COMPLETO CON DATOS DE GOOGLE
+# REGISTRO COMPLETO CON DATOS DE GOOGLE (CON VERIFICACIÓN POR CORREO)
 # ================================================================
 @auth.route("/registro-completo", methods=["GET", "POST"])
 def registro_completo():
@@ -364,6 +364,10 @@ def registro_completo():
                                apellidos=google_data.get('apellidos'),
                                telefono=telefono)
 
+    # Generar token de verificación
+    token = secrets.token_urlsafe(32)
+    expiracion = datetime.now() + timedelta(hours=24)
+
     usuario = Usuario(
         nombre=google_data.get('nombre', ''),
         apellidos=google_data.get('apellidos', ''),
@@ -375,24 +379,47 @@ def registro_completo():
         foto_perfil=google_data.get('foto', ''),
         foto_perfil_url=google_data.get('foto', ''),
         tipo='ciudadano',
-        activo=True,
+        activo=False,  # ← Cambiado: requiere verificación
+        email_verificado=False,  # ← Nuevo
+        token_verificacion=token,  # ← Nuevo
+        token_expiracion=expiracion,  # ← Nuevo
         fecha_registro=datetime.now()
     )
 
     db.session.add(usuario)
     db.session.commit()
 
-    session.pop('google_registro_data', None)
-    session.clear()
-    session['user'] = usuario.email
-    session['user_name'] = usuario.nombre_completo
-    session['user_tipo'] = usuario.tipo
-    session['user_rol'] = usuario.rol or ''
-    session['is_admin'] = False
-    session['foto_perfil'] = usuario.foto_perfil or ''
+    # Enviar correo de verificación
+    try:
+        from app import mail
+        link = url_for('auth.verificar_email', token=token, _external=True)
+        msg = Message(
+            subject="✅ Verifica tu correo — Villa Cutupú",
+            recipients=[usuario.email],
+            html=f"""
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #e0e0e0;border-radius:10px;">
+                <h2 style="color:#2d6a4f;">¡Bienvenido, {usuario.nombre}!</h2>
+                <p>Te registraste con Google en el portal de <strong>Villa Cutupú</strong>.</p>
+                <p>Para activar tu cuenta haz clic en el botón:</p>
+                <a href="{link}" style="display:inline-block;background:#2d6a4f;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0;">
+                    Verificar mi correo
+                </a>
+                <p style="color:#888;font-size:13px;">Este enlace expira en 24 horas.</p>
+                <p style="color:#888;font-size:13px;">Si no solicitaste esto, ignora este mensaje.</p>
+            </div>
+            """
+        )
+        mail.send(msg)
+        flash(f"✅ Te enviamos un correo a {usuario.email}. Verifica tu cuenta para poder ingresar.", "success")
+    except Exception as e:
+        print(f"❌ Error enviando correo: {e}")
+        flash("⚠️ Cuenta creada pero no se pudo enviar el correo. Contacta al administrador.", "warning")
 
-    flash(f"✅ ¡Bienvenido {usuario.nombre}! Tu cuenta ha sido creada exitosamente.", "success")
-    return redirect(url_for("index"))
+    # Limpiar datos temporales de Google
+    session.pop('google_registro_data', None)
+    
+    # No iniciar sesión automáticamente - redirigir al login
+    return redirect(url_for('auth.login'))
 
 
 # ================================================================
