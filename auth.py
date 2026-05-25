@@ -1,5 +1,6 @@
 # ================================================================
-# auth.py - CON GOOGLE OAUTH + LOGIN NORMAL + REGISTRO CON VERIFICACIÓN POR CORREO
+# auth.py - DEFINITIVO CON GOOGLE OAUTH CORREGIDO
+# Google OAuth + Login Normal + Registro con Verificación por Correo
 # ================================================================
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
@@ -16,13 +17,14 @@ from flask_mail import Message
 auth = Blueprint('auth', __name__)
 
 # ================================================================
-# CONFIGURAR GOOGLE OAUTH CON REDIRECT PERSONALIZADO
+# GOOGLE OAUTH - VERSIÓN CORREGIDA
 # ================================================================
 from flask_dance.contrib.google import make_google_blueprint
-from flask_dance.consumer import oauth_authorized, oauth_error
+from flask_dance.consumer import oauth_authorized
 
 IS_PRODUCTION = bool(os.environ.get('RENDER'))
 
+# 🔥 CAMBIO IMPORTANTE: Usar redirect_to en lugar de redirigir a /login/google/authorized
 google_bp = make_google_blueprint(
     client_id=os.environ.get('GOOGLE_CLIENT_ID'),
     client_secret=os.environ.get('GOOGLE_CLIENT_SECRET'),
@@ -31,12 +33,10 @@ google_bp = make_google_blueprint(
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile'
     ],
-    redirect_url="https://ayuntamientovillacutupu.com/login/google/authorized" if IS_PRODUCTION else None
+    redirect_to='auth.post_google_login'  # ← Redirige a tu ruta, no al authorized
 )
 
-# ================================================================
-# SIGNAL: cuando Google autoriza exitosamente
-# ================================================================
+
 @oauth_authorized.connect_via(google_bp)
 def google_logged_in(blueprint, token):
     if not token:
@@ -60,11 +60,12 @@ def google_logged_in(blueprint, token):
         return False
 
     if not google_info.get('verified_email', False):
-        flash('Tu cuenta de Gmail no está verificada.', 'error')
+        flash('Tu cuenta de Gmail no está verificada por Google.', 'error')
         return False
 
     usuario = Usuario.query.filter_by(email=google_email).first()
 
+    # Usuario nuevo → guardar datos en sesión y redirigir a completar registro
     if not usuario:
         session['google_registro_data'] = {
             'email': google_email,
@@ -73,43 +74,69 @@ def google_logged_in(blueprint, token):
             'google_id': google_id,
             'foto': google_foto
         }
-        return False
+        return False  # Flask-Dance redirigirá a redirect_to
 
+    # Usuario existente desactivado
     if not usuario.activo:
         flash('❌ Tu cuenta está desactivada. Contacta al administrador.', 'error')
         return False
 
+    # Actualizar datos de Google
     if google_foto:
         usuario.foto_perfil = google_foto
         usuario.foto_perfil_url = google_foto
-
     if not usuario.google_id:
         usuario.google_id = google_id
+
+    # Si existía pero no tenía email verificado (registro manual previo), verificarlo ahora
+    if not usuario.email_verificado:
+        usuario.email_verificado = True
 
     usuario.ultimo_acceso = datetime.now()
     db.session.commit()
 
+    # Actualizar sesión - NO usar session.clear()
     nombre_usuario = usuario.nombre_completo or usuario.nombre
-    session.clear()
     session['user'] = usuario.email
     session['user_name'] = nombre_usuario
     session['is_admin'] = usuario.tipo == 'admin' or usuario.rol in ['super_admin', 'admin', 'moderador']
     session['user_tipo'] = usuario.tipo
     session['user_rol'] = usuario.rol or ''
     session['foto_perfil'] = usuario.foto_perfil or ''
-    return False
+    
+    flash(f'✅ ¡Bienvenido, {nombre_usuario}!', 'success')
+    return False  # Flask-Dance redirigirá a redirect_to
 
 
-# ================================================================
-# ENDPOINT PERSONALIZADO DESPUÉS DE OAUTH
-# ================================================================
-@auth.route("/login/google/authorized")
-def google_authorized_redirect():
+# 🔥 NUEVA RUTA: Post login handler (reemplaza a google_authorized_redirect)
+@auth.route("/post-google-login")
+def post_google_login():
+    print("=" * 50)
+    print("POST-GOOGLE-LOGIN - Session:", dict(session))
+    print("=" * 50)
+    
+    # Verificar si es registro nuevo
     if 'google_registro_data' in session:
+        print("→ Nuevo usuario, redirigiendo a registro_completo")
         return redirect(url_for('auth.registro_completo'))
+    
+    # Usuario ya existe y está logueado
     if 'user' in session:
+        print(f"→ Usuario logueado: {session.get('user_name')}")
+        if session.get('is_admin'):
+            return redirect(url_for('admin.dashboard'))
         return redirect(url_for('index'))
+    
+    # Algo salió mal
+    print("→ Sesión vacía, error en login")
+    flash('Error al iniciar sesión con Google.', 'error')
     return redirect(url_for('auth.login'))
+
+
+# ⚠️ RUTA ELIMINADA - Ya no se usa (comentada para referencia)
+# @auth.route("/login/google/authorized")
+# def google_authorized_redirect():
+#     pass
 
 
 # ================================================================
@@ -123,13 +150,11 @@ def es_admin():
 
 def get_user_rol():
     if "user" in session:
-        email = session["user"]
-        usuario = Usuario.query.filter_by(email=email).first()
+        usuario = Usuario.query.filter_by(email=session["user"]).first()
         return usuario.rol if usuario else None
     return None
 
 def validar_password(password):
-    """Valida que la contraseña cumpla los requisitos de seguridad"""
     errores = []
     if len(password) < 8:
         errores.append("La contraseña debe tener al menos 8 caracteres")
@@ -159,7 +184,7 @@ def inject_auth_variables():
 
 
 # ================================================================
-# RUTAS
+# LOGIN NORMAL
 # ================================================================
 @auth.route("/login", methods=["GET", "POST"])
 def login():
@@ -188,12 +213,18 @@ def login():
         return render_template("login.html", next=next_url)
 
     if not usuario.activo:
-        flash("❌ Tu cuenta ha sido desactivada.", "error")
+        flash("❌ Tu cuenta ha sido desactivada. Contacta al administrador.", "error")
+        return render_template("login.html", next=next_url)
+
+    # Bloquear si no verificó el correo
+    if not usuario.email_verificado:
+        flash("⚠️ Debes verificar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada.", "warning")
         return render_template("login.html", next=next_url)
 
     usuario.ultimo_acceso = datetime.now()
     db.session.commit()
 
+    # Para login normal SÍ podemos usar clear porque no hay estado OAuth
     session.clear()
     session["user"] = usuario.email
     session["user_name"] = usuario.nombre_completo or f"{usuario.nombre} {usuario.apellidos}".strip()
@@ -214,7 +245,7 @@ def login():
 
 
 # ================================================================
-# REGISTRO CON VERIFICACIÓN POR CORREO
+# REGISTRO NORMAL (con verificación por correo)
 # ================================================================
 @auth.route("/registro", methods=["GET", "POST"])
 def registro():
@@ -231,7 +262,6 @@ def registro():
     confirmar_password = request.form.get("confirmar_password", "")
 
     errores = []
-
     if not nombre:
         errores.append("El nombre es obligatorio")
     if not apellidos:
@@ -240,22 +270,15 @@ def registro():
         errores.append("Email inválido")
     if Usuario.query.filter_by(email=email).first():
         errores.append("Este email ya está registrado")
-
-    # Validar contraseña con requisitos fuertes
-    errores_password = validar_password(password)
-    errores.extend(errores_password)
-
+    errores.extend(validar_password(password))
     if password != confirmar_password:
         errores.append("Las contraseñas no coinciden")
 
     if errores:
         for error in errores:
             flash(f"❌ {error}", "error")
-        return render_template("registro.html",
-                               nombre=nombre, apellidos=apellidos,
-                               email=email, telefono=telefono)
+        return render_template("registro.html", nombre=nombre, apellidos=apellidos, email=email, telefono=telefono)
 
-    # Generar token de verificación
     token = secrets.token_urlsafe(32)
     expiracion = datetime.now() + timedelta(hours=24)
 
@@ -273,11 +296,9 @@ def registro():
         token_expiracion=expiracion,
         fecha_registro=datetime.now()
     )
-
     db.session.add(usuario)
     db.session.commit()
 
-    # Enviar correo de verificación
     try:
         from app import mail
         link = url_for('auth.verificar_email', token=token, _external=True)
@@ -285,11 +306,13 @@ def registro():
             subject="✅ Verifica tu correo — Villa Cutupú",
             recipients=[email],
             html=f"""
-            <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #e0e0e0;border-radius:10px;">
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:30px;
+                        border:1px solid #e0e0e0;border-radius:10px;">
                 <h2 style="color:#2d6a4f;">¡Bienvenido, {nombre}!</h2>
                 <p>Gracias por registrarte en el portal de <strong>Villa Cutupú</strong>.</p>
                 <p>Para activar tu cuenta haz clic en el botón:</p>
-                <a href="{link}" style="display:inline-block;background:#2d6a4f;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0;">
+                <a href="{link}" style="display:inline-block;background:#2d6a4f;color:white;
+                   padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0;">
                     Verificar mi correo
                 </a>
                 <p style="color:#888;font-size:13px;">Este enlace expira en 24 horas.</p>
@@ -334,7 +357,7 @@ def verificar_email(token):
 
 
 # ================================================================
-# REGISTRO COMPLETO CON DATOS DE GOOGLE (CON VERIFICACIÓN POR CORREO)
+# REGISTRO COMPLETO CON GOOGLE (sin verificación adicional)
 # ================================================================
 @auth.route("/registro-completo", methods=["GET", "POST"])
 def registro_completo():
@@ -350,24 +373,12 @@ def registro_completo():
                                apellidos=google_data.get('apellidos'))
 
     telefono = request.form.get("telefono", "").strip()
-    errores = []
 
     if Usuario.query.filter_by(email=google_data['email']).first():
-        errores.append("Este email ya está registrado")
+        flash("❌ Este email ya está registrado.", "error")
+        return redirect(url_for("auth.login"))
 
-    if errores:
-        for error in errores:
-            flash(f"❌ {error}", "error")
-        return render_template("registro_completo.html",
-                               email=google_data.get('email'),
-                               nombre=google_data.get('nombre'),
-                               apellidos=google_data.get('apellidos'),
-                               telefono=telefono)
-
-    # Generar token de verificación
-    token = secrets.token_urlsafe(32)
-    expiracion = datetime.now() + timedelta(hours=24)
-
+    # Google ya verificó el email → activar directamente, sin token
     usuario = Usuario(
         nombre=google_data.get('nombre', ''),
         apellidos=google_data.get('apellidos', ''),
@@ -379,47 +390,26 @@ def registro_completo():
         foto_perfil=google_data.get('foto', ''),
         foto_perfil_url=google_data.get('foto', ''),
         tipo='ciudadano',
-        activo=False,  # ← Cambiado: requiere verificación
-        email_verificado=False,  # ← Nuevo
-        token_verificacion=token,  # ← Nuevo
-        token_expiracion=expiracion,  # ← Nuevo
+        activo=True,
+        email_verificado=True,
+        token_verificacion=None,
+        token_expiracion=None,
         fecha_registro=datetime.now()
     )
-
     db.session.add(usuario)
     db.session.commit()
 
-    # Enviar correo de verificación
-    try:
-        from app import mail
-        link = url_for('auth.verificar_email', token=token, _external=True)
-        msg = Message(
-            subject="✅ Verifica tu correo — Villa Cutupú",
-            recipients=[usuario.email],
-            html=f"""
-            <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #e0e0e0;border-radius:10px;">
-                <h2 style="color:#2d6a4f;">¡Bienvenido, {usuario.nombre}!</h2>
-                <p>Te registraste con Google en el portal de <strong>Villa Cutupú</strong>.</p>
-                <p>Para activar tu cuenta haz clic en el botón:</p>
-                <a href="{link}" style="display:inline-block;background:#2d6a4f;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0;">
-                    Verificar mi correo
-                </a>
-                <p style="color:#888;font-size:13px;">Este enlace expira en 24 horas.</p>
-                <p style="color:#888;font-size:13px;">Si no solicitaste esto, ignora este mensaje.</p>
-            </div>
-            """
-        )
-        mail.send(msg)
-        flash(f"✅ Te enviamos un correo a {usuario.email}. Verifica tu cuenta para poder ingresar.", "success")
-    except Exception as e:
-        print(f"❌ Error enviando correo: {e}")
-        flash("⚠️ Cuenta creada pero no se pudo enviar el correo. Contacta al administrador.", "warning")
-
-    # Limpiar datos temporales de Google
+    # Limpiar datos temporales e iniciar sesión directamente
     session.pop('google_registro_data', None)
-    
-    # No iniciar sesión automáticamente - redirigir al login
-    return redirect(url_for('auth.login'))
+    session['user'] = usuario.email
+    session['user_name'] = usuario.nombre_completo
+    session['user_tipo'] = usuario.tipo
+    session['user_rol'] = usuario.rol or ''
+    session['is_admin'] = False
+    session['foto_perfil'] = usuario.foto_perfil or ''
+
+    flash(f"✅ ¡Bienvenido, {usuario.nombre}! Tu cuenta fue creada exitosamente.", "success")
+    return redirect(url_for('index'))
 
 
 # ================================================================
@@ -435,7 +425,7 @@ def logout():
 
 
 # ================================================================
-# RECUPERAR Y CAMBIAR CONTRASEÑA
+# RECUPERAR CONTRASEÑA
 # ================================================================
 @auth.route("/recuperar-password", methods=["GET", "POST"])
 def recuperar_password():
@@ -444,10 +434,78 @@ def recuperar_password():
             return redirect(url_for("mi_cuenta"))
         return render_template("recuperar.html")
 
-    flash("✅ Si el correo existe, recibirás instrucciones.", "success")
+    email = request.form.get("email", "").strip().lower()
+    usuario = Usuario.query.filter_by(email=email).first()
+
+    if usuario and usuario.email_verificado:
+        token = secrets.token_urlsafe(32)
+        usuario.token_verificacion = token
+        usuario.token_expiracion = datetime.now() + timedelta(hours=1)
+        db.session.commit()
+
+        try:
+            from app import mail
+            link = url_for('auth.reset_password', token=token, _external=True)
+            msg = Message(
+                subject="🔑 Recuperar contraseña — Villa Cutupú",
+                recipients=[email],
+                html=f"""
+                <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:30px;
+                            border:1px solid #e0e0e0;border-radius:10px;">
+                    <h2 style="color:#2d6a4f;">Recuperar contraseña</h2>
+                    <p>Haz clic para crear una nueva contraseña:</p>
+                    <a href="{link}" style="display:inline-block;background:#2d6a4f;color:white;
+                       padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0;">
+                        Cambiar contraseña
+                    </a>
+                    <p style="color:#888;font-size:13px;">Este enlace expira en 1 hora.</p>
+                    <p style="color:#888;font-size:13px;">Si no solicitaste esto, ignora este mensaje.</p>
+                </div>
+                """
+            )
+            mail.send(msg)
+        except Exception as e:
+            print(f"❌ Error enviando correo de recuperación: {e}")
+
+    flash("✅ Si el correo existe, recibirás instrucciones para recuperar tu contraseña.", "success")
     return redirect(url_for("auth.login"))
 
 
+@auth.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    usuario = Usuario.query.filter_by(token_verificacion=token).first()
+
+    if not usuario or (usuario.token_expiracion and datetime.now() > usuario.token_expiracion):
+        flash("❌ El enlace es inválido o expiró.", "error")
+        return redirect(url_for("auth.recuperar_password"))
+
+    if request.method == "GET":
+        return render_template("reset_password.html", token=token)
+
+    password_nueva = request.form.get("password_nueva", "")
+    password_confirmar = request.form.get("password_confirmar", "")
+
+    errores = validar_password(password_nueva)
+    if password_nueva != password_confirmar:
+        errores.append("Las contraseñas no coinciden")
+
+    if errores:
+        for error in errores:
+            flash(f"❌ {error}", "error")
+        return render_template("reset_password.html", token=token)
+
+    usuario.password = password_nueva
+    usuario.token_verificacion = None
+    usuario.token_expiracion = None
+    db.session.commit()
+
+    flash("✅ Contraseña actualizada. Ya puedes iniciar sesión.", "success")
+    return redirect(url_for("auth.login"))
+
+
+# ================================================================
+# CAMBIAR CONTRASEÑA (desde mi cuenta)
+# ================================================================
 @auth.route("/cambiar-password", methods=["POST"])
 def cambiar_password():
     if not esta_logueado():
@@ -460,14 +518,13 @@ def cambiar_password():
 
     usuario = Usuario.query.filter_by(email=email).first()
 
-    if usuario.password:
-        if not usuario or usuario.password != password_actual:
-            flash("❌ La contraseña actual es incorrecta.", "error")
-            return redirect(request.referrer or url_for("mi_cuenta"))
+    if usuario.password and usuario.password != password_actual:
+        flash("❌ La contraseña actual es incorrecta.", "error")
+        return redirect(request.referrer or url_for("mi_cuenta"))
 
-    errores_password = validar_password(password_nueva)
-    if errores_password:
-        for error in errores_password:
+    errores = validar_password(password_nueva)
+    if errores:
+        for error in errores:
             flash(f"❌ {error}", "error")
         return redirect(request.referrer or url_for("mi_cuenta"))
 
@@ -508,7 +565,7 @@ def admin_required(f):
 
 
 # ================================================================
-# SUBIR / ELIMINAR FOTO DE PERFIL
+# FOTO DE PERFIL
 # ================================================================
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 
@@ -532,11 +589,12 @@ def subir_foto_perfil():
     if file and allowed_file(file.filename):
         email = session['user']
         extension = file.filename.rsplit('.', 1)[1].lower()
-        filename = secure_filename(f"{email.replace('@', '_').replace('.', '_')}_{int(datetime.now().timestamp())}.{extension}")
+        filename = secure_filename(
+            f"{email.replace('@', '_').replace('.', '_')}_{int(datetime.now().timestamp())}.{extension}"
+        )
 
         upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'perfiles')
         os.makedirs(upload_folder, exist_ok=True)
-
         filepath = os.path.join(upload_folder, filename)
         file.save(filepath)
 
@@ -578,7 +636,6 @@ def eliminar_foto_perfil():
                     os.remove(file_path)
                 except:
                     pass
-
         usuario.foto_perfil = None
         usuario.foto_perfil_url = None
         db.session.commit()
@@ -622,7 +679,7 @@ def editar_perfil():
 
 
 # ================================================================
-# CREAR USUARIOS POR DEFECTO
+# USUARIOS POR DEFECTO
 # ================================================================
 def crear_usuarios_por_defecto():
     usuarios_por_defecto = [
@@ -636,7 +693,8 @@ def crear_usuarios_por_defecto():
             "tipo": "admin",
             "rol": "super_admin",
             "telefono": "+18096917111",
-            "activo": True
+            "activo": True,
+            "email_verificado": True
         },
         {
             "email": "admin@cutupu.gob.do",
@@ -647,7 +705,8 @@ def crear_usuarios_por_defecto():
             "cedula": "001-0000002-0",
             "tipo": "admin",
             "rol": "admin",
-            "activo": True
+            "activo": True,
+            "email_verificado": True
         },
         {
             "email": "ciudadano@email.com",
@@ -658,7 +717,8 @@ def crear_usuarios_por_defecto():
             "cedula": "001-1234567-8",
             "tipo": "ciudadano",
             "rol": None,
-            "activo": True
+            "activo": True,
+            "email_verificado": True
         }
     ]
 
@@ -668,6 +728,10 @@ def crear_usuarios_por_defecto():
             usuario = Usuario(**datos)
             db.session.add(usuario)
             print(f"✅ Usuario creado: {datos['email']}")
+        else:
+            if not existe.email_verificado:
+                existe.email_verificado = True
+                print(f"✅ Email verificado actualizado: {datos['email']}")
 
     db.session.commit()
     print("✅ Usuarios por defecto verificados")
@@ -684,6 +748,7 @@ def test_auth():
         "user": session.get("user"),
         "message": "Auth funcionando correctamente"
     }
+
 
 print("🔑 GOOGLE_CLIENT_ID:", os.environ.get('GOOGLE_CLIENT_ID', 'NO ENCONTRADO'))
 print("🔑 GOOGLE_CLIENT_SECRET:", os.environ.get('GOOGLE_CLIENT_SECRET', 'NO ENCONTRADO')[:10] if os.environ.get('GOOGLE_CLIENT_SECRET') else 'NO ENCONTRADO')

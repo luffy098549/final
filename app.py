@@ -84,7 +84,7 @@ if is_production():
 else:
     app.config['SESSION_COOKIE_SECURE'] = False
     app.config['SESSION_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['SESSION_COOKIE_SAMESITE'] = None  # ← Cambiado de 'Lax' a None para desarrollo
     print("🔓 Configuración de cookies HTTP aplicada para desarrollo")
 
 # 🔥 DIAGNÓSTICO DE BASE DE DATOS
@@ -162,22 +162,9 @@ app.register_blueprint(google_bp, url_prefix='/login')
 app.register_blueprint(admin_bp)
 
 # ================================================================
-# MANEJO DE REDIRECCIONES POST-LOGIN CON GOOGLE (after_request)
+# ❌ ELIMINADO: MANEJO DE REDIRECCIONES POST-LOGIN CON GOOGLE (after_request)
+# Ya no se necesita porque ahora usamos redirect_to en el blueprint
 # ================================================================
-@app.after_request
-def manejar_redirect_google(response):
-    if request.path == '/login/google/authorized' and response.status_code == 302:
-        if session.get('google_needs_register'):
-            session.pop('google_needs_register', None)
-            return redirect(url_for('auth.registro_completo'))
-        if 'user' in session:
-            msg = session.pop('google_login_message', None)
-            if msg:
-                flash(msg, 'success')
-            if session.get('is_admin'):
-                return redirect(url_for('admin.dashboard'))
-            return redirect(url_for('index'))
-    return response
 
 # ================================================================
 # RUTA EXPLÍCITA PARA VERIFICAR REDIRECCIÓN POST-LOGIN CON GOOGLE
@@ -190,7 +177,6 @@ def debug_oauth():
         "redirect_uri": url_for('google.authorized', _external=True),
         "render_env": os.environ.get('RENDER'),
     })
-
 
 # ================================================================
 # 10. DETECCIÓN DE REDIS
