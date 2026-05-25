@@ -28,8 +28,7 @@ google_bp = make_google_blueprint(
         'openid',
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile'
-    ],
-    redirect_url='/login/google/authorized-check'
+    ]
 )
 
 # ================================================================
@@ -101,16 +100,7 @@ def google_logged_in(blueprint, token):
 # ================================================================
 # ENDPOINT PERSONALIZADO DESPUÉS DE OAUTH
 # ================================================================
-@auth.route('/login/google/authorized-check')
-def google_authorized_check():
-    if session.get('google_registro_data'):
-        return redirect(url_for('auth.registro_completo'))
 
-    if session.get('user'):
-        return redirect(url_for('index'))
-
-    flash('No se pudo iniciar sesión correctamente.', 'error')
-    return redirect(url_for('auth.login'))
 
 
 # ================================================================
