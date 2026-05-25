@@ -1,181 +1,1040 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proyectos y Obras - Transparencia | Villa Cutupú</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/transparencia/proyectos.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyectos y Obras — Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+    /* ================================================================
+       VARIABLES (alineadas con base.html)
+    ================================================================ */
+    :root {
+        --verde:        #1E3A0F;
+        --verde-med:    #2D5016;
+        --verde-light:  #4A7A28;
+        --verde-soft:   #7AAD4F;
+        --verde-xlight: #E8F3DA;
+        --dorado:       #B8860B;
+        --dorado-light: #F0D070;
+        --dorado-claro: #F5DFA0;
+        --crema:        #FAF6EE;
+        --texto:        #131A0D;
+
+        --gris-50:  #F9FAFB; --gris-100: #F3F4F6; --gris-200: #E5E7EB;
+        --gris-300: #D1D5DB; --gris-400: #9CA3AF; --gris-500: #6B7280;
+        --gris-600: #4B5563; --gris-700: #374151; --gris-800: #1F2937;
+
+        /* Semánticos extra para esta página */
+        --azul:       #1e5fa8;
+        --azul-claro: #eef4fc;
+        --rojo:       #b53535;
+        --rojo-claro: #fdf2f2;
+
+        --sh-xs: 0 1px 3px rgba(0,0,0,.06);
+        --sh-sm: 0 4px 14px rgba(0,0,0,.08);
+        --sh-md: 0 10px 36px rgba(0,0,0,.11);
+        --sh-lg: 0 24px 50px rgba(0,0,0,.14);
+        --sh-xl: 0 40px 80px rgba(0,0,0,.18);
+
+        --r-sm:    .5rem;
+        --r-card:  1rem;
+        --r-block: 1.75rem;
+        --r-pill:  9999px;
+
+        --spring: cubic-bezier(.34,1.56,.64,1);
+        --smooth: cubic-bezier(.2,.9,.4,1);
+
+        --header-h: 160px;
+    }
+
+    /* ================================================================
+       RESET
+    ================================================================ */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: calc(var(--header-h) + 1rem);
+    }
+
+    body {
+        font-family: 'Outfit', -apple-system, sans-serif;
+        background: var(--crema);
+        color: var(--texto);
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
+
+    body.menu-open { overflow: hidden; }
+
+    img { max-width:100%; height:auto; display:block; }
+    .container { max-width:1280px; margin:0 auto; padding:0 2rem; width:100%; }
+
+    h1,h2,h3,h4,.serif { font-family:'Cormorant Garamond',Georgia,serif; line-height:1.2; }
+
+    ::selection { background:var(--verde-xlight); color:var(--verde); }
+
+    /* ================================================================
+       SCROLLBAR
+    ================================================================ */
+    ::-webkit-scrollbar { width:8px; }
+    ::-webkit-scrollbar-track { background:var(--crema); }
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg,var(--verde-light),var(--dorado));
+        border-radius:8px; border:2px solid var(--crema);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg,var(--verde),var(--dorado));
+    }
+
+    /* ================================================================
+       CANVAS PARTÍCULAS
+    ================================================================ */
+    #particles-canvas {
+        position: fixed; inset:0;
+        width:100vw; height:100vh;
+        pointer-events:none; z-index:0; opacity:.45;
+    }
+
+    /* ================================================================
+       PAGE FADE-IN
+    ================================================================ */
+    @keyframes pageFadeIn {
+        from { opacity:0; transform:translateY(14px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+    main { position:relative; z-index:1; animation:pageFadeIn .7s .1s both; }
+
+    /* ================================================================
+       HEADER
+    ================================================================ */
+    .main-header {
+        position:fixed; top:0; left:0; right:0;
+        height:var(--header-h);
+        background:rgba(250,246,238,.92);
+        backdrop-filter:blur(16px) saturate(1.8);
+        -webkit-backdrop-filter:blur(16px) saturate(1.8);
+        z-index:1000;
+        border-bottom:1px solid rgba(30,58,15,.08);
+        transition:height .35s var(--smooth), background .35s, box-shadow .35s;
+        animation:hdrSlideDown .7s var(--smooth) both;
+    }
+
+    @keyframes hdrSlideDown {
+        from { transform:translateY(-100%); opacity:0; }
+        to   { transform:translateY(0);     opacity:1; }
+    }
+
+    .main-header.scrolled {
+        height:100px;
+        background:rgba(250,246,238,.98);
+        box-shadow:0 2px 28px rgba(30,58,15,.10);
+        border-bottom:2px solid transparent;
+        border-image:linear-gradient(90deg,var(--verde),var(--dorado),var(--verde)) 1;
+    }
+
+    .header-container {
+        display:flex; justify-content:space-between; align-items:center;
+        max-width:1280px; height:100%; margin:0 auto; padding:0 2rem;
+    }
+
+    .logo a { display:flex; align-items:center; text-decoration:none; position:relative; }
+    .logo a::after {
+        content:''; position:absolute; inset:-6px; border-radius:50%;
+        background:radial-gradient(circle,rgba(184,134,11,.12) 0%,transparent 70%);
+        opacity:0; transform:scale(.7);
+        transition:opacity .4s, transform .4s var(--spring); pointer-events:none;
+    }
+    .logo a:hover::after { opacity:1; transform:scale(1.2); }
+
+    @keyframes logoBounceIn {
+        0%   { opacity:0; transform:scale(0.5) rotate(-15deg); }
+        60%  { opacity:1; transform:scale(1.12) rotate(3deg); }
+        80%  { transform:scale(.95) rotate(-1deg); }
+        100% { transform:scale(1) rotate(0deg); }
+    }
+    @keyframes logoPulse {
+        0%,100% { filter:drop-shadow(0 3px 10px rgba(30,58,15,.15)); }
+        50%      { filter:drop-shadow(0 5px 20px rgba(184,134,11,.30)) drop-shadow(0 0 12px rgba(30,58,15,.20)); }
+    }
+
+    .header-logo {
+        height:140px; width:auto;
+        transition:all .45s var(--spring);
+        filter:drop-shadow(0 3px 10px rgba(0,0,0,.12));
+        animation:logoBounceIn .8s var(--spring) both, logoPulse 3.5s ease-in-out 1s infinite;
+    }
+    .main-header.scrolled .header-logo { height:90px; }
+    .logo:hover .header-logo {
+        transform:scale(1.10) rotate(-4deg);
+        filter:drop-shadow(0 8px 24px rgba(30,58,15,.40)) drop-shadow(0 0 16px rgba(184,134,11,.30));
+        animation:none;
+    }
+
+    /* ── Nav ── */
+    .main-nav ul { display:flex; list-style:none; gap:.2rem; align-items:center; }
+
+    .main-nav a {
+        text-decoration:none; color:var(--texto);
+        font-weight:500; font-size:.89rem;
+        padding:.4rem .72rem; border-radius:.45rem;
+        position:relative; overflow:hidden;
+        transition:color .18s, background .18s;
+    }
+    .main-nav a::before {
+        content:''; position:absolute; inset:0;
+        background:var(--verde-xlight); border-radius:inherit;
+        opacity:0; transform:scale(.8);
+        transition:opacity .18s, transform .3s var(--spring);
+    }
+    .main-nav a:hover::before { opacity:1; transform:scale(1); }
+    .main-nav a:hover { color:var(--verde); }
+    .main-nav a::after {
+        content:''; position:absolute; bottom:3px; left:50%;
+        width:0; height:2px;
+        background:linear-gradient(90deg,var(--verde),var(--dorado));
+        border-radius:2px; transform:translateX(-50%);
+        transition:width .3s var(--spring);
+    }
+    .main-nav a:hover::after, .main-nav a.active::after { width:60%; }
+
+    .btn-login {
+        border:1.5px solid var(--verde) !important; color:var(--verde) !important;
+        border-radius:var(--r-pill) !important; font-weight:600 !important;
+        padding:.38rem 1rem !important; background:transparent !important;
+        transition:all .25s !important;
+    }
+    .btn-login::before,.btn-login::after { display:none !important; }
+    .btn-login:hover {
+        background:var(--verde) !important; color:white !important;
+        transform:translateY(-2px) !important;
+        box-shadow:0 4px 18px rgba(30,58,15,.30) !important;
+    }
+    .btn-registro-nav {
+        background:var(--verde) !important; color:white !important;
+        border-radius:var(--r-pill) !important; font-weight:600 !important;
+        padding:.38rem 1.15rem !important;
+        box-shadow:0 2px 14px rgba(30,58,15,.25);
+        transition:transform .25s var(--spring), box-shadow .25s !important;
+    }
+    .btn-registro-nav::before,.btn-registro-nav::after { display:none !important; }
+    .btn-registro-nav:hover {
+        background:var(--verde-med) !important;
+        transform:translateY(-3px) scale(1.04) !important;
+        box-shadow:0 6px 26px rgba(30,58,15,.42) !important;
+    }
+
+    /* ── Menú toggle ── */
+    .menu-toggle {
+        display:none; flex-direction:column; gap:5px;
+        background:none; border:none; cursor:pointer;
+        padding:.5rem; border-radius:.45rem;
+        transition:background .18s;
+    }
+    .menu-toggle:hover { background:var(--verde-xlight); }
+    .menu-toggle span {
+        display:block; width:24px; height:2px;
+        background:var(--texto); border-radius:2px;
+        transition:transform .3s var(--spring), opacity .18s;
+        transform-origin:center;
+    }
+    .menu-toggle.active span { background:var(--verde); }
+    .menu-toggle.active span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
+    .menu-toggle.active span:nth-child(2) { opacity:0; transform:scaleX(0); }
+    .menu-toggle.active span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
+
+    /* ── Menú móvil ── */
+    .mobile-menu {
+        position:fixed; top:0; right:-110%;
+        width:80%; max-width:320px; height:100dvh;
+        background:white; z-index:1100;
+        padding:5.5rem 1.5rem 2rem;
+        transition:right .4s var(--spring);
+        box-shadow:var(--sh-xl); overflow-y:auto;
+    }
+    .mobile-menu.active { right:0; }
+    .mobile-menu ul { list-style:none; }
+    .mobile-menu li {
+        margin-bottom:.7rem; opacity:0; transform:translateX(30px);
+        transition:opacity .3s var(--smooth), transform .35s var(--spring);
+    }
+    .mobile-menu.active li { opacity:1; transform:translateX(0); }
+    .mobile-menu.active li:nth-child(1){transition-delay:.07s}
+    .mobile-menu.active li:nth-child(2){transition-delay:.12s}
+    .mobile-menu.active li:nth-child(3){transition-delay:.17s}
+    .mobile-menu.active li:nth-child(4){transition-delay:.22s}
+    .mobile-menu.active li:nth-child(5){transition-delay:.27s}
+    .mobile-menu.active li:nth-child(6){transition-delay:.32s}
+    .mobile-menu.active li:nth-child(7){transition-delay:.37s}
+    .mobile-menu a {
+        display:flex; align-items:center; gap:.7rem;
+        text-decoration:none; color:var(--texto);
+        font-weight:500; padding:.72rem 1rem;
+        border-radius:var(--r-card);
+        border-left:3px solid transparent;
+        transition:all .2s var(--spring);
+    }
+    .mobile-menu a:hover {
+        background:var(--verde-xlight); border-left-color:var(--verde);
+        color:var(--verde); transform:translateX(5px);
+    }
+
+    .overlay {
+        position:fixed; inset:0; background:rgba(0,0,0,.42);
+        z-index:1099; opacity:0; visibility:hidden;
+        transition:opacity .3s, visibility .3s; backdrop-filter:blur(2px);
+    }
+    .overlay.active { opacity:1; visibility:visible; }
+
+    /* ================================================================
+       PAGE HEADER
+    ================================================================ */
+    .page-header {
+        background:linear-gradient(160deg,#0e1a08 0%,#1a3a0d 55%,#2d5a1b 100%);
+        color:#fff; padding:calc(var(--header-h) + 3rem) 2rem 3.5rem;
+        position:relative; overflow:hidden;
+    }
+    .page-header::before {
+        content:'';
+        position:absolute; inset:0;
+        background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        pointer-events:none;
+    }
+    .page-header::after {
+        content:''; position:absolute;
+        bottom:-80px; right:-80px;
+        width:360px; height:360px; border-radius:50%;
+        background:radial-gradient(circle,rgba(184,134,11,.12) 0%,transparent 70%);
+        pointer-events:none;
+        animation:glow 9s ease-in-out infinite;
+    }
+    @keyframes glow {
+        0%,100%{transform:scale(1)}
+        50%{transform:scale(1.2) translate(-10px,10px)}
+    }
+
+    .page-header .inner { max-width:1280px; margin:0 auto; position:relative; }
+
+    .breadcrumb {
+        display:flex; align-items:center; gap:8px;
+        font-size:13px; color:rgba(255,255,255,.6);
+        margin-bottom:1.25rem; flex-wrap:wrap;
+    }
+    .breadcrumb a { color:rgba(255,255,255,.75); transition:color .15s; }
+    .breadcrumb a:hover { color:#fff; }
+    .breadcrumb .sep { opacity:.4; }
+
+    .page-header h1 {
+        font-family:'Cormorant Garamond',serif;
+        font-size:clamp(2.2rem,5vw,3.5rem);
+        font-weight:700; letter-spacing:-.02em;
+        line-height:1.1; margin-bottom:.75rem;
+    }
+    .page-header p { font-size:15px; color:rgba(255,255,255,.72); max-width:520px; }
+
+    .ley-tag {
+        display:inline-flex; align-items:center; gap:6px;
+        margin-top:1.25rem;
+        background:rgba(255,255,255,.09);
+        border:1px solid rgba(255,255,255,.18);
+        border-radius:var(--r-pill);
+        padding:5px 16px;
+        font-size:12px; color:rgba(255,255,255,.8); font-weight:500;
+    }
+    .ley-tag i { color:var(--dorado-light); }
+
+    /* ================================================================
+       CUERPO DE PÁGINA
+    ================================================================ */
+    .page-body { max-width:1280px; margin:0 auto; padding:3rem 2rem 6rem; }
+
+    /* ── SCROLL REVEAL ── */
+    .anim {
+        opacity:0; transform:translateY(24px);
+        transition:opacity .6s var(--smooth), transform .6s var(--smooth);
+    }
+    .anim.visible { opacity:1; transform:translateY(0); }
+
+    /* ── INTRO BLOCK ── */
+    .intro-block {
+        display:flex; align-items:flex-start; gap:12px;
+        background:var(--verde-xlight);
+        border:1px solid rgba(74,122,40,.3);
+        border-left:4px solid var(--verde-light);
+        border-radius:var(--r-card);
+        padding:1.1rem 1.4rem;
+        margin-bottom:2.5rem;
+        font-size:14px; color:var(--verde-med);
+    }
+    .intro-block i { color:var(--verde-light); font-size:1.05rem; flex-shrink:0; margin-top:2px; }
+
+    /* ── STATS GRID ── */
+    .stats-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+        gap:1.1rem; margin-bottom:3.5rem;
+    }
+    .stat-card {
+        background:#fff;
+        border:1px solid var(--gris-200);
+        border-radius:var(--r-card);
+        padding:1.5rem 1.4rem 1.25rem;
+        position:relative; overflow:hidden;
+        transition:box-shadow .25s var(--smooth), transform .25s var(--spring);
+        animation:cardFadeUp .5s var(--smooth) both;
+    }
+    .stat-card:hover { box-shadow:var(--sh-md); transform:translateY(-4px); }
+
+    .stat-card::before {
+        content:''; position:absolute; top:0; left:0; right:0; height:3px;
+        background:linear-gradient(90deg,var(--verde),var(--verde-soft));
+    }
+    .stat-card:nth-child(2)::before { background:linear-gradient(90deg,var(--dorado),var(--dorado-light)); }
+    .stat-card:nth-child(3)::before { background:linear-gradient(90deg,var(--azul),#60a5fa); }
+    .stat-card:nth-child(4)::before { background:linear-gradient(90deg,var(--verde-light),var(--verde-soft)); }
+
+    .stat-card:nth-child(1){ animation-delay:.05s }
+    .stat-card:nth-child(2){ animation-delay:.10s }
+    .stat-card:nth-child(3){ animation-delay:.15s }
+    .stat-card:nth-child(4){ animation-delay:.20s }
+
+    @keyframes cardFadeUp {
+        from{opacity:0;transform:translateY(20px)}
+        to{opacity:1;transform:translateY(0)}
+    }
+
+    .stat-icon {
+        width:38px; height:38px; border-radius:.6rem;
+        background:var(--verde-xlight);
+        display:flex; align-items:center; justify-content:center;
+        font-size:1rem; color:var(--verde-light);
+        margin-bottom:.9rem;
+    }
+    .stat-card:nth-child(2) .stat-icon { background:var(--dorado-claro); color:var(--dorado); }
+    .stat-card:nth-child(3) .stat-icon { background:var(--azul-claro);   color:var(--azul); }
+    .stat-card:nth-child(4) .stat-icon { background:var(--verde-xlight);  color:var(--verde-light); }
+
+    .stat-valor {
+        display:block;
+        font-family:'Cormorant Garamond',serif;
+        font-size:2.4rem; font-weight:700;
+        color:var(--texto); letter-spacing:-.025em;
+        line-height:1; margin-bottom:.35rem;
+    }
+    .stat-label { font-size:13px; color:var(--gris-500); line-height:1.35; }
+
+    /* ── BLOQUE ── */
+    .bloque { margin-bottom:3rem; }
+    .bloque-header {
+        display:flex; align-items:flex-end; justify-content:space-between;
+        gap:1rem; margin-bottom:1.25rem;
+        padding-bottom:.9rem;
+        border-bottom:2px solid transparent;
+        border-image:linear-gradient(90deg,var(--verde),transparent) 1;
+    }
+    .bloque-titulo {
+        font-family:'Cormorant Garamond',serif;
+        font-size:1.5rem; font-weight:700;
+        color:var(--texto); letter-spacing:-.01em;
+    }
+    .bloque-meta { font-size:12px; color:var(--gris-400); white-space:nowrap; }
+
+    /* ── TABLAS ── */
+    .tabla-wrapper {
+        background:#fff;
+        border:1px solid var(--gris-200);
+        border-radius:var(--r-card);
+        overflow:hidden;
+        box-shadow:var(--sh-xs);
+        transition:box-shadow .25s;
+    }
+    .tabla-wrapper:hover { box-shadow:var(--sh-sm); }
+    .tabla-scroll { overflow-x:auto; }
+
+    table { width:100%; border-collapse:collapse; font-size:13.5px; }
+    thead tr {
+        background:linear-gradient(135deg,var(--verde) 0%,var(--verde-med) 100%);
+    }
+    th {
+        padding:12px 16px;
+        text-align:left;
+        font-size:11px; font-weight:600;
+        color:rgba(255,255,255,.85);
+        letter-spacing:.07em; text-transform:uppercase;
+        white-space:nowrap;
+    }
+    tbody tr {
+        border-bottom:1px solid var(--gris-100);
+        transition:background .12s;
+    }
+    tbody tr:last-child { border-bottom:none; }
+    tbody tr:hover { background:var(--verde-xlight); }
+
+    td {
+        padding:14px 16px; vertical-align:middle; line-height:1.45;
+        color:var(--gris-700);
+    }
+    td strong { display:block; font-weight:600; color:var(--texto); margin-bottom:2px; }
+    td small   { display:block; color:var(--gris-400); font-size:12px; }
+    td.monto {
+        font-family:'Cormorant Garamond',serif;
+        font-size:1.05rem; font-weight:600;
+        color:var(--verde-med); white-space:nowrap;
+    }
+    td.monto::before { content:'RD$ '; font-size:.75rem; color:var(--gris-400); font-family:'Outfit',sans-serif; font-weight:400; }
+
+    /* ── BADGES ── */
+    .badge {
+        display:inline-flex; align-items:center; gap:5px;
+        padding:3px 11px; border-radius:var(--r-pill);
+        font-size:11.5px; font-weight:600;
+        white-space:nowrap; line-height:1.45;
+    }
+    .badge::before {
+        content:''; width:5px; height:5px;
+        border-radius:50%; background:currentColor; flex-shrink:0;
+    }
+    .badge-verde  { background:var(--verde-xlight); color:var(--verde-med); }
+    .badge-dorado { background:var(--dorado-claro); color:#7a5a00; }
+    .badge-azul   { background:var(--azul-claro);   color:var(--azul); }
+    .badge-rojo   { background:var(--rojo-claro);   color:var(--rojo); }
+    .badge-gris   { background:var(--gris-100);     color:var(--gris-600); }
+
+    .badge-fuente {
+        border-radius:.35rem; font-size:11px;
+        padding:2px 9px; font-weight:500;
+    }
+    .badge-fuente::before { display:none; }
+
+    /* ── PROGRESO ── */
+    .progreso-wrap { display:flex; align-items:center; gap:10px; min-width:140px; }
+    .progreso-barra {
+        flex:1; height:5px; background:var(--gris-200);
+        border-radius:var(--r-pill); overflow:hidden;
+    }
+    .progreso-fill {
+        height:100%; border-radius:var(--r-pill);
+        background:linear-gradient(90deg,var(--verde),var(--verde-soft));
+        transition:width .9s var(--smooth);
+    }
+    .progreso-fill.vacio    { background:var(--gris-300); }
+    .progreso-fill.completo { background:linear-gradient(90deg,var(--verde-med),var(--verde-soft)); }
+    .progreso-fill.medio    { background:linear-gradient(90deg,var(--dorado),var(--dorado-light)); }
+    .progreso-pct { font-size:12px; font-weight:600; color:var(--gris-500); min-width:30px; text-align:right; }
+
+    /* ── COD LICITACIÓN ── */
+    .lic-codigo {
+        font-family:'Outfit',monospace;
+        font-size:11.5px; font-weight:600;
+        background:var(--gris-50);
+        border:1px solid var(--gris-200);
+        border-radius:.35rem; padding:3px 9px;
+        color:var(--gris-600); white-space:nowrap;
+    }
+
+    /* ================================================================
+       FLASH
+    ================================================================ */
+    .flash-messages {
+        position:fixed; top:calc(var(--header-h) + 1rem); right:1.5rem;
+        z-index:9999; max-width:400px;
+        display:flex; flex-direction:column; gap:.6rem; pointer-events:none;
+    }
+    .flash-message {
+        background:white; border-radius:var(--r-card);
+        padding:1rem 1.25rem; box-shadow:var(--sh-lg);
+        display:flex; align-items:center; gap:.9rem;
+        border-left:4px solid; font-weight:500; font-size:.88rem;
+        pointer-events:all; animation:flashIn .4s var(--spring) both;
+    }
+    @keyframes flashIn {
+        from{opacity:0;transform:translateX(120%) scale(.88)}
+        to{opacity:1;transform:translateX(0) scale(1)}
+    }
+    .flash-message.flash-success { border-left-color:var(--verde); }
+    .flash-message.flash-error   { border-left-color:#dc2626; }
+    .flash-message.flash-warning { border-left-color:var(--dorado); }
+    .flash-close {
+        margin-left:auto; background:none; border:none;
+        font-size:1.1rem; cursor:pointer; color:var(--gris-400);
+        width:28px; height:28px; border-radius:50%;
+        display:flex; align-items:center; justify-content:center;
+        transition:background .18s, transform .3s var(--spring);
+    }
+    .flash-close:hover { background:var(--gris-100); transform:rotate(90deg); }
+
+    /* ================================================================
+       BACK TO TOP
+    ================================================================ */
+    .back-to-top {
+        position:fixed; bottom:2rem; right:2rem;
+        width:50px; height:50px;
+        background:var(--verde); color:white;
+        border:none; border-radius:50%;
+        cursor:pointer; z-index:900;
+        display:flex; align-items:center; justify-content:center;
+        font-size:1rem;
+        box-shadow:0 4px 22px rgba(30,58,15,.32);
+        opacity:0; visibility:hidden;
+        transition:opacity .3s, visibility .3s, background .2s, transform .3s var(--spring);
+    }
+    .back-to-top.visible { opacity:1; visibility:visible; }
+    .back-to-top:hover {
+        background:var(--dorado);
+        transform:translateY(-5px) scale(1.1);
+        box-shadow:0 8px 28px rgba(184,134,11,.45);
+    }
+
+    /* ================================================================
+       FOOTER
+    ================================================================ */
+    footer {
+        background:linear-gradient(160deg,#0E1A08 0%,#131A0D 100%);
+        color:white; padding:4rem 0 1.75rem;
+        margin-top:4rem; position:relative; overflow:hidden; z-index:1;
+    }
+    footer::before {
+        content:''; position:absolute; top:-80px; right:-80px;
+        width:300px; height:300px; border-radius:50%;
+        background:radial-gradient(circle,rgba(184,134,11,.09) 0%,transparent 70%);
+        animation:footerGlow 8s ease-in-out infinite; pointer-events:none;
+    }
+    @keyframes footerGlow {
+        0%,100%{transform:scale(1) translate(0,0)}
+        50%{transform:scale(1.15) translate(-10px,10px)}
+    }
+
+    .footer-grid {
+        display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+        gap:2.5rem; margin-bottom:2.5rem; position:relative; z-index:1;
+    }
+    .footer-info,.footer-links,.footer-contact { transition:transform .35s var(--spring); }
+    .footer-info:hover,.footer-links:hover,.footer-contact:hover { transform:translateY(-5px); }
+
+    .footer-info h3,.footer-links h3,.footer-contact h3 {
+        font-family:'Cormorant Garamond',serif;
+        font-size:1.25rem; font-weight:600;
+        margin-bottom:1.25rem; color:var(--dorado);
+        position:relative; padding-bottom:.6rem;
+    }
+    .footer-info h3::after,.footer-links h3::after,.footer-contact h3::after {
+        content:''; position:absolute; bottom:0; left:0;
+        width:30px; height:2px;
+        background:linear-gradient(90deg,var(--dorado),transparent);
+        border-radius:2px; transition:width .4s var(--spring);
+    }
+    .footer-info:hover h3::after,.footer-links:hover h3::after,.footer-contact:hover h3::after { width:60px; }
+
+    .footer-info p,.footer-contact p { margin:.55rem 0; opacity:.78; font-size:.86rem; }
+    .footer-info a,.footer-contact a { color:white; text-decoration:none; transition:color .18s; }
+    .footer-info a:hover,.footer-contact a:hover { color:var(--dorado); }
+
+    .footer-links ul { list-style:none; }
+    .footer-links li { margin:.5rem 0; }
+    .footer-links a {
+        color:rgba(255,255,255,.75); text-decoration:none; font-size:.86rem;
+        display:inline-flex; align-items:center; gap:.5rem;
+        transition:color .18s, transform .2s var(--spring);
+    }
+    .footer-links a:hover { color:white; transform:translateX(7px); }
+
+    .social-links { display:flex; gap:.7rem; margin-top:1.25rem; }
+    .social-link {
+        color:white; background:rgba(255,255,255,.08);
+        width:38px; height:38px; border-radius:50%;
+        border:1px solid rgba(255,255,255,.12);
+        display:flex; align-items:center; justify-content:center;
+        font-size:.88rem;
+        transition:background .2s, transform .3s var(--spring), box-shadow .2s;
+    }
+    .social-link:hover {
+        background:var(--dorado); border-color:var(--dorado);
+        transform:translateY(-5px) scale(1.12);
+        box-shadow:0 6px 20px rgba(184,134,11,.45);
+    }
+
+    .footer-bottom {
+        text-align:center; padding-top:1.75rem;
+        border-top:1px solid rgba(255,255,255,.07);
+        font-size:.76rem; opacity:.5; position:relative; z-index:1;
+    }
+
+    /* ================================================================
+       RESPONSIVE
+    ================================================================ */
+    @media(max-width:900px){
+        .main-nav { display:none; }
+        .menu-toggle { display:flex; }
+        .header-logo { height:100px; }
+        .main-header { height:120px; }
+        .main-header.scrolled { height:80px; }
+        .main-header.scrolled .header-logo { height:70px; }
+        .page-header { padding-top:calc(120px + 2.5rem); }
+    }
+    @media(max-width:768px){
+        .container { padding:0 1.25rem; }
+        .page-body { padding:2rem 1.25rem 4rem; }
+        .footer-grid { grid-template-columns:1fr; text-align:center; }
+        .social-links { justify-content:center; }
+        .bloque-header { flex-direction:column; align-items:flex-start; }
+        .header-logo { height:85px; }
+        .main-header { height:105px; }
+        .page-header { padding-top:calc(105px + 2rem); }
+    }
+    @media(max-width:480px){
+        .stats-grid { grid-template-columns:1fr 1fr; }
+        .header-logo { height:70px; }
+        .main-header { height:90px; }
+        .page-header { padding-top:calc(90px + 1.5rem); }
+    }
+    @media(prefers-reduced-motion:reduce){
+        *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+    }
+    </style>
 </head>
 <body>
-<header class="main-header">
-    <div class="container">
+
+<!-- CANVAS PARTÍCULAS -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- ================================================================
+     HEADER
+================================================================ -->
+<header class="main-header" id="mainHeader">
+    <div class="header-container">
         <div class="logo">
-            <a href="/"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="header-logo"></a>
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/logo.png') }}"
+                     alt="Logo Junta Distrital Villa Cutupú" class="header-logo">
+            </a>
         </div>
-        <nav class="main-nav">
+
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav class="main-nav" aria-label="Navegación principal">
             <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/municipio">Municipio</a></li>
-                <li><a href="/servicios">Servicios</a></li>
-                <li><a href="/transparencia" class="active">Transparencia</a></li>
-                <li><a href="/noticias">Noticias</a></li>
-                <li><a href="/contacto">Contacto</a></li>
+                <li><a href="/"            class="nav-link">Inicio</a></li>
+                <li><a href="/municipio"   class="nav-link">Municipio</a></li>
+                <li><a href="/servicios"   class="nav-link">Servicios</a></li>
+                <li><a href="/transparencia" class="nav-link active">Transparencia</a></li>
+                <li><a href="/noticias"    class="nav-link">Noticias</a></li>
+                <li><a href="/contacto"    class="nav-link">Contacto</a></li>
                 {% if logged %}
-                <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
-                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                <li><a href="/mi-cuenta"   class="btn-login">Mi Cuenta</a></li>
+                <li><a href="/logout"      style="color:var(--gris-500);font-size:.85rem;padding:.4rem .8rem">Salir</a></li>
                 {% else %}
-                <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
-                <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                <li><a href="/login"    class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/registro" class="btn-registro-nav">Registrarse</a></li>
                 {% endif %}
             </ul>
         </nav>
     </div>
 </header>
 
+<!-- Menú móvil -->
+<nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <ul>
+        <li><a href="/"><i class="fas fa-home"></i> Inicio</a></li>
+        <li><a href="/municipio"><i class="fas fa-city"></i> Municipio</a></li>
+        <li><a href="/servicios"><i class="fas fa-concierge-bell"></i> Servicios</a></li>
+        <li><a href="/transparencia"><i class="fas fa-file-alt"></i> Transparencia</a></li>
+        <li><a href="/noticias"><i class="fas fa-newspaper"></i> Noticias</a></li>
+        <li><a href="/contacto"><i class="fas fa-envelope"></i> Contacto</a></li>
+        {% if logged %}
+        <li><a href="/mi-cuenta"><i class="fas fa-user"></i> Mi Cuenta</a></li>
+        <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Salir</a></li>
+        {% else %}
+        <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a></li>
+        <li><a href="/registro"><i class="fas fa-user-plus"></i> Registrarse</a></li>
+        {% endif %}
+    </ul>
+</nav>
+<div class="overlay" id="overlay"></div>
+
+<!-- ================================================================
+     MAIN
+================================================================ -->
 <main>
-    <section class="page-header">
-        <div class="breadcrumb">
-            <a href="/transparencia">Transparencia</a> <span>/</span> <span>Proyectos y Obras</span>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages" role="status" aria-live="polite">
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+            <span>{{ message }}</span>
+            <button class="flash-close" aria-label="Cerrar" onclick="this.parentElement.remove()">&times;</button>
         </div>
-        <h1>Proyectos y Obras</h1>
-        <p>Obras en ejecución, planificadas y licitaciones en curso — 2025</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- PAGE HEADER -->
+    <section class="page-header">
+        <div class="inner">
+            <nav class="breadcrumb" aria-label="Ruta de navegación">
+                <a href="/transparencia">Transparencia</a>
+                <span class="sep">›</span>
+                <span>Proyectos y Obras</span>
+            </nav>
+            <h1>Proyectos y Obras</h1>
+            <p>Obras en ejecución, planificadas y licitaciones en curso — 2025</p>
+            <div class="ley-tag">
+                <i class="fas fa-balance-scale"></i>
+                Art. 3 · Ley 200-04 de Libre Acceso a la Información
+            </div>
+        </div>
     </section>
 
-    <section class="page">
-        <div class="intro-block">
+    <!-- CUERPO -->
+    <div class="page-body">
+
+        <!-- Intro -->
+        <div class="intro-block anim">
+            <i class="fas fa-info-circle"></i>
             <p>Registro actualizado de proyectos conforme al <strong>Artículo 3 de la Ley 200-04</strong>. Se incluyen montos, fuentes de financiamiento, contratistas y porcentaje de avance de cada obra.</p>
         </div>
 
+        <!-- STATS -->
         <div class="stats-grid">
-            <div class="stat-card"><span class="stat-valor">5</span><span class="stat-label">Proyectos en ejecución o finalizados</span></div>
-            <div class="stat-card"><span class="stat-valor">3</span><span class="stat-label">Proyectos planificados 2025–2026</span></div>
-            <div class="stat-card"><span class="stat-valor">2</span><span class="stat-label">Licitaciones en curso</span></div>
-            <div class="stat-card"><span class="stat-valor">RD$ 11M</span><span class="stat-label">Inversión total proyectada</span></div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-hard-hat"></i></div>
+                <span class="stat-valor">5</span>
+                <span class="stat-label">Proyectos en ejecución o finalizados</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-drafting-compass"></i></div>
+                <span class="stat-valor">3</span>
+                <span class="stat-label">Proyectos planificados 2025–2026</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-gavel"></i></div>
+                <span class="stat-valor">2</span>
+                <span class="stat-label">Licitaciones en curso</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-coins"></i></div>
+                <span class="stat-valor">RD$&thinsp;11M</span>
+                <span class="stat-label">Inversión total proyectada</span>
+            </div>
         </div>
 
-        <h2 class="bloque-titulo">Proyectos en ejecución (2025)</h2>
-        <div class="tabla-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Proyecto</th>
-                        <th>Monto RD$</th>
-                        <th>Fuente</th>
-                        <th>Avance</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Aceras y contenes — Los Multifamiliares</strong><small>Constructora Río Verde SRL</small></td>
-                        <td>2,580,000</td>
-                        <td><span class="badge badge-verde">Presupuesto Municipal</span></td>
-                        <td><div class="progreso-barra"><div class="progreso-fill" style="width:45%"></div></div> 45%</td>
-                        <td><span class="badge badge-azul">En ejecución</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Remozamiento parque central de Villa Cutupú</strong><small>Pendiente de contratación</small></td>
-                        <td>1,250,000</td>
-                        <td><span class="badge badge-gold">FONPER</span></td>
-                        <td><div class="progreso-barra"><div class="progreso-fill" style="width:0%"></div></div> 0%</td>
-                        <td><span class="badge badge-gold">Licitación en curso</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Alumbrado público Villa Progreso — Fase II</strong><small>Electro Sur</small></td>
-                        <td>850,000</td>
-                        <td><span class="badge badge-verde">Presupuesto Municipal</span></td>
-                        <td><div class="progreso-barra"><div class="progreso-fill" style="width:100%"></div></div> 100%</td>
-                        <td><span class="badge badge-verde">Finalizado</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Muro de contención — Cañada El Hoyo</strong><small>Construcciones Jiménez</small></td>
-                        <td>950,000</td>
-                        <td><span class="badge badge-rojo" style="background:#fef2f2;color:#b91c1c;border-color:#fecaca;">Fondo de Emergencia</span></td>
-                        <td><div class="progreso-barra"><div class="progreso-fill" style="width:30%"></div></div> 30%</td>
-                        <td><span class="badge badge-azul">En ejecución</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Rehabilitación camino Los Ramones – La Gina</strong><small>Pendiente de contratación</small></td>
-                        <td>1,450,000</td>
-                        <td><span class="badge badge-azul">MOPC</span></td>
-                        <td><div class="progreso-barra"><div class="progreso-fill" style="width:0%"></div></div> 0%</td>
-                        <td><span class="badge badge-gris">Inicia 04/2025</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <!-- ── PROYECTOS EN EJECUCIÓN ── -->
+        <section class="bloque anim">
+            <div class="bloque-header">
+                <h2 class="bloque-titulo">Proyectos en ejecución (2025)</h2>
+                <span class="bloque-meta"><i class="fas fa-file-contract"></i> Ley 340-06 · Contrataciones Públicas</span>
+            </div>
+            <div class="tabla-wrapper">
+                <div class="tabla-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Proyecto / Contratista</th>
+                                <th>Monto RD$</th>
+                                <th>Fuente</th>
+                                <th>Avance</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>Aceras y contenes — Los Multifamiliares</strong>
+                                    <small>Constructora Río Verde SRL</small>
+                                </td>
+                                <td class="monto">2,580,000</td>
+                                <td><span class="badge badge-verde badge-fuente">Ppto. Municipal</span></td>
+                                <td>
+                                    <div class="progreso-wrap">
+                                        <div class="progreso-barra"><div class="progreso-fill" style="width:45%"></div></div>
+                                        <span class="progreso-pct">45%</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-azul">En ejecución</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Remozamiento parque central de Villa Cutupú</strong>
+                                    <small>Pendiente de contratación</small>
+                                </td>
+                                <td class="monto">1,250,000</td>
+                                <td><span class="badge badge-dorado badge-fuente">FONPER</span></td>
+                                <td>
+                                    <div class="progreso-wrap">
+                                        <div class="progreso-barra"><div class="progreso-fill vacio" style="width:0%"></div></div>
+                                        <span class="progreso-pct">0%</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-dorado">Licitación en curso</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Alumbrado público Villa Progreso — Fase II</strong>
+                                    <small>Electro Sur</small>
+                                </td>
+                                <td class="monto">850,000</td>
+                                <td><span class="badge badge-verde badge-fuente">Ppto. Municipal</span></td>
+                                <td>
+                                    <div class="progreso-wrap">
+                                        <div class="progreso-barra"><div class="progreso-fill completo" style="width:100%"></div></div>
+                                        <span class="progreso-pct">100%</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-verde">Finalizado</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Muro de contención — Cañada El Hoyo</strong>
+                                    <small>Construcciones Jiménez</small>
+                                </td>
+                                <td class="monto">950,000</td>
+                                <td><span class="badge badge-rojo badge-fuente">Fondo Emergencia</span></td>
+                                <td>
+                                    <div class="progreso-wrap">
+                                        <div class="progreso-barra"><div class="progreso-fill medio" style="width:30%"></div></div>
+                                        <span class="progreso-pct">30%</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-azul">En ejecución</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Rehabilitación camino Los Ramones – La Gina</strong>
+                                    <small>Pendiente de contratación</small>
+                                </td>
+                                <td class="monto">1,450,000</td>
+                                <td><span class="badge badge-azul badge-fuente">MOPC</span></td>
+                                <td>
+                                    <div class="progreso-wrap">
+                                        <div class="progreso-barra"><div class="progreso-fill vacio" style="width:0%"></div></div>
+                                        <span class="progreso-pct">0%</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-gris">Inicia 04/2025</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-        <h2 class="bloque-titulo">Proyectos planificados 2025–2026</h2>
-        <div class="tabla-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Proyecto</th>
-                        <th>Monto estimado RD$</th>
-                        <th>Fecha estimada inicio</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Centro Comunal de Los Multifamiliares</td><td>3,200,000</td><td>Julio 2025</td><td><span class="badge badge-gris">En diseño</span></td></tr>
-                    <tr><td>Asfaltado calles sector Buenos Aires</td><td>4,500,000</td><td>Agosto 2025</td><td><span class="badge badge-gris">Estudio de suelo</span></td></tr>
-                    <tr><td>Ampliación del cementerio municipal</td><td>1,800,000</td><td>Octubre 2025</td><td><span class="badge badge-gris">Anteproyecto</span></td></tr>
-                </tbody>
-            </table>
-        </div>
+        <!-- ── PROYECTOS PLANIFICADOS ── -->
+        <section class="bloque anim">
+            <div class="bloque-header">
+                <h2 class="bloque-titulo">Proyectos planificados 2025–2026</h2>
+                <span class="bloque-meta"><i class="fas fa-map"></i> Planificación Municipal</span>
+            </div>
+            <div class="tabla-wrapper">
+                <div class="tabla-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Proyecto</th>
+                                <th>Monto estimado RD$</th>
+                                <th>Inicio estimado</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Centro Comunal de Los Multifamiliares</strong></td>
+                                <td class="monto">3,200,000</td>
+                                <td>Julio 2025</td>
+                                <td><span class="badge badge-gris">En diseño</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Asfaltado calles sector Buenos Aires</strong></td>
+                                <td class="monto">4,500,000</td>
+                                <td>Agosto 2025</td>
+                                <td><span class="badge badge-gris">Estudio de suelo</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ampliación del cementerio municipal</strong></td>
+                                <td class="monto">1,800,000</td>
+                                <td>Octubre 2025</td>
+                                <td><span class="badge badge-gris">Anteproyecto</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-        <h2 class="bloque-titulo">Licitaciones en curso (Ley 340-06)</h2>
-        <div class="tabla-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Objeto</th>
-                        <th>Fecha apertura</th>
-                        <th>Presupuesto RD$</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>CCC-LPI-2025-001</strong></td>
-                        <td>Remozamiento del parque central</td>
-                        <td>15/03/2025</td>
-                        <td>1,250,000</td>
-                        <td><span class="badge badge-gold">Recepción de ofertas</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>CCC-CM-2025-002</strong></td>
-                        <td>Suministro de materiales de construcción</td>
-                        <td>20/03/2025</td>
-                        <td>800,000</td>
-                        <td><span class="badge badge-azul">Publicada</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+        <!-- ── LICITACIONES ── -->
+        <section class="bloque anim">
+            <div class="bloque-header">
+                <h2 class="bloque-titulo">Licitaciones en curso</h2>
+                <span class="bloque-meta"><i class="fas fa-gavel"></i> Ley 340-06 · Compras y Contrataciones</span>
+            </div>
+            <div class="tabla-wrapper">
+                <div class="tabla-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Objeto</th>
+                                <th>Apertura</th>
+                                <th>Presupuesto RD$</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="lic-codigo">CCC-LPI-2025-001</span></td>
+                                <td>Remozamiento del parque central</td>
+                                <td style="white-space:nowrap;color:var(--gris-500)">15/03/2025</td>
+                                <td class="monto">1,250,000</td>
+                                <td><span class="badge badge-dorado">Recepción de ofertas</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="lic-codigo">CCC-CM-2025-002</span></td>
+                                <td>Suministro de materiales de construcción</td>
+                                <td style="white-space:nowrap;color:var(--gris-500)">20/03/2025</td>
+                                <td class="monto">800,000</td>
+                                <td><span class="badge badge-azul">Publicada</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </div><!-- /page-body -->
 </main>
 
+<!-- ================================================================
+     FOOTER
+================================================================ -->
 <footer>
     <div class="container">
         <div class="footer-grid">
-            <!-- Columna 1: Información institucional -->
-            <div class="footer-info">
+            <div class="footer-info anim">
                 <h3>Junta Distrital de Villa Cutupú</h3>
                 <p>Río Verde Arriba, La Vega<br>República Dominicana</p>
                 <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
                 <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
                 <div class="social-links">
-                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
-                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" rel="noopener" class="social-link" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
                 </div>
             </div>
-            
-            <!-- Columna 2: ENLACES RÁPIDOS (corregido) -->
-            <div class="footer-links">
+
+            <div class="footer-links anim" style="transition-delay:.12s">
                 <h3>Enlaces rápidos</h3>
                 <ul>
                     <li><a href="/">Inicio</a></li>
@@ -186,22 +1045,156 @@
                     <li><a href="/contacto">Contacto</a></li>
                 </ul>
             </div>
-            
-            <!-- Columna 3: Contacto -->
-            <div class="footer-contact">
-                <h3>Contacto</h3>
+
+            <div class="footer-contact anim" style="transition-delay:.22s">
+                <h3>Horario de Atención</h3>
+                <p>🕐 Lunes a Viernes<br>8:00 AM – 4:00 PM</p>
+                <p>📍 Oficina Central, Villa Cutupú</p>
                 <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
-                <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                <p>🕐 Lun-Vie: 8:00 AM – 2:00 PM</p>
             </div>
         </div>
-        
+
         <div class="footer-bottom">
-            <p>© 2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
+            <p>© 2025–2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
 
-<script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
+<button class="back-to-top" id="backToTop" aria-label="Volver arriba">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- ================================================================
+     SCRIPTS
+================================================================ -->
+<script>
+(function(){
+    'use strict';
+
+    /* ── PARTÍCULAS ── */
+    const canvas = document.getElementById('particles-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resize();
+        window.addEventListener('resize', resize, { passive:true });
+
+        const count = Math.min(40, Math.floor(window.innerWidth / 26));
+        const pts = Array.from({ length:count }, () => ({
+            x:  Math.random() * canvas.width,
+            y:  Math.random() * canvas.height,
+            r:  Math.random() * 2 + .5,
+            vx: (Math.random() - .5) * .3,
+            vy: (Math.random() - .5) * .3,
+            c:  Math.random() > .5 ? '46,107,47' : '184,134,11',
+            a:  Math.random() * .15 + .03
+        }));
+
+        (function draw(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            for(let i=0;i<pts.length;i++){
+                for(let j=i+1;j<pts.length;j++){
+                    const d = Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+                    if(d<130){
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(${pts[i].c},${.05*(1-d/130)})`;
+                        ctx.lineWidth = .5;
+                        ctx.moveTo(pts[i].x,pts[i].y);
+                        ctx.lineTo(pts[j].x,pts[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            pts.forEach(p=>{
+                ctx.beginPath();
+                ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+                ctx.fillStyle = `rgba(${p.c},${p.a})`;
+                ctx.fill();
+                p.x+=p.vx; p.y+=p.vy;
+                if(p.x<0||p.x>canvas.width)  p.vx*=-1;
+                if(p.y<0||p.y>canvas.height)  p.vy*=-1;
+            });
+            requestAnimationFrame(draw);
+        })();
+    }
+
+    /* ── HEADER SCROLL ── */
+    const hdr = document.getElementById('mainHeader');
+    window.addEventListener('scroll', () => hdr && hdr.classList.toggle('scrolled', window.scrollY > 12), { passive:true });
+
+    /* ── BACK TO TOP ── */
+    const btt = document.getElementById('backToTop');
+    if(btt){
+        window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 320), { passive:true });
+        btt.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+    }
+
+    /* ── MOBILE MENU ── */
+    const toggle  = document.getElementById('menuToggle');
+    const mMenu   = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('overlay');
+
+    function openMenu(){
+        toggle.classList.add('active'); mMenu.classList.add('active');
+        overlay.classList.add('active'); document.body.classList.add('menu-open');
+        toggle.setAttribute('aria-expanded','true');
+        mMenu.setAttribute('aria-hidden','false');
+    }
+    function closeMenu(){
+        toggle.classList.remove('active'); mMenu.classList.remove('active');
+        overlay.classList.remove('active'); document.body.classList.remove('menu-open');
+        toggle.setAttribute('aria-expanded','false');
+        mMenu.setAttribute('aria-hidden','true');
+    }
+    if(toggle) toggle.addEventListener('click', () => mMenu.classList.contains('active') ? closeMenu() : openMenu());
+    if(overlay) overlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', e => { if(e.key==='Escape') closeMenu(); });
+
+    /* ── ACTIVE NAV ── */
+    const path = window.location.pathname;
+    document.querySelectorAll('.nav-link').forEach(a => {
+        const h = a.getAttribute('href');
+        if(h === path || (h !== '/' && path.startsWith(h))) a.classList.add('active');
+    });
+
+    /* ── SCROLL REVEAL ── */
+    if('IntersectionObserver' in window){
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
+            });
+        }, { threshold:.1, rootMargin:'0px 0px -40px 0px' });
+        document.querySelectorAll('.anim').forEach(el => io.observe(el));
+    } else {
+        document.querySelectorAll('.anim').forEach(el => el.classList.add('visible'));
+    }
+
+    /* ── ANIMACIÓN BARRAS DE PROGRESO ── */
+    const fills = document.querySelectorAll('.progreso-fill');
+    const pObs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if(e.isIntersecting){
+                const t = e.target;
+                const w = t.style.width;
+                t.style.width = '0%';
+                requestAnimationFrame(() => setTimeout(() => { t.style.width = w; }, 80));
+                pObs.unobserve(t);
+            }
+        });
+    }, { threshold:.2 });
+    fills.forEach(f => pObs.observe(f));
+
+    /* ── FLASH AUTO-DISMISS ── */
+    setTimeout(() => {
+        document.querySelectorAll('.flash-message').forEach(el => {
+            el.style.transition = 'opacity .3s, transform .3s';
+            el.style.opacity = '0'; el.style.transform = 'translateX(60px)';
+            setTimeout(() => el.remove(), 320);
+        });
+    }, 5500);
+})();
+</script>
+
+{% block extra_js %}{% endblock %}
 </body>
 </html>
