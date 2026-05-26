@@ -161,6 +161,8 @@ from auth import google_bp
 app.register_blueprint(google_bp, url_prefix='/login')
 app.register_blueprint(admin_bp)
 
+
+
 # ================================================================
 # ❌ ELIMINADO: MANEJO DE REDIRECCIONES POST-LOGIN CON GOOGLE (after_request)
 # Ya no se necesita porque ahora usamos redirect_to en el blueprint
@@ -245,10 +247,11 @@ def sitemap():
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"],
+    default_limits=["1000 per day", "200 per hour"],
     storage_uri="redis://localhost:6379/0" if REDIS_AVAILABLE else "memory://",
     strategy="fixed-window",
 )
+limiter.exempt(admin_bp)
 print("✅ Caché y Rate Limiting configurados")
 
 # ================================================================

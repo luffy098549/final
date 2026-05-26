@@ -1,0 +1,1186 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}{% if noticia %}Editar Noticia{% else %}Nueva Noticia{% endif %} — Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ============================================================
+   NOTICIAS FORM — Admin Panel
+   ============================================================ */
+
+.form-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.form-page-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.form-page-header h1 i {
+    color: #2d5016;
+    font-size: 1.3rem;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.breadcrumb a {
+    color: #2d5016;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.breadcrumb a:hover { text-decoration: underline; }
+
+.breadcrumb i { font-size: 0.7rem; opacity: 0.5; }
+
+/* Layout de dos columnas */
+.form-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+/* Cards del formulario */
+.form-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.form-card-header {
+    padding: 1rem 1.4rem;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #fafafa;
+}
+
+.form-card-header i {
+    color: #2d5016;
+    font-size: 0.95rem;
+}
+
+.form-card-header h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.form-card-body {
+    padding: 1.4rem;
+}
+
+/* Campos del formulario */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group:last-child { margin-bottom: 0; }
+
+.form-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.03em;
+}
+
+.form-label .required {
+    color: #e74c3c;
+    margin-left: 2px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #1f2937;
+    background: #fff;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    font-family: inherit;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: #2d5016;
+    box-shadow: 0 0 0 3px rgba(45,80,22,0.1);
+}
+
+.form-control::placeholder { color: #9ca3af; }
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+}
+
+select.form-control {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.65rem center;
+    background-size: 1.1rem;
+    padding-right: 2.2rem;
+}
+
+.form-hint {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 0.3rem;
+}
+
+/* Editor de contenido */
+#contenido-editor {
+    min-height: 280px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.editor-toolbar {
+    display: flex;
+    gap: 0.2rem;
+    padding: 0.5rem 0.6rem;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    flex-wrap: wrap;
+}
+
+.editor-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: #4b5563;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+}
+
+.editor-btn:hover {
+    background: #e5e7eb;
+    border-color: #d1d5db;
+    color: #111;
+}
+
+.editor-separator {
+    width: 1px;
+    background: #e5e7eb;
+    margin: 0.2rem 0.3rem;
+}
+
+.editor-area {
+    min-height: 220px;
+    padding: 0.9rem 1rem;
+    outline: none;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: #1f2937;
+}
+
+.editor-area:focus { background: #fffef7; }
+
+/* Hidden textarea para el valor real */
+#contenido { display: none; }
+
+/* Vista previa imagen */
+.image-preview {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    display: none;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+}
+
+.image-preview.visible { display: block; }
+
+/* Upload zone */
+.upload-zone {
+    border: 2px dashed #d1d5db;
+    border-radius: 10px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    background: #fafafa;
+    cursor: pointer;
+}
+
+.upload-zone.dragover {
+    border-color: #2d5016;
+    background: #f0fdf4;
+}
+
+.upload-zone-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    text-align: center;
+}
+
+.btn-upload-pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding: 0.45rem 1rem;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+}
+
+.btn-upload-pick:hover {
+    border-color: #2d5016;
+    color: #2d5016;
+    background: #f0fdf4;
+}
+
+.upload-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #2d5016;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Switch / Toggle */
+.toggle-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.toggle-group:last-child { border-bottom: none; padding-bottom: 0; }
+.toggle-group:first-child { padding-top: 0; }
+
+.toggle-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.toggle-label span {
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.toggle-label small {
+    font-size: 0.74rem;
+    color: #9ca3af;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: #d1d5db;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.toggle-slider::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: #2d5016;
+}
+
+.toggle-switch input:checked + .toggle-slider::after {
+    transform: translateX(18px);
+}
+
+/* Tags input */
+.tags-input {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    min-height: 42px;
+    cursor: text;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.tags-input:focus-within {
+    border-color: #2d5016;
+    box-shadow: 0 0 0 3px rgba(45,80,22,0.1);
+}
+
+.tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: #eff3ee;
+    color: #2d5016;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+.tag-pill button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #5a684f;
+    font-size: 0.75rem;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+}
+
+.tag-pill button:hover { color: #e74c3c; }
+
+.tags-input input {
+    border: none;
+    outline: none;
+    font-size: 0.86rem;
+    color: #1f2937;
+    background: transparent;
+    min-width: 100px;
+    flex: 1;
+}
+
+/* Selector de estado con colores */
+.estado-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.estado-option {
+    position: relative;
+}
+
+.estado-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+}
+
+.estado-option label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.65rem 0.4rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: center;
+}
+
+.estado-option label i { font-size: 1.1rem; }
+.estado-option label span { font-size: 0.73rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.estado-option input[value="borrador"] + label { color: #6b7280; }
+.estado-option input[value="borrador"]:checked + label { border-color: #6b7280; background: #f9fafb; color: #374151; }
+
+.estado-option input[value="publicado"] + label { color: #16a34a; }
+.estado-option input[value="publicado"]:checked + label { border-color: #16a34a; background: #f0fdf4; color: #15803d; }
+
+.estado-option input[value="archivado"] + label { color: #ea580c; }
+.estado-option input[value="archivado"]:checked + label { border-color: #ea580c; background: #fff7ed; color: #c2410c; }
+
+.estado-option label:hover { border-color: #9ca3af; background: #f9fafb; }
+
+/* Buttons de acción */
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.4rem;
+    background: #2d5016;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background: #3d6b1e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(45,80,22,0.28);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.2rem;
+    background: white;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-decoration: none;
+}
+
+.btn-secondary:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    color: #1f2937;
+}
+
+/* Info de noticia (cuando se edita) */
+.noticia-meta-info {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    color: #166534;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.noticia-meta-info strong { font-weight: 600; }
+
+/* Contador de caracteres */
+.char-counter {
+    font-size: 0.73rem;
+    color: #9ca3af;
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+.char-counter.warning { color: #ea580c; }
+.char-counter.danger  { color: #e74c3c; font-weight: 600; }
+
+/* Responsive */
+@media (max-width: 900px) {
+    .form-layout {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+
+    <!-- ENCABEZADO -->
+    <div class="form-page-header">
+        <div>
+            <div class="breadcrumb">
+                <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="{{ url_for('admin.admin_noticias') }}">Noticias</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>{% if noticia %}Editar{% else %}Nueva Noticia{% endif %}</span>
+            </div>
+            <h1>
+                <i class="fas fa-{% if noticia %}edit{% else %}plus-circle{% endif %}"></i>
+                {% if noticia %}Editar Noticia{% else %}Nueva Noticia{% endif %}
+            </h1>
+        </div>
+        <div class="form-actions">
+            <a href="{{ url_for('admin.admin_noticias') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <form method="POST" 
+          action="{{ url_for('admin.admin_noticia_editar', noticia_id=noticia.id) if noticia else url_for('admin.admin_noticia_nueva') }}"
+          id="noticia-form">
+
+        <div class="form-layout">
+
+            <!-- COLUMNA PRINCIPAL -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+                <!-- Contenido principal -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Contenido</h3>
+                    </div>
+                    <div class="form-card-body">
+
+                        <div class="form-group">
+                            <label class="form-label" for="titulo">
+                                Título <span class="required">*</span>
+                            </label>
+                            <input type="text"
+                                   id="titulo"
+                                   name="titulo"
+                                   class="form-control"
+                                   placeholder="Escribe un título claro y atractivo..."
+                                   value="{{ noticia.titulo if noticia else '' }}"
+                                   maxlength="200"
+                                   required>
+                            <div class="char-counter" id="titulo-counter">0 / 200</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="resumen">
+                                Resumen
+                            </label>
+                            <textarea id="resumen"
+                                      name="resumen"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Breve descripción que aparece en la lista de noticias (máx. 300 caracteres)..."
+                                      maxlength="300">{{ noticia.resumen if noticia else '' }}</textarea>
+                            <div class="char-counter" id="resumen-counter">0 / 300</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Contenido <span class="required">*</span>
+                            </label>
+
+                            <!-- Toolbar del editor -->
+                            <div id="contenido-editor">
+                                <div class="editor-toolbar">
+                                    <button type="button" class="editor-btn" onclick="fmt('bold')" title="Negrita"><i class="fas fa-bold"></i></button>
+                                    <button type="button" class="editor-btn" onclick="fmt('italic')" title="Cursiva"><i class="fas fa-italic"></i></button>
+                                    <button type="button" class="editor-btn" onclick="fmt('underline')" title="Subrayado"><i class="fas fa-underline"></i></button>
+                                    <div class="editor-separator"></div>
+                                    <button type="button" class="editor-btn" onclick="fmt('insertUnorderedList')" title="Lista"><i class="fas fa-list-ul"></i></button>
+                                    <button type="button" class="editor-btn" onclick="fmt('insertOrderedList')" title="Lista numerada"><i class="fas fa-list-ol"></i></button>
+                                    <div class="editor-separator"></div>
+                                    <button type="button" class="editor-btn" onclick="fmtHeading('h2')" title="Título H2"><b>H2</b></button>
+                                    <button type="button" class="editor-btn" onclick="fmtHeading('h3')" title="Subtítulo H3"><b>H3</b></button>
+                                    <div class="editor-separator"></div>
+                                    <button type="button" class="editor-btn" onclick="fmt('createLink', prompt('URL:'))" title="Enlace"><i class="fas fa-link"></i></button>
+                                    <button type="button" class="editor-btn" onclick="fmt('removeFormat')" title="Limpiar formato"><i class="fas fa-eraser"></i></button>
+                                </div>
+                                <div class="editor-area"
+                                     id="editor-area"
+                                     contenteditable="true"
+                                     data-placeholder="Escribe el contenido completo de la noticia aquí...">{{ noticia.contenido|safe if noticia and noticia.contenido else '' }}</div>
+                            </div>
+
+                            <!-- Hidden real textarea -->
+                            <textarea name="contenido" id="contenido"></textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Imagen -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <i class="fas fa-image"></i>
+                        <h3>Imagen destacada</h3>
+                    </div>
+                    <div class="form-card-body">
+
+                        <!-- Zona de drop / click para subir -->
+                        <div class="upload-zone" id="upload-zone">
+                            <input type="file" id="file-input" accept="image/*" style="display:none;">
+                            <div class="upload-zone-inner" id="upload-zone-inner">
+                                <i class="fas fa-cloud-upload-alt" style="font-size:2rem; color:#9ca3af; margin-bottom:0.5rem;"></i>
+                                <p style="font-size:0.88rem; color:#6b7280; margin:0;">Arrastra una imagen aquí o</p>
+                                <button type="button" class="btn-upload-pick">
+                                    <i class="fas fa-folder-open"></i> Seleccionar archivo
+                                </button>
+                                <p style="font-size:0.72rem; color:#9ca3af; margin-top:0.4rem;">PNG, JPG, WEBP — máx. 10 MB</p>
+                            </div>
+
+                            <!-- Estado: subiendo -->
+                            <div id="upload-progress" style="display:none; text-align:center; padding:1rem;">
+                                <div class="upload-spinner"></div>
+                                <p style="font-size:0.82rem; color:#6b7280; margin-top:0.6rem;">Subiendo imagen...</p>
+                            </div>
+                        </div>
+
+                        <!-- Vista previa tras subir -->
+                        <div class="image-preview" id="image-preview" style="margin-top:0.75rem;">
+                            <img src="" alt="Vista previa" id="preview-img">
+                            <button type="button" id="remove-img-btn" 
+                                    style="display:none; position:absolute; top:6px; right:6px; background:#e74c3c; color:white; border:none; border-radius:50%; width:26px; height:26px; cursor:pointer; font-size:0.75rem; align-items:center; justify-content:center;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <!-- Campo oculto con la URL final -->
+                        <input type="hidden" id="imagen_url" name="imagen_url"
+                               value="{{ noticia.imagen_url if noticia else '' }}">
+
+                        <!-- También permitir URL manual como fallback -->
+                        <div style="margin-top:0.75rem;">
+                            <label class="form-label" style="font-size:0.75rem; color:#9ca3af;">O pega una URL directamente</label>
+                            <input type="url"
+                                   id="imagen_url_manual"
+                                   class="form-control"
+                                   placeholder="https://res.cloudinary.com/..."
+                                   value="{{ noticia.imagen_url if noticia else '' }}"
+                                   style="font-size:0.8rem;">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- COLUMNA LATERAL -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+                <!-- Estado de publicación -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <i class="fas fa-globe"></i>
+                        <h3>Estado</h3>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="estado-selector">
+                            <div class="estado-option">
+                                <input type="radio" name="estado" id="estado-borrador" value="borrador"
+                                       {% if not noticia or noticia.estado == 'borrador' %}checked{% endif %}>
+                                <label for="estado-borrador">
+                                    <i class="fas fa-file"></i>
+                                    <span>Borrador</span>
+                                </label>
+                            </div>
+                            <div class="estado-option">
+                                <input type="radio" name="estado" id="estado-publicado" value="publicado"
+                                       {% if noticia and noticia.estado == 'publicado' %}checked{% endif %}>
+                                <label for="estado-publicado">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Publicar</span>
+                                </label>
+                            </div>
+                            <div class="estado-option">
+                                <input type="radio" name="estado" id="estado-archivado" value="archivado"
+                                       {% if noticia and noticia.estado == 'archivado' %}checked{% endif %}>
+                                <label for="estado-archivado">
+                                    <i class="fas fa-archive"></i>
+                                    <span>Archivar</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1rem;">
+                            <div class="toggle-group">
+                                <div class="toggle-label">
+                                    <span><i class="fas fa-star" style="color:#c8960c; font-size:0.8rem;"></i> Destacada</span>
+                                    <small>Aparece primero en la lista</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="destacada" id="destacada"
+                                           {% if noticia and noticia.destacada %}checked{% endif %}>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions" style="margin-top: 1.2rem;">
+                            <button type="submit" class="btn-primary" style="flex: 1; justify-content: center;">
+                                <i class="fas fa-{% if noticia %}save{% else %}paper-plane{% endif %}"></i>
+                                {% if noticia %}Guardar cambios{% else %}Crear noticia{% endif %}
+                            </button>
+                        </div>
+
+                        {% if noticia %}
+                        <div style="margin-top: 0.75rem;">
+                            <a href="{{ url_for('admin.admin_noticias') }}" class="btn-secondary" style="width: 100%; justify-content: center;">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Categoría y Tags -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <i class="fas fa-tag"></i>
+                        <h3>Clasificación</h3>
+                    </div>
+                    <div class="form-card-body">
+
+                        <div class="form-group">
+                            <label class="form-label" for="categoria_id">
+                                Categoría <span class="required">*</span>
+                            </label>
+                            {% if categorias and categorias|length > 0 %}
+                            <select name="categoria_id" id="categoria_id" class="form-control" required>
+                                <option value="">— Selecciona una categoría —</option>
+                                {% for cat in categorias %}
+                                <option value="{{ cat.id }}"
+                                        {% if noticia and noticia.categoria_id == cat.id %}selected{% endif %}>
+                                    {{ cat.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            {% else %}
+                            <div style="background: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; padding: 0.75rem; color: #856404;">
+                                <i class="fas fa-exclamation-triangle"></i> No hay categorías disponibles. 
+                                <a href="#" style="color: #2d5016; font-weight: 600;">Crea una categoría primero</a>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Etiquetas (tags)</label>
+                            <div class="tags-input" id="tags-container">
+                                <input type="text"
+                                       id="tags-input-field"
+                                       placeholder="Escribe y presiona Enter..."
+                                       autocomplete="off">
+                            </div>
+                            <input type="hidden" name="tags" id="tags-hidden"
+                                   value="{{ noticia.tags|join(',') if noticia and noticia.tags else '' }}">
+                            <div class="form-hint">Presiona Enter o coma para añadir</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Info de la noticia (solo en edición) -->
+                {% if noticia %}
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <i class="fas fa-info-circle"></i>
+                        <h3>Información</h3>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="noticia-meta-info">
+                            <div><strong>Creada:</strong> {{ noticia.fecha_creacion.strftime('%d/%m/%Y %H:%M') if noticia.fecha_creacion else '—' }}</div>
+                            {% if noticia.fecha_publicacion %}
+                            <div><strong>Publicada:</strong> {{ noticia.fecha_publicacion.strftime('%d/%m/%Y %H:%M') }}</div>
+                            {% endif %}
+                            <div><strong>Slug:</strong> <code style="font-size:0.78rem;">{{ noticia.slug }}</code></div>
+                            <div><strong>Likes:</strong> {{ noticia.likes.count() if noticia.likes else 0 }}</div>
+                        </div>
+                        <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <a href="/noticias/{{ noticia.slug }}" target="_blank" class="btn-secondary" style="justify-content: center;">
+                                <i class="fas fa-external-link-alt"></i> Ver noticia pública
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </form>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ============================================================
+// EDITOR DE CONTENIDO
+// ============================================================
+
+const editorArea = document.getElementById('editor-area');
+const hiddenContent = document.getElementById('contenido');
+
+editorArea.addEventListener('input', syncContent);
+editorArea.addEventListener('blur', syncContent);
+
+function syncContent() {
+    hiddenContent.value = editorArea.innerHTML;
+}
+
+function fmt(cmd, val) {
+    document.execCommand(cmd, false, val || null);
+    editorArea.focus();
+    syncContent();
+}
+
+function fmtHeading(tag) {
+    document.execCommand('formatBlock', false, tag);
+    editorArea.focus();
+    syncContent();
+}
+
+// Sync inicial del contenido al cargar
+syncContent();
+
+// ============================================================
+// CONTADORES DE CARACTERES
+// ============================================================
+
+function setupCounter(inputId, counterId, max) {
+    const input = document.getElementById(inputId);
+    const counter = document.getElementById(counterId);
+    if (!input || !counter) return;
+
+    function update() {
+        const len = input.value.length;
+        counter.textContent = `${len} / ${max}`;
+        counter.className = 'char-counter';
+        if (len > max * 0.9) counter.classList.add('warning');
+        if (len >= max) counter.classList.add('danger');
+    }
+
+    input.addEventListener('input', update);
+    update();
+}
+
+setupCounter('titulo', 'titulo-counter', 200);
+setupCounter('resumen', 'resumen-counter', 300);
+
+// ============================================================
+// UPLOADER DE IMAGEN A CLOUDINARY
+// ============================================================
+
+const fileInput    = document.getElementById('file-input');
+const uploadZone   = document.getElementById('upload-zone');
+const uploadProgress = document.getElementById('upload-progress');
+const uploadInner  = document.getElementById('upload-zone-inner');
+const imagePreview = document.getElementById('image-preview');
+const previewImg   = document.getElementById('preview-img');
+const removeBtn    = document.getElementById('remove-img-btn');
+const imagenUrl    = document.getElementById('imagen_url');
+const imagenManual = document.getElementById('imagen_url_manual');
+
+// ✅ FIX: Inicializar vista previa directo (sin DOMContentLoaded wrapper)
+// El script está en extra_js que carga al final del body, el DOM ya existe.
+(function initImagePreview() {
+    const existingUrl = imagenUrl ? imagenUrl.value.trim() : '';
+    if (existingUrl) {
+        previewImg.src = existingUrl;
+        imagePreview.classList.add('visible');
+        if (removeBtn) removeBtn.style.display = 'flex';
+        if (uploadZone) uploadZone.style.display = 'none';
+    }
+})();
+
+async function uploadImage(file) {
+    if (!file || !file.type.startsWith('image/')) {
+        alert('Solo se permiten imágenes (PNG, JPG, WEBP)');
+        return false;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+        alert('La imagen no puede superar 10 MB');
+        return false;
+    }
+
+    if (uploadInner) uploadInner.style.display = 'none';
+    if (uploadProgress) uploadProgress.style.display = 'block';
+
+    const formData = new FormData();
+    formData.append('imagen', file);
+
+    try {
+        const response = await fetch('/admin/noticias/subir-imagen', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            imagenUrl.value = data.url;
+            imagenManual.value = data.url;
+            previewImg.src = data.url;
+            imagePreview.classList.add('visible');
+            if (removeBtn) removeBtn.style.display = 'flex';
+            if (uploadZone) uploadZone.style.display = 'none';
+            return true;
+        } else {
+            throw new Error(data.error || 'Error al subir');
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        alert('Error al subir la imagen: ' + error.message);
+        if (uploadInner) uploadInner.style.display = 'flex';
+        if (uploadProgress) uploadProgress.style.display = 'none';
+        if (fileInput) fileInput.value = '';
+        return false;
+    }
+}
+
+function resetUploaderUI() {
+    if (uploadInner) uploadInner.style.display = 'flex';
+    if (uploadProgress) uploadProgress.style.display = 'none';
+    if (uploadZone) uploadZone.style.display = 'block';
+    if (fileInput) fileInput.value = '';
+}
+
+function removeImage() {
+    imagenUrl.value = '';
+    imagenManual.value = '';
+    previewImg.src = '';
+    imagePreview.classList.remove('visible');
+    if (removeBtn) removeBtn.style.display = 'none';
+    resetUploaderUI();
+}
+
+// Eventos de upload
+if (uploadZone) {
+    uploadZone.addEventListener('click', function(e) {
+        if (e.target.closest('.btn-upload-pick')) return;
+        fileInput.click();
+    });
+}
+
+const uploadButton = document.querySelector('.btn-upload-pick');
+if (uploadButton) {
+    uploadButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        fileInput.click();
+    });
+}
+
+if (fileInput) {
+    fileInput.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            uploadImage(this.files[0]);
+        }
+    });
+}
+
+if (uploadZone) {
+    uploadZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+    
+    uploadZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+    
+    uploadZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            uploadImage(file);
+        } else if (file) {
+            alert('Por favor, sube un archivo de imagen válido');
+        }
+    });
+}
+
+if (imagenManual) {
+    imagenManual.addEventListener('input', function() {
+        const url = this.value.trim();
+        imagenUrl.value = url;
+        if (url) {
+            previewImg.src = url;
+            imagePreview.classList.add('visible');
+            if (uploadZone) uploadZone.style.display = 'none';
+            if (removeBtn) removeBtn.style.display = 'flex';
+            
+            previewImg.onerror = () => {
+                imagePreview.classList.remove('visible');
+                if (uploadZone) uploadZone.style.display = 'block';
+                if (removeBtn) removeBtn.style.display = 'none';
+                alert('La URL de la imagen no es válida');
+            };
+        } else {
+            removeImage();
+        }
+    });
+}
+
+if (removeBtn) {
+    removeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        removeImage();
+    });
+}
+
+// ============================================================
+// SISTEMA DE TAGS
+// ============================================================
+
+const tagsContainer  = document.getElementById('tags-container');
+const tagsInputField = document.getElementById('tags-input-field');
+const tagsHidden     = document.getElementById('tags-hidden');
+let tags = [];
+
+function initTags() {
+    const existing = tagsHidden.value;
+    if (!existing) return;
+    tags = existing.split(',').map(t => t.trim()).filter(Boolean);
+    renderTags();
+}
+
+function renderTags() {
+    const pills = tagsContainer.querySelectorAll('.tag-pill');
+    pills.forEach(p => p.remove());
+
+    tags.forEach((tag, i) => {
+        const pill = document.createElement('span');
+        pill.className = 'tag-pill';
+        pill.innerHTML = `${tag} <button type="button" class="remove-tag-btn" data-index="${i}">×</button>`;
+        tagsContainer.insertBefore(pill, tagsInputField);
+    });
+
+    document.querySelectorAll('.remove-tag-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            tags.splice(index, 1);
+            renderTags();
+        });
+    });
+
+    tagsHidden.value = tags.join(',');
+}
+
+function addTag(val) {
+    const tag = val.trim().replace(/,/g, '');
+    if (tag && !tags.includes(tag) && tags.length < 10) {
+        tags.push(tag);
+        renderTags();
+        return true;
+    }
+    return false;
+}
+
+if (tagsInputField) {
+    tagsInputField.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            if (addTag(this.value)) {
+                this.value = '';
+            }
+        } else if (e.key === 'Backspace' && this.value === '' && tags.length) {
+            tags.pop();
+            renderTags();
+        }
+    });
+
+    tagsInputField.addEventListener('blur', function() {
+        if (this.value.trim()) {
+            addTag(this.value);
+            this.value = '';
+        }
+    });
+}
+
+if (tagsContainer) {
+    tagsContainer.addEventListener('click', function(e) {
+        if (e.target === this || e.target.classList.contains('tag-pill')) {
+            tagsInputField.focus();
+        }
+    });
+}
+
+initTags();
+
+// ============================================================
+// VALIDACIÓN DEL FORMULARIO
+// ============================================================
+
+document.getElementById('noticia-form').addEventListener('submit', function(e) {
+    syncContent();
+    
+    const contenido = editorArea.textContent.trim();
+    if (!contenido || contenido === '<br>') {
+        alert('El contenido de la noticia es obligatorio.');
+        e.preventDefault();
+        return false;
+    }
+    
+    const titulo = document.getElementById('titulo')?.value.trim();
+    if (!titulo) {
+        alert('El título es obligatorio.');
+        e.preventDefault();
+        return false;
+    }
+    
+    const categoria = document.getElementById('categoria_id')?.value;
+    if (!categoria) {
+        alert('Por favor selecciona una categoría.');
+        e.preventDefault();
+        return false;
+    }
+});
+</script>
+{% endblock %}

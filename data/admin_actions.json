@@ -304,5 +304,11 @@
     "tipo": "guardar_configuracion",
     "descripcion": "Configuración actualizada - Sección: general - 9 valores guardados",
     "admin": "superadmin@cutupu.gob.do"
+  },
+  {
+    "fecha": "2026-05-26T00:03:58.276156",
+    "tipo": "guardar_reporte",
+    "descripcion": "Guardó reporte 'Reporte de Denuncias' con 5 registros",
+    "admin": "superadmin@cutupu.gob.do"
   }
 ]

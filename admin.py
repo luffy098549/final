@@ -1331,7 +1331,108 @@ def admin_encuestas():
 
 
 # ================================================================
-# NOTICIAS - ADMINISTRACIÓN (sin cambios)
+# GESTIÓN DE CATEGORÍAS DE NOTICIAS (INSERTADO JUSTO ANTES DE admin_noticias)
+# ================================================================
+
+@admin_bp.route("/noticias/categorias")
+@admin_required
+def admin_categorias():
+    categorias = CategoriaNoticia.query.order_by(CategoriaNoticia.orden.asc(), CategoriaNoticia.nombre.asc()).all()
+    return render_template("admin/categorias.html", categorias=categorias)
+
+
+@admin_bp.route("/noticias/categorias/crear", methods=["POST"])
+@admin_required
+def admin_categoria_crear():
+    nombre = request.form.get('nombre', '').strip()
+    color  = request.form.get('color', '#3b82f6').strip()
+    icono  = request.form.get('icono', 'newspaper').strip()
+    orden  = request.form.get('orden', 0, type=int)
+
+    if not nombre:
+        flash("El nombre de la categoría es obligatorio.", "error")
+        return redirect(url_for('admin.admin_categorias'))
+
+    slug = CategoriaNoticia.slugify(nombre)
+
+    if CategoriaNoticia.query.filter_by(slug=slug).first():
+        flash(f"Ya existe una categoría con el nombre '{nombre}'.", "error")
+        return redirect(url_for('admin.admin_categorias'))
+
+    cat = CategoriaNoticia(nombre=nombre, slug=slug, color=color, icono=icono, orden=orden, activa=True)
+    db.session.add(cat)
+    db.session.commit()
+
+    registrar_log(accion='crear_categoria', modulo='noticias', descripcion=f"Creó categoría '{nombre}'")
+    flash(f"✅ Categoría '{nombre}' creada correctamente.", "success")
+    return redirect(url_for('admin.admin_categorias'))
+
+
+@admin_bp.route("/noticias/categorias/<int:cat_id>/editar", methods=["POST"])
+@admin_required
+def admin_categoria_editar(cat_id):
+    cat = CategoriaNoticia.query.get_or_404(cat_id)
+
+    nombre = request.form.get('nombre', '').strip()
+    color  = request.form.get('color', cat.color).strip()
+    icono  = request.form.get('icono', cat.icono).strip()
+    orden  = request.form.get('orden', cat.orden, type=int)
+    activa = request.form.get('activa') == 'on'
+
+    if not nombre:
+        flash("El nombre es obligatorio.", "error")
+        return redirect(url_for('admin.admin_categorias'))
+
+    nuevo_slug = CategoriaNoticia.slugify(nombre)
+    existe = CategoriaNoticia.query.filter(CategoriaNoticia.slug == nuevo_slug, CategoriaNoticia.id != cat_id).first()
+    if existe:
+        flash(f"Ya existe otra categoría con ese nombre.", "error")
+        return redirect(url_for('admin.admin_categorias'))
+
+    cat.nombre = nombre
+    cat.slug   = nuevo_slug
+    cat.color  = color
+    cat.icono  = icono
+    cat.orden  = orden
+    cat.activa = activa
+    db.session.commit()
+
+    registrar_log(accion='editar_categoria', modulo='noticias', descripcion=f"Editó categoría '{nombre}'")
+    flash(f"✅ Categoría '{nombre}' actualizada.", "success")
+    return redirect(url_for('admin.admin_categorias'))
+
+
+@admin_bp.route("/noticias/categorias/<int:cat_id>/eliminar", methods=["POST"])
+@admin_required
+def admin_categoria_eliminar(cat_id):
+    cat = CategoriaNoticia.query.get_or_404(cat_id)
+
+    if cat.noticias.count() > 0:
+        flash(f"No se puede eliminar '{cat.nombre}' porque tiene {cat.noticias.count()} noticia(s) asociada(s).", "error")
+        return redirect(url_for('admin.admin_categorias'))
+
+    nombre = cat.nombre
+    db.session.delete(cat)
+    db.session.commit()
+
+    registrar_log(accion='eliminar_categoria', modulo='noticias', descripcion=f"Eliminó categoría '{nombre}'")
+    flash(f"✅ Categoría '{nombre}' eliminada.", "success")
+    return redirect(url_for('admin.admin_categorias'))
+
+
+@admin_bp.route("/noticias/categorias/<int:cat_id>/toggle", methods=["POST"])
+@admin_required
+def admin_categoria_toggle(cat_id):
+    cat = CategoriaNoticia.query.get_or_404(cat_id)
+    cat.activa = not cat.activa
+    db.session.commit()
+    estado = "activada" if cat.activa else "desactivada"
+    flash(f"✅ Categoría '{cat.nombre}' {estado}.", "success")
+    return redirect(url_for('admin.admin_categorias'))
+
+
+# ================================================================
+# NOTICIAS - ADMINISTRACIÓN (con ruta subir-imagen ANTES de rutas con parámetros)
 # ================================================================
 
 @admin_bp.route("/noticias")
@@ -1362,6 +1463,77 @@ def admin_noticias():
         categoria_actual=categoria_id
     )
 
+
+# ================================================================
+# SUBIR IMAGEN DE NOTICIA A CLOUDINARY (RUTA SIN PARÁMETROS - VA PRIMERO)
+# ================================================================
+
+@admin_bp.route("/noticias/subir-imagen", methods=["POST"])
+@admin_required
+def admin_subir_imagen_noticia():
+    """Sube una imagen de noticia a Cloudinary y devuelve la URL."""
+    try:
+        archivo = request.files.get('imagen')
+
+        if not archivo or archivo.filename == '':
+            return jsonify({'success': False, 'error': 'No se recibió ningún archivo'}), 400
+
+        # Validar extensión
+        ALLOWED = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+        ext = archivo.filename.rsplit('.', 1)[-1].lower() if '.' in archivo.filename else ''
+        if ext not in ALLOWED:
+            return jsonify({'success': False, 'error': f'Formato no permitido: {ext}'}), 400
+
+        archivo.stream.seek(0)
+        file_content = archivo.read()
+
+        if len(file_content) == 0:
+            return jsonify({'success': False, 'error': 'El archivo está vacío'}), 400
+
+        if len(file_content) > 10 * 1024 * 1024:
+            return jsonify({'success': False, 'error': 'La imagen supera 10 MB'}), 400
+
+        # Nombre único
+        from datetime import datetime as _dt
+        ts = _dt.now().strftime('%Y%m%d_%H%M%S')
+        admin_email = session.get('user', 'admin').replace('@', '_').replace('.', '_')
+        public_id = f"noticias/{admin_email}_{ts}"
+
+        import cloudinary
+        import cloudinary.uploader
+
+        resultado = cloudinary.uploader.upload(
+            file_content,
+            public_id=public_id,
+            folder='noticias',
+            overwrite=True,
+            transformation=[
+                {'width': 1200, 'height': 630, 'crop': 'fill', 'gravity': 'auto'},
+                {'fetch_format': 'auto', 'quality': 'auto'}
+            ]
+        )
+
+        registrar_log(
+            accion='subir_imagen_noticia',
+            modulo='noticias',
+            descripcion=f"Subió imagen de noticia: {resultado.get('public_id')}",
+        )
+
+        return jsonify({
+            'success': True,
+            'url': resultado['secure_url'],
+            'public_id': resultado['public_id']
+        })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+# ================================================================
+# RUTAS CON PARÁMETROS (después de la ruta sin parámetros)
+# ================================================================
 
 @admin_bp.route("/noticias/nueva", methods=["GET", "POST"])
 @admin_required

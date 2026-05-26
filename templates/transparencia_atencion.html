@@ -3,444 +3,696 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atención al Ciudadano - Transparencia | Villa Cutupú</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Atención al Ciudadano — Transparencia | Villa Cutupú</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    /* ================================================================
+       VARIABLES (diseño unificado institucional)
+    ================================================================ */
+    :root {
+        --verde:        #1E3A0F;
+        --verde-med:    #2D5016;
+        --verde-light:  #4A7A28;
+        --verde-soft:   #7AAD4F;
+        --verde-xlight: #E8F3DA;
+        --dorado:       #B8860B;
+        --dorado-light: #F0D070;
+        --dorado-claro: #F5DFA0;
+        --crema:        #FAF6EE;
+        --texto:        #131A0D;
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-        }
+        --gris-50:  #F9FAFB; --gris-100: #F3F4F6; --gris-200: #E5E7EB;
+        --gris-300: #D1D5DB; --gris-400: #9CA3AF; --gris-500: #6B7280;
+        --gris-600: #4B5563; --gris-700: #374151; --gris-800: #1F2937;
 
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
+        --sh-xs: 0 1px 3px rgba(0,0,0,.06);
+        --sh-sm: 0 4px 14px rgba(0,0,0,.08);
+        --sh-md: 0 10px 36px rgba(0,0,0,.11);
+        --sh-lg: 0 24px 50px rgba(0,0,0,.14);
+        --sh-xl: 0 40px 80px rgba(0,0,0,.18);
 
-        /* Header */
-        .main-header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+        --r-sm:    .5rem;
+        --r-card:  1rem;
+        --r-pill:  9999px;
 
-        .main-header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-        }
+        --spring: cubic-bezier(.34,1.56,.64,1);
+        --smooth: cubic-bezier(.2,.9,.4,1);
 
-        .logo a {
-            display: flex;
-            align-items: center;
-        }
+        --header-h: 160px;
+    }
 
-        .header-logo {
-            height: 60px;
-            width: auto;
-        }
+    /* ================================================================
+       RESET Y GLOBALES
+    ================================================================ */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        .main-nav ul {
-            display: flex;
-            list-style: none;
-            gap: 1.5rem;
-            align-items: center;
-        }
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: calc(var(--header-h) + 1rem);
+    }
 
-        .main-nav a {
-            text-decoration: none;
-            color: #1e293b;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
+    body {
+        font-family: 'Outfit', -apple-system, sans-serif;
+        background: var(--crema);
+        color: var(--texto);
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
 
-        .main-nav a:hover,
-        .main-nav a.active {
-            color: #2d6a4f;
-        }
+    body.menu-open { overflow: hidden; }
 
-        .btn-login, .btn-registro, .btn-logout {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-        }
+    img { max-width:100%; height:auto; display:block; }
+    .container { max-width:1280px; margin:0 auto; padding:0 2rem; width:100%; }
 
-        .btn-login {
-            background: #2d6a4f;
-            color: white !important;
-        }
+    h1,h2,h3,h4,.serif { font-family:'Cormorant Garamond',Georgia,serif; line-height:1.2; }
 
-        .btn-registro {
-            border: 1px solid #2d6a4f;
-            color: #2d6a4f !important;
-        }
+    ::selection { background:var(--verde-xlight); color:var(--verde); }
 
-        .btn-logout {
-            background: #dc2626;
-            color: white !important;
-        }
+    /* ================================================================
+       SCROLLBAR
+    ================================================================ */
+    ::-webkit-scrollbar { width:8px; }
+    ::-webkit-scrollbar-track { background:var(--crema); }
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg,var(--verde-light),var(--dorado));
+        border-radius:8px; border:2px solid var(--crema);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg,var(--verde),var(--dorado));
+    }
 
-        /* Page Header */
-        .page-header {
-            background: linear-gradient(135deg, #1a3c2c 0%, #2d6a4f 100%);
-            color: white;
-            padding: 3rem 0;
-            text-align: center;
-        }
+    /* ================================================================
+       CANVAS PARTÍCULAS
+    ================================================================ */
+    #particles-canvas {
+        position: fixed; inset:0;
+        width:100vw; height:100vh;
+        pointer-events:none; z-index:0; opacity:.45;
+    }
 
-        .breadcrumb {
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
+    /* ================================================================
+       PAGE FADE-IN
+    ================================================================ */
+    @keyframes pageFadeIn {
+        from { opacity:0; transform:translateY(14px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+    main { position:relative; z-index:1; animation:pageFadeIn .7s .1s both; }
 
-        .breadcrumb a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-        }
+    /* ================================================================
+       HEADER (fijo, con logo desde static)
+    ================================================================ */
+    .main-header {
+        position:fixed; top:0; left:0; right:0;
+        height:var(--header-h);
+        background:rgba(250,246,238,.92);
+        backdrop-filter:blur(16px) saturate(1.8);
+        -webkit-backdrop-filter:blur(16px) saturate(1.8);
+        z-index:1000;
+        border-bottom:1px solid rgba(30,58,15,.08);
+        transition:height .35s var(--smooth), background .35s, box-shadow .35s;
+        animation:hdrSlideDown .7s var(--smooth) both;
+    }
 
-        .breadcrumb span {
-            color: rgba(255,255,255,0.6);
-        }
+    @keyframes hdrSlideDown {
+        from { transform:translateY(-100%); opacity:0; }
+        to   { transform:translateY(0);     opacity:1; }
+    }
 
-        .page-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
+    .main-header.scrolled {
+        height:100px;
+        background:rgba(250,246,238,.98);
+        box-shadow:0 2px 28px rgba(30,58,15,.10);
+        border-bottom:2px solid transparent;
+        border-image:linear-gradient(90deg,var(--verde),var(--dorado),var(--verde)) 1;
+    }
 
-        .page-header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
+    .header-container {
+        display:flex; justify-content:space-between; align-items:center;
+        max-width:1280px; height:100%; margin:0 auto; padding:0 2rem;
+    }
 
-        /* Intro Block */
-        .intro-block {
-            background: #f0f7f2;
-            border-left: 4px solid #2d6a4f;
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin: 2rem 0;
-        }
+    .logo a { display:flex; align-items:center; text-decoration:none; position:relative; }
+    .logo a::after {
+        content:''; position:absolute; inset:-6px; border-radius:50%;
+        background:radial-gradient(circle,rgba(184,134,11,.12) 0%,transparent 70%);
+        opacity:0; transform:scale(.7);
+        transition:opacity .4s, transform .4s var(--spring); pointer-events:none;
+    }
+    .logo a:hover::after { opacity:1; transform:scale(1.2); }
 
-        .bloque-titulo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1a3c2c;
-            margin: 2.5rem 0 1.5rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid #2d6a4f;
-            display: inline-block;
-        }
+    @keyframes logoBounceIn {
+        0%   { opacity:0; transform:scale(0.5) rotate(-15deg); }
+        60%  { opacity:1; transform:scale(1.12) rotate(3deg); }
+        80%  { transform:scale(.95) rotate(-1deg); }
+        100% { transform:scale(1) rotate(0deg); }
+    }
+    @keyframes logoPulse {
+        0%,100% { filter:drop-shadow(0 3px 10px rgba(30,58,15,.15)); }
+        50%      { filter:drop-shadow(0 5px 20px rgba(184,134,11,.30)) drop-shadow(0 0 12px rgba(30,58,15,.20)); }
+    }
 
-        /* Grid de oficinas */
-        .oficinas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
+    .header-logo {
+        height:140px; width:auto;
+        transition:all .45s var(--spring);
+        filter:drop-shadow(0 3px 10px rgba(0,0,0,.12));
+        animation:logoBounceIn .8s var(--spring) both, logoPulse 3.5s ease-in-out 1s infinite;
+    }
+    .main-header.scrolled .header-logo { height:90px; }
+    .logo:hover .header-logo {
+        transform:scale(1.10) rotate(-4deg);
+        filter:drop-shadow(0 8px 24px rgba(30,58,15,.40)) drop-shadow(0 0 16px rgba(184,134,11,.30));
+        animation:none;
+    }
 
-        .oficina-card {
-            background: white;
-            border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            transition: all 0.3s ease;
-            border: 1px solid #e2e8f0;
-        }
+    /* ── Nav ── */
+    .main-nav ul { display:flex; list-style:none; gap:.2rem; align-items:center; }
 
-        .oficina-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            border-color: #2d6a4f;
-        }
+    .main-nav a {
+        text-decoration:none; color:var(--texto);
+        font-weight:500; font-size:.89rem;
+        padding:.4rem .72rem; border-radius:.45rem;
+        position:relative; overflow:hidden;
+        transition:color .18s, background .18s;
+    }
+    .main-nav a::before {
+        content:''; position:absolute; inset:0;
+        background:var(--verde-xlight); border-radius:inherit;
+        opacity:0; transform:scale(.8);
+        transition:opacity .18s, transform .3s var(--spring);
+    }
+    .main-nav a:hover::before { opacity:1; transform:scale(1); }
+    .main-nav a:hover { color:var(--verde); }
+    .main-nav a::after {
+        content:''; position:absolute; bottom:3px; left:50%;
+        width:0; height:2px;
+        background:linear-gradient(90deg,var(--verde),var(--dorado));
+        border-radius:2px; transform:translateX(-50%);
+        transition:width .3s var(--spring);
+    }
+    .main-nav a:hover::after, .main-nav a.active::after { width:60%; }
 
-        .oficina-icono {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
+    .btn-login {
+        border:1.5px solid var(--verde) !important; color:var(--verde) !important;
+        border-radius:var(--r-pill) !important; font-weight:600 !important;
+        padding:.38rem 1rem !important; background:transparent !important;
+        transition:all .25s !important;
+    }
+    .btn-login::before,.btn-login::after { display:none !important; }
+    .btn-login:hover {
+        background:var(--verde) !important; color:white !important;
+        transform:translateY(-2px) !important;
+        box-shadow:0 4px 18px rgba(30,58,15,.30) !important;
+    }
+    .btn-registro-nav {
+        background:var(--verde) !important; color:white !important;
+        border-radius:var(--r-pill) !important; font-weight:600 !important;
+        padding:.38rem 1.15rem !important;
+        box-shadow:0 2px 14px rgba(30,58,15,.25);
+        transition:transform .25s var(--spring), box-shadow .25s !important;
+    }
+    .btn-registro-nav::before,.btn-registro-nav::after { display:none !important; }
+    .btn-registro-nav:hover {
+        background:var(--verde-med) !important;
+        transform:translateY(-3px) scale(1.04) !important;
+        box-shadow:0 6px 26px rgba(30,58,15,.42) !important;
+    }
 
-        .oficina-card h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #1a3c2c;
-            margin-bottom: 0.5rem;
-        }
+    /* ── Menú toggle ── */
+    .menu-toggle {
+        display:none; flex-direction:column; gap:5px;
+        background:none; border:none; cursor:pointer;
+        padding:.5rem; border-radius:.45rem;
+        transition:background .18s;
+    }
+    .menu-toggle:hover { background:var(--verde-xlight); }
+    .menu-toggle span {
+        display:block; width:24px; height:2px;
+        background:var(--texto); border-radius:2px;
+        transition:transform .3s var(--spring), opacity .18s;
+        transform-origin:center;
+    }
+    .menu-toggle.active span { background:var(--verde); }
+    .menu-toggle.active span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
+    .menu-toggle.active span:nth-child(2) { opacity:0; transform:scaleX(0); }
+    .menu-toggle.active span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
 
-        .oficina-card .funcion {
-            color: #2d6a4f;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
+    /* ── Menú móvil ── */
+    .mobile-menu {
+        position:fixed; top:0; right:-110%;
+        width:80%; max-width:320px; height:100dvh;
+        background:white; z-index:1100;
+        padding:5.5rem 1.5rem 2rem;
+        transition:right .4s var(--spring);
+        box-shadow:var(--sh-xl); overflow-y:auto;
+    }
+    .mobile-menu.active { right:0; }
+    .mobile-menu ul { list-style:none; }
+    .mobile-menu li {
+        margin-bottom:.7rem; opacity:0; transform:translateX(30px);
+        transition:opacity .3s var(--smooth), transform .35s var(--spring);
+    }
+    .mobile-menu.active li { opacity:1; transform:translateX(0); }
+    .mobile-menu a {
+        display:flex; align-items:center; gap:.7rem;
+        text-decoration:none; color:var(--texto);
+        font-weight:500; padding:.72rem 1rem;
+        border-radius:var(--r-card);
+        border-left:3px solid transparent;
+        transition:all .2s var(--spring);
+    }
+    .mobile-menu a:hover {
+        background:var(--verde-xlight); border-left-color:var(--verde);
+        color:var(--verde); transform:translateX(5px);
+    }
 
-        .oficina-card p {
-            color: #475569;
-            line-height: 1.6;
-        }
+    .overlay {
+        position:fixed; inset:0; background:rgba(0,0,0,.42);
+        z-index:1099; opacity:0; visibility:hidden;
+        transition:opacity .3s, visibility .3s; backdrop-filter:blur(2px);
+    }
+    .overlay.active { opacity:1; visibility:visible; }
 
-        /* Contacto Grid */
-        .contacto-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
+    /* ================================================================
+       PAGE HEADER
+    ================================================================ */
+    .page-header {
+        background:linear-gradient(160deg,#0e1a08 0%,#1a3a0d 55%,#2d5a1b 100%);
+        color:#fff; padding:calc(var(--header-h) + 3rem) 2rem 3.5rem;
+        position:relative; overflow:hidden;
+    }
+    .page-header::before {
+        content:'';
+        position:absolute; inset:0;
+        background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        pointer-events:none;
+    }
+    .page-header::after {
+        content:''; position:absolute;
+        bottom:-80px; right:-80px;
+        width:360px; height:360px; border-radius:50%;
+        background:radial-gradient(circle,rgba(184,134,11,.12) 0%,transparent 70%);
+        pointer-events:none;
+        animation:glow 9s ease-in-out infinite;
+    }
+    @keyframes glow {
+        0%,100%{transform:scale(1)}
+        50%{transform:scale(1.2) translate(-10px,10px)}
+    }
 
-        .contacto-item {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
+    .page-header .inner { max-width:1280px; margin:0 auto; position:relative; }
 
-        .contacto-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        }
+    .breadcrumb {
+        display:flex; align-items:center; gap:8px;
+        font-size:13px; color:rgba(255,255,255,.6);
+        margin-bottom:1.25rem; flex-wrap:wrap;
+    }
+    .breadcrumb a { color:rgba(255,255,255,.75); transition:color .15s; text-decoration:none; }
+    .breadcrumb a:hover { color:#fff; }
+    .breadcrumb .sep { opacity:.4; }
 
-        .ci-icono {
-            font-size: 2rem;
-        }
+    .page-header h1 {
+        font-family:'Cormorant Garamond',serif;
+        font-size:clamp(2.2rem,5vw,3.5rem);
+        font-weight:700; letter-spacing:-.02em;
+        line-height:1.1; margin-bottom:.75rem;
+    }
+    .page-header p { font-size:15px; color:rgba(255,255,255,.72); max-width:560px; }
 
-        .contacto-item h4 {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-bottom: 0.25rem;
-        }
+    .ley-tag {
+        display:inline-flex; align-items:center; gap:6px;
+        margin-top:1.25rem;
+        background:rgba(255,255,255,.09);
+        border:1px solid rgba(255,255,255,.18);
+        border-radius:var(--r-pill);
+        padding:5px 16px;
+        font-size:12px; color:rgba(255,255,255,.8); font-weight:500;
+    }
+    .ley-tag i { color:var(--dorado-light); }
 
-        .contacto-item p, .contacto-item a {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #1a3c2c;
-            text-decoration: none;
-        }
+    /* ================================================================
+       CUERPO (Atención al Ciudadano)
+    ================================================================ */
+    .page-body { max-width:1280px; margin:0 auto; padding:3rem 2rem 6rem; }
 
-        .contacto-item a:hover {
-            color: #2d6a4f;
-        }
+    /* SCROLL REVEAL */
+    .anim {
+        opacity:0; transform:translateY(24px);
+        transition:opacity .6s var(--smooth), transform .6s var(--smooth);
+    }
+    .anim.visible { opacity:1; transform:translateY(0); }
 
-        /* Derechos Grid */
-        .derechos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
+    /* INTRO */
+    .intro-block {
+        display:flex; align-items:flex-start; gap:12px;
+        background:var(--verde-xlight);
+        border:1px solid rgba(74,122,40,.3);
+        border-left:4px solid var(--verde-light);
+        border-radius:var(--r-card);
+        padding:1.1rem 1.4rem;
+        margin-bottom:2.5rem;
+        font-size:14px; color:var(--verde-med);
+    }
+    .intro-block i { color:var(--verde-light); flex-shrink:0; margin-top:2px; }
 
-        .derecho-card {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
+    /* BLOQUE TÍTULO */
+    .bloque-titulo {
+        font-family:'Cormorant Garamond',serif;
+        font-size:1.8rem;
+        font-weight:700;
+        color:var(--texto);
+        margin: 2rem 0 1.5rem 0;
+        padding-bottom:0.75rem;
+        border-bottom:3px solid var(--verde-light);
+        display:inline-block;
+        letter-spacing:-0.01em;
+    }
 
-        .derecho-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            border-color: #2d6a4f;
-        }
+    /* OFICINAS GRID */
+    .oficinas-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));
+        gap:1.8rem;
+        margin: 2rem 0;
+    }
+    .oficina-card {
+        background:#fff;
+        border-radius:var(--r-card);
+        padding:1.5rem;
+        transition:all .3s var(--spring);
+        border:1px solid var(--gris-100);
+        box-shadow:var(--sh-xs);
+        position:relative;
+        overflow:hidden;
+    }
+    .oficina-card::before {
+        content:'';
+        position:absolute;
+        top:0;
+        left:0;
+        width:4px;
+        height:100%;
+        background:var(--verde-light);
+        transition:width .3s var(--spring);
+    }
+    .oficina-card:hover {
+        transform:translateY(-6px);
+        box-shadow:var(--sh-md);
+        border-color:var(--verde-soft);
+    }
+    .oficina-card:hover::before { width:6px; }
+    .oficina-icono { font-size:2rem; margin-bottom:.5rem; }
+    .oficina-card h3 { font-size:1.2rem; font-weight:700; margin-bottom:.25rem; }
+    .funcion { font-size:.75rem; font-weight:600; color:var(--verde-light); margin-bottom:.75rem; text-transform:uppercase; letter-spacing:1px; }
+    .oficina-card p { color:var(--gris-600); line-height:1.6; font-size:0.9rem; }
 
-        .derecho-icono {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
+    /* CONTACTO GRID */
+    .contacto-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+        gap:1.5rem;
+        margin:2rem 0;
+    }
+    .contacto-item {
+        background:#fff;
+        border-radius:var(--r-card);
+        padding:1.2rem;
+        display:flex;
+        align-items:center;
+        gap:1rem;
+        border:1px solid var(--gris-100);
+        transition:all .25s var(--spring);
+    }
+    .contacto-item:hover { transform:translateY(-3px); box-shadow:var(--sh-sm); border-color:var(--verde-light); }
+    .ci-icono { font-size:1.8rem; }
+    .contacto-item h4 { font-size:.7rem; color:var(--gris-500); margin-bottom:.2rem; text-transform:uppercase; letter-spacing:.5px; }
+    .contacto-item p, .contacto-item a { font-weight:600; color:var(--verde); text-decoration:none; font-size:.9rem; }
+    .contacto-item a:hover { color:var(--dorado); }
 
-        .derecho-card h4 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #1a3c2c;
-        }
+    /* DERECHOS GRID */
+    .derechos-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+        gap:1.2rem;
+        margin:2rem 0;
+    }
+    .derecho-card {
+        background:#fff;
+        border-radius:var(--r-card);
+        padding:1.2rem;
+        text-align:center;
+        border:1px solid var(--gris-100);
+        transition:all .2s var(--spring);
+    }
+    .derecho-card:hover { transform:translateY(-3px); box-shadow:var(--sh-sm); border-color:var(--verde-light); }
+    .derecho-icono { font-size:1.8rem; margin-bottom:.3rem; }
+    .derecho-card h4 { font-size:.85rem; font-weight:600; color:var(--texto); }
 
-        /* Nota legal */
-        .nota-legal {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin: 2rem 0;
-        }
+    /* PROCEDIMIENTO LISTA */
+    .procedimiento-lista {
+        background:#fff;
+        border-radius:var(--r-card);
+        padding:1.8rem;
+        margin:1rem 0 2rem;
+        border:1px solid var(--gris-100);
+        box-shadow:var(--sh-xs);
+    }
+    .paso-item {
+        display:flex;
+        align-items:center;
+        gap:1rem;
+        margin-bottom:1.2rem;
+    }
+    .paso-numero {
+        width:34px; height:34px; background:var(--verde); color:white;
+        border-radius:50%; display:flex; align-items:center; justify-content:center;
+        font-weight:700; font-size:.9rem; flex-shrink:0;
+    }
+    .paso-item span:last-child { color:var(--gris-700); font-size:.9rem; }
 
-        /* Footer */
-        footer {
-            background: #0f172a;
-            color: #94a3b8;
-            padding: 3rem 0 1.5rem;
-            margin-top: 3rem;
-        }
+    /* NOTA LEGAL */
+    .nota-legal {
+        background:#FEF9E6;
+        border-left:4px solid var(--dorado);
+        padding:1rem 1.5rem;
+        border-radius:var(--r-card);
+        margin:2rem 0;
+        font-size:0.9rem;
+    }
 
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
+    /* BOTÓN CTA */
+    .cta-center {
+        margin:2rem 0;
+        text-align:center;
+        padding:1.5rem;
+        background:var(--verde-xlight);
+        border-radius:var(--r-card);
+    }
+    .btn-cta {
+        background:var(--verde);
+        color:white;
+        padding:0.75rem 1.8rem;
+        border-radius:var(--r-pill);
+        text-decoration:none;
+        font-weight:600;
+        display:inline-block;
+        transition:all .25s var(--spring);
+        box-shadow:var(--sh-sm);
+    }
+    .btn-cta:hover { background:var(--dorado); transform:translateY(-3px); box-shadow:var(--sh-md); }
 
-        .footer-info h3,
-        .footer-links h3,
-        .footer-contact h3 {
-            color: white;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-        }
+    /* BACK TO TOP */
+    .back-to-top {
+        position:fixed; bottom:2rem; right:2rem;
+        width:50px; height:50px;
+        background:var(--verde); color:white;
+        border:none; border-radius:50%;
+        cursor:pointer; z-index:900;
+        display:flex; align-items:center; justify-content:center;
+        font-size:1rem;
+        box-shadow:0 4px 22px rgba(30,58,15,.32);
+        opacity:0; visibility:hidden;
+        transition:opacity .3s, visibility .3s, background .2s, transform .3s var(--spring);
+    }
+    .back-to-top.visible { opacity:1; visibility:visible; }
+    .back-to-top:hover {
+        background:var(--dorado);
+        transform:translateY(-5px) scale(1.1);
+    }
 
-        .footer-info p,
-        .footer-contact p {
-            margin: 0.5rem 0;
-            line-height: 1.5;
-        }
+    /* FOOTER ELEGANTE */
+    footer {
+        background:linear-gradient(160deg,#0E1A08 0%,#131A0D 100%);
+        color:white; padding:4rem 0 1.75rem;
+        margin-top:4rem; position:relative; overflow:hidden; z-index:1;
+    }
+    footer::before {
+        content:''; position:absolute; top:-80px; right:-80px;
+        width:300px; height:300px; border-radius:50%;
+        background:radial-gradient(circle,rgba(184,134,11,.09) 0%,transparent 70%);
+        animation:footerGlow 8s ease-in-out infinite; pointer-events:none;
+    }
+    @keyframes footerGlow {
+        0%,100%{transform:scale(1) translate(0,0)}
+        50%{transform:scale(1.15) translate(-10px,10px)}
+    }
+    .footer-grid {
+        display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+        gap:2.5rem; margin-bottom:2.5rem; position:relative; z-index:1;
+    }
+    .footer-info h3,.footer-links h3,.footer-contact h3 {
+        font-family:'Cormorant Garamond',serif;
+        font-size:1.25rem; font-weight:600;
+        margin-bottom:1.25rem; color:var(--dorado);
+        position:relative; padding-bottom:.6rem;
+    }
+    .footer-info h3::after,.footer-links h3::after,.footer-contact h3::after {
+        content:''; position:absolute; bottom:0; left:0;
+        width:30px; height:2px;
+        background:linear-gradient(90deg,var(--dorado),transparent);
+        border-radius:2px; transition:width .4s var(--spring);
+    }
+    .footer-info:hover h3::after,.footer-links:hover h3::after,.footer-contact:hover h3::after { width:60px; }
+    .footer-info p,.footer-contact p { margin:.55rem 0; opacity:.78; font-size:.86rem; }
+    .footer-info a,.footer-contact a { color:white; text-decoration:none; transition:color .18s; }
+    .footer-info a:hover,.footer-contact a:hover { color:var(--dorado); }
+    .footer-links ul { list-style:none; }
+    .footer-links li { margin:.5rem 0; }
+    .footer-links a {
+        color:rgba(255,255,255,.75); text-decoration:none; font-size:.86rem;
+        display:inline-flex; align-items:center; gap:.5rem;
+        transition:color .18s, transform .2s var(--spring);
+    }
+    .footer-links a:hover { color:white; transform:translateX(7px); }
+    .social-links { display:flex; gap:.7rem; margin-top:1.25rem; }
+    .social-link {
+        color:white; background:rgba(255,255,255,.08);
+        width:38px; height:38px; border-radius:50%;
+        border:1px solid rgba(255,255,255,.12);
+        display:flex; align-items:center; justify-content:center;
+        font-size:.88rem;
+        transition:background .2s, transform .3s var(--spring), box-shadow .2s;
+    }
+    .social-link:hover {
+        background:var(--dorado); border-color:var(--dorado);
+        transform:translateY(-5px) scale(1.12);
+    }
+    .footer-bottom { text-align:center; padding-top:1.75rem; border-top:1px solid rgba(255,255,255,.07); font-size:.76rem; opacity:.5; }
 
-        .footer-info a,
-        .footer-contact a {
-            color: #94a3b8;
-            text-decoration: none;
-        }
-
-        .footer-info a:hover {
-            color: white;
-        }
-
-        .footer-links ul {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin: 0.5rem 0;
-        }
-
-        .footer-links a {
-            color: #94a3b8;
-            text-decoration: none;
-        }
-
-        .footer-links a:hover {
-            color: white;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-link {
-            color: #94a3b8;
-            text-decoration: none;
-        }
-
-        .social-link:hover {
-            color: white;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 1.5rem;
-            border-top: 1px solid #1e293b;
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 768px) {
-            .main-header .container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .main-nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .page-header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .bloque-titulo {
-                font-size: 1.4rem;
-            }
-        }
+    @media(max-width:900px){
+        .main-nav { display:none; }
+        .menu-toggle { display:flex; }
+        .main-header { height:120px; }
+        .main-header.scrolled { height:80px; }
+        .page-header { padding-top:calc(120px + 2.5rem); }
+    }
+    @media(max-width:768px){
+        .page-body { padding:2rem 1.25rem 4rem; }
+        .footer-grid { grid-template-columns:1fr; text-align:center; }
+        .social-links { justify-content:center; }
+        .bloque-titulo { font-size:1.5rem; }
+        .header-logo { height:85px; }
+    }
+    @media(max-width:480px){ .header-logo { height:70px; } }
     </style>
 </head>
 <body>
 
-<header class="main-header">
-    <div class="container">
+<canvas id="particles-canvas"></canvas>
+
+<header class="main-header" id="mainHeader">
+    <div class="header-container">
         <div class="logo">
-            <a href="/"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="header-logo"></a>
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Junta Distrital Villa Cutupú" class="header-logo">
+            </a>
         </div>
-        <nav class="main-nav">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <nav class="main-nav" aria-label="Navegación principal">
             <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/municipio">Municipio</a></li>
-                <li><a href="/servicios">Servicios</a></li>
-                <li><a href="/transparencia" class="active">Transparencia</a></li>
-                <li><a href="/noticias">Noticias</a></li>
-                <li><a href="/contacto">Contacto</a></li>
+                <li><a href="/" class="nav-link">Inicio</a></li>
+                <li><a href="/municipio" class="nav-link">Municipio</a></li>
+                <li><a href="/servicios" class="nav-link">Servicios</a></li>
+                <li><a href="/transparencia" class="nav-link active">Transparencia</a></li>
+                <li><a href="/noticias" class="nav-link">Noticias</a></li>
+                <li><a href="/contacto" class="nav-link">Contacto</a></li>
                 {% if logged %}
                 <li><a href="/mi-cuenta" class="btn-login">Mi Cuenta</a></li>
-                <li><a href="/logout" class="btn-logout">Salir</a></li>
+                <li><a href="/logout" style="color:var(--gris-500);font-size:.85rem;padding:.4rem .8rem">Salir</a></li>
                 {% else %}
                 <li><a href="/login" class="btn-login">Iniciar sesión</a></li>
-                <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                <li><a href="/registro" class="btn-registro-nav">Registrarse</a></li>
                 {% endif %}
             </ul>
         </nav>
     </div>
 </header>
 
+<nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <ul>
+        <li><a href="/"><i class="fas fa-home"></i> Inicio</a></li>
+        <li><a href="/municipio"><i class="fas fa-city"></i> Municipio</a></li>
+        <li><a href="/servicios"><i class="fas fa-concierge-bell"></i> Servicios</a></li>
+        <li><a href="/transparencia"><i class="fas fa-file-alt"></i> Transparencia</a></li>
+        <li><a href="/noticias"><i class="fas fa-newspaper"></i> Noticias</a></li>
+        <li><a href="/contacto"><i class="fas fa-envelope"></i> Contacto</a></li>
+        {% if logged %}
+        <li><a href="/mi-cuenta"><i class="fas fa-user"></i> Mi Cuenta</a></li>
+        <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Salir</a></li>
+        {% else %}
+        <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a></li>
+        <li><a href="/registro"><i class="fas fa-user-plus"></i> Registrarse</a></li>
+        {% endif %}
+    </ul>
+</nav>
+<div class="overlay" id="overlay"></div>
+
 <main>
     <section class="page-header">
-        <div class="container">
+        <div class="inner">
             <div class="breadcrumb">
-                <a href="/transparencia">Transparencia</a> <span>/</span> <span>Atención al Ciudadano</span>
+                <a href="/transparencia">Transparencia</a>
+                <span class="sep">›</span>
+                <span>Atención al Ciudadano</span>
             </div>
             <h1>Atención al Ciudadano</h1>
             <p>Oficinas, canales de atención y mecanismos para ejercer tu derecho a la información</p>
+            <div class="ley-tag">
+                <i class="fas fa-balance-scale"></i>
+                Art. 3 · Ley 200-04 de Libre Acceso a la Información
+            </div>
         </div>
     </section>
 
-    <div class="container">
-        <div class="intro-block">
+    <div class="page-body">
+        <!-- INTRO -->
+        <div class="intro-block anim">
+            <i class="fas fa-users"></i>
             <p>Conforme al <strong>Artículo 3 de la Ley 200-04</strong> sobre Libre Acceso a la Información Pública, toda persona tiene derecho a solicitar y recibir información de las instituciones del Estado. Presentamos los canales de atención y las oficinas responsables de garantizar este derecho en el Ayuntamiento de Cutupú.</p>
         </div>
 
-        <!-- OFICINA ADMINISTRATIVA -->
-        <h2 class="bloque-titulo">Oficinas de Atención al Ciudadano</h2>
-        
-        <div class="oficinas-grid">
-            <!-- Oficina Administrativa -->
+        <!-- OFICINAS DE ATENCIÓN -->
+        <h2 class="bloque-titulo anim">Oficinas de Atención al Ciudadano</h2>
+        <div class="oficinas-grid anim">
             <div class="oficina-card">
                 <div class="oficina-icono">📋</div>
                 <h3>Oficina Administrativa</h3>
                 <div class="funcion">Atención al ciudadano</div>
                 <p>Atiende a los ciudadanos, especialmente cuando desean realizar solicitudes o gestiones que no están publicadas en la página oficial del ayuntamiento.</p>
             </div>
-
-            <!-- Libre Acceso a la Información Pública (OAI/M) -->
             <div class="oficina-card">
                 <div class="oficina-icono">📢</div>
-                <h3>Libre Acceso a la Información Pública (OAI/M)</h3>
-                <div class="funcion">Transparencia y acceso a la información</div>
+                <h3>Libre Acceso a la Información (OAI/M)</h3>
+                <div class="funcion">Transparencia y acceso</div>
                 <p>Garantiza que los ciudadanos puedan acceder a la información del ayuntamiento de manera transparente, conforme a la Ley 200-04.</p>
             </div>
-
-            <!-- Salón de Reuniones -->
             <div class="oficina-card">
                 <div class="oficina-icono">🏛️</div>
                 <h3>Salón de Reuniones</h3>
@@ -449,130 +701,54 @@
             </div>
         </div>
 
-        <!-- DATOS DE CONTACTO REALES -->
-        <h2 class="bloque-titulo">📞 Datos de Contacto</h2>
-        
-        <div class="contacto-grid">
-            <div class="contacto-item">
-                <span class="ci-icono">📞</span>
-                <div>
-                    <h4>Teléfono</h4>
-                    <p><a href="tel:+18096917111">(809) 691-7111</a></p>
-                </div>
-            </div>
-            <div class="contacto-item">
-                <span class="ci-icono">✉️</span>
-                <div>
-                    <h4>Correo Electrónico</h4>
-                    <p><a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
-                </div>
-            </div>
-            <div class="contacto-item">
-                <span class="ci-icono">🕐</span>
-                <div>
-                    <h4>Horario de Atención</h4>
-                    <p>Lunes a Viernes<br>8:00 AM – 4:00 PM</p>
-                </div>
-            </div>
-            <div class="contacto-item">
-                <span class="ci-icono">📍</span>
-                <div>
-                    <h4>Dirección</h4>
-                    <p>Calle Principal, Cutupú<br>Río Verde Arriba, La Vega</p>
-                </div>
-            </div>
-            <div class="contacto-item">
-                <span class="ci-icono">🌐</span>
-                <div>
-                    <h4>Sitio Web</h4>
-                    <p><a href="/">villacutupu.gob.do</a></p>
-                </div>
-            </div>
-            <div class="contacto-item">
-                <span class="ci-icono">📘</span>
-                <div>
-                    <h4>Redes Sociales</h4>
-                    <p>
-                        <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank">Facebook</a> | 
-                        <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank">Instagram</a>
-                    </p>
-                </div>
-            </div>
+        <!-- DATOS DE CONTACTO -->
+        <h2 class="bloque-titulo anim">📞 Datos de Contacto</h2>
+        <div class="contacto-grid anim">
+            <div class="contacto-item"><span class="ci-icono">📞</span><div><h4>Teléfono</h4><p><a href="tel:+18096917111">(809) 691-7111</a></p></div></div>
+            <div class="contacto-item"><span class="ci-icono">✉️</span><div><h4>Correo Electrónico</h4><p><a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p></div></div>
+            <div class="contacto-item"><span class="ci-icono">🕐</span><div><h4>Horario de Atención</h4><p>Lunes a Viernes<br>8:00 AM – 4:00 PM</p></div></div>
+            <div class="contacto-item"><span class="ci-icono">📍</span><div><h4>Dirección</h4><p>Calle Principal, Cutupú<br>Río Verde Arriba, La Vega</p></div></div>
+            <div class="contacto-item"><span class="ci-icono">🌐</span><div><h4>Sitio Web</h4><p><a href="/">villacutupu.gob.do</a></p></div></div>
+            <div class="contacto-item"><span class="ci-icono">📘</span><div><h4>Redes Sociales</h4><p><a href="https://www.facebook.com/ayuntamientocutupu" target="_blank">Facebook</a> | <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank">Instagram</a></p></div></div>
         </div>
 
         <!-- BASE LEGAL -->
-        <h2 class="bloque-titulo">⚖️ Base Legal</h2>
-        <div class="nota-legal">
-            <strong>📌 Ley 200-04 sobre Libre Acceso a la Información Pública</strong><br>
-            Artículo 3: El Estado está obligado a publicar información actualizada sobre sus funcionarios y procedimientos.<br>
-            Artículo 5: Toda persona tiene derecho a solicitar y recibir información de las instituciones públicas.<br>
-            Artículo 13: El plazo máximo para responder una solicitud de información es de 15 días hábiles.
+        <h2 class="bloque-titulo anim">⚖️ Base Legal</h2>
+        <div class="nota-legal anim">
+            <strong>📌 Ley 200-04 sobre Libre Acceso a la Información Pública</strong><br><br>
+            <strong>Artículo 3:</strong> El Estado está obligado a publicar información actualizada sobre sus funcionarios y procedimientos.<br>
+            <strong>Artículo 5:</strong> Toda persona tiene derecho a solicitar y recibir información de las instituciones públicas.<br>
+            <strong>Artículo 13:</strong> El plazo máximo para responder una solicitud de información es de 15 días hábiles.
         </div>
 
         <!-- DERECHOS DEL CIUDADANO -->
-        <h2 class="bloque-titulo">✅ Derechos del Ciudadano</h2>
-        
-        <div class="derechos-grid">
-            <div class="derecho-card">
-                <div class="derecho-icono">📄</div>
-                <h4>Solicitar información</h4>
-            </div>
-            <div class="derecho-card">
-                <div class="derecho-icono">⏱️</div>
-                <h4>Recibir respuesta en 15 días hábiles</h4>
-            </div>
-            <div class="derecho-card">
-                <div class="derecho-icono">📋</div>
-                <h4>Acceso a expedientes y documentos</h4>
-            </div>
-            <div class="derecho-card">
-                <div class="derecho-icono">🔄</div>
-                <h4>Recurrir si la respuesta es negativa</h4>
-            </div>
-            <div class="derecho-card">
-                <div class="derecho-icono">🔒</div>
-                <h4>Confidencialidad de datos personales</h4>
-            </div>
-            <div class="derecho-card">
-                <div class="derecho-icono">💰</div>
-                <h4>Acceso gratuito (excepto costo de reproducción)</h4>
-            </div>
+        <h2 class="bloque-titulo anim">✅ Derechos del Ciudadano</h2>
+        <div class="derechos-grid anim">
+            <div class="derecho-card"><div class="derecho-icono">📄</div><h4>Solicitar información</h4></div>
+            <div class="derecho-card"><div class="derecho-icono">⏱️</div><h4>Recibir respuesta en 15 días hábiles</h4></div>
+            <div class="derecho-card"><div class="derecho-icono">📋</div><h4>Acceso a expedientes</h4></div>
+            <div class="derecho-card"><div class="derecho-icono">🔄</div><h4>Recurrir si la respuesta es negativa</h4></div>
+            <div class="derecho-card"><div class="derecho-icono">🔒</div><h4>Confidencialidad de datos personales</h4></div>
+            <div class="derecho-card"><div class="derecho-icono">💰</div><h4>Acceso gratuito (excepto costo de reproducción)</h4></div>
         </div>
 
         <!-- CÓMO SOLICITAR INFORMACIÓN -->
-        <h2 class="bloque-titulo">📝 ¿Cómo solicitar información?</h2>
-        
-        <div style="background: white; border-radius: 20px; padding: 2rem; margin: 1rem 0 2rem 0;">
-            <ul style="list-style: none; padding: 0;">
-                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
-                    <span style="background: #2d6a4f; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold;">1</span>
-                    <span>Identifica el área o departamento que posee la información que necesitas</span>
-                </li>
-                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
-                    <span style="background: #2d6a4f; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold;">2</span>
-                    <span>Presenta tu solicitud en la Oficina Administrativa o vía correo electrónico</span>
-                </li>
-                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
-                    <span style="background: #2d6a4f; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold;">3</span>
-                    <span>Incluye tu nombre completo, cédula, descripción clara de la información solicitada y correo de contacto</span>
-                </li>
-                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
-                    <span style="background: #2d6a4f; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold;">4</span>
-                    <span>Recibirás respuesta en un plazo máximo de 15 días hábiles</span>
-                </li>
-            </ul>
+        <h2 class="bloque-titulo anim">📝 ¿Cómo solicitar información?</h2>
+        <div class="procedimiento-lista anim">
+            <div class="paso-item"><div class="paso-numero">1</div><span>Identifica el área o departamento que posee la información que necesitas</span></div>
+            <div class="paso-item"><div class="paso-numero">2</div><span>Presenta tu solicitud en la Oficina Administrativa o vía correo electrónico</span></div>
+            <div class="paso-item"><div class="paso-numero">3</div><span>Incluye tu nombre completo, cédula, descripción clara de la información solicitada y correo de contacto</span></div>
+            <div class="paso-item"><div class="paso-numero">4</div><span>Recibirás respuesta en un plazo máximo de 15 días hábiles</span></div>
         </div>
 
         <!-- NOTA IMPORTANTE -->
-        <div class="nota-legal">
+        <div class="nota-legal anim">
             <strong>📌 Importante:</strong> Toda solicitud de información pública debe ser atendida de manera gratuita. El solicitante solo asumirá el costo de reproducción (fotocopias, impresiones, etc.) si así lo requiere.
         </div>
 
-        <div style="margin: 2rem 0; text-align: center; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
-            <p style="color: #64748b;">¿Necesitas hacer una solicitud de información o tienes alguna queja?</p>
-            <p style="margin-top: 0.5rem;">
-                <a href="/contacto" style="background: #2d6a4f; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 600;">📞 Contáctanos ahora</a>
-            </p>
+        <div class="cta-center anim">
+            <p style="margin-bottom:1rem; color:var(--verde-med);">¿Necesitas hacer una solicitud de información o tienes alguna queja?</p>
+            <a href="/contacto" class="btn-cta">📞 Contáctanos ahora</a>
         </div>
     </div>
 </main>
@@ -586,34 +762,68 @@
                 <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
                 <p>✉️ <a href="mailto:juntamunicipalrioverdearriba@gmail.com">juntamunicipalrioverdearriba@gmail.com</a></p>
                 <div class="social-links">
-                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link">Facebook</a>
-                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link">Instagram</a>
+                    <a href="https://www.facebook.com/ayuntamientocutupu" target="_blank" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/juntamunicipalvillacutupu0107" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
             <div class="footer-links">
                 <h3>Enlaces rápidos</h3>
-                <ul>
-                    <li><a href="/">Inicio</a></li>
-                    <li><a href="/municipio">Municipio</a></li>
-                    <li><a href="/servicios">Servicios</a></li>
-                    <li><a href="/transparencia">Transparencia</a></li>
-                    <li><a href="/noticias">Noticias</a></li>
-                    <li><a href="/contacto">Contacto</a></li>
-                </ul>
+                <ul><li><a href="/">Inicio</a></li><li><a href="/municipio">Municipio</a></li><li><a href="/servicios">Servicios</a></li><li><a href="/transparencia">Transparencia</a></li><li><a href="/noticias">Noticias</a></li><li><a href="/contacto">Contacto</a></li></ul>
             </div>
             <div class="footer-contact">
                 <h3>Horario de Atención</h3>
-                <p>🕐 Lun-Vie: 8:00 AM – 4:00 PM</p>
-                <p>📍 Oficina Central: Calle Principal, Cutupú</p>
+                <p>🕐 Lunes a Viernes<br>8:00 AM – 4:00 PM</p>
+                <p>📍 Oficina Central, Villa Cutupú</p>
                 <p>📞 <a href="tel:+18096917111">(809) 691-7111</a></p>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>© 2025-2026 Junta Distrital de Villa Cutupú. Todos los derechos reservados.</p>
-        </div>
+        <div class="footer-bottom"><p>© 2025–2026 Junta de Distrito Municipal de Villa Cutupú. Todos los derechos reservados.</p></div>
     </div>
 </footer>
 
-<script src="{{ url_for('static', filename='js/transparencia-sub.js') }}"></script>
+<button class="back-to-top" id="backToTop" aria-label="Volver arriba"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+(function(){
+    'use strict';
+    const canvas = document.getElementById('particles-canvas');
+    if(canvas){
+        const ctx = canvas.getContext('2d');
+        function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resize(); window.addEventListener('resize', resize, { passive:true });
+        const count = Math.min(40, Math.floor(window.innerWidth / 26));
+        const pts = Array.from({ length:count }, () => ({
+            x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 2 + .5,
+            vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3,
+            c: Math.random() > .5 ? '46,107,47' : '184,134,11', a: Math.random() * .15 + .03
+        }));
+        (function draw(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){ const d=Math.hypot(pts[i].x-pts[j].x, pts[i].y-pts[j].y); if(d<130){ ctx.beginPath(); ctx.strokeStyle=`rgba(${pts[i].c},${.05*(1-d/130)})`; ctx.lineWidth=.5; ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); } }
+            pts.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(${p.c},${p.a})`; ctx.fill(); p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width) p.vx*=-1; if(p.y<0||p.y>canvas.height) p.vy*=-1; });
+            requestAnimationFrame(draw);
+        })();
+    }
+    const hdr = document.getElementById('mainHeader');
+    window.addEventListener('scroll', () => hdr && hdr.classList.toggle('scrolled', window.scrollY > 12), { passive:true });
+    const btt = document.getElementById('backToTop');
+    if(btt){
+        window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 320), { passive:true });
+        btt.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+    }
+    const toggle = document.getElementById('menuToggle'), mMenu = document.getElementById('mobileMenu'), overlay = document.getElementById('overlay');
+    function openMenu(){ toggle.classList.add('active'); mMenu.classList.add('active'); overlay.classList.add('active'); document.body.classList.add('menu-open'); toggle.setAttribute('aria-expanded','true'); mMenu.setAttribute('aria-hidden','false'); }
+    function closeMenu(){ toggle.classList.remove('active'); mMenu.classList.remove('active'); overlay.classList.remove('active'); document.body.classList.remove('menu-open'); toggle.setAttribute('aria-expanded','false'); mMenu.setAttribute('aria-hidden','true'); }
+    if(toggle) toggle.addEventListener('click', () => mMenu.classList.contains('active') ? closeMenu() : openMenu());
+    if(overlay) overlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', e => { if(e.key==='Escape') closeMenu(); });
+    const path = window.location.pathname;
+    document.querySelectorAll('.nav-link').forEach(a => { const h = a.getAttribute('href'); if(h === path || (h !== '/' && path.startsWith(h))) a.classList.add('active'); });
+    if('IntersectionObserver' in window){
+        const io = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } }); }, { threshold:.1, rootMargin:'0px 0px -40px 0px' });
+        document.querySelectorAll('.anim').forEach(el => io.observe(el));
+    } else { document.querySelectorAll('.anim').forEach(el => el.classList.add('visible')); }
+})();
+</script>
 </body>
 </html>
