@@ -33,10 +33,10 @@
             </div>
         </div>
 
-        <!-- GRID -->
+        <!-- GRID DE TARJETAS -->
         <div class="dev-grid">
 
-            <!-- Sebastián Durán Peralta -->
+            <!-- 01 - Sebastián Durán Peralta -->
             <div class="dev-card anim"
                  data-nombre="Sebastián Durán Peralta"
                  data-cargo="Desarrollador Web Junior · Líder del Proyecto"
@@ -54,7 +54,6 @@
                     </div>
                     <div class="dev-ring"></div>
                     <div class="dev-num">01</div>
-                    <!-- Badge de líder ELIMINADO de Sebastián -->
                 </div>
                 <div class="dev-info">
                     <div class="dev-name">Sebastián Durán Peralta</div>
@@ -63,25 +62,25 @@
                 <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
             </div>
 
-            <!-- Perla Mercedes Serrano Tobía -->
+            <!-- 02 - Perla Mercedes Serrano Tobía (Líder) -->
             <div class="dev-card anim"
                  data-nombre="Perla Mercedes Serrano Tobía"
                  data-cargo="Técnica en Informática"
                  data-num="02"
                  data-iniciales="PS"
-             data-foto="{{ url_for('static', filename='img/desarrolladores/perla.jpeg') }}"
+                 data-foto="{{ url_for('static', filename='img/desarrolladores/perla.jpeg') }}"
                  data-bio="Técnica en Informática con conocimientos en bases de datos, XAMPP y programación en Python. Participó en el diseño y estructura de la información del sistema, apoyando en la organización y gestión de datos del proyecto."
                  data-tags="Python,XAMPP,Bases de Datos">
                 <div class="dev-avatar-wrap">
-                   <div class="dev-avatar">
-    <img src="{{ url_for('static', filename='img/desarrolladores/perla.jpeg') }}"
-         alt="Perla Serrano"
-         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <span style="display:none">PS</span>
-</div>
+                    <div class="dev-avatar">
+                        <img src="{{ url_for('static', filename='img/desarrolladores/perla.jpeg') }}"
+                             alt="Perla Serrano"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <span style="display:none">PS</span>
+                    </div>
                     <div class="dev-ring"></div>
                     <div class="dev-num">02</div>
-                    <div class="dev-lead-badge">Líder</div>  <!-- Badge de líder AGREGADO a Perla -->
+                    <div class="dev-lead-badge">Líder</div>
                 </div>
                 <div class="dev-info">
                     <div class="dev-name">Perla Mercedes Serrano Tobía</div>
@@ -90,18 +89,21 @@
                 <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
             </div>
 
-            <!-- Cristian Evaristo Peña Mera -->
+            <!-- 03 - Cristian Evaristo Peña Mera -->
             <div class="dev-card anim"
                  data-nombre="Cristian Evaristo Peña Mera"
                  data-cargo="Técnico en Informática"
                  data-num="03"
                  data-iniciales="CP"
-                 data-foto=""
+                 data-foto="{{ url_for('static', filename='img/desarrolladores/cristian.jpeg') }}"
                  data-bio="Técnico en Informática con conocimientos en desarrollo web y programación. Participó en la construcción de vistas y funcionalidades del sistema, aportando en el desarrollo front-end y back-end del proyecto."
                  data-tags="Desarrollo Web,Programación">
                 <div class="dev-avatar-wrap">
                     <div class="dev-avatar">
-                        <span>CP</span>
+                        <img src="{{ url_for('static', filename='img/desarrolladores/cristian.jpeg') }}"
+                             alt="Cristian Peña"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <span style="display:none">CP</span>
                     </div>
                     <div class="dev-ring"></div>
                     <div class="dev-num">03</div>
@@ -113,44 +115,47 @@
                 <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
             </div>
 
-           <!-- Allan Enmanuel Rosario Suárez -->
-<div class="dev-card anim"
-     data-nombre="Allan Enmanuel Rosario Suárez"
-     data-cargo="Técnico en Informática"
-     data-num="04"
-     data-iniciales="AR"
-     data-foto="{{ url_for('static', filename='img/desarrolladores/allan.png') }}"
-     data-bio="Técnico en Informática con conocimientos en hardware y ciberseguridad básica. Responsable del soporte técnico, configuración del entorno y aspectos de seguridad del sistema durante el desarrollo del proyecto."
-     data-tags="Hardware,Ciberseguridad,Soporte Técnico">
-    <div class="dev-avatar-wrap">
-        <div class="dev-avatar">
-            <img src="{{ url_for('static', filename='img/desarrolladores/allan.png') }}"
-                 alt="Allan Enmanuel Rosario Suárez"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <span style="display:none">AR</span>
-        </div>
-        <div class="dev-ring"></div>
-        <div class="dev-num">04</div>
-    </div>
-    <div class="dev-info">
-        <div class="dev-name">Allan Enmanuel Rosario Suárez</div>
-        <div class="dev-role"><i class="fas fa-star"></i> Técnico en Informática</div>
-    </div>
-    <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
-</div>
+            <!-- 04 - Allan Enmanuel Rosario Suárez -->
+            <div class="dev-card anim"
+                 data-nombre="Allan Enmanuel Rosario Suárez"
+                 data-cargo="Técnico en Informática"
+                 data-num="04"
+                 data-iniciales="AR"
+                 data-foto="{{ url_for('static', filename='img/desarrolladores/allan.png') }}"
+                 data-bio="Técnico en Informática con conocimientos en hardware y ciberseguridad básica. Responsable del soporte técnico, configuración del entorno y aspectos de seguridad del sistema durante el desarrollo del proyecto."
+                 data-tags="Hardware,Ciberseguridad,Soporte Técnico">
+                <div class="dev-avatar-wrap">
+                    <div class="dev-avatar">
+                        <img src="{{ url_for('static', filename='img/desarrolladores/allan.png') }}"
+                             alt="Allan Rosario"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <span style="display:none">AR</span>
+                    </div>
+                    <div class="dev-ring"></div>
+                    <div class="dev-num">04</div>
+                </div>
+                <div class="dev-info">
+                    <div class="dev-name">Allan Enmanuel Rosario Suárez</div>
+                    <div class="dev-role"><i class="fas fa-star"></i> Técnico en Informática</div>
+                </div>
+                <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
+            </div>
 
-            <!-- Raimy Junior Delgado Marte -->
+            <!-- 05 - Raimy Junior Delgado Marte -->
             <div class="dev-card anim"
                  data-nombre="Raimy Junior Delgado Marte"
                  data-cargo="Técnico en Informática"
                  data-num="05"
                  data-iniciales="RD"
-                 data-foto=""
+                 data-foto="{{ url_for('static', filename='img/desarrolladores/raimy.jpeg') }}"
                  data-bio="Técnico en Informática con participación activa en el desarrollo, pruebas y documentación del sistema. Apoyó en la validación de funcionalidades y en la revisión de la experiencia de usuario del proyecto."
                  data-tags="Testing,Documentación,QA">
                 <div class="dev-avatar-wrap">
                     <div class="dev-avatar">
-                        <span>RD</span>
+                        <img src="{{ url_for('static', filename='img/desarrolladores/raimy.jpeg') }}"
+                             alt="Raimy Delgado"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <span style="display:none">RD</span>
                     </div>
                     <div class="dev-ring"></div>
                     <div class="dev-num">05</div>
@@ -162,18 +167,21 @@
                 <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
             </div>
 
-            <!-- Anthony Baldera Tavarez -->
+            <!-- 06 - Anthony Baldera Tavarez -->
             <div class="dev-card anim"
                  data-nombre="Anthony Baldera Tavarez"
                  data-cargo="Técnico en Informática"
                  data-num="06"
                  data-iniciales="AB"
-                 data-foto=""
+                 data-foto="{{ url_for('static', filename='img/desarrolladores/anthony.jpeg') }}"
                  data-bio="Técnico en Informática con contribución en el diseño visual, pruebas del sistema y verificación de la experiencia de usuario. Participó en la revisión del diseño y en las pruebas finales del proyecto educativo."
                  data-tags="Diseño UI,Pruebas,UX">
                 <div class="dev-avatar-wrap">
                     <div class="dev-avatar">
-                        <span>AB</span>
+                        <img src="{{ url_for('static', filename='img/desarrolladores/anthony.jpeg') }}"
+                             alt="Anthony Baldera"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <span style="display:none">AB</span>
                     </div>
                     <div class="dev-ring"></div>
                     <div class="dev-num">06</div>
@@ -185,31 +193,31 @@
                 <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
             </div>
 
-<!-- Kiandra Fermín Méndez -->
-<div class="dev-card anim"
-     data-nombre="Kiandra Fermín Méndez"
-     data-cargo="Técnica en Informática"
-     data-num="07"
-     data-iniciales="KF"
-     data-foto="{{ url_for('static', filename='img/desarrolladores/kiamdra.jpeg') }}"
-     data-bio="Técnica en Informática organizada y responsable, con sólidos conocimientos en paquetes de oficina, gestión de archivos y herramientas digitales. Destaca por su rápida adaptación a nuevos sistemas, comunicación clara y capacidad para trabajar tanto en equipo como de forma autónoma."
-     data-tags="Ofimática,Gestión de Archivos,Herramientas Digitales,Trabajo en Equipo">
-    <div class="dev-avatar-wrap">
-        <div class="dev-avatar">
-            <img src="{{ url_for('static', filename='img/desarrolladores/kiamdra.jpeg') }}"
-                 alt="Kiandra Fermín Méndez"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <span style="display:none">KF</span>
-        </div>
-        <div class="dev-ring"></div>
-        <div class="dev-num">07</div>
-    </div>
-    <div class="dev-info">
-        <div class="dev-name">Kiandra Fermín Méndez</div>
-        <div class="dev-role"><i class="fas fa-star"></i> Técnica en Informática</div>
-    </div>
-    <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
-</div>
+            <!-- 07 - Kiandra Fermín Méndez -->
+            <div class="dev-card anim"
+                 data-nombre="Kiandra Fermín Méndez"
+                 data-cargo="Técnica en Informática"
+                 data-num="07"
+                 data-iniciales="KF"
+                 data-foto="{{ url_for('static', filename='img/desarrolladores/kiamdra.jpeg') }}"
+                 data-bio="Técnica en Informática organizada y responsable, con sólidos conocimientos en paquetes de oficina, gestión de archivos y herramientas digitales. Destaca por su rápida adaptación a nuevos sistemas, comunicación clara y capacidad para trabajar tanto en equipo como de forma autónoma."
+                 data-tags="Ofimática,Gestión de Archivos,Herramientas Digitales,Trabajo en Equipo">
+                <div class="dev-avatar-wrap">
+                    <div class="dev-avatar">
+                        <img src="{{ url_for('static', filename='img/desarrolladores/kiamdra.jpeg') }}"
+                             alt="Kiandra Fermín"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <span style="display:none">KF</span>
+                    </div>
+                    <div class="dev-ring"></div>
+                    <div class="dev-num">07</div>
+                </div>
+                <div class="dev-info">
+                    <div class="dev-name">Kiandra Fermín Méndez</div>
+                    <div class="dev-role"><i class="fas fa-star"></i> Técnica en Informática</div>
+                </div>
+                <div class="dev-arrow"><i class="fas fa-chevron-right"></i></div>
+            </div>
 
         </div>
 
@@ -234,8 +242,29 @@
 
 <style>
 /* ================================================================
-   DESARROLLADORES — estilos
+   DESARROLLADORES — estilos (variables CSS)
 ================================================================ */
+:root {
+    --verde: #2c5a1e;
+    --verde-soft: #6a9c4b;
+    --verde-xlight: #eef5e9;
+    --dorado: #c28b1b;
+    --gris-100: #f0f0f0;
+    --gris-200: #e0e0e0;
+    --gris-300: #cccccc;
+    --gris-500: #7a7a7a;
+    --gris-600: #5a5a5a;
+    --gris-700: #3a3a3a;
+    --texto: #1e2a1c;
+    --crema: #fffcf5;
+    --r-block: 1.5rem;
+    --r-card: 1rem;
+    --r-pill: 40px;
+    --sh-sm: 0 8px 20px rgba(0,0,0,0.05);
+    --sh-md: 0 18px 36px rgba(0,0,0,0.08);
+    --spring: cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
 .dev-section {
     padding: 7rem 0;
     background: white;
@@ -380,7 +409,6 @@
     border-radius: 50%;
     object-position: top;
 }
-
 .dev-avatar span {
     font-weight: 800; font-size: 1.15rem;
     color: var(--verde);
@@ -779,32 +807,43 @@
 
         function fill(idx) {
             const d = cards[idx].dataset;
-            // Foto o iniciales
-            if (d.foto && d.foto.trim()) {
-                dmFoto.innerHTML = `<img src="${d.foto}" alt="${d.nombre}">`;
-                const imgEl = dmFoto.querySelector('img');
-                if (imgEl) {
-                    imgEl.onclick = () => {
+            const hasFoto = d.foto && d.foto.trim() !== '';
+            
+            if (hasFoto) {
+                const img = document.createElement('img');
+                img.src = d.foto;
+                img.alt = d.nombre;
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    dmFoto.textContent = d.iniciales || '?';
+                };
+                dmFoto.innerHTML = '';
+                dmFoto.appendChild(img);
+                img.onclick = () => {
+                    if (img.complete && img.naturalWidth > 0) {
                         lbImg.src = d.foto;
                         lb.classList.add('active');
-                    };
-                }
+                    }
+                };
             } else {
+                dmFoto.innerHTML = '';
                 dmFoto.textContent = d.iniciales || '?';
             }
+            
             dmNum.textContent  = d.num || String(idx+1).padStart(2,'0');
             dmCargo.textContent = d.cargo || '';
             dmNom.textContent  = d.nombre || '';
             dmBio.textContent  = d.bio || '';
-            // Tags
+            
             dmTags.innerHTML = '';
             (d.tags || '').split(',').filter(Boolean).forEach(t => {
                 const sp = document.createElement('span');
                 sp.textContent = t.trim();
                 dmTags.appendChild(sp);
             });
-            // Dots activo
-            dmDots.querySelectorAll('.dm-dot').forEach((dot, i) => {
+            
+            const dots = dmDots.querySelectorAll('.dm-dot');
+            dots.forEach((dot, i) => {
                 dot.classList.toggle('active', i === idx);
             });
         }
@@ -845,7 +884,6 @@
             if (e.key === 'ArrowLeft') goTo(current - 1);
         });
 
-        // Swipe móvil
         let tx = 0;
         const modal = overlay.querySelector('.dev-modal');
         modal.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
