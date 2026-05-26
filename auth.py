@@ -24,7 +24,6 @@ from flask_dance.consumer import oauth_authorized
 
 IS_PRODUCTION = bool(os.environ.get('RENDER'))
 
-# 🔥 CAMBIO IMPORTANTE: Usar redirect_to en lugar de redirigir a /login/google/authorized
 google_bp = make_google_blueprint(
     client_id=os.environ.get('GOOGLE_CLIENT_ID'),
     client_secret=os.environ.get('GOOGLE_CLIENT_SECRET'),
@@ -33,7 +32,7 @@ google_bp = make_google_blueprint(
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile'
     ],
-    redirect_to='auth.post_google_login'  # ← Redirige a tu ruta, no al authorized
+    redirect_to='auth.post_google_login'
 )
 
 
@@ -65,7 +64,6 @@ def google_logged_in(blueprint, token):
 
     usuario = Usuario.query.filter_by(email=google_email).first()
 
-    # Usuario nuevo → guardar datos en sesión y redirigir a completar registro
     if not usuario:
         session['google_registro_data'] = {
             'email': google_email,
@@ -74,28 +72,24 @@ def google_logged_in(blueprint, token):
             'google_id': google_id,
             'foto': google_foto
         }
-        return False  # Flask-Dance redirigirá a redirect_to
+        return False
 
-    # Usuario existente desactivado
     if not usuario.activo:
         flash('❌ Tu cuenta está desactivada. Contacta al administrador.', 'error')
         return False
 
-    # Actualizar datos de Google
     if google_foto:
         usuario.foto_perfil = google_foto
         usuario.foto_perfil_url = google_foto
     if not usuario.google_id:
         usuario.google_id = google_id
 
-    # Si existía pero no tenía email verificado (registro manual previo), verificarlo ahora
     if not usuario.email_verificado:
         usuario.email_verificado = True
 
     usuario.ultimo_acceso = datetime.now()
     db.session.commit()
 
-    # Actualizar sesión - NO usar session.clear()
     nombre_usuario = usuario.nombre_completo or usuario.nombre
     session['user'] = usuario.email
     session['user_name'] = nombre_usuario
@@ -103,40 +97,27 @@ def google_logged_in(blueprint, token):
     session['user_tipo'] = usuario.tipo
     session['user_rol'] = usuario.rol or ''
     session['foto_perfil'] = usuario.foto_perfil or ''
-    
+
     flash(f'✅ ¡Bienvenido, {nombre_usuario}!', 'success')
-    return False  # Flask-Dance redirigirá a redirect_to
+    return False
 
 
-# 🔥 NUEVA RUTA: Post login handler (reemplaza a google_authorized_redirect)
 @auth.route("/post-google-login")
 def post_google_login():
     print("=" * 50)
     print("POST-GOOGLE-LOGIN - Session:", dict(session))
     print("=" * 50)
-    
-    # Verificar si es registro nuevo
+
     if 'google_registro_data' in session:
-        print("→ Nuevo usuario, redirigiendo a registro_completo")
         return redirect(url_for('auth.registro_completo'))
-    
-    # Usuario ya existe y está logueado
+
     if 'user' in session:
-        print(f"→ Usuario logueado: {session.get('user_name')}")
         if session.get('is_admin'):
             return redirect(url_for('admin.dashboard'))
         return redirect(url_for('index'))
-    
-    # Algo salió mal
-    print("→ Sesión vacía, error en login")
+
     flash('Error al iniciar sesión con Google.', 'error')
     return redirect(url_for('auth.login'))
-
-
-# ⚠️ RUTA ELIMINADA - Ya no se usa (comentada para referencia)
-# @auth.route("/login/google/authorized")
-# def google_authorized_redirect():
-#     pass
 
 
 # ================================================================
@@ -216,15 +197,13 @@ def login():
         flash("❌ Tu cuenta ha sido desactivada. Contacta al administrador.", "error")
         return render_template("login.html", next=next_url)
 
-    # Bloquear si no verificó el correo
     if not usuario.email_verificado:
-        flash("⚠️ Debes verificar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada.", "warning")
+        flash("⚠️ Debes verificar tu correo antes de iniciar sesión.", "warning")
         return render_template("login.html", next=next_url)
 
     usuario.ultimo_acceso = datetime.now()
     db.session.commit()
 
-    # Para login normal SÍ podemos usar clear porque no hay estado OAuth
     session.clear()
     session["user"] = usuario.email
     session["user_name"] = usuario.nombre_completo or f"{usuario.nombre} {usuario.apellidos}".strip()
@@ -245,7 +224,7 @@ def login():
 
 
 # ================================================================
-# REGISTRO NORMAL (con verificación por correo)
+# REGISTRO NORMAL
 # ================================================================
 @auth.route("/registro", methods=["GET", "POST"])
 def registro():
@@ -357,7 +336,7 @@ def verificar_email(token):
 
 
 # ================================================================
-# REGISTRO COMPLETO CON GOOGLE (sin verificación adicional)
+# REGISTRO COMPLETO CON GOOGLE
 # ================================================================
 @auth.route("/registro-completo", methods=["GET", "POST"])
 def registro_completo():
@@ -378,7 +357,6 @@ def registro_completo():
         flash("❌ Este email ya está registrado.", "error")
         return redirect(url_for("auth.login"))
 
-    # Google ya verificó el email → activar directamente, sin token
     usuario = Usuario(
         nombre=google_data.get('nombre', ''),
         apellidos=google_data.get('apellidos', ''),
@@ -399,7 +377,6 @@ def registro_completo():
     db.session.add(usuario)
     db.session.commit()
 
-    # ✅ Correo de bienvenida
     try:
         from app import mail
         msg = Message(
@@ -426,7 +403,6 @@ def registro_completo():
     except Exception as e:
         print(f"⚠️ No se pudo enviar correo de bienvenida: {e}")
 
-    # Limpiar datos temporales e iniciar sesión directamente
     session.pop('google_registro_data', None)
     session['user'] = usuario.email
     session['user_name'] = usuario.nombre_completo
@@ -531,7 +507,7 @@ def reset_password(token):
 
 
 # ================================================================
-# CAMBIAR CONTRASEÑA (desde mi cuenta)
+# CAMBIAR CONTRASEÑA
 # ================================================================
 @auth.route("/cambiar-password", methods=["POST"])
 def cambiar_password():
@@ -589,120 +565,6 @@ def admin_required(f):
             return redirect(url_for("index"))
         return f(*args, **kwargs)
     return decorated_function
-
-
-# ================================================================
-# FOTO DE PERFIL
-# ================================================================
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@auth.route('/subir-foto-perfil', methods=['POST'])
-@login_required
-def subir_foto_perfil():
-    if 'foto_perfil' not in request.files:
-        flash('No se seleccionó ningún archivo', 'error')
-        return redirect(request.referrer or url_for('mi_cuenta'))
-
-    file = request.files['foto_perfil']
-
-    if file.filename == '':
-        flash('No se seleccionó ningún archivo', 'error')
-        return redirect(request.referrer or url_for('mi_cuenta'))
-
-    if file and allowed_file(file.filename):
-        email = session['user']
-        extension = file.filename.rsplit('.', 1)[1].lower()
-        filename = secure_filename(
-            f"{email.replace('@', '_').replace('.', '_')}_{int(datetime.now().timestamp())}.{extension}"
-        )
-
-        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'perfiles')
-        os.makedirs(upload_folder, exist_ok=True)
-        filepath = os.path.join(upload_folder, filename)
-        file.save(filepath)
-
-        usuario = Usuario.query.filter_by(email=email).first()
-        if usuario:
-            if usuario.foto_perfil and '/static/uploads/perfiles/' in usuario.foto_perfil:
-                old_file = os.path.join(current_app.root_path, usuario.foto_perfil.lstrip('/'))
-                if os.path.exists(old_file):
-                    try:
-                        os.remove(old_file)
-                    except:
-                        pass
-
-            foto_url = f'/static/uploads/perfiles/{filename}'
-            usuario.foto_perfil = foto_url
-            usuario.foto_perfil_url = foto_url
-            db.session.commit()
-            session['foto_perfil'] = foto_url
-            flash('✅ Foto de perfil actualizada correctamente', 'success')
-        else:
-            flash('❌ Error al actualizar la foto', 'error')
-    else:
-        flash('❌ Formato no permitido. Use PNG, JPG, JPEG, WEBP o GIF', 'error')
-
-    return redirect(request.referrer or url_for('mi_cuenta'))
-
-
-@auth.route('/eliminar-foto-perfil', methods=['POST'])
-@login_required
-def eliminar_foto_perfil():
-    email = session['user']
-    usuario = Usuario.query.filter_by(email=email).first()
-
-    if usuario and usuario.foto_perfil:
-        if '/static/uploads/perfiles/' in usuario.foto_perfil:
-            file_path = os.path.join(current_app.root_path, usuario.foto_perfil.lstrip('/'))
-            if os.path.exists(file_path):
-                try:
-                    os.remove(file_path)
-                except:
-                    pass
-        usuario.foto_perfil = None
-        usuario.foto_perfil_url = None
-        db.session.commit()
-        session['foto_perfil'] = None
-        flash('✅ Foto de perfil eliminada correctamente', 'success')
-    else:
-        flash('❌ No hay foto de perfil para eliminar', 'error')
-
-    return redirect(request.referrer or url_for('mi_cuenta'))
-
-
-# ================================================================
-# EDITAR PERFIL
-# ================================================================
-@auth.route('/editar-perfil', methods=['POST'])
-@login_required
-def editar_perfil():
-    email = session['user']
-    usuario = Usuario.query.filter_by(email=email).first()
-
-    if not usuario:
-        flash('❌ Usuario no encontrado', 'error')
-        return redirect(url_for('mi_cuenta'))
-
-    usuario.nombre = request.form.get('nombre', usuario.nombre)
-    usuario.apellidos = request.form.get('apellidos', usuario.apellidos)
-    usuario.telefono = request.form.get('telefono', usuario.telefono)
-    usuario.direccion = request.form.get('direccion', usuario.direccion)
-
-    if usuario.nombre and usuario.apellidos:
-        usuario.nombre_completo = f"{usuario.nombre} {usuario.apellidos}".strip()
-    elif usuario.nombre:
-        usuario.nombre_completo = usuario.nombre
-    else:
-        usuario.nombre_completo = usuario.email.split('@')[0]
-
-    db.session.commit()
-    session['user_name'] = usuario.nombre_completo
-    flash('✅ Perfil actualizado correctamente', 'success')
-    return redirect(url_for('mi_cuenta'))
 
 
 # ================================================================

@@ -316,7 +316,12 @@
         <h2 class="muni-section-title">Autoridades <span class="muni-title-accent">Municipales</span></h2>
         <p class="muni-autoridades-subtitle">Período constitucional 2024 - 2028</p>
         <div class="muni-alcalde-card" data-alcalde-id="robert">
-            <div class="muni-alcalde-avatar"><span>RT</span><div class="muni-avatar-pulse"></div></div>
+           <div class="muni-alcalde-avatar" style="overflow:hidden; padding:0; border-radius:50%;">
+    <img src="{{ url_for('static', filename='img/rober23.jpeg') }}" 
+         alt="Robert Donald Tolentino"
+         style="width:100%; height:100%; object-fit:cover; object-position:center top; border-radius:50%;">
+    <div class="muni-avatar-pulse"></div>
+</div>
             <div class="muni-alcalde-info">
                 <div class="muni-autoridad-badge">Alcalde / Director Municipal</div>
                 <h3>Robert Donald Tolentino</h3>

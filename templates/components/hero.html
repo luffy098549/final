@@ -67,7 +67,7 @@
                     {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068565/ayuntamiento4_m68o6b.jpg', 'label': 'Área de Atención', 'place': 'Servicio de calidad al ciudadano'},
                     {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068597/ayunttamiento6_oey2fa.jpg', 'label': 'Vista Panorámica', 'place': 'Nuestra casa de todos'},
                     {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068627/ayuntamiento7_cjgxp5.jpg', 'label': 'Salón de Eventos', 'place': 'Reuniones comunitarias'},
-                    {'url': 'https://res.cloudinary.com/dwst50un4/image/upload/v1778068522/ayuntamiento1_j2zt8n.jpg', 'label': 'Gestión Transparente', 'place': 'Compromiso con el progreso'}
+                  
                 ] %}
 
                 {% for photo in slider_photos %}
@@ -850,8 +850,8 @@
     z-index: 3;
     animation: floatCard 4s ease-in-out infinite;
 }
-.card-top { top: -1.8rem; right: -1.8rem; animation-delay: 0s; }
-.card-bottom { bottom: -1.8rem; left: -1.8rem; animation-delay: 1s; }
+.card-top { top: -2.5rem; right: -5rem; animation-delay: 0s; }
+.card-bottom { bottom: -2.5rem; left: -5rem; animation-delay: 1s; }
 @keyframes floatCard {
     0%,100% { transform: translateY(0) rotate(0deg); }
     50% { transform: translateY(-12px) rotate(2deg); }
@@ -967,6 +967,12 @@
     .hero-info-bar { gap: 1.5rem; padding: 1rem; }
     .info-item { font-size: .8rem; }
     .info-separator { display: none; }
+}
+.hero-image-wrapper {
+    flex: 1;
+    position: relative;
+    max-width: 560px;
+    margin: 2.5rem 5rem; /* añade esto */
 }
 @media (max-width: 640px) {
     .hero-title { font-size: 2.2rem; }
