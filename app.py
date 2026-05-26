@@ -649,6 +649,10 @@ def servicios():
 def bitacora():
     return render_template("bitacora.html")
 
+@app.route("/galeria")
+def galeria():
+    return render_template("galeria.html")
+
 @app.route("/mapa")
 def mapa_incidencias():
     try:

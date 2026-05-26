@@ -1,0 +1,618 @@
+{% extends "base.html" %}
+
+{% block title %}Galería | {{ config.nombre_municipio }}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ══════════════════════════════════════
+   GALERÍA COMPLETA — Villa Cutupú
+══════════════════════════════════════ */
+
+/* Hero */
+.galeria-page-hero {
+    background: var(--verde, #2c7a3e);
+    padding: 5rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+}
+.galeria-page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+.galeria-page-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 60px;
+    background: var(--crema, #fffaf0);
+    clip-path: ellipse(55% 100% at 50% 100%);
+}
+.hero-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: white;
+}
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.2);
+    padding: .35rem 1rem;
+    border-radius: 40px;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 1.2rem;
+}
+.hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+}
+.hero-title em {
+    font-style: italic;
+    color: var(--dorado, #c9a03d);
+}
+.hero-subtitle {
+    font-size: .95rem;
+    opacity: .85;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+    line-height: 1.65;
+}
+.hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.hero-stat {
+    text-align: center;
+}
+.hero-stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dorado, #c9a03d);
+    line-height: 1;
+}
+.hero-stat-label {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: .7;
+    margin-top: .25rem;
+}
+
+/* Cuerpo principal */
+.galeria-page-body {
+    background: var(--crema, #fffaf0);
+    padding: 4rem 0 6rem;
+}
+
+/* Filtros */
+.galeria-filtros {
+    display: flex;
+    gap: .6rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 3rem;
+}
+.filtro-btn {
+    padding: .45rem 1.1rem;
+    border-radius: 40px;
+    border: 1.5px solid var(--gris-200, #e0e0e0);
+    background: white;
+    color: var(--gris-500, #888);
+    font-size: .78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s cubic-bezier(0.2,0.9,0.4,1.1);
+    text-transform: uppercase;
+    letter-spacing: .8px;
+}
+.filtro-btn:hover {
+    border-color: var(--verde, #2c7a3e);
+    color: var(--verde, #2c7a3e);
+    transform: translateY(-2px);
+}
+.filtro-btn.active {
+    background: var(--verde, #2c7a3e);
+    border-color: var(--verde, #2c7a3e);
+    color: white;
+    box-shadow: 0 4px 14px rgba(44,122,62,.28);
+}
+
+/* Masonry / Grid de fotos */
+.galeria-masonry {
+    columns: 3;
+    column-gap: 1.1rem;
+}
+@media (max-width: 900px)  { .galeria-masonry { columns: 2; } }
+@media (max-width: 540px)  { .galeria-masonry { columns: 1; } }
+
+.foto-card {
+    break-inside: avoid;
+    margin-bottom: 1.1rem;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    display: block;
+    transition: transform .35s cubic-bezier(0.2,0.9,0.4,1.1),
+                box-shadow .35s;
+}
+.foto-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 12px 30px rgba(0,0,0,.14);
+    z-index: 2;
+}
+.foto-card img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform .5s ease;
+}
+.foto-card:hover img { transform: scale(1.06); }
+
+.foto-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,20,6,.85) 0%, rgba(10,20,6,.2) 50%, transparent 75%);
+    opacity: 0;
+    transition: opacity .3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.2rem;
+}
+.foto-card:hover .foto-overlay { opacity: 1; }
+.foto-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.15);
+    color: rgba(255,255,255,.9);
+    font-size: .65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    padding: .22rem .6rem;
+    border-radius: 40px;
+    margin-bottom: .5rem;
+    align-self: flex-start;
+}
+.foto-titulo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: .2rem;
+    transform: translateY(8px);
+    transition: transform .3s cubic-bezier(0.2,0.9,0.4,1.1);
+}
+.foto-card:hover .foto-titulo { transform: translateY(0); }
+.foto-desc {
+    font-size: .73rem;
+    color: rgba(255,255,255,.72);
+    transform: translateY(8px);
+    transition: transform .3s cubic-bezier(0.2,0.9,0.4,1.1) .04s;
+}
+.foto-card:hover .foto-desc { transform: translateY(0); }
+.foto-zoom {
+    position: absolute;
+    top: .9rem; right: .9rem;
+    width: 34px; height: 34px;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.2);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: .8rem;
+    transform: scale(0) rotate(-45deg);
+    transition: transform .3s cubic-bezier(0.2,0.9,0.4,1.1);
+}
+.foto-card:hover .foto-zoom { transform: scale(1) rotate(0); }
+
+/* Hidden para filtros */
+.foto-card.oculta {
+    display: none;
+}
+
+/* Empty state */
+.galeria-empty {
+    text-align: center;
+    padding: 5rem 1rem;
+    color: var(--gris-400, #aaa);
+    display: none;
+}
+.galeria-empty i { font-size: 3rem; margin-bottom: 1rem; opacity: .4; }
+.galeria-empty p { font-size: .9rem; }
+
+/* ── LIGHTBOX ── */
+#galeriaPageLB {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .35s, visibility .35s;
+}
+#galeriaPageLB.active { opacity: 1; visibility: visible; }
+#galeriaPageLB .lb-bd {
+    position: absolute; inset: 0;
+    background: rgba(5,10,3,.95);
+    backdrop-filter: blur(12px);
+    cursor: zoom-out;
+}
+#galeriaPageLB .lb-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: min(90vw, 1100px);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    transform: scale(.9);
+    transition: transform .4s cubic-bezier(0.2,0.9,0.4,1.1);
+}
+#galeriaPageLB.active .lb-wrap { transform: scale(1); }
+#galeriaPageLB .lb-img {
+    max-height: 74vh;
+    max-width: 100%;
+    border-radius: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.6);
+    object-fit: contain;
+}
+#galeriaPageLB .lb-img.anim-r { animation: lbR .3s cubic-bezier(0.2,0.9,0.4,1.1) both; }
+#galeriaPageLB .lb-img.anim-l { animation: lbL .3s cubic-bezier(0.2,0.9,0.4,1.1) both; }
+@keyframes lbR { from { opacity:0; transform: translateX(60px) scale(.96); } to { opacity:1; transform: none; } }
+@keyframes lbL { from { opacity:0; transform: translateX(-60px) scale(.96); } to { opacity:1; transform: none; } }
+
+#galeriaPageLB .lb-info { text-align: center; color: white; }
+#galeriaPageLB .lb-tit {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 700;
+    margin-bottom: .25rem;
+}
+#galeriaPageLB .lb-dsc { font-size: .82rem; color: rgba(255,255,255,.6); margin-bottom: .4rem; }
+#galeriaPageLB .lb-cnt {
+    font-size: .7rem; font-weight: 600;
+    color: var(--dorado, #c9a03d);
+    letter-spacing: 1px; text-transform: uppercase;
+}
+#galeriaPageLB .lb-dots {
+    display: flex; gap: .45rem;
+    justify-content: center; margin-top: .4rem;
+}
+#galeriaPageLB .lb-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,.3);
+    border: none; cursor: pointer; padding: 0;
+    transition: all .25s cubic-bezier(0.2,0.9,0.4,1.1);
+}
+#galeriaPageLB .lb-dot.on { background: var(--dorado, #c9a03d); width: 22px; border-radius: 4px; }
+
+.lb-btn {
+    position: fixed;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.15);
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(6px);
+    transition: background .2s, transform .25s cubic-bezier(0.2,0.9,0.4,1.1);
+    z-index: 2;
+}
+.lb-close-btn { top: 1.5rem; right: 1.5rem; width: 46px; height: 46px; font-size: .95rem; }
+.lb-close-btn:hover { background: #dc2626; transform: rotate(90deg) scale(1.1); }
+.lb-prev-btn { top: 50%; left: 1.5rem; transform: translateY(-50%); width: 52px; height: 52px; font-size: 1.1rem; }
+.lb-next-btn { top: 50%; right: 1.5rem; transform: translateY(-50%); width: 52px; height: 52px; font-size: 1.1rem; }
+.lb-prev-btn:hover { background: var(--verde, #2c7a3e); transform: translateY(-50%) translateX(-4px) scale(1.1); }
+.lb-next-btn:hover { background: var(--verde, #2c7a3e); transform: translateY(-50%) translateX(4px) scale(1.1); }
+
+/* Entrada de cards */
+.foto-card {
+    animation: cardEntra .5s cubic-bezier(0.2,0.9,0.4,1.1) both;
+}
+@keyframes cardEntra {
+    from { opacity: 0; transform: translateY(20px) scale(.97); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Mobile overlay siempre visible */
+@media (hover: none) {
+    .foto-overlay { opacity: 1; }
+    .foto-titulo, .foto-desc { transform: translateY(0); }
+    .foto-zoom { transform: scale(1) rotate(0); }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO ══ -->
+<section class="galeria-page-hero">
+    <div class="container hero-inner">
+        <div class="hero-eyebrow">
+            <i class="fas fa-images"></i>
+            Galería Municipal
+        </div>
+        <h1 class="hero-title">
+            Cutupú en <em>imágenes</em>
+        </h1>
+        <p class="hero-subtitle">
+            Descubre los espacios, obras y momentos que hacen grande a nuestra comunidad
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-num" id="totalFotos">—</div>
+                <div class="hero-stat-label">Fotografías</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num" id="totalCats">—</div>
+                <div class="hero-stat-label">Categorías</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ CUERPO ══ -->
+<section class="galeria-page-body">
+    <div class="container">
+
+        <!-- Filtros -->
+        <div class="galeria-filtros" id="filtrosGaleria">
+            <button class="filtro-btn active" data-cat="todos">
+                <i class="fas fa-th"></i> Todos
+            </button>
+            <button class="filtro-btn" data-cat="paisaje">
+                <i class="fas fa-mountain"></i> Paisaje
+            </button>
+            <button class="filtro-btn" data-cat="infraestructura">
+                <i class="fas fa-building"></i> Infraestructura
+            </button>
+            <button class="filtro-btn" data-cat="eventos">
+                <i class="fas fa-calendar-alt"></i> Eventos
+            </button>
+            <button class="filtro-btn" data-cat="comunidad">
+                <i class="fas fa-users"></i> Comunidad
+            </button>
+            <button class="filtro-btn" data-cat="obras">
+                <i class="fas fa-hard-hat"></i> Obras
+            </button>
+        </div>
+
+        <!-- Masonry grid -->
+        <div class="galeria-masonry" id="galeriaGrid">
+
+            <div class="foto-card" data-cat="paisaje" data-index="0"
+                 data-titulo="Vista Panorámica"
+                 data-desc="Nuestro hermoso distrito rodeado de naturaleza">
+                <img src="https://res.cloudinary.com/dwst50un4/image/upload/v1778069860/WhatsApp_Image_2026-02-16_at_10.09.06_PM_n0rxjn.jpg"
+                     alt="Vista Panorámica" loading="lazy">
+                <div class="foto-overlay">
+                    <div class="foto-zoom"><i class="fas fa-expand-alt"></i></div>
+                    <span class="foto-tag"><i class="fas fa-mountain"></i> Paisaje</span>
+                    <div class="foto-titulo">Vista Panorámica</div>
+                    <div class="foto-desc">Nuestro hermoso distrito rodeado de naturaleza</div>
+                </div>
+            </div>
+
+            <div class="foto-card" data-cat="infraestructura" data-index="1"
+                 data-titulo="Parque Central"
+                 data-desc="Espacio de recreación y encuentro familiar">
+                <img src="https://res.cloudinary.com/dwst50un4/image/upload/v1778069869/WhatsApp_Image_2026-02-16_at_10.09.13_PM_oou7s2.jpg"
+                     alt="Parque Central" loading="lazy">
+                <div class="foto-overlay">
+                    <div class="foto-zoom"><i class="fas fa-expand-alt"></i></div>
+                    <span class="foto-tag"><i class="fas fa-tree"></i> Infraestructura</span>
+                    <div class="foto-titulo">Parque Central</div>
+                    <div class="foto-desc">Espacio de recreación y encuentro familiar</div>
+                </div>
+            </div>
+
+            <div class="foto-card" data-cat="infraestructura" data-index="2"
+                 data-titulo="Sede de la Junta Distrital"
+                 data-desc="Oficina central del Ayuntamiento de Cutupú">
+                <img src="https://res.cloudinary.com/dwst50un4/image/upload/v1778068522/ayuntamiento1_j2zt8n.jpg"
+                     alt="Sede de la Junta Distrital" loading="lazy">
+                <div class="foto-overlay">
+                    <div class="foto-zoom"><i class="fas fa-expand-alt"></i></div>
+                    <span class="foto-tag"><i class="fas fa-building"></i> Infraestructura</span>
+                    <div class="foto-titulo">Sede de la Junta Distrital</div>
+                    <div class="foto-desc">Oficina central del Ayuntamiento de Cutupú</div>
+                </div>
+            </div>
+
+            <!-- Agrega más foto-cards aquí con la misma estructura -->
+
+        </div>
+
+        <!-- Empty state -->
+        <div class="galeria-empty" id="galeriaEmpty">
+            <i class="fas fa-images"></i>
+            <p>No hay fotos en esta categoría aún.</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- ══ LIGHTBOX ══ -->
+<div id="galeriaPageLB" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Visor de imágenes">
+    <div class="lb-bd"></div>
+    <button class="lb-btn lb-close-btn" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+    <button class="lb-btn lb-prev-btn"  aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+    <button class="lb-btn lb-next-btn"  aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    <div class="lb-wrap">
+        <img src="" alt="" class="lb-img" id="lbMainImg">
+        <div class="lb-info">
+            <div class="lb-tit" id="lbTit"></div>
+            <div class="lb-dsc" id="lbDsc"></div>
+            <div class="lb-cnt" id="lbCnt"></div>
+            <div class="lb-dots" id="lbDots"></div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    'use strict';
+
+    /* ── Recopilar fotos visibles ── */
+    function getFotos(cards) {
+        return Array.from(cards).map(c => ({
+            src:    c.querySelector('img').src,
+            titulo: c.dataset.titulo || '',
+            desc:   c.dataset.desc   || '',
+            el:     c
+        }));
+    }
+
+    /* ── Filtros ── */
+    const grid    = document.getElementById('galeriaGrid');
+    const empty   = document.getElementById('galeriaEmpty');
+    const allCards = grid.querySelectorAll('.foto-card');
+
+    document.getElementById('filtrosGaleria').addEventListener('click', e => {
+        const btn = e.target.closest('.filtro-btn');
+        if (!btn) return;
+        document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const cat = btn.dataset.cat;
+        let visible = 0;
+        allCards.forEach((c, i) => {
+            const show = cat === 'todos' || c.dataset.cat === cat;
+            c.classList.toggle('oculta', !show);
+            if (show) {
+                c.style.animationDelay = (visible * 0.05) + 's';
+                visible++;
+            }
+        });
+        empty.style.display = visible === 0 ? 'block' : 'none';
+
+        /* Actualizar índices del lightbox */
+        rebuildIndex();
+    });
+
+    /* ── Contador hero ── */
+    document.getElementById('totalFotos').textContent = allCards.length;
+    const cats = new Set(Array.from(allCards).map(c => c.dataset.cat));
+    document.getElementById('totalCats').textContent = cats.size;
+
+    /* ── Lightbox ── */
+    const lb        = document.getElementById('galeriaPageLB');
+    const lbImg     = document.getElementById('lbMainImg');
+    const lbTit     = document.getElementById('lbTit');
+    const lbDsc     = document.getElementById('lbDsc');
+    const lbCnt     = document.getElementById('lbCnt');
+    const lbDots    = document.getElementById('lbDots');
+
+    let fotos  = [];
+    let current = 0;
+
+    function rebuildIndex() {
+        fotos = getFotos(grid.querySelectorAll('.foto-card:not(.oculta)'));
+    }
+    rebuildIndex();
+
+    function buildDots() {
+        lbDots.innerHTML = '';
+        fotos.forEach((_, i) => {
+            const d = document.createElement('button');
+            d.className = 'lb-dot' + (i === current ? ' on' : '');
+            d.setAttribute('aria-label', 'Foto ' + (i + 1));
+            d.addEventListener('click', () => goTo(i));
+            lbDots.appendChild(d);
+        });
+    }
+
+    function updateDots() {
+        lbDots.querySelectorAll('.lb-dot').forEach((d, i) =>
+            d.classList.toggle('on', i === current));
+    }
+
+    function show(dir) {
+        const f = fotos[current];
+        if (!f) return;
+        lbImg.classList.remove('anim-r', 'anim-l');
+        void lbImg.offsetWidth;
+        lbImg.src = f.src;
+        lbImg.alt = f.titulo;
+        lbTit.textContent = f.titulo;
+        lbDsc.textContent = f.desc;
+        lbCnt.textContent = (current + 1) + ' / ' + fotos.length;
+        if (dir === 'next') lbImg.classList.add('anim-r');
+        if (dir === 'prev') lbImg.classList.add('anim-l');
+        updateDots();
+    }
+
+    function goTo(idx, dir) {
+        const d = dir || (idx > current ? 'next' : 'prev');
+        current = (idx + fotos.length) % fotos.length;
+        show(d);
+    }
+
+    function open(el) {
+        rebuildIndex();
+        const visibles = Array.from(grid.querySelectorAll('.foto-card:not(.oculta)'));
+        current = visibles.indexOf(el);
+        if (current < 0) current = 0;
+        buildDots();
+        show();
+        lb.classList.add('active');
+        lb.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+        lb.classList.remove('active');
+        lb.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    allCards.forEach(c => c.addEventListener('click', () => open(c)));
+
+    lb.querySelector('.lb-bd').addEventListener('click', close);
+    lb.querySelector('.lb-close-btn').addEventListener('click', close);
+    lb.querySelector('.lb-prev-btn').addEventListener('click', () => goTo(current - 1, 'prev'));
+    lb.querySelector('.lb-next-btn').addEventListener('click', () => goTo(current + 1, 'next'));
+
+    document.addEventListener('keydown', e => {
+        if (!lb.classList.contains('active')) return;
+        if (e.key === 'Escape')     close();
+        if (e.key === 'ArrowLeft')  goTo(current - 1, 'prev');
+        if (e.key === 'ArrowRight') goTo(current + 1, 'next');
+    });
+
+    /* Swipe */
+    let tx = 0;
+    lb.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener('touchend',   e => {
+        const d = tx - e.changedTouches[0].clientX;
+        if (Math.abs(d) > 45) d > 0 ? goTo(current + 1, 'next') : goTo(current - 1, 'prev');
+    });
+
+})();
+</script>
+{% endblock %}
